@@ -1,0 +1,80 @@
+"use client"
+
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Construction } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
+
+export function WorkInProgress() {
+  const router = useRouter()
+
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="w-[420px] glass overflow-hidden">
+          <CardHeader className="text-center pb-2">
+            <motion.div 
+              className="mx-auto mb-6 bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center"
+              animate={{ 
+                rotate: [0, -10, 10, -10, 0],
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <Construction className="h-8 w-8 text-primary" />
+            </motion.div>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Under Construction
+            </CardTitle>
+            <CardDescription className="text-lg mt-2">
+              This feature is currently being built
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <div className="w-full bg-muted rounded-lg h-2 overflow-hidden">
+              <motion.div 
+                className="h-full bg-primary"
+                animate={{ 
+                  x: ["-100%", "100%"],
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
+            </div>
+            <p className="text-muted-foreground">
+              Our team is working hard to bring you an amazing experience. 
+              Check back soon to see what we're building!
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center pb-6">
+            <Button 
+              size="lg"
+              onClick={() => router.back()}
+              className="px-8"
+            >
+              Go Back
+            </Button>
+          </CardFooter>
+        </Card>
+      </motion.div>
+    </div>
+  )
+}

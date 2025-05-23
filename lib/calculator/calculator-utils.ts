@@ -1,0 +1,104 @@
+export type Operation = {
+  symbol: string
+  precedence: number
+  execute: (a: number, b: number) => number
+}
+
+export const operations: { [key: string]: Operation } = {
+  '+': { symbol: '+', precedence: 1, execute: (a, b) => a + b },
+  '-': { symbol: '-', precedence: 1, execute: (a, b) => a - b },
+  '*': { symbol: '×', precedence: 2, execute: (a, b) => a * b },
+  '/': { symbol: '÷', precedence: 2, execute: (a, b) => a / b },
+  '^': { symbol: '^', precedence: 3, execute: (a, b) => Math.pow(a, b) }
+}
+
+export const scientificFunctions = {
+  sin: Math.sin,
+  cos: Math.cos,
+  tan: Math.tan,
+  log: Math.log10,
+  ln: Math.log,
+  sqrt: Math.sqrt,
+  abs: Math.abs
+}
+
+export function evaluateExpression(expression: string): number {
+  // Remove whitespace and validate
+  expression = expression.replace(/\s+/g, '')
+  if (!expression) return 0
+
+  // Tokenize the expression
+  const tokens = tokenize(expression)
+  
+  // Convert to postfix notation
+  const postfix = toPostfix(tokens)
+  
+  // Evaluate postfix expression
+  return evaluatePostfix(postfix)
+}
+
+function tokenize(expression: string): string[] {
+  const tokens: string[] = []
+  let current = ''
+  
+  for (let i = 0; i < expression.length; i++) {
+    const char = expression[i]
+    
+    if (isOperator(char)) {
+      if (current) tokens.push(current)
+      tokens.push(char)
+      current = ''
+    } else {
+      current += char
+    }
+  }
+  
+  if (current) tokens.push(current)
+  
+  return tokens
+}
+
+function isOperator(char: string): boolean {
+  return '+-*/^'.includes(char)
+}
+
+function toPostfix(tokens: string[]): string[] {
+  const output: string[] = []
+  const operators: string[] = []
+  
+  for (const token of tokens) {
+    if (isOperator(token)) {
+      while (
+        operators.length > 0 &&
+        operations[operators[operators.length - 1]].precedence >= operations[token].precedence
+      ) {
+        output.push(operators.pop()!)
+      }
+      operators.push(token)
+    } else {
+      output.push(token)
+    }
+  }
+  
+  while (operators.length > 0) {
+    output.push(operators.pop()!)
+  }
+  
+  return output
+}
+
+function evaluatePostfix(tokens: string[]): number {
+  const stack: number[] = []
+  
+  for (const token of tokens) {
+    if (isOperator(token)) {
+      const b = stack.pop()!
+      const a = stack.pop()!
+      stack.push(operations[token].execute(a, b))
+    } else {
+      stack.push(Number(token))
+    }
+  }
+  
+  return stack[0]
+}
