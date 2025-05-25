@@ -13,7 +13,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight, Code2, Heart, Sparkles, Zap, Lightbulb, Users } from "lucide-react"
 
 const container = {
   hidden: { opacity: 0 },
@@ -31,19 +31,47 @@ const item = {
 }
 
 const features = [
-  "All-in-one toolkit with essential utilities for everyone",
-  "Modern, minimalist interface designed for simplicity",
-  "Keyboard-first navigation with command palette",
-  "Fully responsive and accessible across all devices",
-  "Open-source and community-driven development",
-  "Regular updates and new features based on user feedback",
-  "No sign-up required - just open and start using",
-  "Offline-capable for reliable access anywhere"
+  {
+    icon: Zap,
+    title: "Lightning Fast",
+    description: "All tools run directly in your browser - no server delays, no waiting"
+  },
+  {
+    icon: Heart,
+    title: "Free Forever",
+    description: "Every tool is completely free to use, no hidden costs or premium features"
+  },
+  {
+    icon: Code2,
+    title: "Open Source",
+    description: "Built in the open, contributions welcome from everyone"
+  },
+  {
+    icon: Lightbulb,
+    title: "Smart Defaults",
+    description: "Thoughtfully designed with sensible defaults for quick results"
+  }
+]
+
+const philosophy = [
+  {
+    title: "Built for Everyone",
+    description: "Whether you're a developer, designer, or content creator, our tools are designed to be intuitive and accessible"
+  },
+  {
+    title: "Privacy First",
+    description: "Your data never leaves your browser. No tracking, no analytics, just pure functionality"
+  },
+  {
+    title: "Community Driven",
+    description: "Shaped by real user feedback and needs, not corporate interests"
+  }
 ]
 
 export default function Home() {
   return (
     <div className="space-y-32">
+      {/* Hero Section */}
       <motion.div 
         className="text-center space-y-8 max-w-4xl mx-auto pt-20"
         initial={{ opacity: 0, y: 20 }}
@@ -75,7 +103,7 @@ export default function Home() {
         <div className="flex flex-col items-center gap-4">
           <Link href="/explore">
             <Button size="lg" className="text-lg px-8">
-              Explore All
+              Explore All Tools
             </Button>
           </Link>
           <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -84,20 +112,90 @@ export default function Home() {
         </div>
       </motion.div>
 
+      {/* Features Section */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+        className="space-y-12"
       >
-        {features.map((feature, index) => (
-          <motion.div key={index} variants={item}>
-            <Card className="p-6 glass glass-hover">
-              <p className="text-foreground">{feature}</p>
-            </Card>
-          </motion.div>
-        ))}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4">Why Choose astraa?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Crafted with attention to detail and focused on delivering the best possible experience
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {features.map((feature, index) => (
+            <motion.div key={index} variants={item}>
+              <Card className="p-6 glass glass-hover">
+                <feature.icon className="h-8 w-8 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Philosophy Section */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="space-y-12"
+      >
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4">Our Philosophy</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            The principles that guide everything we build
+          </p>
+        </div>
+
+        <div className="grid gap-8 md:grid-cols-3">
+          {philosophy.map((item, index) => (
+            <motion.div key={index} variants={item}>
+              <Card className="p-8 glass glass-hover text-center">
+                <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
+                <p className="text-muted-foreground">{item.description}</p>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Contribute Section */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="text-center space-y-8"
+      >
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold">Want to Contribute?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Join our community of developers and help make astraa even better
+          </p>
+        </div>
+
+        <Card className="p-8 glass max-w-2xl mx-auto">
+          <div className="flex items-center justify-center gap-8">
+            <Users className="h-12 w-12 text-primary" />
+            <div className="text-left">
+              <h3 className="text-xl font-semibold mb-2">Open Source Community</h3>
+              <p className="text-muted-foreground mb-4">
+                Whether you're fixing bugs, adding features, or improving documentation - every contribution matters
+              </p>
+              <Button asChild>
+                <Link href="/contribute" className="gap-2">
+                  Get Started
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </Card>
       </motion.div>
     </div>
   )
-}
