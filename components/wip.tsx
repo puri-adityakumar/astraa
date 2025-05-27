@@ -25,7 +25,7 @@ export function WorkInProgress() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="w-[420px] glass overflow-hidden">
+          <Card className="w-[320px] md:w-[420px] glass overflow-hidden">
             <CardHeader className="text-center pb-2">
               <motion.div 
                 className="mx-auto mb-6 bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center"
@@ -40,15 +40,15 @@ export function WorkInProgress() {
               >
                 <Construction className="h-8 w-8 text-primary" />
               </motion.div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <CardTitle className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Coming Soon
               </CardTitle>
-              <CardDescription className="text-lg mt-2">
+              <CardDescription className="text-base md:text-lg mt-2">
                 This feature will be available soon
               </CardDescription>
             </CardHeader>
-            <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">
+            <CardContent className="text-center space-y-4 px-4 md:px-6">
+              <p className="text-muted-foreground text-sm md:text-base">
                 We're working hard to bring you something amazing. 
                 Stay tuned for updates!
               </p>
@@ -57,7 +57,7 @@ export function WorkInProgress() {
               <Button 
                 size="lg"
                 onClick={() => router.back()}
-                className="px-8"
+                className="px-6 md:px-8"
               >
                 Go Back
               </Button>
@@ -75,7 +75,7 @@ export function WorkInProgress() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-[420px] glass overflow-hidden">
+        <Card className="w-[320px] md:w-[420px] glass overflow-hidden">
           <CardHeader className="text-center pb-2">
             <motion.div 
               className="mx-auto mb-6 bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center"
@@ -90,14 +90,14 @@ export function WorkInProgress() {
             >
               <Construction className="h-8 w-8 text-primary" />
             </motion.div>
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <CardTitle className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Under Construction
             </CardTitle>
-            <CardDescription className="text-lg mt-2">
+            <CardDescription className="text-base md:text-lg mt-2">
               This feature is currently being built
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
+          <CardContent className="text-center space-y-4 px-4 md:px-6">
             <div className="w-full bg-muted rounded-lg h-2 overflow-hidden">
               <motion.div 
                 className="h-full bg-primary"
@@ -111,7 +111,7 @@ export function WorkInProgress() {
                 }}
               />
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm md:text-base">
               Our team is working hard to bring you an amazing experience. 
               Check back soon to see what we're building!
             </p>
@@ -120,7 +120,7 @@ export function WorkInProgress() {
             <Button 
               size="lg"
               onClick={() => router.back()}
-              className="px-8"
+              className="px-6 md:px-8"
             >
               Go Back
             </Button>

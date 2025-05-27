@@ -12,7 +12,7 @@ export default function NotFound() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-[420px] glass p-8 text-center space-y-8">
+        <Card className="w-[320px] md:w-[420px] glass p-6 md:p-8 text-center space-y-8">
           <motion.div 
             animate={{ 
               scale: [1, 1.1, 1],
@@ -26,18 +26,18 @@ export default function NotFound() {
             className="relative"
           >
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-            <div className="relative mx-auto bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center">
-              <FileQuestion className="h-10 w-10 text-primary" />
+            <div className="relative mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center">
+              <FileQuestion className="h-8 w-8 text-primary" />
             </div>
           </motion.div>
           
           <div className="space-y-4">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               404
             </h2>
             <div className="space-y-2">
-              <h3 className="text-2xl font-semibold">Page Not Found</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl md:text-2xl font-semibold">Page Not Found</h3>
+              <p className="text-muted-foreground text-sm md:text-base">
                 Oops! The page you're looking for seems to have wandered off.
                 Let's get you back on track.
               </p>

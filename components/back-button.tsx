@@ -10,11 +10,11 @@ export function BackButton() {
       variant="ghost"
       size="sm"
       asChild
-      className="mb-4 gap-2"
+      className="mb-4 gap-2 -ml-2"
     >
       <Link href="/explore">
         <ArrowLeft className="h-4 w-4" />
-        Back to Explore
+        <span className="hidden sm:inline">Back to Explore</span>
       </Link>
     </Button>
   )
