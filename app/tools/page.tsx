@@ -3,8 +3,8 @@
 import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { toolCategories } from "@/lib/tools"
 import Link from "next/link"
+import { useTools } from "@/lib/tools-context"
 
 const container = {
   hidden: { opacity: 0 },
@@ -22,6 +22,8 @@ const item = {
 }
 
 export default function ToolsPage() {
+  const { categories } = useTools()
+
   return (
     <div className="max-w-6xl mx-auto space-y-12">
       <motion.div 
@@ -36,7 +38,7 @@ export default function ToolsPage() {
         </p>
       </motion.div>
 
-      {toolCategories.map((category, categoryIndex) => (
+      {categories.map((category, categoryIndex) => (
         <motion.div 
           key={category.name}
           initial={{ opacity: 0 }}

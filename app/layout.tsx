@@ -5,6 +5,7 @@ import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ToolsProvider } from '@/lib/tools-context';
 
 const workSans = Work_Sans({ 
   subsets: ['latin'],
@@ -32,14 +33,16 @@ export default function RootLayout({
           disableTransitionOnChange
           suppressHydrationWarning
         >
-          <div className="min-h-screen flex flex-col">
-            <Navigation />
-            <main className="container mx-auto px-4 py-8 animate-in flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-          <Toaster />
+          <ToolsProvider>
+            <div className="min-h-screen flex flex-col">
+              <Navigation />
+              <main className="container mx-auto px-4 py-8 animate-in flex-1">
+                {children}
+              </main>
+              <Footer />
+            </div>
+            <Toaster />
+          </ToolsProvider>
         </ThemeProvider>
       </body>
     </html>
