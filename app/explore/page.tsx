@@ -4,9 +4,9 @@ import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { toolCategories } from "@/lib/tools"
-import { games } from "@/lib/games"
 import { Gamepad2, Wrench } from "lucide-react"
+import { useTools } from "@/lib/tools-context"
+import { games } from "@/lib/games"
 
 const container = {
   hidden: { opacity: 0 },
@@ -24,6 +24,8 @@ const item = {
 }
 
 export default function ExplorePage() {
+  const { categories } = useTools()
+
   return (
     <div className="max-w-6xl mx-auto space-y-12">
       <motion.div 
@@ -55,7 +57,7 @@ export default function ExplorePage() {
           animate="show"
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
-          {toolCategories[0].items.map((tool) => (
+          {categories[0].items.map((tool) => (
             <motion.div key={tool.path} variants={item}>
               <Link href={tool.path}>
                 <Card className="p-6 glass glass-hover group space-y-4">
