@@ -53,11 +53,71 @@
   * {
     @apply border-border;
   }
+  
+  /* Mobile-first optimizations */
+  html {
+    /* Prevent horizontal scrolling on mobile */
+    overflow-x: hidden;
+    /* Improve text rendering */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
   body {
     @apply bg-background text-foreground font-worksans;
+    /* Optimize for mobile performance */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    /* Improve touch scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Minimum font size for mobile readability */
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  /* Optimize button and interactive elements for touch */
+  button, 
+  [role="button"], 
+  input[type="submit"], 
+  input[type="button"] {
+    /* Minimum touch target size */
+    min-height: 44px;
+    min-width: 44px;
+    /* Remove tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+    /* Improve touch responsiveness */
+    touch-action: manipulation;
+  }
+  
+  /* Optimize links for touch */
+  a {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Improve form inputs on mobile */
+  input, 
+  textarea, 
+  select {
+    /* Prevent zoom on iOS when focusing inputs */
+    font-size: 16px;
+    /* Improve touch interaction */
+    touch-action: manipulation;
+  }
+  
+  /* Optimize images for mobile */
+  img {
+    /* Prevent images from breaking layout */
+    max-width: 100%;
+    height: auto;
+    /* Improve image loading performance */
+    loading: lazy;
   }
 }
 
+/* Mobile-optimized light theme background */
 .light body {
   background: 
     linear-gradient(to right,
@@ -76,84 +136,127 @@
       rgba(147, 51, 234, 0.05),
       transparent 50%
     ),
+    /* Simplified pattern for mobile performance */
     radial-gradient(
-      rgba(34, 197, 94, 0.1) 1px,
+      rgba(34, 197, 94, 0.05) 1px,
       transparent 1px
-    ) 0 0/20px 20px;
+    ) 0 0/30px 30px;
 }
 
+/* Mobile-optimized dark theme background */
 .dark body {
   background: 
     linear-gradient(to bottom right, 
-      hsl(var(--primary)/0.2) 0%, 
+      hsl(var(--primary)/0.1) 0%, 
       transparent 30%
     ),
     linear-gradient(to top left, 
-      hsl(var(--secondary)/0.2) 0%, 
+      hsl(var(--secondary)/0.1) 0%, 
       transparent 30%
     ),
     linear-gradient(to bottom left, 
-      hsl(var(--accent)/0.2) 0%, 
+      hsl(var(--accent)/0.1) 0%, 
       transparent 30%
     ),
     hsl(var(--background));
-  background-attachment: fixed;
+  /* Remove fixed attachment for better mobile performance */
+  background-attachment: scroll;
 }
 
 @layer components {
+  /* Mobile-optimized glass effect */
   .glass {
-    @apply bg-background/40 backdrop-blur-xl border shadow-sm rounded-lg;
+    @apply bg-background/60 backdrop-blur-md border shadow-sm rounded-lg;
+    /* Reduce backdrop blur for better mobile performance */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
   
   .glass-hover {
-    @apply hover:bg-foreground/5 hover:border-foreground/10 transition-all duration-300;
+    @apply hover:bg-foreground/5 hover:border-foreground/10 transition-all duration-200;
+    /* Faster transitions for mobile */
+    will-change: background-color, border-color;
   }
   
+  /* Optimized animations for mobile */
   .animate-in {
-    animation: animate-in 0.5s ease-out;
+    animation: animate-in 0.3s ease-out;
   }
   
   @keyframes animate-in {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
+  
+  /* Mobile-specific utility classes */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  /* Optimize scrolling for mobile */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Mobile-optimized focus states */
+  .focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
 }
 
-/* Fix text colors in light theme */
+/* Mobile-optimized light theme adjustments */
 .light {
-  /* Ensure text is visible on light backgrounds */
   .text-white {
     @apply text-gray-900;
   }
   
-  /* Improve contrast for muted text */
   .text-muted-foreground {
-    @apply text-gray-600;
+    @apply text-gray-700; /* Better contrast for mobile */
   }
   
-  /* Enhance card contrast */
   .glass {
-    @apply bg-white/80 border-2;
+    @apply bg-white/85 border; /* Better contrast, thinner border for mobile */
   }
   
-  /* Improve hover states */
   .glass-hover:hover {
-    @apply bg-gray-50/80;
+    @apply bg-gray-50/90;
   }
   
-  /* Better navigation contrast */
   .nav-link {
     @apply text-gray-700 hover:text-gray-900;
   }
   
-  /* Gradient text enhancement */
   .bg-gradient-to-r {
     @apply from-emerald-600 via-emerald-500 to-purple-600;
+  }
+}
+/* Mobile-specific responsive utilities */
+@media (max-width: 640px) {
+  /* Reduce spacing on very small screens */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Optimize typography for mobile */
+  h1 {
+    line-height: 1.2;
+  }
+  
+  h2, h3 {
+    line-height: 1.3;
+  }
+  
+  /* Ensure adequate spacing between interactive elements */
+  button + button,
+  a + a {
+    margin-left: 0.5rem;
   }
 }
