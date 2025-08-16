@@ -6,6 +6,7 @@ import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ToolsProvider } from '@/lib/tools-context';
+import { ActivityProvider } from '@/lib/activity-tracker';
 
 const workSans = Work_Sans({ 
   subsets: ['latin'],
@@ -34,14 +35,16 @@ export default function RootLayout({
           suppressHydrationWarning
         >
           <ToolsProvider>
-            <div className="min-h-screen flex flex-col">
-              <Navigation />
-              <main className="container mx-auto px-4 py-8 animate-in flex-1">
-                {children}
-              </main>
-              <Footer />
-            </div>
-            <Toaster />
+            <ActivityProvider>
+              <div className="min-h-screen flex flex-col">
+                <Navigation />
+                <main className="container mx-auto px-4 py-8 animate-in flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+              <Toaster />
+            </ActivityProvider>
           </ToolsProvider>
         </ThemeProvider>
       </body>

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import Link from "next/link"
 import { CommandMenu } from "@/components/command-menu"
 import { tools } from "@/lib/tools"
+import { ActivityFeed } from "@/components/activity-feed"
 import {
   Carousel,
   CarouselContent,
@@ -163,6 +164,23 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
+      </motion.div>
+
+      {/* Live Activity Feed */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="space-y-8"
+      >
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-4">Live Activity</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            See what's happening right now across our platform
+          </p>
+        </div>
+        
+        <ActivityFeed />
       </motion.div>
 
       {/* Contribute Section */}
