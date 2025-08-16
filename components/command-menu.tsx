@@ -16,6 +16,7 @@ import { tools, toolCategories } from "@/lib/tools"
 import { games } from "@/lib/games"
 import { Badge } from "@/components/ui/badge"
 import { DialogContent, DialogTitle } from "@/components/ui/dialog"
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 
 export function CommandMenu() {
   const router = useRouter()
@@ -56,7 +57,9 @@ export function CommandMenu() {
       {mounted && (
         <CommandDialog open={open} onOpenChange={setOpen}>
           <DialogContent className="p-0">
-            <DialogTitle className="sr-only">Search tools and games</DialogTitle>
+            <VisuallyHidden.Root>
+              <DialogTitle>Search tools and games</DialogTitle>
+            </VisuallyHidden.Root>
             <CommandInput placeholder="Type to search tools and games..." />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
