@@ -1,4 +1,4 @@
-import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Gamepad2, Brain, Code, FileJson, Database, Terminal, DivideIcon as LucideIcon, Palette } from "lucide-react"
+import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Gamepad2, Brain, Code, FileJson, Database, Terminal, Palette, type LucideIcon } from "lucide-react"
 
 export type ToolCategory = {
   name: string

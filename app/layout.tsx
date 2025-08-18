@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ToolsProvider } from '@/lib/tools-context';
 import { ActivityProvider } from '@/lib/activity-tracker';
 
-const workSans = Work_Sans({ 
+const workSans = Work_Sans({
   subsets: ['latin'],
   variable: '--font-work-sans',
 });
@@ -32,7 +32,6 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          suppressHydrationWarning
         >
           <ToolsProvider>
             <ActivityProvider>

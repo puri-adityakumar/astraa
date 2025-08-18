@@ -73,7 +73,7 @@ export default function Home() {
   return (
     <div className="space-y-32">
       {/* Hero Section */}
-      <motion.div 
+      <motion.div
         className="text-center space-y-8 max-w-4xl mx-auto pt-20"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -100,7 +100,7 @@ export default function Home() {
             </h2>
           </div>
         </div>
-        
+
         <div className="flex flex-col items-center gap-4">
           <Link href="/explore">
             <Button size="lg" className="text-lg px-8">
@@ -155,11 +155,11 @@ export default function Home() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {philosophy.map((item, index) => (
+          {philosophy.map((philosophyItem, index) => (
             <motion.div key={index} variants={item}>
               <Card className="p-8 glass glass-hover text-center">
-                <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
-                <p className="text-muted-foreground">{item.description}</p>
+                <h3 className="text-xl font-semibold mb-4">{philosophyItem.title}</h3>
+                <p className="text-muted-foreground">{philosophyItem.description}</p>
               </Card>
             </motion.div>
           ))}
@@ -179,7 +179,7 @@ export default function Home() {
             See what's happening right now across our platform
           </p>
         </div>
-        
+
         <ActivityFeed />
       </motion.div>
 

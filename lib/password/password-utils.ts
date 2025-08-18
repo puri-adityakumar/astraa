@@ -5,11 +5,9 @@ interface PasswordOptions {
   symbols: boolean
 }
 
-interface PasswordResult {
-  success: boolean
-  password?: string
-  error?: string
-}
+type PasswordResult =
+  | { success: true; password: string }
+  | { success: false; error: string }
 
 export function generatePassword(length: number, options: PasswordOptions): PasswordResult {
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

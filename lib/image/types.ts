@@ -5,6 +5,13 @@ export interface ImageDimensions {
   height: number;
 }
 
+export interface CropArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface ImageOptions {
   format: ImageFormat;
   quality: number;
