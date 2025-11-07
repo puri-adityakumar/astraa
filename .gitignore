@@ -34,8 +34,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# docs
-/docs
+# docs (build output, not source)
+# /docs - Commented out to allow documentation source files
 
 
 #shit files
