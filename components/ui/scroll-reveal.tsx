@@ -50,7 +50,7 @@ export function ScrollReveal({
   margin = "-100px",
 }: ScrollRevealProps) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once, margin })
+  const isInView = useInView(ref, { once, margin: margin as any })
   const shouldReduce = useReducedMotion()
 
   if (shouldReduce) {

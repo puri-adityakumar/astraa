@@ -3,7 +3,7 @@
  * Common animation configurations for consistent use across the app
  */
 
-import { Variants, Transition } from 'framer-motion';
+import { Variants } from 'framer-motion';
 import { ANIMATION_CONFIG } from './config';
 
 /**

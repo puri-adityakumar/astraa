@@ -4,8 +4,6 @@
  */
 
 import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
-import { useReducedMotion } from "@/lib/animations/hooks"
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -23,33 +21,6 @@ function Skeleton({
   animate = true,
   ...props
 }: SkeletonProps) {
-  const shouldReduce = useReducedMotion()
-  const shouldAnimate = animate && !shouldReduce
-
-  if (shouldAnimate) {
-    return (
-      <motion.div
-        className={cn(
-          "rounded-md bg-muted relative overflow-hidden",
-          className
-        )}
-        {...props}
-      >
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-muted-foreground/10 to-transparent"
-          animate={{
-            x: ['-100%', '100%'],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
-      </motion.div>
-    )
-  }
-
   return (
     <div
       className={cn("animate-pulse rounded-md bg-muted", className)}

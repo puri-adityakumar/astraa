@@ -8,8 +8,7 @@
 import { motion } from "framer-motion"
 import { ReactNode } from "react"
 import { useReducedMotion } from "@/lib/animations/hooks"
-import { cn } from "@/lib/utils"
-import { staggerContainer, staggerItem } from "@/lib/animations/variants"
+import { staggerItem } from "@/lib/animations/variants"
 
 interface AnimatedListProps {
   children: ReactNode

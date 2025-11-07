@@ -8,10 +8,10 @@
 import { motion, HTMLMotionProps } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useReducedMotion } from "@/lib/animations/hooks"
-import { Card, CardProps } from "./card"
-import { forwardRef } from "react"
+import { Card } from "./card"
+import { forwardRef, ReactNode } from "react"
 
-interface AnimatedCardProps extends Omit<HTMLMotionProps<"div">, keyof CardProps>, CardProps {
+interface AnimatedCardProps extends Omit<HTMLMotionProps<"div">, "children"> {
   /**
    * Hover effect type
    * @default "lift"
@@ -29,6 +29,11 @@ interface AnimatedCardProps extends Omit<HTMLMotionProps<"div">, keyof CardProps
    */
   gradientFrom?: string
   gradientTo?: string
+  
+  /**
+   * Card content
+   */
+  children?: ReactNode
 }
 
 const AnimatedCard = forwardRef<HTMLDivElement, AnimatedCardProps>(
