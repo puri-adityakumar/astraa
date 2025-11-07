@@ -21,6 +21,12 @@
   --accent-foreground: 355.7 100% 97.3%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
+  --success: 142 76% 36%;
+  --success-foreground: 355.7 100% 97.3%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --info: 217 91% 60%;
+  --info-foreground: 0 0% 100%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
   --ring: 142 76% 36%;
@@ -45,9 +51,75 @@
   --accent-foreground: 0 0% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
+  --success: 142 76% 45%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 98%;
+  --info: 217 91% 60%;
+  --info-foreground: 0 0% 98%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
   --ring: 252 100% 69%;
+  --nav-height: 64px;
+}
+
+.light-high-contrast {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --primary: 142 100% 25%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 142 100% 25%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 95%;
+  --muted-foreground: 0 0% 20%;
+  --accent: 142 100% 25%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 100% 35%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 142 100% 25%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 100% 35%;
+  --warning-foreground: 0 0% 100%;
+  --info: 217 100% 35%;
+  --info-foreground: 0 0% 100%;
+  --border: 0 0% 70%;
+  --input: 0 0% 70%;
+  --ring: 142 100% 25%;
+  --radius: 0.75rem;
+  --nav-height: 64px;
+}
+
+.dark-high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 0%;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 0%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 252 100% 75%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 217 100% 70%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 85%;
+  --accent: 291 100% 75%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 100% 60%;
+  --destructive-foreground: 0 0% 0%;
+  --success: 142 100% 60%;
+  --success-foreground: 0 0% 0%;
+  --warning: 38 100% 60%;
+  --warning-foreground: 0 0% 0%;
+  --info: 217 100% 65%;
+  --info-foreground: 0 0% 0%;
+  --border: 0 0% 40%;
+  --input: 0 0% 40%;
+  --ring: 252 100% 75%;
+  --radius: 0.75rem;
   --nav-height: 64px;
 }
 
@@ -321,4 +393,176 @@
   .bg-gradient-to-r {
     @apply from-emerald-600 via-emerald-500 to-purple-600;
   }
+}
+
+/* Accessibility Features */
+
+/* Reduced Motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Font Size Variants */
+.font-small {
+  font-size: 87.5%;
+}
+
+.font-medium {
+  font-size: 100%;
+}
+
+.font-large {
+  font-size: 112.5%;
+}
+
+.font-large h1 {
+  font-size: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+}
+
+.font-large h2 {
+  font-size: clamp(2rem, 1.75rem + 1.875vw, 3.25rem);
+}
+
+.font-large h3 {
+  font-size: clamp(1.75rem, 1.5rem + 1vw, 2.5rem);
+}
+
+/* Enhanced Focus Indicators */
+.enhanced-focus *:focus-visible {
+  outline: 3px solid hsl(var(--ring)) !important;
+  outline-offset: 3px !important;
+  border-radius: 4px;
+}
+
+.enhanced-focus button:focus-visible,
+.enhanced-focus a:focus-visible,
+.enhanced-focus input:focus-visible,
+.enhanced-focus select:focus-visible,
+.enhanced-focus textarea:focus-visible {
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.3);
+}
+
+/* Skip to main content link */
+.skip-to-main {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 0 0 0.5rem 0;
+  z-index: 9999;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.skip-to-main:focus {
+  top: 0;
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Enhancements */
+.light-high-contrast .glass,
+.dark-high-contrast .glass {
+  border-width: 2px;
+  border-color: hsl(var(--border));
+}
+
+.light-high-contrast button,
+.dark-high-contrast button {
+  border: 2px solid currentColor;
+}
+
+.light-high-contrast a:hover,
+.dark-high-contrast a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+/* Ensure sufficient color contrast for links */
+.light-high-contrast a,
+.dark-high-contrast a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Better focus visibility in high contrast */
+.light-high-contrast *:focus-visible,
+.dark-high-contrast *:focus-visible {
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+/* Keyboard Navigation Helpers */
+[data-keyboard-nav="true"] *:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ARIA Live Region Styling */
+[aria-live] {
+  position: relative;
+}
+
+/* Ensure proper contrast for status messages */
+.status-success {
+  background: hsl(var(--success) / 0.1);
+  border: 1px solid hsl(var(--success));
+  color: hsl(var(--success-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.status-warning {
+  background: hsl(var(--warning) / 0.1);
+  border: 1px solid hsl(var(--warning));
+  color: hsl(var(--warning-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.status-error {
+  background: hsl(var(--destructive) / 0.1);
+  border: 1px solid hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.status-info {
+  background: hsl(var(--info) / 0.1);
+  border: 1px solid hsl(var(--info));
+  color: hsl(var(--info-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
 }

@@ -2,7 +2,8 @@
 
 import { CommandMenu } from './command-menu'
 import { Logo } from './logo'
-import { ThemeToggle } from './theme/theme-toggle'
+import { EnhancedThemeToggle } from './theme/enhanced-theme-toggle'
+import { AccessibilityPanel } from './accessibility/accessibility-panel'
 import Link from 'next/link'
 import { Github, Menu, X, Home, Compass, Gamepad2, Wrench, Heart } from 'lucide-react'
 import { Button } from './ui/button'
@@ -95,7 +96,8 @@ export function Navigation() {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <ThemeToggle />
+            <AccessibilityPanel />
+            <EnhancedThemeToggle />
             
             {/* GitHub Link - Desktop */}
             <Button 

@@ -4,10 +4,12 @@ import { Work_Sans } from 'next/font/google';
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/theme/theme-provider";
+import { EnhancedThemeProvider } from "@/components/theme/enhanced-theme-provider";
 import { ToolsProvider } from '@/lib/tools-context';
 import { ActivityProvider } from '@/lib/activity-tracker';
 import { PageTransition } from '@/components/ui/page-transition';
+import { KeyboardNavDetector } from '@/components/accessibility/keyboard-nav-detector';
+import { SkipToMain } from '@/components/accessibility/skip-to-main';
 
 const workSans = Work_Sans({
   subsets: ['latin'],
@@ -30,7 +32,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
       </head>
       <body className={workSans.className} suppressHydrationWarning>
-        <ThemeProvider
+        <EnhancedThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
@@ -38,9 +40,11 @@ export default function RootLayout({
         >
           <ToolsProvider>
             <ActivityProvider>
+              <KeyboardNavDetector />
+              <SkipToMain />
               <div className="min-h-screen flex flex-col">
                 <Navigation />
-                <main className="flex-1 w-full">
+                <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
                   <PageTransition type="fade">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
                       {children}
@@ -52,7 +56,7 @@ export default function RootLayout({
               <Toaster />
             </ActivityProvider>
           </ToolsProvider>
-        </ThemeProvider>
+        </EnhancedThemeProvider>
       </body>
     </html>
   );
