@@ -63,66 +63,6 @@
   --nav-height: 64px;
 }
 
-.light-high-contrast {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 0%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 0%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 0%;
-  --primary: 142 100% 25%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 142 100% 25%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 95%;
-  --muted-foreground: 0 0% 20%;
-  --accent: 142 100% 25%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 100% 35%;
-  --destructive-foreground: 0 0% 100%;
-  --success: 142 100% 25%;
-  --success-foreground: 0 0% 100%;
-  --warning: 38 100% 35%;
-  --warning-foreground: 0 0% 100%;
-  --info: 217 100% 35%;
-  --info-foreground: 0 0% 100%;
-  --border: 0 0% 70%;
-  --input: 0 0% 70%;
-  --ring: 142 100% 25%;
-  --radius: 0.75rem;
-  --nav-height: 64px;
-}
-
-.dark-high-contrast {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --card: 0 0% 0%;
-  --card-foreground: 0 0% 100%;
-  --popover: 0 0% 0%;
-  --popover-foreground: 0 0% 100%;
-  --primary: 252 100% 75%;
-  --primary-foreground: 0 0% 0%;
-  --secondary: 217 100% 70%;
-  --secondary-foreground: 0 0% 0%;
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 85%;
-  --accent: 291 100% 75%;
-  --accent-foreground: 0 0% 0%;
-  --destructive: 0 100% 60%;
-  --destructive-foreground: 0 0% 0%;
-  --success: 142 100% 60%;
-  --success-foreground: 0 0% 0%;
-  --warning: 38 100% 60%;
-  --warning-foreground: 0 0% 0%;
-  --info: 217 100% 65%;
-  --info-foreground: 0 0% 0%;
-  --border: 0 0% 40%;
-  --input: 0 0% 40%;
-  --ring: 252 100% 75%;
-  --radius: 0.75rem;
-  --nav-height: 64px;
-}
-
 @layer base {
   * {
     @apply border-border;
@@ -466,38 +406,6 @@
   top: 0;
   outline: 3px solid hsl(var(--ring));
   outline-offset: 2px;
-}
-
-/* High Contrast Mode Enhancements */
-.light-high-contrast .glass,
-.dark-high-contrast .glass {
-  border-width: 2px;
-  border-color: hsl(var(--border));
-}
-
-.light-high-contrast button,
-.dark-high-contrast button {
-  border: 2px solid currentColor;
-}
-
-.light-high-contrast a:hover,
-.dark-high-contrast a:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-}
-
-/* Ensure sufficient color contrast for links */
-.light-high-contrast a,
-.dark-high-contrast a {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* Better focus visibility in high contrast */
-.light-high-contrast *:focus-visible,
-.dark-high-contrast *:focus-visible {
-  outline: 3px solid hsl(var(--ring));
-  outline-offset: 3px;
 }
 
 /* Keyboard Navigation Helpers */

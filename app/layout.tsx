@@ -4,12 +4,10 @@ import { Work_Sans } from 'next/font/google';
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
-import { EnhancedThemeProvider } from "@/components/theme/enhanced-theme-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { ToolsProvider } from '@/lib/tools-context';
 import { ActivityProvider } from '@/lib/activity-tracker';
 import { PageTransition } from '@/components/ui/page-transition';
-import { KeyboardNavDetector } from '@/components/accessibility/keyboard-nav-detector';
-import { SkipToMain } from '@/components/accessibility/skip-to-main';
 
 const workSans = Work_Sans({
   subsets: ['latin'],
@@ -32,7 +30,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
       </head>
       <body className={workSans.className} suppressHydrationWarning>
-        <EnhancedThemeProvider
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
@@ -40,8 +38,6 @@ export default function RootLayout({
         >
           <ToolsProvider>
             <ActivityProvider>
-              <KeyboardNavDetector />
-              <SkipToMain />
               <div className="min-h-screen flex flex-col">
                 <Navigation />
                 <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
@@ -56,7 +52,7 @@ export default function RootLayout({
               <Toaster />
             </ActivityProvider>
           </ToolsProvider>
-        </EnhancedThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
