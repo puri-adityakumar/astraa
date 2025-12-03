@@ -62,39 +62,21 @@ export function Navigation() {
       aria-label="Main navigation"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Logo />
+        <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4 lg:grid lg:grid-cols-3">
+          {/* Left Section: Logo */}
+          <div className="flex items-center justify-start gap-4">
+            <div className="flex-shrink-0">
+              <Logo />
+            </div>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-1">
-            {navigationLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                  "hover:bg-primary/10 hover:text-primary",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  "min-h-touch flex items-center gap-2"
-                )}
-                aria-label={link.label}
-              >
-                <link.icon className="h-4 w-4" aria-hidden="true" />
-                <span>{link.label}</span>
-              </Link>
-            ))}
-          </div>
-
-          {/* Command Menu - Desktop */}
-          <div className="flex-1 hidden md:flex justify-center px-4 max-w-2xl mx-auto lg:max-w-md">
+          {/* Center Section: Command Menu (Search) */}
+          <div className="hidden md:flex justify-center">
             <CommandMenu />
           </div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Right Section: Actions */}
+          <div className="flex items-center justify-end gap-2 sm:gap-3">
             <ThemeToggle />
 
             {/* GitHub Link - Desktop */}
