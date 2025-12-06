@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import React, { useState, useEffect, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -25,11 +25,35 @@ import { ArrowRight } from "lucide-react"
 export function FloatingNav({ className }: { className?: string }) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [visible, setVisible] = useState(true)
+  const lastScrollY = useRef(0)
   const router = useRouter()
   const { categories } = useTools()
 
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      if (currentScrollY < 50) {
+        // Always show at top of page
+        setVisible(true)
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down - hide
+        setVisible(false)
+      } else {
+        // Scrolling up - show
+        setVisible(true)
+      }
+      
+      lastScrollY.current = currentScrollY
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   useEffect(() => {
@@ -52,55 +76,60 @@ export function FloatingNav({ className }: { className?: string }) {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className={cn(
-          "flex fixed top-6 inset-x-0 mx-4 sm:mx-auto max-w-2xl",
-          "border-2 border-neutral-400/50 dark:border-neutral-600/50 rounded-full",
-          "bg-transparent backdrop-blur-sm",
-          "z-[5000] px-6 py-2 items-center justify-between gap-4",
-          className
-        )}
-      >
-        {/* Left: Logo */}
-        <Link href="/" className="flex items-center gap-1 shrink-0">
-          <span className="font-logo text-lg text-foreground">astraa</span>
-          <span className="font-mono text-xs text-muted-foreground">अस्त्र</span>
-        </Link>
-
-        {/* Center: Search */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex-1 max-w-xs justify-start text-muted-foreground hover:text-foreground hover:bg-transparent border-2 border-neutral-400/50 dark:border-neutral-600/50 rounded-full px-4"
-          onClick={() => setSearchOpen(true)}
-        >
-          <Search className="h-4 w-4 mr-2" />
-          <span className="text-sm">Search...</span>
-          <kbd className="ml-auto hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted/50 px-1.5 font-mono text-[10px]">
-            <span>⌘</span><span>K</span>
-          </kbd>
-        </Button>
-
-        {/* Right: Back */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="group shrink-0 h-8 w-8 flex items-center justify-center rounded-full border-2 border-neutral-400/50 dark:border-neutral-600/50"
-          onClick={() => router.back()}
-          aria-label="Go back"
-        >
+      <AnimatePresence>
+        {visible && (
           <motion.div
-            initial={{ x: 0 }}
-            whileHover={{ x: -2 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className={cn(
+              "flex fixed top-6 inset-x-0 mx-4 sm:mx-auto max-w-2xl",
+              "border-2 border-neutral-400/50 dark:border-neutral-600/50 rounded-full",
+              "bg-transparent backdrop-blur-sm",
+              "z-[5000] px-6 py-2 items-center justify-between gap-4",
+              className
+            )}
           >
-            <ArrowLeft className="h-4 w-4" />
+            {/* Left: Logo */}
+            <Link href="/" className="flex items-center gap-1 shrink-0">
+              <span className="font-logo text-lg text-foreground">astraa</span>
+              <span className="font-mono text-xs text-muted-foreground">अस्त्र</span>
+            </Link>
+
+            {/* Center: Search */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex-1 max-w-xs justify-start text-muted-foreground hover:text-foreground hover:bg-transparent border-2 border-neutral-400/50 dark:border-neutral-600/50 rounded-full px-4"
+              onClick={() => setSearchOpen(true)}
+            >
+              <Search className="h-4 w-4 mr-2" />
+              <span className="text-sm">Search...</span>
+              <kbd className="ml-auto hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted/50 px-1.5 font-mono text-[10px]">
+                <span>⌘</span><span>K</span>
+              </kbd>
+            </Button>
+
+            {/* Right: Back */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="group shrink-0 h-8 w-8 flex items-center justify-center rounded-full border-2 border-neutral-400/50 dark:border-neutral-600/50"
+              onClick={() => router.back()}
+              aria-label="Go back"
+            >
+              <motion.div
+                initial={{ x: 0 }}
+                whileHover={{ x: -2 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </motion.div>
+            </motion.button>
           </motion.div>
-        </motion.button>
-      </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Search Dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
