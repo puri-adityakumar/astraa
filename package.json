@@ -53,6 +53,7 @@
     "eslint-config-next": "^15.1.0",
     "focus-trap-react": "^10.2.3",
     "framer-motion": "^11.15.0",
+    "geist": "^1.5.1",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.468.0",
     "next": "^15.1.0",

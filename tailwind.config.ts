@@ -36,8 +36,9 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        worksans: ['Work Sans', 'sans-serif'],
-        ibm: ['IBM Plex Mono', 'monospace'],
+        sans: ['var(--font-geist-sans)', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'monospace'],
+        logo: ['Funnel Display', 'sans-serif'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],

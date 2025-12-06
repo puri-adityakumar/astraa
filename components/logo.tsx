@@ -9,10 +9,10 @@ export function Logo() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-medium"
+        className="text-2xl font-semibold"
       >
-        <span className="font-ibm text-white">astrah</span>
-        <span className="font-ibm text-sm text-muted-foreground ml-1">अस्त्र</span>
+        <span className="font-logo text-white">astraa</span>
+        <span className="font-mono text-sm text-muted-foreground ml-1">अस्त्र</span>
       </motion.div>
     </Link>
   )

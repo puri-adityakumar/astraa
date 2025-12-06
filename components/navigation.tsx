@@ -53,10 +53,10 @@ export function Navigation() {
   return (
     <nav
       className={cn(
-        "border-b backdrop-blur-md sticky top-0 z-50 transition-all duration-300",
+        "sticky top-0 z-50 transition-all duration-300",
         isScrolled
-          ? "bg-background/95 border-border shadow-md"
-          : "bg-background/80 border-border/50"
+          ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
+          : "bg-transparent border-b border-transparent"
       )}
       role="navigation"
       aria-label="Main navigation"

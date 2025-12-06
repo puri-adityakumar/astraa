@@ -1,8 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Funnel Display';
+  src: url('/fonts/FunnelDisplay-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --background: 0 0% 100%;
@@ -88,7 +94,7 @@
   }
   
   body {
-    @apply bg-background text-foreground font-worksans;
+    @apply bg-background text-foreground;
     /* Fluid typography base */
     font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
     line-height: 1.6;

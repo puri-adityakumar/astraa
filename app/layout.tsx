@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Work_Sans } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
@@ -9,13 +10,8 @@ import { ToolsProvider } from '@/lib/tools-context';
 import { ActivityProvider } from '@/lib/activity-tracker';
 import { PageTransition } from '@/components/ui/page-transition';
 
-const workSans = Work_Sans({
-  subsets: ['latin'],
-  variable: '--font-work-sans',
-});
-
 export const metadata: Metadata = {
-  title: 'astrah - Utility Tools Suite',
+  title: 'astraa - Utility Tools Suite',
   description: 'A collection of helpful utility tools for developers and creators',
 };
 
@@ -29,7 +25,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
       </head>
-      <body className={workSans.className} suppressHydrationWarning>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
