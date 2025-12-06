@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { HiArrowRight } from "react-icons/hi2"
+import { useEffect, useState } from "react"
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -18,6 +19,12 @@ const fadeInUp = {
 }
 
 export function HeroSection() {
+  const [isMac, setIsMac] = useState(false)
+
+  useEffect(() => {
+    setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0)
+  }, [])
+
   return (
     <section className="relative flex-1 flex items-center justify-center -my-6 sm:-my-8 lg:-my-12">
       <motion.div
@@ -38,10 +45,10 @@ export function HeroSection() {
           variants={fadeInUp}
           className="font-bold tracking-tight text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
         >
-          <span className="text-foreground">Powerful Tools,</span>
+          <span className="text-foreground">Powerful Tools</span>
           <br />
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-400">
-            अस्त्र at Your Command
+            अस्त्र at your command
           </span>
         </motion.h1>
 
@@ -78,8 +85,10 @@ export function HeroSection() {
           className="mt-8 text-xs text-muted-foreground"
         >
           Press{" "}
-          <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">⌘</kbd>
-          {" "}
+          <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+            {isMac ? "⌘" : "Ctrl"}
+          </kbd>
+          {" + "}
           <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">K</kbd>
           {" "}for quick access
         </motion.p>
