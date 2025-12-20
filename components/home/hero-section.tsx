@@ -8,8 +8,8 @@ import { useEffect, useState } from "react"
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
-  show: { 
-    opacity: 1, 
+  show: {
+    opacity: 1,
     y: 0,
     transition: {
       duration: 0.5,
@@ -41,7 +41,7 @@ export function HeroSection() {
         }}
       >
         {/* Main Heading */}
-        <motion.h1 
+        <motion.h1
           variants={fadeInUp}
           className="font-bold tracking-tight text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
         >
@@ -53,7 +53,7 @@ export function HeroSection() {
         </motion.h1>
 
         {/* Tagline */}
-        <motion.p 
+        <motion.p
           variants={fadeInUp}
           className="mt-6 text-muted-foreground text-lg sm:text-xl max-w-xl mx-auto"
         >
@@ -64,13 +64,13 @@ export function HeroSection() {
         </motion.p>
 
         {/* CTA Button */}
-        <motion.div 
+        <motion.div
           variants={fadeInUp}
           className="mt-10"
         >
           <Link href="/explore">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="text-base px-8 h-12 group"
             >
               Explore
