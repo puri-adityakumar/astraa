@@ -15,13 +15,15 @@ export const games: Game[] = [
     name: "Snake",
     description: "Classic snake game",
     path: "/games/snake",
-    icon: Gamepad2
+    icon: Gamepad2,
+    comingSoon: true
   },
   {
     name: "Dino Jump",
     description: "Chrome's famous dinosaur game",
     path: "/games/dino",
-    icon: Gamepad2
+    icon: Gamepad2,
+    comingSoon: true
   },
   {
     name: "Pacman",
@@ -30,13 +32,14 @@ export const games: Game[] = [
     icon: Gamepad2,
     comingSoon: true
   },
-  
+
   // Puzzle Games
   {
     name: "Memory Game",
     description: "Test your memory with card matching",
     path: "/games/memory",
-    icon: Brain
+    icon: Brain,
+    comingSoon: true
   },
   {
     name: "Sudoku",
@@ -56,6 +59,7 @@ export const games: Game[] = [
     name: "2048",
     description: "Merge tiles to reach 2048",
     path: "/games/2048",
-    icon: Dices
+    icon: Dices,
+    comingSoon: true
   }
 ]
