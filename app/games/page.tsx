@@ -1,16 +1,12 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo } from "react"
 import { motion } from "framer-motion"
 import { games } from "@/lib/games"
-import { SearchFilter } from "@/components/search-filter"
 import { ContentGrid } from "@/components/content-grid"
 import type { ContentItem } from "@/components/content-grid"
 
 export default function GamesPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filterValue, setFilterValue] = useState("all")
-
   // Convert games to ContentItem format
   const gameItems: ContentItem[] = useMemo(() =>
     games.map(game => ({
@@ -20,36 +16,10 @@ export default function GamesPage() {
     []
   )
 
-  // Filter games based on search and availability
-  const filteredGames = useMemo(() => {
-    let filtered = gameItems
-
-    // Apply availability filter
-    if (filterValue === "available") {
-      filtered = filtered.filter(game => !game.comingSoon)
-    }
-
-    // Apply search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(game =>
-        game.name.toLowerCase().includes(query) ||
-        game.description.toLowerCase().includes(query)
-      )
-    }
-
-    return filtered
-  }, [gameItems, searchQuery, filterValue])
-
-  const filterOptions = [
-    { value: "all", label: "All Games" },
-    { value: "available", label: "Available" }
-  ]
-
   const availableCount = gameItems.filter(g => !g.comingSoon).length
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12 pt-16">
       <motion.div
         className="text-center space-y-3 sm:space-y-4 px-4"
         initial={{ opacity: 0, y: 20 }}
@@ -65,31 +35,8 @@ export default function GamesPage() {
         </div>
       </motion.div>
 
-      {/* Search and Filter */}
-      <SearchFilter
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        filterValue={filterValue}
-        onFilterChange={setFilterValue}
-        filterOptions={filterOptions}
-        filterLabel="Status"
-        placeholder="Search games..."
-      />
-
-      {/* Results count */}
-      {(searchQuery || filterValue !== "all") && (
-        <div className="px-4">
-          <p className="text-muted-foreground text-sm">
-            Found {filteredGames.length} {filteredGames.length === 1 ? 'game' : 'games'}
-          </p>
-        </div>
-      )}
-
       {/* Games Grid */}
-      <ContentGrid
-        items={filteredGames}
-        emptyMessage="No games match your search. Try different keywords or filters."
-      />
+      <ContentGrid items={gameItems} />
     </div>
   )
 }
