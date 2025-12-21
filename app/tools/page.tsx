@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 import { useTools } from "@/lib/tools-context"
 import { ContentGrid } from "@/components/content-grid"
-import type { ContentItem } from "@/components/content-grid"
 
 export default function ToolsPage() {
   const { categories } = useTools()
