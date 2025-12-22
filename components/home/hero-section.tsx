@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import { ShimmerButton } from "@/components/ui/shimmer-button"
 import Link from "next/link"
 import { HiArrowRight } from "react-icons/hi2"
 import { useEffect, useState } from "react"
@@ -66,16 +66,20 @@ export function HeroSection() {
         {/* CTA Button */}
         <motion.div
           variants={fadeInUp}
-          className="mt-10"
+          className="mt-10 flex justify-center"
         >
           <Link href="/explore">
-            <Button
-              size="lg"
-              className="text-base px-8 h-12 group"
+            <ShimmerButton
+              className="shadow-2xl"
+              shimmerSize="0.1em"
+              borderRadius="100px"
+              shimmerDuration="2s"
             >
-              Explore
-              <HiArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
+              <span className="flex items-center gap-2 text-base font-medium px-4 py-1">
+                Explore
+                <HiArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </ShimmerButton>
           </Link>
         </motion.div>
 

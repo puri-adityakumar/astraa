@@ -138,48 +138,66 @@ const config: Config = {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
       },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
-        },
-        'fade-in-up': {
-          from: { opacity: '0', transform: 'translateY(20px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
-        'slide-in-bottom': {
-          from: { transform: 'translateY(100%)' },
-          to: { transform: 'translateY(0)' },
-        },
-        'slide-in-top': {
-          from: { transform: 'translateY(-100%)' },
-          to: { transform: 'translateY(0)' },
-        },
-        'scale-in': {
-          from: { opacity: '0', transform: 'scale(0.9)' },
-          to: { opacity: '1', transform: 'scale(1)' },
+    },
+    keyframes: {
+      "shimmer-slide": {
+        to: {
+          transform: "translate(calc(100cqw - 100%), 0)",
         },
       },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.5s ease-out',
-        'fade-in-up': 'fade-in-up 0.6s ease-out',
-        'slide-in-bottom': 'slide-in-bottom 0.4s ease-out',
-        'slide-in-top': 'slide-in-top 0.4s ease-out',
-        'scale-in': 'scale-in 0.5s ease-out',
-        'spin-slow': 'spin 3s linear infinite',
-        'pulse-slow': 'pulse 3s ease-in-out infinite',
-        'bounce-slow': 'bounce 3s ease-in-out infinite',
+      "spin-around": {
+        "0%": {
+          transform: "translateZ(0) rotate(0)",
+        },
+        "15%, 35%": {
+          transform: "translateZ(0) rotate(90deg)",
+        },
+        "65%, 85%": {
+          transform: "translateZ(0) rotate(270deg)",
+        },
+        "100%": {
+          transform: "translateZ(0) rotate(360deg)",
+        },
       },
+      'accordion-down': {
+        from: { height: '0' },
+        to: { height: 'var(--radix-accordion-content-height)' },
+      },
+      'accordion-up': {
+        from: { height: 'var(--radix-accordion-content-height)' },
+        to: { height: '0' },
+      },
+      'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+      'fade-in-up': {
+        from: { opacity: '0', transform: 'translateY(20px)' },
+        to: { opacity: '1', transform: 'translateY(0)' },
+      },
+      'slide-in-bottom': {
+        from: { transform: 'translateY(100%)' },
+        to: { transform: 'translateY(0)' },
+      },
+      'slide-in-top': {
+        from: { transform: 'translateY(-100%)' },
+        to: { transform: 'translateY(0)' },
+      },
+      'scale-in': {
+        from: { opacity: '0', transform: 'scale(0.9)' },
+        to: { opacity: '1', transform: 'scale(1)' },
+      },
+    },
+    animation: {
+      'accordion-down': 'accordion-down 0.2s ease-out',
+      'accordion-up': 'accordion-up 0.2s ease-out',
+      'fade-in': 'fade-in 0.5s ease-out',
+      'fade-in-up': 'fade-in-up 0.6s ease-out',
+      'slide-in-bottom': 'slide-in-bottom 0.4s ease-out',
+      'slide-in-top': 'slide-in-top 0.4s ease-out',
+      'scale-in': 'scale-in 0.5s ease-out',
+      'spin-slow': 'spin 3s linear infinite',
+      'pulse-slow': 'pulse 3s ease-in-out infinite',
+      'bounce-slow': 'bounce 3s ease-in-out infinite',
+      "shimmer-slide": "shimmer-slide var(--speed) ease-in-out infinite alternate",
+      "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
     },
   },
   plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
