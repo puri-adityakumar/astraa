@@ -3,7 +3,7 @@
 import { OpenRouter } from '@openrouter/sdk';
 
 export async function generateText(topic: string, wordCount: number) {
-    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
         return { success: false, error: 'OPENROUTER_API_KEY is not configured.' };

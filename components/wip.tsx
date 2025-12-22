@@ -27,12 +27,12 @@ export function WorkInProgress() {
         >
           <Card className="w-[320px] md:w-[420px] glass overflow-hidden">
             <CardHeader className="text-center pb-2">
-              <motion.div 
+              <motion.div
                 className="mx-auto mb-6 bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center"
-                animate={{ 
+                animate={{
                   scale: [1, 1.1, 1],
                 }}
-                transition={{ 
+                transition={{
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut"
@@ -49,12 +49,12 @@ export function WorkInProgress() {
             </CardHeader>
             <CardContent className="text-center space-y-4 px-4 md:px-6">
               <p className="text-muted-foreground text-sm md:text-base">
-                We're working hard to bring you something amazing. 
+                We're working hard to bring you something amazing.
                 Stay tuned for updates!
               </p>
             </CardContent>
             <CardFooter className="flex justify-center pb-6">
-              <Button 
+              <Button
                 size="lg"
                 onClick={() => router.back()}
                 className="px-6 md:px-8"
