@@ -2,8 +2,13 @@
 
 import { motion } from "framer-motion"
 import { Construction } from "lucide-react"
+import { ReactNode } from "react"
 
-export function WorkInProgress() {
+interface WorkInProgressProps {
+  children?: ReactNode
+}
+
+export function WorkInProgress({ children }: WorkInProgressProps) {
   const env = process.env.NEXT_PUBLIC_ENV
 
   if (env === 'prod') {
@@ -44,5 +49,6 @@ export function WorkInProgress() {
     )
   }
 
-  return null
+  // In dev mode, show the actual content
+  return <>{children}</>
 }
