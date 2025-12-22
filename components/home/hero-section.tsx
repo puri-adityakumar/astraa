@@ -45,7 +45,7 @@ export function HeroSection() {
           variants={fadeInUp}
           className="font-bold tracking-tight text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
         >
-          <span className="text-foreground">Powerful Tools</span>
+          <span className="text-foreground">Stop Searching, Start Solving</span>
           <br />
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-400">
             अस्त्र at your command
@@ -57,9 +57,13 @@ export function HeroSection() {
           variants={fadeInUp}
           className="mt-6 text-muted-foreground text-lg sm:text-xl max-w-xl mx-auto"
         >
-          Your all-in-one utility suite.{" "}
+          Your all-in-one utility suite. A{" "}
+          <span className="text-foreground font-medium">vast collection</span>{" "}
+          of powerful tools{" "}
+          <span className="text-foreground font-medium">compiled in one place</span>
+          ,{" "}
           <span className="text-foreground font-medium">
-            Simple, powerful, runs in your browser.
+            running entirely in your browser.
           </span>
         </motion.p>
 
@@ -86,14 +90,14 @@ export function HeroSection() {
         {/* Keyboard Shortcut */}
         <motion.p
           variants={fadeInUp}
-          className="mt-8 text-xs text-muted-foreground"
+          className="mt-8 text-sm text-muted-foreground"
         >
           Press{" "}
-          <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+          <kbd className="rounded border bg-muted px-2 py-0.5 font-mono text-xs font-medium">
             {isMac ? "⌘" : "Ctrl"}
           </kbd>
           {" + "}
-          <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">K</kbd>
+          <kbd className="rounded border bg-muted px-2 py-0.5 font-mono text-xs font-medium">K</kbd>
           {" "}for quick access
         </motion.p>
       </motion.div>
