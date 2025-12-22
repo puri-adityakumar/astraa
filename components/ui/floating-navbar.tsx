@@ -18,7 +18,7 @@ import {
 import { useTools } from "@/lib/tools-context"
 import { games } from "@/lib/games"
 import { Badge } from "@/components/ui/badge"
-import { DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { DialogTitle } from "@/components/ui/dialog"
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 import { ArrowRight } from "lucide-react"
 
@@ -133,56 +133,54 @@ export function FloatingNav({ className }: { className?: string }) {
 
       {/* Search Dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <DialogContent className="p-0 overflow-hidden">
-          <VisuallyHidden.Root>
-            <DialogTitle>Search tools and games</DialogTitle>
-          </VisuallyHidden.Root>
-          <CommandInput placeholder="Search tools and games..." />
-          <CommandList className="max-h-[400px]">
-            <CommandEmpty>No results found.</CommandEmpty>
+        <VisuallyHidden.Root>
+          <DialogTitle>Search tools and games</DialogTitle>
+        </VisuallyHidden.Root>
+        <CommandInput placeholder="Search tools and games..." />
+        <CommandList className="max-h-[400px]">
+          <CommandEmpty>No results found.</CommandEmpty>
 
-            {categories.map((category) => (
-              <CommandGroup key={category.name} heading={category.name}>
-                {category.items.map((tool) => (
-                  <CommandItem
-                    key={tool.path}
-                    value={`${tool.name} ${tool.description}`}
-                    onSelect={() => runCommand(() => router.push(tool.path))}
-                    className="flex items-center justify-between gap-2 cursor-pointer group"
-                    {...(tool.comingSoon && { disabled: true })}
-                  >
-                    <div className="flex items-center gap-2">
-                      <tool.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-                      <span>{tool.name}</span>
-                      {tool.wip && <Badge variant="secondary" className="text-xs">WIP</Badge>}
-                      {tool.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
-                    </div>
-                    <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            ))}
-
-            <CommandGroup heading="Games">
-              {games.map((game) => (
+          {categories.map((category) => (
+            <CommandGroup key={category.name} heading={category.name}>
+              {category.items.map((tool) => (
                 <CommandItem
-                  key={game.path}
-                  value={`${game.name} ${game.description}`}
-                  onSelect={() => runCommand(() => router.push(game.path))}
+                  key={tool.path}
+                  value={`${tool.name} ${tool.description}`}
+                  onSelect={() => runCommand(() => router.push(tool.path))}
                   className="flex items-center justify-between gap-2 cursor-pointer group"
-                  {...(game.comingSoon && { disabled: true })}
+                  {...(tool.comingSoon && { disabled: true })}
                 >
                   <div className="flex items-center gap-2">
-                    <game.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-                    <span>{game.name}</span>
-                    {game.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
+                    <tool.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                    <span>{tool.name}</span>
+                    {tool.wip && <Badge variant="secondary" className="text-xs">WIP</Badge>}
+                    {tool.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
                   </div>
                   <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                 </CommandItem>
               ))}
             </CommandGroup>
-          </CommandList>
-        </DialogContent>
+          ))}
+
+          <CommandGroup heading="Games">
+            {games.map((game) => (
+              <CommandItem
+                key={game.path}
+                value={`${game.name} ${game.description}`}
+                onSelect={() => runCommand(() => router.push(game.path))}
+                className="flex items-center justify-between gap-2 cursor-pointer group"
+                {...(game.comingSoon && { disabled: true })}
+              >
+                <div className="flex items-center gap-2">
+                  <game.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                  <span>{game.name}</span>
+                  {game.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
+                </div>
+                <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
       </CommandDialog>
     </>
   )
