@@ -2,16 +2,22 @@
 
 import { motion } from "framer-motion"
 import { Construction } from "lucide-react"
-import { ReactNode } from "react"
+import { ReactNode, useState, useEffect } from "react"
 
 interface WorkInProgressProps {
   children?: ReactNode
 }
 
 export function WorkInProgress({ children }: WorkInProgressProps) {
-  const env = process.env.NEXT_PUBLIC_ENV
+  const [showWip, setShowWip] = useState(false)
 
-  if (env === 'prod') {
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_ENV === 'prod') {
+      setShowWip(true)
+    }
+  }, [])
+
+  if (showWip) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center">
         <motion.div
@@ -49,6 +55,6 @@ export function WorkInProgress({ children }: WorkInProgressProps) {
     )
   }
 
-  // In dev mode, show the actual content
+  // Default: render children (works for both SSR initial render and dev mode)
   return <>{children}</>
 }
