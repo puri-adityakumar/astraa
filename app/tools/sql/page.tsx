@@ -7,7 +7,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Copy } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { BackButton } from "@/components/back-button"
 
 export default function SqlFormatter() {
   const { toast } = useToast()
@@ -60,8 +59,6 @@ export default function SqlFormatter() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <BackButton />
-      
       <div>
         <h1 className="text-3xl font-bold">SQL Formatter</h1>
         <p className="text-muted-foreground">
@@ -79,8 +76,8 @@ export default function SqlFormatter() {
               placeholder="Paste your SQL query here..."
               className="font-mono min-h-[300px]"
             />
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={formatSql}
               disabled={!sql}
             >

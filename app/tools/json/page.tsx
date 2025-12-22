@@ -7,7 +7,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Copy, Check, X } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { BackButton } from "@/components/back-button"
 
 export default function JsonValidator() {
   const { toast } = useToast()
@@ -41,8 +40,6 @@ export default function JsonValidator() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <BackButton />
-      
       <div>
         <h1 className="text-3xl font-bold">JSON Validator</h1>
         <p className="text-muted-foreground">
@@ -74,8 +71,8 @@ export default function JsonValidator() {
               placeholder="Paste your JSON here..."
               className="font-mono min-h-[300px]"
             />
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={validateAndFormat}
               disabled={!json}
             >

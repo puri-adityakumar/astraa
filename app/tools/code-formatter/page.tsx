@@ -14,7 +14,6 @@ import {
 import { Label } from "@/components/ui/label"
 import { Copy } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { BackButton } from "@/components/back-button"
 
 const languages = [
   { id: "javascript", name: "JavaScript" },
@@ -33,7 +32,7 @@ export default function CodeFormatter() {
   const formatCode = () => {
     try {
       let formatted = code
-      
+
       // Basic formatting for demonstration
       // In production, you'd want to use proper formatters like prettier
       if (language === "javascript" || language === "typescript") {
@@ -74,8 +73,6 @@ export default function CodeFormatter() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <BackButton />
-      
       <div>
         <h1 className="text-3xl font-bold">Code Formatter</h1>
         <p className="text-muted-foreground">
@@ -110,8 +107,8 @@ export default function CodeFormatter() {
               placeholder="Paste your code here..."
               className="font-mono min-h-[300px]"
             />
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={formatCode}
               disabled={!code}
             >

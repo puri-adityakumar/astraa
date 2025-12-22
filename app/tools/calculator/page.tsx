@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card"
 import { CalculatorDisplay } from "@/components/calculator/calculator-display"
 import { CalculatorButton } from "@/components/calculator/calculator-button"
 import { evaluateExpression, scientificFunctions } from "@/lib/calculator/calculator-utils"
-import { BackButton } from "@/components/back-button"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("")
@@ -60,8 +59,6 @@ export default function Calculator() {
 
   return (
     <div className="max-w-md mx-auto space-y-6 sm:space-y-8 px-4">
-      <BackButton />
-      
       <div>
         <h1 className="text-fluid-3xl font-bold">Scientific Calculator</h1>
         <p className="text-muted-foreground text-fluid-base">

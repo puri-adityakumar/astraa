@@ -3,13 +3,10 @@
 import { MusicPlayer } from "@/components/music/player"
 import { Pomodoro } from "@/components/music/pomodoro"
 import { TodoList } from "@/components/music/todo"
-import { BackButton } from "@/components/back-button"
 
 export default function LofiPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <BackButton />
-      
       <div>
         <h1 className="text-3xl font-bold">Lofi Focus Studio</h1>
         <p className="text-muted-foreground">
@@ -19,7 +16,7 @@ export default function LofiPage() {
 
       <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
         <MusicPlayer />
-        
+
         <div className="space-y-8">
           <Pomodoro />
           <TodoList />

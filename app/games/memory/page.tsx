@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useMemoryGame } from "@/lib/games/memory/useMemoryGame"
 import { RefreshCw } from "lucide-react"
-import { BackButton } from "@/components/back-button"
 
 export default function MemoryGame() {
   const { gameState, flipCard, resetGame } = useMemoryGame()
@@ -13,9 +12,7 @@ export default function MemoryGame() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <BackButton />
-      
-      <motion.div 
+      <motion.div
         className="text-center space-y-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

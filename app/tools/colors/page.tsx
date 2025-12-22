@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Copy } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { hexToRgb } from "@/lib/colors/color-utils"
-import { BackButton } from "@/components/back-button"
 
 export default function ColorPicker() {
   const { toast } = useToast()
@@ -35,8 +34,6 @@ export default function ColorPicker() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <BackButton />
-      
       <div>
         <h1 className="text-3xl font-bold">Color Picker</h1>
         <p className="text-muted-foreground">

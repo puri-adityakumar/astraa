@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useDinoGame } from "@/lib/games/dino/useDinoGame"
 import { Gamepad2, Globe } from "lucide-react"
-import { BackButton } from "@/components/back-button"
 
 export default function DinoGame() {
   const [mode, setMode] = useState<'custom' | 'original'>('original')
@@ -15,9 +14,7 @@ export default function DinoGame() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <BackButton />
-      
-      <motion.div 
+      <motion.div
         className="text-center space-y-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -27,7 +24,7 @@ export default function DinoGame() {
         <p className="text-muted-foreground">
           The famous Chrome dinosaur game. Choose between the original or our custom version!
         </p>
-        
+
         <div className="flex items-center justify-center gap-4">
           <Button
             variant={mode === 'original' ? 'default' : 'outline'}
@@ -50,14 +47,14 @@ export default function DinoGame() {
 
       {mode === 'original' ? (
         <Card className="aspect-[2/1] relative overflow-hidden">
-          <iframe 
-            src="https://chromedino.com/" 
+          <iframe
+            src="https://chromedino.com/"
             className="absolute inset-0 w-full h-full"
             style={{ border: 'none' }}
           />
         </Card>
       ) : (
-        <Card 
+        <Card
           className="p-6 relative h-[400px] overflow-hidden cursor-pointer"
           onClick={() => isGameOver ? startGame() : jump()}
         >
@@ -112,7 +109,7 @@ export default function DinoGame() {
           ))}
 
           {/* Ground */}
-          <div 
+          <div
             className="absolute bottom-0 left-0 right-0 h-[20px] bg-muted"
             style={{
               backgroundImage: 'linear-gradient(to right, #ccc 50%, transparent 50%)',
