@@ -60,7 +60,7 @@ export function LandingNavigation() {
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4 lg:grid lg:grid-cols-3">
           {/* Left Section: Logo */}
           <div className="flex items-center justify-start gap-4">
