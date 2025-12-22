@@ -42,9 +42,12 @@ const locations = [
 ]
 
 // Generate realistic demo data
-const generateDemoActivity = (): Activity => {
+const generateDemoActivity = (): Activity | null => {
   const allItems = [...tools, ...games]
   const randomItem = allItems[Math.floor(Math.random() * allItems.length)]
+  
+  if (!randomItem) return null
+  
   const isGame = games.some(g => g.name === randomItem.name)
   
   return {
@@ -53,14 +56,14 @@ const generateDemoActivity = (): Activity => {
     name: randomItem.name,
     icon: randomItem.icon.name || 'Circle',
     timestamp: new Date(Date.now() - Math.random() * 3600000), // Last hour
-    location: locations[Math.floor(Math.random() * locations.length)]
+    location: locations[Math.floor(Math.random() * locations.length)] ?? 'Unknown'
   }
 }
 
 export function ActivityProvider({ children }: { children: ReactNode }) {
   const [stats, setStats] = useState<ActivityStats>(() => {
     // Initialize with demo data
-    const activities = Array.from({ length: 20 }, generateDemoActivity)
+    const activities = Array.from({ length: 20 }, generateDemoActivity).filter((a): a is Activity => a !== null)
     const toolCounts = new Map<string, { count: number; icon: string }>()
     
     activities.forEach(activity => {
@@ -88,7 +91,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
       name,
       icon: 'Circle',
       timestamp: new Date(),
-      location: locations[Math.floor(Math.random() * locations.length)]
+      location: locations[Math.floor(Math.random() * locations.length)] ?? 'Unknown'
     }
 
     setStats(prev => ({
@@ -103,12 +106,14 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(() => {
       if (Math.random() > 0.7) { // 30% chance every 3 seconds
         const newActivity = generateDemoActivity()
-        setStats(prev => ({
-          ...prev,
-          totalUsage: prev.totalUsage + 1,
-          recentActivities: [newActivity, ...prev.recentActivities].slice(0, 10),
-          activeUsers: Math.max(15, prev.activeUsers + (Math.random() > 0.5 ? 1 : -1))
-        }))
+        if (newActivity) {
+          setStats(prev => ({
+            ...prev,
+            totalUsage: prev.totalUsage + 1,
+            recentActivities: [newActivity, ...prev.recentActivities].slice(0, 10),
+            activeUsers: Math.max(15, prev.activeUsers + (Math.random() > 0.5 ? 1 : -1))
+          }))
+        }
       }
     }, 3000)
 

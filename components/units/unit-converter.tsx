@@ -12,10 +12,10 @@ import { unitCategories, convertUnit, type Unit } from "@/lib/unit-conversions"
 import { UnitConverterForm } from "@/components/units/unit-converter-form"
 
 export function UnitConverterClient() {
-  const [category, setCategory] = useState(unitCategories[0].name)
+  const [category, setCategory] = useState(unitCategories[0]?.name ?? "")
   const [value, setValue] = useState("")
-  const [fromUnit, setFromUnit] = useState<Unit>(unitCategories[0].units[0])
-  const [toUnit, setToUnit] = useState<Unit>(unitCategories[0].units[1])
+  const [fromUnit, setFromUnit] = useState<Unit>(unitCategories[0]?.units[0] ?? {} as Unit)
+  const [toUnit, setToUnit] = useState<Unit>(unitCategories[0]?.units[1] ?? {} as Unit)
   const [result, setResult] = useState<string>("")
 
   const handleConvert = () => {
@@ -37,7 +37,7 @@ export function UnitConverterClient() {
 
   const handleCategoryChange = (newCategory: string) => {
     const categoryUnits = unitCategories.find(c => c.name === newCategory)?.units
-    if (categoryUnits) {
+    if (categoryUnits && categoryUnits[0] && categoryUnits[1]) {
       setCategory(newCategory)
       setFromUnit(categoryUnits[0])
       setToUnit(categoryUnits[1])
@@ -58,7 +58,7 @@ export function UnitConverterClient() {
 
       <Card className="p-6">
         <Tabs
-          defaultValue={unitCategories[0].name}
+          defaultValue={unitCategories[0]?.name ?? ""}
           onValueChange={handleCategoryChange}
           className="space-y-6"
         >

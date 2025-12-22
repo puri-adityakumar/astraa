@@ -20,7 +20,7 @@ export function PasswordGeneratorClient() {
   })
 
   const handleGeneratePassword = () => {
-    const result = generatePassword(length[0], options)
+    const result = generatePassword(length[0] ?? 12, options)
     if (result.success) {
       setPassword(result.password)
     } else {

@@ -5,8 +5,6 @@ import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FiatConverter } from "./fiat-converter"
 import { CryptoConverter } from "./crypto-converter"
-import type { CurrencyCode } from "@/lib/currency-data"
-import type { CryptoId } from "@/lib/crypto-data"
 
 export function CurrencyConverterClient() {
   const [amount, setAmount] = useState<string>("")

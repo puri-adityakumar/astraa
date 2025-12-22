@@ -1,4 +1,4 @@
-import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Gamepad2, Brain, Code, FileJson, Database, Terminal, Palette, type LucideIcon } from "lucide-react"
+import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Palette, type LucideIcon } from "lucide-react"
 
 export type ToolCategory = {
   name: string
@@ -32,10 +32,9 @@ export const toolCategories: ToolCategory[] = [
       },
       {
         name: 'Text Generator',
-        description: 'AI-powered text snippet generator',
+        description: 'Smart, context-aware Lorem Ipsum alternative',
         path: '/tools/text',
-        icon: Type,
-        comingSoon: true
+        icon: Type
       },
       {
         name: 'Currency Converter',
@@ -65,7 +64,8 @@ export const toolCategories: ToolCategory[] = [
         name: 'Lofi Focus Studio',
         description: 'Stream lofi music with productivity tools',
         path: '/tools/music',
-        icon: Music
+        icon: Music,
+        comingSoon: true
       },
       {
         name: 'Color Palette Generator',
@@ -82,19 +82,22 @@ export const toolCategories: ToolCategory[] = [
         name: 'Code Formatter',
         description: 'Format and beautify code snippets',
         path: '/tools/code-formatter',
-        icon: Code
+        icon: Code,
+        comingSoon: true
       },
       {
         name: 'JSON Validator',
         description: 'Validate and format JSON data',
         path: '/tools/json',
-        icon: FileJson
+        icon: FileJson,
+        comingSoon: true
       },
       {
         name: 'SQL Formatter',
         description: 'Format and validate SQL queries',
         path: '/tools/sql',
-        icon: Database
+        icon: Database,
+        comingSoon: true
       },
       {
         name: 'Regex Tester',

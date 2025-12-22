@@ -4,8 +4,7 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { CalculatorDisplay } from "@/components/calculator/calculator-display"
 import { CalculatorButton } from "@/components/calculator/calculator-button"
-import { evaluateExpression, operations, scientificFunctions } from "@/lib/calculator/calculator-utils"
-import { BackButton } from "@/components/back-button"
+import { evaluateExpression, scientificFunctions } from "@/lib/calculator/calculator-utils"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("")
@@ -59,23 +58,21 @@ export default function Calculator() {
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-8">
-      <BackButton />
-      
+    <div className="max-w-md mx-auto space-y-6 sm:space-y-8 px-4">
       <div>
-        <h1 className="text-3xl font-bold">Scientific Calculator</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-fluid-3xl font-bold">Scientific Calculator</h1>
+        <p className="text-muted-foreground text-fluid-base">
           Perform complex calculations with ease
         </p>
       </div>
 
-      <Card className="p-6 space-y-4">
+      <Card className="p-4 sm:p-6 space-y-4">
         <CalculatorDisplay
           value={display}
           expression={expression}
         />
 
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
           {/* Scientific Functions */}
           <CalculatorButton value="sin" onClick={() => applyFunction("sin")} />
           <CalculatorButton value="cos" onClick={() => applyFunction("cos")} />

@@ -38,12 +38,12 @@ export function useTools() {
   return {
     tools,
     categories: toolCategories,
-    updateTools: (newTools: typeof tools) => {
+    updateTools: (_newTools: typeof tools) => {
       // This was used for dynamic tool updates in the old system
       // In the new system, tools are static, but we can track usage
       console.warn('updateTools is deprecated. Tools are now static.')
     },
-    updateCategories: (newCategories: typeof toolCategories) => {
+    updateCategories: (_newCategories: typeof toolCategories) => {
       // Similar to updateTools, this is now deprecated
       console.warn('updateCategories is deprecated. Categories are now static.')
     },

@@ -7,10 +7,11 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
+  const validTheme = (theme === 'dark' || theme === 'light' || theme === 'system') ? theme : 'system';
 
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
+      theme={validTheme}
       className="toaster group"
       toastOptions={{
         classNames: {

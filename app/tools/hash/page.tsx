@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import { HashGeneratorClient } from "@/components/hash/hash-generator"
-import { BackButton } from "@/components/back-button"
 
 export const metadata: Metadata = {
   title: "Hash Generator | astraa",
@@ -12,10 +11,5 @@ export const metadata: Metadata = {
 }
 
 export default function HashGeneratorPage() {
-  return (
-    <div>
-      <BackButton />
-      <HashGeneratorClient />
-    </div>
-  )
+  return <HashGeneratorClient />
 }

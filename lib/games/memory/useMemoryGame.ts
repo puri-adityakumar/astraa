@@ -53,6 +53,8 @@ export function useMemoryGame() {
     if (gameState.flippedCards.length === 2) {
       const [first, second] = gameState.flippedCards
 
+      if (!first || !second) return
+
       if (first.value === second.value) {
         const newCards = gameState.cards.map(card =>
           card.id === first.id || card.id === second.id

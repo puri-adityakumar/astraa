@@ -1,8 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Funnel Display';
+  src: url('/fonts/FunnelDisplay-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --background: 0 0% 100%;
@@ -21,10 +27,17 @@
   --accent-foreground: 355.7 100% 97.3%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
+  --success: 142 76% 36%;
+  --success-foreground: 355.7 100% 97.3%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --info: 217 91% 60%;
+  --info-foreground: 0 0% 100%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
   --ring: 142 76% 36%;
   --radius: 0.75rem;
+  --nav-height: 64px;
 }
 
 .dark {
@@ -44,17 +57,98 @@
   --accent-foreground: 0 0% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
+  --success: 142 76% 45%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 98%;
+  --info: 217 91% 60%;
+  --info-foreground: 0 0% 98%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
   --ring: 252 100% 69%;
+  --nav-height: 64px;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  
+  html {
+    /* Enable smooth scrolling */
+    scroll-behavior: smooth;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+  }
+  
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
   body {
-    @apply bg-background text-foreground font-worksans;
+    @apply bg-background text-foreground;
+    /* Fluid typography base */
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+    line-height: 1.6;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* Better text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Ensure touch-friendly interactive elements */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    @apply min-h-touch min-w-touch;
+  }
+  
+  /* Better focus visibility for keyboard navigation */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+  
+  /* Improve heading hierarchy with fluid typography */
+  h1 {
+    font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.75rem);
+    line-height: 1.1;
+    font-weight: 700;
+  }
+  
+  h2 {
+    font-size: clamp(1.875rem, 1.5rem + 1.875vw, 3rem);
+    line-height: 1.2;
+    font-weight: 700;
+  }
+  
+  h3 {
+    font-size: clamp(1.5rem, 1.3rem + 1vw, 2.25rem);
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  
+  h4 {
+    font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.875rem);
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  
+  /* Responsive images */
+  img {
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -123,6 +217,95 @@
       transform: translateY(0);
     }
   }
+  
+  /* Smooth fade-in animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+  
+  /* Pulse animation for interactive elements */
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
+  
+  /* Center-focused layout utilities */
+  .content-center {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  .content-narrow {
+    @apply mx-auto max-w-3xl px-4 sm:px-6;
+  }
+  
+  .content-wide {
+    @apply mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Touch-friendly spacing */
+  .touch-spacing {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+  
+  /* Responsive grid utilities */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+  
+  /* Mobile-optimized card */
+  .card-mobile {
+    @apply p-4 sm:p-6 rounded-lg;
+  }
+  
+  /* Fluid spacing */
+  .section-spacing {
+    @apply py-12 sm:py-16 lg:py-24;
+  }
+  
+  .section-spacing-sm {
+    @apply py-8 sm:py-12 lg:py-16;
+  }
+  
+  /* Enhanced button hover effects */
+  .btn-hover-lift {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
+  }
+  
+  /* Gradient text utilities */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+  }
+  
+  /* Card with enhanced shadow */
+  .card-elevated {
+    @apply shadow-lg hover:shadow-2xl transition-shadow duration-300;
+  }
+  
+  /* Smooth border radius transitions */
+  .rounded-smooth {
+    @apply rounded-xl transition-all duration-300 hover:rounded-2xl;
+  }
 }
 
 /* Fix text colors in light theme */
@@ -156,4 +339,144 @@
   .bg-gradient-to-r {
     @apply from-emerald-600 via-emerald-500 to-purple-600;
   }
+}
+
+/* Accessibility Features */
+
+/* Reduced Motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Font Size Variants */
+.font-small {
+  font-size: 87.5%;
+}
+
+.font-medium {
+  font-size: 100%;
+}
+
+.font-large {
+  font-size: 112.5%;
+}
+
+.font-large h1 {
+  font-size: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+}
+
+.font-large h2 {
+  font-size: clamp(2rem, 1.75rem + 1.875vw, 3.25rem);
+}
+
+.font-large h3 {
+  font-size: clamp(1.75rem, 1.5rem + 1vw, 2.5rem);
+}
+
+/* Enhanced Focus Indicators */
+.enhanced-focus *:focus-visible {
+  outline: 3px solid hsl(var(--ring)) !important;
+  outline-offset: 3px !important;
+  border-radius: 4px;
+}
+
+.enhanced-focus button:focus-visible,
+.enhanced-focus a:focus-visible,
+.enhanced-focus input:focus-visible,
+.enhanced-focus select:focus-visible,
+.enhanced-focus textarea:focus-visible {
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.3);
+}
+
+/* Skip to main content link */
+.skip-to-main {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 0 0 0.5rem 0;
+  z-index: 9999;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.skip-to-main:focus {
+  top: 0;
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Keyboard Navigation Helpers */
+[data-keyboard-nav="true"] *:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ARIA Live Region Styling */
+[aria-live] {
+  position: relative;
+}
+
+/* Ensure proper contrast for status messages */
+.status-success {
+  background: hsl(var(--success) / 0.1);
+  border: 1px solid hsl(var(--success));
+  color: hsl(var(--success-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.status-warning {
+  background: hsl(var(--warning) / 0.1);
+  border: 1px solid hsl(var(--warning));
+  color: hsl(var(--warning-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.status-error {
+  background: hsl(var(--destructive) / 0.1);
+  border: 1px solid hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.status-info {
+  background: hsl(var(--info) / 0.1);
+  border: 1px solid hsl(var(--info));
+  color: hsl(var(--info-foreground));
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
 }

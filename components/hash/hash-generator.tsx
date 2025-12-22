@@ -11,7 +11,7 @@ import { hashAlgorithms } from "@/lib/hash"
 export function HashGeneratorClient() {
   const { toast } = useToast()
   const [input, setInput] = useState("")
-  const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0].id)
+  const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0]?.id ?? "sha256")
   const [hash, setHash] = useState("")
 
   const handleGenerateHash = () => {

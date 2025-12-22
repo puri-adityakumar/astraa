@@ -8,11 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Copy } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { hexToRgb } from "@/lib/colors/color-utils"
-import { BackButton } from "@/components/back-button"
 
 export default function ColorPicker() {
   const { toast } = useToast()
-  const [colors, setColors] = useState([
+  const [colors] = useState([
     "#FDF7F4",
     "#8EB486",
     "#997C70",
@@ -35,8 +34,6 @@ export default function ColorPicker() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <BackButton />
-      
       <div>
         <h1 className="text-3xl font-bold">Color Picker</h1>
         <p className="text-muted-foreground">
@@ -67,14 +64,14 @@ export default function ColorPicker() {
                 style={{ backgroundColor: selectedColor }}
               />
               <Input
-                value={selectedColor.toUpperCase()}
+                value={selectedColor?.toUpperCase() ?? ''}
                 readOnly
                 className="font-mono"
               />
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => copyToClipboard(selectedColor)}
+                onClick={() => selectedColor && copyToClipboard(selectedColor)}
               >
                 <Copy className="h-4 w-4" />
               </Button>
@@ -85,14 +82,14 @@ export default function ColorPicker() {
             <Label>RGB Value</Label>
             <div className="flex items-center gap-2">
               <Input
-                value={getRgbString(selectedColor)}
+                value={selectedColor ? getRgbString(selectedColor) : ''}
                 readOnly
                 className="font-mono"
               />
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => copyToClipboard(getRgbString(selectedColor))}
+                onClick={() => selectedColor && copyToClipboard(getRgbString(selectedColor))}
               >
                 <Copy className="h-4 w-4" />
               </Button>

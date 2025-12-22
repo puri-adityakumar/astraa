@@ -7,8 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Copy } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { BackButton } from "@/components/back-button"
-
+import { WorkInProgress } from "@/components/wip"
 export default function SqlFormatter() {
   const { toast } = useToast()
   const [sql, setSql] = useState("")
@@ -59,53 +58,53 @@ export default function SqlFormatter() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <BackButton />
-      
-      <div>
-        <h1 className="text-3xl font-bold">SQL Formatter</h1>
-        <p className="text-muted-foreground">
-          Format and validate SQL queries
-        </p>
-      </div>
+    <WorkInProgress>
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold">SQL Formatter</h1>
+          <p className="text-muted-foreground">
+            Format and validate SQL queries
+          </p>
+        </div>
 
-      <Card className="p-6">
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-4">
-            <Label>Input SQL</Label>
-            <Textarea
-              value={sql}
-              onChange={(e) => setSql(e.target.value)}
-              placeholder="Paste your SQL query here..."
-              className="font-mono min-h-[300px]"
-            />
-            <Button 
-              className="w-full" 
-              onClick={formatSql}
-              disabled={!sql}
-            >
-              Format SQL
-            </Button>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label>Formatted SQL</Label>
+        <Card className="p-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-4">
+              <Label>Input SQL</Label>
+              <Textarea
+                value={sql}
+                onChange={(e) => setSql(e.target.value)}
+                placeholder="Paste your SQL query here..."
+                className="font-mono min-h-[300px]"
+              />
               <Button
-                variant="outline"
-                size="icon"
-                onClick={copyToClipboard}
-                disabled={!formattedSql}
+                className="w-full"
+                onClick={formatSql}
+                disabled={!sql}
               >
-                <Copy className="h-4 w-4" />
+                Format SQL
               </Button>
             </div>
-            <div className="min-h-[300px] p-4 bg-muted rounded-md font-mono whitespace-pre overflow-auto">
-              {formattedSql || "Formatted SQL will appear here"}
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Formatted SQL</Label>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={copyToClipboard}
+                  disabled={!formattedSql}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="min-h-[300px] p-4 bg-muted rounded-md font-mono whitespace-pre overflow-auto">
+                {formattedSql || "Formatted SQL will appear here"}
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </WorkInProgress>
   )
 }

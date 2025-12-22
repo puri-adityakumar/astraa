@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from 'react'
-import type { Direction, Position, Snake, Food, GameState } from './types'
+import type { Direction, Snake, Food, GameState } from './types'
 
 const GRID_SIZE = 20
 const INITIAL_SNAKE: Snake = [{ x: 10, y: 10 }]
@@ -22,7 +22,10 @@ export function useSnakeGame() {
     if (gameState.isGameOver) return
 
     const newSnake = [...gameState.snake]
-    const head = { ...newSnake[0] }
+    const currentHead = newSnake[0]
+    if (!currentHead) return
+    
+    const head = { ...currentHead }
 
     switch (gameState.direction) {
       case 'UP':

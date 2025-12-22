@@ -194,7 +194,7 @@ export function ActivityFeed() {
                         <motion.div
                           className="h-full bg-gradient-to-r from-primary to-secondary"
                           initial={{ width: 0 }}
-                          animate={{ width: `${(tool.count / stats.popularTools[0].count) * 100}%` }}
+                          animate={{ width: `${stats.popularTools[0] ? (tool.count / stats.popularTools[0].count) * 100 : 0}%` }}
                           transition={{ delay: 0.8 + index * 0.1, duration: 0.8 }}
                         />
                       </div>

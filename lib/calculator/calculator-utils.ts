@@ -44,11 +44,11 @@ function tokenize(expression: string): string[] {
   for (let i = 0; i < expression.length; i++) {
     const char = expression[i]
     
-    if (isOperator(char)) {
+    if (char && isOperator(char)) {
       if (current) tokens.push(current)
       tokens.push(char)
       current = ''
-    } else {
+    } else if (char) {
       current += char
     }
   }
@@ -68,10 +68,10 @@ function toPostfix(tokens: string[]): string[] {
   
   for (const token of tokens) {
     if (isOperator(token)) {
-      while (
-        operators.length > 0 &&
-        operations[operators[operators.length - 1]].precedence >= operations[token].precedence
-      ) {
+      while (operators.length > 0) {
+        const lastOp = operators[operators.length - 1]
+        if (!lastOp || !operations[lastOp] || !operations[token]) break
+        if (operations[lastOp].precedence < operations[token].precedence) break
         output.push(operators.pop()!)
       }
       operators.push(token)
@@ -91,7 +91,7 @@ function evaluatePostfix(tokens: string[]): number {
   const stack: number[] = []
   
   for (const token of tokens) {
-    if (isOperator(token)) {
+    if (isOperator(token) && operations[token]) {
       const b = stack.pop()!
       const a = stack.pop()!
       stack.push(operations[token].execute(a, b))
@@ -100,5 +100,5 @@ function evaluatePostfix(tokens: string[]): number {
     }
   }
   
-  return stack[0]
+  return stack[0] ?? 0
 }

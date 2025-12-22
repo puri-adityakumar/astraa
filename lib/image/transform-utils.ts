@@ -1,4 +1,4 @@
-import type { ImageFormat, ImageDimensions, ImageOptions } from './types';
+import type { ImageDimensions, ImageOptions } from './types';
 
 export function resizeImage(
   canvas: HTMLCanvasElement,

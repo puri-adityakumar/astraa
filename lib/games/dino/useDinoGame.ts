@@ -104,11 +104,12 @@ export function useDinoGame() {
           .filter(obstacle => obstacle.x + obstacle.width > 0)
 
         // Generate new obstacles
+        const lastObstacle = newObstacles[newObstacles.length - 1]
         if (newObstacles.length === 0 || 
-            newObstacles[newObstacles.length - 1].x < 
+            (lastObstacle && lastObstacle.x < 
             window.innerWidth - Math.random() * 
             (GAME_CONFIG.maxObstacleDistance - GAME_CONFIG.minObstacleDistance) - 
-            GAME_CONFIG.minObstacleDistance) {
+            GAME_CONFIG.minObstacleDistance)) {
           newObstacles.push({
             x: window.innerWidth,
             width: 20,

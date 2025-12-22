@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import { ImageResizerClient } from "@/components/image/image-resizer"
-import { BackButton } from "@/components/back-button"
 
 export const metadata: Metadata = {
   title: "Image Resizer | astraa",
@@ -27,10 +26,5 @@ export const metadata: Metadata = {
 }
 
 export default function ImageResizerPage() {
-  return (
-    <div>
-      <BackButton />
-      <ImageResizerClient />
-    </div>
-  )
+  return <ImageResizerClient />
 }

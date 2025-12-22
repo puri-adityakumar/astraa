@@ -30,7 +30,7 @@ export function TransformControls({
         <div className="flex items-center gap-2">
           <Slider
             value={[rotation]}
-            onValueChange={([value]) => onRotationChange(value)}
+            onValueChange={([value]) => value !== undefined && onRotationChange(value)}
             min={0}
             max={360}
             step={90}

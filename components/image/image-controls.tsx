@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Download } from "lucide-react"
 import { FormatSelector } from "./format-selector"
-import type { ImageFormat, ImageOptions } from "@/lib/image/types"
+import type { ImageOptions } from "@/lib/image/types"
 
 interface ImageControlsProps {
   dimensions: { width: number; height: number }
@@ -25,7 +25,6 @@ export function ImageControls({
   onWidthChange,
   onHeightChange,
   onOptionsChange,
-  onImageUpload,
   onDownload,
   disabled,
 }: ImageControlsProps) {
@@ -62,7 +61,7 @@ export function ImageControls({
           <Label>Quality: {options.quality}%</Label>
           <Slider
             value={[options.quality]}
-            onValueChange={([value]) => onOptionsChange({ quality: value })}
+            onValueChange={([value]) => value !== undefined && onOptionsChange({ quality: value })}
             min={1}
             max={100}
             step={1}

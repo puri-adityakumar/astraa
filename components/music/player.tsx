@@ -26,7 +26,7 @@ export function MusicPlayer() {
 
   const handleVolumeChange = (value: number[]) => {
     setVolume(value)
-    if (audioRef.current) {
+    if (audioRef.current && value[0] !== undefined) {
       audioRef.current.volume = value[0]
     }
   }

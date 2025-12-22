@@ -1,0 +1,201 @@
+"use client"
+
+import { CommandMenu } from '@/components/command-menu'
+import { Logo } from '@/components/logo'
+import { ThemeToggle } from '@/components/theme-toggle'
+import Link from 'next/link'
+import { Github, Menu, X, Home, Compass } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '@/lib/utils'
+
+// Mobile navigation - simplified list
+const mobileNavigationLinks = [
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/explore', label: 'Explore', icon: Compass },
+  { href: '/contribute', label: 'Contribute', icon: Github },
+]
+
+export function LandingNavigation() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Close menu when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMenuOpen(false)
+    }
+
+    if (isMenuOpen) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = ''
+    }
+  }, [isMenuOpen])
+
+  return (
+    <nav
+      className={cn(
+        "sticky top-0 z-50 transition-all duration-300",
+        isScrolled
+          ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
+          : "bg-transparent border-b border-transparent"
+      )}
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+        <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4 lg:grid lg:grid-cols-3">
+          {/* Left Section: Logo */}
+          <div className="flex items-center justify-start gap-4">
+            <div className="flex-shrink-0">
+              <Logo />
+            </div>
+          </div>
+
+          {/* Center Section: Command Menu (Search) */}
+          <div className="hidden md:flex justify-center">
+            <CommandMenu />
+          </div>
+
+          {/* Right Section: Actions */}
+          <div className="flex items-center justify-end gap-2 sm:gap-3">
+            <ThemeToggle />
+
+            {/* GitHub Link - Desktop */}
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="hidden sm:inline-flex min-h-touch min-w-touch hover:bg-primary/10 hover:text-primary transition-colors duration-200"
+            >
+              <Link href="/contribute" aria-label="Contribute on GitHub">
+                <Github className="h-5 w-5" aria-hidden="true" />
+              </Link>
+            </Button>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden min-h-touch min-w-touch hover:bg-primary/10 transition-colors duration-200"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {isMenuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X className="h-5 w-5" aria-hidden="true" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Menu className="h-5 w-5" aria-hidden="true" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-background/80 backdrop-blur-sm lg:hidden"
+              style={{ top: 'var(--nav-height, 64px)' }}
+              onClick={() => setIsMenuOpen(false)}
+              aria-hidden="true"
+            />
+
+            {/* Menu Panel */}
+            <motion.div
+              id="mobile-menu"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="fixed left-0 right-0 lg:hidden bg-background border-b border-border shadow-lg"
+              style={{ top: 'var(--nav-height, 64px)' }}
+              role="menu"
+              aria-orientation="vertical"
+            >
+              <div className="container mx-auto px-4 py-4 space-y-2 max-h-[calc(100vh-var(--nav-height,64px))] overflow-y-auto">
+                {/* Command Menu - Mobile */}
+                <div className="md:hidden mb-4">
+                  <CommandMenu />
+                </div>
+
+                {/* Navigation Links - Using mobile-specific list */}
+                <nav className="space-y-1" aria-label="Mobile navigation">
+                  {mobileNavigationLinks.map((link, index) => (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05, duration: 0.2 }}
+                    >
+                      <Link
+                        href={link.href}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium",
+                          "hover:bg-primary/10 hover:text-primary transition-all duration-200",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                          "min-h-touch group"
+                        )}
+                        onClick={() => setIsMenuOpen(false)}
+                        role="menuitem"
+                      >
+                        <link.icon
+                          className="h-5 w-5 transition-transform duration-200 group-hover:scale-110"
+                          aria-hidden="true"
+                        />
+                        <span>{link.label}</span>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </nav>
+  )
+}
