@@ -19,7 +19,14 @@ export const scientificFunctions = {
   log: Math.log10,
   ln: Math.log,
   sqrt: Math.sqrt,
-  abs: Math.abs
+  abs: Math.abs,
+  fact: (n: number) => {
+    if (n < 0) return NaN;
+    if (n === 0 || n === 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) result *= i;
+    return result;
+  }
 }
 
 export function evaluateExpression(expression: string): number {
@@ -29,10 +36,10 @@ export function evaluateExpression(expression: string): number {
 
   // Tokenize the expression
   const tokens = tokenize(expression)
-  
+
   // Convert to postfix notation
   const postfix = toPostfix(tokens)
-  
+
   // Evaluate postfix expression
   return evaluatePostfix(postfix)
 }
@@ -40,10 +47,10 @@ export function evaluateExpression(expression: string): number {
 function tokenize(expression: string): string[] {
   const tokens: string[] = []
   let current = ''
-  
+
   for (let i = 0; i < expression.length; i++) {
     const char = expression[i]
-    
+
     if (char && isOperator(char)) {
       if (current) tokens.push(current)
       tokens.push(char)
@@ -52,9 +59,9 @@ function tokenize(expression: string): string[] {
       current += char
     }
   }
-  
+
   if (current) tokens.push(current)
-  
+
   return tokens
 }
 
@@ -65,7 +72,7 @@ function isOperator(char: string): boolean {
 function toPostfix(tokens: string[]): string[] {
   const output: string[] = []
   const operators: string[] = []
-  
+
   for (const token of tokens) {
     if (isOperator(token)) {
       while (operators.length > 0) {
@@ -79,17 +86,17 @@ function toPostfix(tokens: string[]): string[] {
       output.push(token)
     }
   }
-  
+
   while (operators.length > 0) {
     output.push(operators.pop()!)
   }
-  
+
   return output
 }
 
 function evaluatePostfix(tokens: string[]): number {
   const stack: number[] = []
-  
+
   for (const token of tokens) {
     if (isOperator(token) && operations[token]) {
       const b = stack.pop()!
@@ -99,6 +106,6 @@ function evaluatePostfix(tokens: string[]): number {
       stack.push(Number(token))
     }
   }
-  
+
   return stack[0] ?? 0
 }
