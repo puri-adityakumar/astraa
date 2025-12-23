@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -21,7 +21,7 @@ interface UnitConverterFormProps {
   onValueChange: (value: string) => void
   onFromUnitChange: (unit: Unit) => void
   onToUnitChange: (unit: Unit) => void
-  onConvert: () => void
+  resultValue?: string
 }
 
 export function UnitConverterForm({
@@ -32,71 +32,89 @@ export function UnitConverterForm({
   onValueChange,
   onFromUnitChange,
   onToUnitChange,
-  onConvert
+  resultValue
 }: UnitConverterFormProps) {
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-[1fr,auto,1fr]">
+      <div className="space-y-6">
+        {/* From Section */}
         <div className="space-y-2">
-          <Label>From</Label>
-          <Select
-            value={fromUnit.symbol}
-            onValueChange={(value) => {
-              const unit = units.find(u => u.symbol === value)
-              if (unit) onFromUnitChange(unit)
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select unit" />
-            </SelectTrigger>
-            <SelectContent>
-              {units.map((unit) => (
-                <SelectItem key={unit.symbol} value={unit.symbol}>
-                  {unit.name} ({unit.symbol})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="space-y-2">
-            <Input
-              type="number"
-              value={value}
-              onChange={(e) => onValueChange(e.target.value)}
-              placeholder="Enter value..."
-            />
+          <Label className="text-base font-semibold">From</Label>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Input
+                type="number"
+                value={value}
+                onChange={(e) => onValueChange(e.target.value)}
+                placeholder="Enter value"
+                className="h-11 font-mono text-lg"
+              />
+            </div>
+            <div className="w-[180px]">
+              <Select
+                value={fromUnit.symbol}
+                onValueChange={(value) => {
+                  const unit = units.find(u => u.symbol === value)
+                  if (unit) onFromUnitChange(unit)
+                }}
+              >
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {units.map((unit) => (
+                    <SelectItem key={unit.symbol} value={unit.symbol}>
+                      {unit.name} ({unit.symbol})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-end justify-center">
-          <ArrowRight className="h-4 w-4 mb-[1.75rem] text-muted-foreground" />
+        {/* Swap/Direction Indicator */}
+        <div className="flex justify-center">
+          <div className="bg-muted p-2 rounded-full">
+            <ArrowRight className="h-4 w-4 text-muted-foreground rotate-90" />
+          </div>
         </div>
 
+        {/* To Section */}
         <div className="space-y-2">
-          <Label>To</Label>
-          <Select
-            value={toUnit.symbol}
-            onValueChange={(value) => {
-              const unit = units.find(u => u.symbol === value)
-              if (unit) onToUnitChange(unit)
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select unit" />
-            </SelectTrigger>
-            <SelectContent>
-              {units.map((unit) => (
-                <SelectItem key={unit.symbol} value={unit.symbol}>
-                  {unit.name} ({unit.symbol})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label className="text-base font-semibold">To</Label>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Input
+                readOnly
+                value={resultValue || ""}
+                placeholder="Result will appear here"
+                className="h-11 font-mono text-lg bg-muted/50"
+              />
+            </div>
+            <div className="w-[180px]">
+              <Select
+                value={toUnit.symbol}
+                onValueChange={(value) => {
+                  const unit = units.find(u => u.symbol === value)
+                  if (unit) onToUnitChange(unit)
+                }}
+              >
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {units.map((unit) => (
+                    <SelectItem key={unit.symbol} value={unit.symbol}>
+                      {unit.name} ({unit.symbol})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       </div>
-
-      <Button className="w-full" onClick={onConvert}>
-        Convert
-      </Button>
     </div>
   )
 }
