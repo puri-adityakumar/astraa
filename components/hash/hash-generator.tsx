@@ -29,16 +29,18 @@ export function HashGeneratorClient() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Hash Generator</h1>
-        <p className="text-muted-foreground">
+    <div className="container max-w-2xl pt-24 pb-12 space-y-8">
+      <div className="space-y-4 text-center sm:text-left">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          Hash Generator
+        </h1>
+        <p className="text-muted-foreground text-lg">
           Generate secure hash outputs from your text input
         </p>
       </div>
 
       <Card className="p-6 space-y-6">
-        <HashInput 
+        <HashInput
           value={input}
           selectedHash={selectedHash}
           onChange={setInput}
@@ -46,7 +48,7 @@ export function HashGeneratorClient() {
           onGenerate={handleGenerateHash}
         />
         {hash && (
-          <HashOutput 
+          <HashOutput
             type={selectedHash}
             hash={hash}
           />
