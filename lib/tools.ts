@@ -1,4 +1,4 @@
-import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Palette, type LucideIcon } from "lucide-react"
+import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, type LucideIcon } from "lucide-react"
 
 export type ToolCategory = {
   name: string
@@ -67,12 +67,7 @@ export const toolCategories: ToolCategory[] = [
         icon: Music,
         comingSoon: true
       },
-      {
-        name: 'Color Palette Generator',
-        description: 'Generate beautiful color schemes',
-        path: '/tools/colors',
-        icon: Palette
-      }
+
     ]
   },
   {
