@@ -1,4 +1,4 @@
-import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, type LucideIcon } from "lucide-react"
+import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Binary, type LucideIcon } from "lucide-react"
 
 export type ToolCategory = {
   name: string
@@ -74,9 +74,16 @@ export const toolCategories: ToolCategory[] = [
     name: "Developer Tools",
     items: [
       {
-        name: 'Code Formatter',
-        description: 'Format and beautify code snippets',
-        path: '/tools/code-formatter',
+        name: 'Base64 Encoder/Decoder',
+        description: 'Encode and decode Base64 strings',
+        path: '/tools/base64',
+        icon: Binary,
+        comingSoon: true
+      },
+      {
+        name: 'Code Snippet Generator',
+        description: 'Generate beautiful code snippets',
+        path: '/tools/snippet-generator',
         icon: Code,
         comingSoon: true
       },
