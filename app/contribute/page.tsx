@@ -1,237 +1,183 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Github, Heart, Users, Zap, Code, Bug, Lightbulb, FileText, MessageSquare, Star } from "lucide-react"
+import { Github, Bug, Star, FileText, BookOpen, MessageCircle } from "lucide-react"
+import { BsTwitterX, BsTelegram } from "react-icons/bs"
+import Link from "next/link"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-const features = [
-  {
-    icon: Users,
-    title: "Community Driven",
-    description: "Built by developers for everyone. Your contributions help shape the future of astraa"
-  },
-  {
-    icon: Zap,
-    title: "Open Source",
-    description: "Fully open source and free to use. Inspect the code, suggest improvements, or add new features."
-  },
-  {
-    icon: Heart,
-    title: "Made with Love",
-    description: "Every feature is crafted with attention to detail and a focus on user experience."
-  }
-]
-
-const contributionTypes = [
-  {
-    icon: Code,
-    title: "Code Contributions",
-    description: "Add new tools, fix bugs, or improve existing features",
-    items: [
-      "Create new utility tools or games",
-      "Enhance existing tool functionality",
-      "Improve performance and accessibility",
-      "Write tests for better code coverage"
-    ]
-  },
-  {
-    icon: Bug,
-    title: "Bug Reports",
-    description: "Help us identify and fix issues",
-    items: [
-      "Report bugs with detailed reproduction steps",
-      "Include screenshots or error messages",
-      "Test fixes and provide feedback",
-      "Verify issues on different browsers"
-    ]
-  },
-  {
-    icon: Lightbulb,
-    title: "Feature Requests",
-    description: "Suggest new ideas and improvements",
-    items: [
-      "Propose new tools or games",
-      "Suggest UI/UX improvements",
-      "Request accessibility enhancements",
-      "Share workflow optimization ideas"
-    ]
-  },
-  {
-    icon: FileText,
-    title: "Documentation",
-    description: "Improve guides and documentation",
-    items: [
-      "Write or improve tool documentation",
-      "Create tutorials and guides",
-      "Fix typos and clarify instructions",
-      "Translate content to other languages"
-    ]
-  }
-]
-
-const guidelines = [
-  {
-    title: "Getting Started",
-    steps: [
-      "Fork the repository on GitHub",
-      "Clone your fork locally",
-      "Create a new branch for your changes",
-      "Make your changes and test thoroughly",
-      "Submit a pull request with a clear description"
-    ]
-  },
-  {
-    title: "Code Standards",
-    steps: [
-      "Follow TypeScript best practices",
-      "Maintain consistent code formatting",
-      "Write clear, descriptive commit messages",
-      "Include comments for complex logic",
-      "Ensure accessibility compliance"
-    ]
-  },
-  {
-    title: "Pull Request Guidelines",
-    steps: [
-      "Provide a clear description of changes",
-      "Reference related issues if applicable",
-      "Include screenshots for UI changes",
-      "Ensure all tests pass",
-      "Be responsive to review feedback"
-    ]
-  }
-]
+interface Contributor {
+  id: number
+  login: string
+  avatar_url: string
+  html_url: string
+  contributions: number
+}
 
 export default function ContributePage() {
+  const [contributors, setContributors] = useState<Contributor[]>([])
+
+  useEffect(() => {
+    fetch('https://api.github.com/repos/puri-adityakumar/astraa/contributors')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setContributors(data)
+        }
+      })
+      .catch(err => console.error('Failed to fetch contributors:', err))
+  }, [])
+
   return (
-    <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
-      <motion.div 
-        className="text-center space-y-3 sm:space-y-4 px-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-fluid-4xl font-bold">Contribute to astraa</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto text-fluid-base">
-          Help us make astraa better for everyone. Whether you're a developer, designer, or user, there are many ways to contribute.
+    <div className="container max-w-5xl pt-24 pb-12 space-y-16">
+      {/* Header Section */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          Contribute to <span style={{ fontFamily: "'Funnel Display', sans-serif" }}>astraa</span>
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          Built by developers, for developers. Help us shape the future of this open-source collection of tools.
         </p>
-      </motion.div>
+        <div className="flex items-center justify-center gap-4 pt-4">
+          <Button asChild size="lg" className="rounded-full px-8">
+            <Link href="https://github.com/puri-adityakumar/astraa" target="_blank">
+              <Github className="mr-2 h-5 w-5" />
+              Star on GitHub
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="rounded-full px-8">
+            <Link href="https://github.com/puri-adityakumar/astraa/issues" target="_blank">
+              <Bug className="mr-2 h-5 w-5" />
+              Report Issue
+            </Link>
+          </Button>
+        </div>
 
-      {/* Core Values */}
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-3 px-4">
-        {features.map((feature, index) => (
-          <motion.div
-            key={feature.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <Card className="p-5 sm:p-6 glass glass-hover h-full">
-              <feature.icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary mb-3 sm:mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm sm:text-base">{feature.description}</p>
-            </Card>
-          </motion.div>
-        ))}
+        <div className="pt-8 max-w-xl mx-auto space-y-6">
+          <blockquote className="font-mono text-sm sm:text-base text-muted-foreground leading-relaxed italic">
+            "This was my first idea when I started coding. I wanted to build this, but back then I didn't have the skills. Now I do, so I made it happen."
+          </blockquote>
+          <div className="flex items-center justify-center gap-3">
+            <div className="text-right leading-tight">
+              <span className="text-sm font-semibold block">~ Aditya</span>
+              <span className="text-xs text-muted-foreground block">Founder</span>
+            </div>
+            <Link href="https://github.com/puri-adityakumar" target="_blank" className="flex-shrink-0 hover:opacity-80 transition-opacity">
+              <img
+                src="https://github.com/puri-adityakumar.png"
+                alt="Aditya"
+                className="w-10 h-10 rounded-full border border-border bg-muted"
+              />
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* Ways to Contribute */}
-      <div className="space-y-4 sm:space-y-6">
-        <h2 className="text-fluid-2xl font-bold text-center px-4">Ways to Contribute</h2>
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 px-4">
-          {contributionTypes.map((type, index) => (
-            <motion.div
-              key={type.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + index * 0.1 }}
-            >
-              <Card className="p-5 sm:p-6 glass h-full">
-                <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <type.icon className="h-6 w-6 sm:h-7 sm:w-7 text-primary flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-1">{type.title}</h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">{type.description}</p>
+      {/* Top Contributors Section */}
+      <div className="space-y-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center">
+          Top Contributors
+        </h2>
+
+        {contributors.length > 0 ? (
+          <div className="flex flex-col items-center gap-6">
+            {/* Overlapping Avatars */}
+            <div className="flex items-center justify-center">
+              <div className="flex -space-x-4">
+                {contributors.slice(0, 4).map((contributor) => (
+                  <Link
+                    key={contributor.id}
+                    href={contributor.html_url}
+                    target="_blank"
+                    className="transition-transform hover:scale-110 hover:z-10 relative"
+                  >
+                    <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-4 border-background shadow-lg">
+                      <AvatarImage src={contributor.avatar_url} alt={contributor.login} />
+                      <AvatarFallback>{contributor.login.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </Link>
+                ))}
+                {contributors.length > 4 && (
+                  <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-foreground text-background border-4 border-background shadow-lg flex items-center justify-center font-semibold text-sm sm:text-base">
+                    +{contributors.length - 4}
                   </div>
-                </div>
-                <ul className="space-y-2 ml-10 sm:ml-11">
-                  {type.items.map((item, i) => (
-                    <li key={i} className="text-sm sm:text-base text-muted-foreground flex items-start">
-                      <span className="mr-2 text-primary">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+                )}
+              </div>
+            </div>
+
+            {/* Contributor Names */}
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+              {contributors.slice(0, 5).map((contributor, index) => (
+                <Link
+                  key={contributor.id}
+                  href={contributor.html_url}
+                  target="_blank"
+                  className="hover:text-foreground transition-colors"
+                >
+                  {contributor.login}
+                  {index < Math.min(contributors.length, 5) - 1 && <span className="ml-6 text-border">•</span>}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-muted-foreground">
+            No contributors yet. Be the first to contribute!
+          </p>
+        )}
       </div>
 
-      {/* Contribution Guidelines */}
-      <div className="space-y-4 sm:space-y-6">
-        <h2 className="text-fluid-2xl font-bold text-center px-4">Contribution Guidelines</h2>
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-3 px-4">
-          {guidelines.map((guideline, index) => (
-            <motion.div
-              key={guideline.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 + index * 0.1 }}
-            >
-              <Card className="p-5 sm:p-6 glass h-full">
-                <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{guideline.title}</h3>
-                <ol className="space-y-2">
-                  {guideline.steps.map((step, i) => (
-                    <li key={i} className="text-sm sm:text-base text-muted-foreground flex items-start">
-                      <span className="mr-2 text-primary font-semibold">{i + 1}.</span>
-                      <span>{step}</span>
-                    </li>
-                  ))}
-                </ol>
-              </Card>
-            </motion.div>
-          ))}
+      {/* Getting Started Section */}
+      <div className="space-y-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center">
+          Getting Started
+        </h2>
+
+        <div className="max-w-2xl mx-auto space-y-4">
+          <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-muted/30 transition-colors">
+            <Star className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Star the repository</p>
+              <p className="text-sm text-muted-foreground">Show your support and help us reach more developers.</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-muted/30 transition-colors">
+            <FileText className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Read CONTRIBUTING.md & Code of Conduct</p>
+              <p className="text-sm text-muted-foreground">Understand our guidelines before making contributions.</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-muted/30 transition-colors">
+            <BookOpen className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Check the Issues tab or raise a new issue</p>
+              <p className="text-sm text-muted-foreground">Find tasks to work on or report bugs and feature requests.</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-muted/30 transition-colors">
+            <MessageCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Reach out to us</p>
+              <p className="text-sm text-muted-foreground">
+                Connect with us on{" "}
+                <Link href="https://x.com/astraadottech" target="_blank" className="inline-flex items-center gap-1 text-foreground hover:underline">
+                  <BsTwitterX className="h-3 w-3" /> X
+                </Link>
+                {" "}or{" "}
+                <Link href="https://t.me/astraadottech" target="_blank" className="inline-flex items-center gap-1 text-foreground hover:underline">
+                  <BsTelegram className="h-3.5 w-3.5" /> Telegram
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Call to Action */}
-      <Card className="p-6 sm:p-8 text-center mx-4 glass">
-        <div className="flex justify-center gap-2 mb-4">
-          <Star className="h-6 w-6 text-primary" />
-          <MessageSquare className="h-6 w-6 text-primary" />
-          <Github className="h-6 w-6 text-primary" />
-        </div>
-        <h2 className="text-fluid-2xl font-bold mb-3 sm:mb-4">Ready to Contribute?</h2>
-        <p className="text-muted-foreground mb-5 sm:mb-6 text-fluid-base max-w-2xl mx-auto">
-          Check out our GitHub repository to get started. Star the repo, open an issue, or submit a pull request. Every contribution counts!
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild className="min-h-touch">
-            <a 
-              href="https://github.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="gap-2"
-            >
-              <Github className="h-4 w-4" />
-              View on GitHub
-            </a>
-          </Button>
-          <Button asChild variant="outline" className="min-h-touch">
-            <a 
-              href="https://github.com/issues" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="gap-2"
-            >
-              <Bug className="h-4 w-4" />
-              Report an Issue
-            </a>
-          </Button>
-        </div>
-      </Card>
     </div>
   )
 }
