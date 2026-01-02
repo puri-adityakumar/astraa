@@ -26,9 +26,12 @@ export function FloatingNav({ className }: { className?: string }) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [visible, setVisible] = useState(true)
+  const [scrollDelta, setScrollDelta] = useState(0)
   const lastScrollY = useRef(0)
   const router = useRouter()
   const { categories } = useTools()
+
+  const scrollThreshold = 120
 
   useEffect(() => {
     setMounted(true)
@@ -36,25 +39,30 @@ export function FloatingNav({ className }: { className?: string }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const current = window.scrollY
+      const diff = current - lastScrollY.current
 
-      if (currentScrollY < 50) {
-        // Always show at top of page
+      const newDelta =
+        Math.sign(scrollDelta) === Math.sign(diff) ? scrollDelta + diff : diff
+
+      setScrollDelta(newDelta)
+
+      if (current < 50) {
         setVisible(true)
-      } else if (currentScrollY > lastScrollY.current) {
-        // Scrolling down - hide
+        setScrollDelta(0)
+      } else if (newDelta > scrollThreshold && current > 150) {
         setVisible(false)
-      } else {
-        // Scrolling up - show
+      } else if (newDelta < -50 || diff < 0) {
         setVisible(true)
+        setScrollDelta(0)
       }
 
-      lastScrollY.current = currentScrollY
+      lastScrollY.current = current
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [scrollDelta])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -79,15 +87,16 @@ export function FloatingNav({ className }: { className?: string }) {
       <AnimatePresence>
         {visible && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
+            initial={{ scaleX: 0, scaleY: 0, opacity: 0 }}
+            animate={{ scaleX: 1, scaleY: 1, opacity: 1 }}
+            exit={{ scaleX: 0, scaleY: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
             className={cn(
               "flex fixed top-6 inset-x-0 mx-4 sm:mx-auto max-w-2xl",
               "border border-neutral-200/20 dark:border-neutral-800/20 rounded-full",
               "bg-background/50 backdrop-blur-md shadow-sm",
               "z-[5000] px-6 py-2 items-center justify-between gap-4",
+              "origin-top",
               className
             )}
           >
