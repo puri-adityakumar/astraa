@@ -79,7 +79,7 @@ export function Footer() {
           {/* Right Section - Left aligned on mobile, right aligned on desktop */}
           <div className="flex flex-col gap-3 items-start md:items-end md:justify-end">
             {/* Social Icons */}
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-1 md:gap-5">
               <Link
                 href="https://github.com/puri-adityakumar/astraa"
                 target="_blank"
