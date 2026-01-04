@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Github } from "lucide-react"
 import { BsTwitterX, BsTelegram } from "react-icons/bs"
 import { Logo } from "@/components/logo"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { AvatarCircles } from "@/components/ui/avatar-circles"
 
 interface Contributor {
   id: number
@@ -28,6 +28,23 @@ export function Footer() {
       .catch(err => console.error('Failed to fetch contributors:', err))
   }, [])
 
+  // Transform contributors for AvatarCircles
+  const avatarUrls = useMemo(() => {
+    if (contributors.length > 0) {
+      return contributors.slice(0, 5).map((c) => ({
+        imageUrl: c.avatar_url,
+        profileUrl: c.html_url,
+      }))
+    }
+    return [{
+      imageUrl: "https://github.com/puri-adityakumar.png",
+      profileUrl: "https://github.com/puri-adityakumar",
+    }]
+  }, [contributors])
+
+  // Calculate remaining contributors count
+  const remainingCount = contributors.length > 5 ? contributors.length - 5 : 0
+
   return (
     <footer className="relative z-10 bg-gradient-to-b from-transparent via-background/40 to-background w-full">
       <div className="container px-4 md:px-6 py-6 md:py-8 max-w-7xl mx-auto">
@@ -45,34 +62,10 @@ export function Footer() {
 
             <div className="flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Contributed by:</span>
-              <div className="flex items-center -space-x-2">
-                {contributors.length > 0 ? (
-                  contributors.slice(0, 5).map((contributor) => (
-                    <Link
-                      key={contributor.id}
-                      href={contributor.html_url}
-                      target="_blank"
-                      className="transition-transform hover:scale-110 hover:z-10 translate-y-0.5"
-                    >
-                      <Avatar className="h-7 w-7 md:h-8 md:w-8 border-2 border-background">
-                        <AvatarImage src={contributor.avatar_url} alt={contributor.login} />
-                        <AvatarFallback>{contributor.login.slice(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                    </Link>
-                  ))
-                ) : (
-                  <Link
-                    href="https://github.com/puri-adityakumar"
-                    target="_blank"
-                    className="transition-transform hover:scale-110 hover:z-10 translate-y-0.5"
-                  >
-                    <Avatar className="h-7 w-7 md:h-8 md:w-8 border-2 border-background">
-                      <AvatarImage src="https://github.com/puri-adityakumar.png" alt="@puri-adityakumar" />
-                      <AvatarFallback>AK</AvatarFallback>
-                    </Avatar>
-                  </Link>
-                )}
-              </div>
+              <AvatarCircles
+                avatarUrls={avatarUrls}
+                numPeople={remainingCount}
+              />
             </div>
           </div>
 
