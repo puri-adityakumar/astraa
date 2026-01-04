@@ -13,7 +13,7 @@ import { tools, toolCategories } from '../tools'
  */
 export function useActivity() {
   const { stats, trackActivity } = useActivityTracking()
-  
+
   return {
     stats,
     trackActivity
@@ -26,7 +26,7 @@ export function useActivity() {
  */
 export function useTools() {
   const { updateToolUsage } = useToolSettings()
-  
+
   // Track tool usage when tools are accessed
   const trackToolAccess = (toolName: string) => {
     const tool = tools.find(t => t.name === toolName)
@@ -34,7 +34,7 @@ export function useTools() {
       updateToolUsage(tool.path)
     }
   }
-  
+
   return {
     tools,
     categories: toolCategories,
@@ -61,10 +61,10 @@ export function migrateFromContextAPI() {
     const oldActivityData = localStorage.getItem('activity-context-data')
     if (oldActivityData) {
       const parsedData = JSON.parse(oldActivityData)
-      
+
       // Migrate to new activity tracking store
       const { trackActivity } = useActivityTracking.getState()
-      
+
       if (parsedData.recentActivities) {
         parsedData.recentActivities.forEach((activity: any) => {
           // Convert old activity format to new format
@@ -74,20 +74,20 @@ export function migrateFromContextAPI() {
           })
         })
       }
-      
+
       // Remove old data after migration
       localStorage.removeItem('activity-context-data')
-      console.log('Successfully migrated activity data from Context API')
+
     }
-    
+
     // Check for old tool settings
     const oldToolData = localStorage.getItem('tools-context-data')
     if (oldToolData) {
       const parsedData = JSON.parse(oldToolData)
-      
+
       // Migrate tool preferences if any
       const { updateToolSettings } = useToolSettings.getState()
-      
+
       if (parsedData.toolPreferences) {
         Object.entries(parsedData.toolPreferences).forEach(([toolId, settings]) => {
           updateToolSettings(toolId, {
@@ -96,12 +96,12 @@ export function migrateFromContextAPI() {
           })
         })
       }
-      
+
       // Remove old data after migration
       localStorage.removeItem('tools-context-data')
-      console.log('Successfully migrated tool data from Context API')
+
     }
-    
+
   } catch (error) {
     console.error('Error during Context API migration:', error)
   }
@@ -113,7 +113,7 @@ export function migrateFromContextAPI() {
 export function needsMigration(): boolean {
   const hasOldActivityData = localStorage.getItem('activity-context-data') !== null
   const hasOldToolData = localStorage.getItem('tools-context-data') !== null
-  
+
   return hasOldActivityData || hasOldToolData
 }
 
@@ -122,10 +122,10 @@ export function needsMigration(): boolean {
  */
 export function useMigration() {
   const migrationNeeded = needsMigration()
-  
+
   if (migrationNeeded) {
     migrateFromContextAPI()
   }
-  
+
   return { migrationNeeded }
 }

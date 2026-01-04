@@ -154,7 +154,7 @@ export async function clearAllStoredData(): Promise<void> {
     await adapter.removeItem(key)
   }
   
-  console.log('All stored data cleared')
+
 }
 
 /**
@@ -192,7 +192,7 @@ export async function importStoredData(jsonData: string): Promise<boolean> {
       await adapter.setItem(key, JSON.stringify(value))
     }
     
-    console.log('Data imported successfully')
+
     return true
   } catch (error) {
     console.error('Failed to import data:', error)
