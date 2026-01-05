@@ -23,13 +23,13 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-interface CommandDialogProps extends DialogProps {}
+interface CommandDialogProps extends DialogProps { }
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className="overflow-hidden p-0 shadow-lg transition-all duration-200">
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 [&_[cmdk-item]_svg]:text-popover-foreground [&_[cmdk-item]]:text-popover-foreground hover:[&_[cmdk-item]]:text-popover-foreground">
+      <DialogContent className="overflow-hidden p-0 shadow-lg transition-all duration-200 [&>button]:top-3 [&>button]:right-3">
+        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
           {children}
         </Command>
       </DialogContent>
@@ -129,8 +129,9 @@ const CommandItem = React.forwardRef<
       "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
       "transition-all duration-150 ease-in-out",
       "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
-      "data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground",
-      "data-[selected='true']:scale-[0.99]",
+      "data-[selected='true']:bg-accent data-[selected='true']:text-accent-foreground",
+      // Icons follow the current text color (no special hover/selected overrides)
+      "[&_svg]:text-current",
       "hover:bg-accent/50",
       className
     )}
