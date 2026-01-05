@@ -28,7 +28,7 @@ export function HashSelector({ selectedHash, onHashChange }: HashSelectorProps) 
   return (
     <div className="flex items-center gap-2">
       <Select value={selectedHash} onValueChange={onHashChange}>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-full sm:w-[200px]">
           <SelectValue placeholder="Select hash type" />
         </SelectTrigger>
         <SelectContent>

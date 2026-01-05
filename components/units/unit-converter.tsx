@@ -49,18 +49,18 @@ export function UnitConverterClient() {
   const currentUnits = unitCategories.find(c => c.name === category)?.units || []
 
   return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
+    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
       {/* Header */}
       <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Unit Converter
         </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl">
+        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
           Seamlessly convert between different units of measurement. Select a category from the menu to get started.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 sm:gap-8">
         {/* Sidebar Navigation */}
         <div className="space-y-1">
           <div className="flex items-center justify-between md:block px-2 md:px-0 mb-3 ml-2 lg:ml-0">
@@ -108,10 +108,9 @@ export function UnitConverterClient() {
         {/* Main Content Area */}
         <div className="min-h-[400px]">
           <Card className="h-full border-border/50 shadow-sm overflow-hidden">
-            <div className="p-6 sm:p-8 space-y-8">
+            <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-semibold tracking-tight">Convert {category}</h2>
-                {/* Optional: Add icon based on category here if available */}
+                <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">Convert {category}</h2>
               </div>
 
               <UnitConverterForm

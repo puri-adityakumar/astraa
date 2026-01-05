@@ -101,7 +101,7 @@ export function FloatingNav({ className }: { className?: string }) {
             <Button
               variant="ghost"
               size="sm"
-              className="flex-1 max-w-xs justify-start text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-neutral-200/20 dark:border-neutral-800/20 rounded-full px-4"
+              className="hidden sm:flex flex-1 max-w-xs justify-start text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-neutral-200/20 dark:border-neutral-800/20 rounded-full px-4"
               onClick={() => setSearchOpen(true)}
             >
               <Search className="h-4 w-4 mr-2" />

@@ -70,23 +70,23 @@ export function PasswordGeneratorClient() {
   }
 
   return (
-    <div className="container max-w-2xl pt-24 pb-12 space-y-8">
+    <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
       {/* Header */}
       <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Password Generator
         </h1>
-        <p className="text-muted-foreground text-lg text-pretty">
+        <p className="text-muted-foreground text-base sm:text-lg text-pretty">
           Generate secure, random passwords, memorable passphrases, or PIN codes instantly.
         </p>
       </div>
 
-      <div className="bg-card border border-border/50 rounded-xl shadow-sm p-6 sm:p-8 space-y-8">
+      <div className="bg-card border border-border/50 rounded-xl shadow-sm p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
 
         {/* 1. Choose Password Type (Tabs) */}
         <div className="space-y-4">
           <Label className="text-base font-semibold">Choose password type</Label>
-          <div className="grid grid-cols-3 p-1 bg-muted/50 rounded-lg">
+          <div className="grid grid-cols-1 xs:grid-cols-3 p-1 bg-muted/50 rounded-lg">
             <button
               onClick={() => setMode("random")}
               className={cn(
@@ -132,8 +132,8 @@ export function PasswordGeneratorClient() {
 
           <div className="space-y-6 px-1">
             {/* Length Slider - Context Aware */}
-            <div className="flex items-center gap-6">
-              <Label className="w-24 shrink-0 text-muted-foreground font-normal">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <Label className="w-20 sm:w-24 shrink-0 text-muted-foreground font-normal text-sm sm:text-base">
                 {mode === "memorable" ? "Words" : "Characters"}
               </Label>
               <Slider
@@ -148,7 +148,7 @@ export function PasswordGeneratorClient() {
                 step={1}
                 className="flex-1"
               />
-              <div className="w-12 text-center py-1 px-2 bg-muted/50 rounded-md border text-sm font-mono font-medium tabular-nums">
+              <div className="w-10 sm:w-12 text-center py-1 px-2 bg-muted/50 rounded-md border text-sm sm:text-sm font-mono font-medium tabular-nums shrink-0">
                 {mode === "random" ? length[0] : mode === "memorable" ? wordCount[0] : pinLength[0]}
               </div>
             </div>
@@ -157,9 +157,9 @@ export function PasswordGeneratorClient() {
 
             {/* Toggles - Context Aware */}
             {mode === "random" && (
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+              <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-8 gap-y-4">
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="numbers" className="font-normal text-muted-foreground cursor-pointer">Numbers</Label>
+                  <Label htmlFor="numbers" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Numbers</Label>
                   <Switch
                     id="numbers"
                     checked={options.numbers}
@@ -167,7 +167,7 @@ export function PasswordGeneratorClient() {
                   />
                 </div>
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="symbols" className="font-normal text-muted-foreground cursor-pointer">Symbols</Label>
+                  <Label htmlFor="symbols" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Symbols</Label>
                   <Switch
                     id="symbols"
                     checked={options.symbols}
@@ -178,9 +178,9 @@ export function PasswordGeneratorClient() {
             )}
 
             {mode === "memorable" && (
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+              <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-8 gap-y-4">
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="capitalize" className="font-normal text-muted-foreground cursor-pointer">Capitalize</Label>
+                  <Label htmlFor="capitalize" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Capitalize</Label>
                   <Switch
                     id="capitalize"
                     checked={memOptions.capitalize}
@@ -188,7 +188,7 @@ export function PasswordGeneratorClient() {
                   />
                 </div>
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="fullwords" className="font-normal text-muted-foreground cursor-pointer">Full words</Label>
+                  <Label htmlFor="fullwords" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Full words</Label>
                   <Switch
                     id="fullwords"
                     checked={memOptions.fullWords}
