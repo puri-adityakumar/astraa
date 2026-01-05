@@ -126,6 +126,48 @@ astraa/
 - Address feedback promptly - PRs with unaddressed comments may be closed
 - Feel free to recreate a PR once issues are resolved
 
+## Release Process
+
+### Merging Development to Main
+
+When merging the `development` branch to `main`, follow this convention:
+
+**PR Title Format:**
+```
+release(v<VERSION>): merge development to main
+```
+
+**Examples:**
+- `release(v0.1.0): merge development to main`
+- `release(v0.2.0): merge development to main`
+- `release(v1.0.0): merge development to main`
+
+**PR Description Template:**
+```markdown
+## Version: v<VERSION>
+
+### Summary
+Merging development branch to main for release v<VERSION>
+
+### Key Changes
+- List major changes (features, fixes, improvements)
+
+### Checklist
+- [ ] All CI checks passing
+- [ ] Tested on mobile and desktop
+- [ ] Build successful
+- [ ] Documentation updated (if needed)
+```
+
+**Versioning:**
+- Use [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`
+- `v0.x.x` = Pre-release (alpha/beta)
+- `v1.0.0` = First stable production release
+- Increment:
+  - `MAJOR` for breaking changes
+  - `MINOR` for new features
+  - `PATCH` for bug fixes
+
 ## Getting Help
 
 - **Telegram**: [astraadottech](https://t.me/astraadottech)
