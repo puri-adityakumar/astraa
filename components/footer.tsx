@@ -25,7 +25,9 @@ export function Footer() {
           setContributors(data)
         }
       })
-      .catch(err => console.error('Failed to fetch contributors:', err))
+      .catch(() => {
+        // Silent fail - avatar will show default
+      })
   }, [])
 
   // Transform contributors for AvatarCircles
