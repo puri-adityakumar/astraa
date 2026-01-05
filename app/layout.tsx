@@ -13,6 +13,7 @@ import { LandingBackground } from '@/components/landing-background';
 
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 export const metadata: Metadata = {
   title: 'astraa - Utility Tools Suite',
@@ -50,9 +51,11 @@ export default function RootLayout({
                 </main>
                 <Footer />
               </div>
-              <Toaster />
-              <Analytics />
-              <SpeedInsights />
+<Toaster />
+              <TooltipProvider>
+                <Analytics />
+                <SpeedInsights />
+              </TooltipProvider>
             </ActivityProvider>
           </ToolsProvider>
         </ThemeProvider>
