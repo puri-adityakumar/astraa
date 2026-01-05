@@ -70,7 +70,7 @@ export function Footer() {
           </div>
 
           {/* Right Section - Left aligned on mobile, right aligned on desktop */}
-          <div className="flex flex-col gap-3 items-start md:items-end md:justify-end">
+          <div className="flex flex-col gap-2 md:gap-3 items-center md:items-end md:justify-end">
             {/* Social Icons */}
             <div className="flex items-center gap-1 md:gap-5">
               <Link
