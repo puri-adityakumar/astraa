@@ -33,12 +33,12 @@ export function HashInput({
         />
       </div>
 
-      <div className="flex items-center gap-4">
-        <HashSelector 
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <HashSelector
           selectedHash={selectedHash}
           onHashChange={onHashChange}
         />
-        <Button className="flex-1" onClick={onGenerate}>
+        <Button className="flex-1 min-h-[40px]" onClick={onGenerate}>
           Generate Hash
         </Button>
       </div>

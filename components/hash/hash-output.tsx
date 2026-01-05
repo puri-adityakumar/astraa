@@ -32,13 +32,14 @@ export function HashOutput({ type, hash }: HashOutputProps) {
           id={type}
           value={hash}
           readOnly
-          className="font-mono"
+          className="font-mono text-xs sm:text-sm"
         />
         <Button
           variant="outline"
           size="icon"
           onClick={copyToClipboard}
           disabled={!hash}
+          className="shrink-0"
         >
           <Copy className="h-4 w-4" />
         </Button>
