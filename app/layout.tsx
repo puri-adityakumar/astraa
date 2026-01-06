@@ -51,8 +51,8 @@ export default function RootLayout({
                 </main>
                 <Footer />
               </div>
-<Toaster />
               <TooltipProvider>
+                <Toaster />
                 <Analytics />
                 <SpeedInsights />
               </TooltipProvider>
