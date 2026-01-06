@@ -68,17 +68,19 @@ export function ImageControls({
           </div>
 
           {/* Lock Button */}
-          <div className="shrink-0 pb-1">
+          <div className="shrink-0 flex items-center">
             <Button
               variant="outline"
               size="icon"
               className={cn(
-                "h-9 w-9 transition-colors",
+                "h-10 w-10 transition-colors cursor-pointer",
                 isLocked ? "bg-primary text-primary-foreground hover:bg-primary/90" : "text-muted-foreground"
               )}
               onClick={() => onLockChange(!isLocked)}
               disabled={disabled}
               title={isLocked ? "Unlock aspect ratio" : "Lock aspect ratio"}
+              aria-pressed={isLocked}
+              aria-label={isLocked ? "Unlock aspect ratio" : "Lock aspect ratio"}
             >
               {isLocked ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
             </Button>
@@ -98,8 +100,8 @@ export function ImageControls({
           </div>
 
           {/* Unit Display (Static px for now) */}
-          <div className="shrink-0 pb-1">
-            <div className="h-9 px-3 flex items-center justify-center bg-muted/50 border rounded-md text-sm text-muted-foreground">
+          <div className="shrink-0 flex items-center">
+            <div className="h-10 px-3 flex items-center justify-center bg-muted/50 border rounded-md text-sm text-muted-foreground">
               px
             </div>
           </div>

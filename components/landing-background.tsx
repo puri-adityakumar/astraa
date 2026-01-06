@@ -12,15 +12,21 @@ const PixelBlast = dynamic(() => import("@/components/ui/pixel-blast"), {
 export function LandingBackground() {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
     setMounted(true)
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
-  // Only show on landing page
+  // Only show on landing page and disable on mobile
   if (pathname !== "/") return null
   if (!mounted) return null
+  if (isMobile) return null
 
   const pixelColor = resolvedTheme === "dark" ? "#B19EEF" : "#22c55e"
 

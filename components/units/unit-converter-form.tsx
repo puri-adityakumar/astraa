@@ -40,17 +40,17 @@ export function UnitConverterForm({
         {/* From Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">From</Label>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <Input
                 type="number"
                 value={value}
                 onChange={(e) => onValueChange(e.target.value)}
                 placeholder="Enter value"
-                className="h-11 font-mono text-lg"
+                className="h-11 font-mono text-base sm:text-lg"
               />
             </div>
-            <div className="w-[180px]">
+            <div className="w-full sm:w-[180px]">
               <Select
                 value={fromUnit.symbol}
                 onValueChange={(value) => {
@@ -63,7 +63,7 @@ export function UnitConverterForm({
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit) => (
-                    <SelectItem key={unit.symbol} value={unit.symbol}>
+                    <SelectItem key={unit.symbol} value={unit.symbol} className="text-sm">
                       {unit.name} ({unit.symbol})
                     </SelectItem>
                   ))}
@@ -83,16 +83,16 @@ export function UnitConverterForm({
         {/* To Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">To</Label>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <Input
                 readOnly
                 value={resultValue || ""}
                 placeholder="Result will appear here"
-                className="h-11 font-mono text-lg bg-muted/50"
+                className="h-11 font-mono text-base sm:text-lg bg-muted/50"
               />
             </div>
-            <div className="w-[180px]">
+            <div className="w-full sm:w-[180px]">
               <Select
                 value={toUnit.symbol}
                 onValueChange={(value) => {
@@ -105,7 +105,7 @@ export function UnitConverterForm({
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit) => (
-                    <SelectItem key={unit.symbol} value={unit.symbol}>
+                    <SelectItem key={unit.symbol} value={unit.symbol} className="text-sm">
                       {unit.name} ({unit.symbol})
                     </SelectItem>
                   ))}
