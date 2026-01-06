@@ -13,6 +13,7 @@ import { LandingBackground } from '@/components/landing-background';
 
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 export const metadata: Metadata = {
   title: 'astraa - Utility Tools Suite',
@@ -36,25 +37,27 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ToolsProvider>
-            <ActivityProvider>
-              <LandingBackground />
-              <div className="min-h-screen flex flex-col">
-                <Navigation />
-                <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
-                  <PageTransition type="fade">
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-                      {children}
-                    </div>
-                  </PageTransition>
-                </main>
-                <Footer />
-              </div>
-              <Toaster />
-              <Analytics />
-              <SpeedInsights />
-            </ActivityProvider>
-          </ToolsProvider>
+          <TooltipProvider>
+            <ToolsProvider>
+              <ActivityProvider>
+                <LandingBackground />
+                <div className="min-h-screen flex flex-col">
+                  <Navigation />
+                  <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
+                    <PageTransition type="fade">
+                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+                        {children}
+                      </div>
+                    </PageTransition>
+                  </main>
+                  <Footer />
+                </div>
+                <Toaster />
+                <Analytics />
+                <SpeedInsights />
+              </ActivityProvider>
+            </ToolsProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
