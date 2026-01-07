@@ -29,7 +29,11 @@ function getSecureRandomInt(max: number): number {
     do {
         crypto.getRandomValues(array);
         randomValue = array[0];
-    } while (randomValue >= limit);
+    } while (randomValue !== undefined && randomValue >= limit);
+
+    if (randomValue === undefined) {
+        throw new Error("Failed to generate random value");
+    }
 
     return randomValue % max;
 }
@@ -37,7 +41,7 @@ function getSecureRandomInt(max: number): number {
 function secureShuffle(array: string[]): string[] {
     for (let i = array.length - 1; i > 0; i--) {
         const j = getSecureRandomInt(i + 1);
-        [array[i], array[j]] = [array[j], array[i]];
+        [array[i], array[j]] = [array[j]!, array[i]!];
     }
     return array;
 }
@@ -95,7 +99,7 @@ export function generateMemorablePassword(count: number, capitalize: boolean): P
         const bytes = crypto.getRandomValues(new Uint8Array(safeCount * 2));
         const words = niceware.bytesToPassphrase(bytes);
 
-        const formattedWords = words.map(word => {
+        const formattedWords = words.map((word: string) => {
             return capitalize ? word.charAt(0).toUpperCase() + word.slice(1) : word;
         })
 
