@@ -74,7 +74,7 @@ export function generatePassword(length: number, options: PasswordOptions): Pass
         };
     }
 
-   let passwordArray = [...guaranteedChars];
+    let passwordArray = [...guaranteedChars];
     while (passwordArray.length < length) {
         const idx = getSecureRandomInt(allowedChars.length);
         passwordArray.push(allowedChars[idx]!);
