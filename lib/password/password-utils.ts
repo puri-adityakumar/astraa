@@ -19,9 +19,18 @@ const CHAR_SETS = {
 }
 
 function getSecureRandomInt(max: number): number {
-    const array = new Uint32Array(1);
-    crypto.getRandomValues(array);
-    return array[0] % max;
+    if (max <= 0) throw new Error("Max must be positive");
+    if (max === 1) return 0;
+    
+    let randomValue;
+    const limit = Math.floor(0x100000000 / max) * max;
+
+    do {
+        crypto.getRandomValues(array);
+        randomValue = array[0];
+    } while (randomValue >= limit);
+
+    return randomValue % max;
 }
 
 function secureShuffle(array: string[]): string[] {
@@ -57,7 +66,14 @@ export function generatePassword(length: number, options: PasswordOptions): Pass
         return { success: false, error: "Please select at least one character type" };
     }
 
-    let passwordArray = guaranteedChars.slice(0, length);
+    if (length < guaranteedChars.length) {
+        return { 
+            success: false, 
+            error: `Password length ${length} is too short for ${guaranteedChars.length} required character types.` 
+        };
+    }
+
+   let passwordArray = [...guaranteedChars];
     while (passwordArray.length < length) {
         const idx = getSecureRandomInt(allowedChars.length);
         passwordArray.push(allowedChars[idx]!);
