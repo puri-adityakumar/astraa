@@ -64,11 +64,13 @@ export function generateMemorablePassword(count: number, capitalize: boolean): P
   const selectedWords: string[] = []
 
   for (let i = 0; i < count; i++) {
-    let word = words[Math.floor(Math.random() * words.length)] ?? ""
+    const word = words[Math.floor(Math.random() * words.length)]
+    if (!word) continue
+    let processedWord = word
     if (capitalize) {
-      word = word.charAt(0).toUpperCase() + word.slice(1)
+      processedWord = processedWord.charAt(0).toUpperCase() + processedWord.slice(1)
     }
-    selectedWords.push(word)
+    selectedWords.push(processedWord)
   }
 
   // If "fullWords" is false, maybe we shouldn't use dashes? 

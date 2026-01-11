@@ -43,6 +43,12 @@ export function FiatConverter({
       setIsLoading(true)
       try {
         const rate = await getExchangeRate(fromCurrency, toCurrency)
+        
+        if (rate === null) {
+          onResult("Error")
+          throw new Error("Failed to fetch rate")
+        }
+
         const converted = (Number(amount) * rate).toFixed(2)
         // Store just the numeric result or formatted string?
         // UnitConverter stores "1 USD = X EUR".
