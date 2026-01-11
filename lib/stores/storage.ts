@@ -111,14 +111,35 @@ export function createEnhancedStorage(): StorageAdapter {
 
 /**
  * Creates a Zustand-compatible storage object for enhanced persistence
+ * Includes concurrency control to prevent race conditions
  */
 export function createZustandStorage() {
   const adapter = createEnhancedStorage()
+  const locks = new Map<string, Promise<void>>()
+
+  /**
+   * Enqueues an operation for a specific key to ensure sequential execution
+   */
+  const enqueue = async <T>(key: string, operation: () => Promise<T>): Promise<T> => {
+    // Get the current promise for this key or resolve immediately
+    const current = locks.get(key) || Promise.resolve()
+
+    // Create a new promise that chains after the current one
+    const nextPromise = current.then(() => operation())
+
+    // Update the lock with a promise that always resolves
+    // This ensures that even if an operation fails, the queue doesn't get stuck
+    // We explicitly cast the catch return to void to satisfy the map type
+    locks.set(key, nextPromise.then(() => {}).catch(() => {}))
+
+    return nextPromise
+  }
   
   return {
     getItem: async (name: string): Promise<string | null> => {
       try {
-        return await adapter.getItem(name)
+        // We wait for pending writes to finish before reading
+        return await enqueue(name, () => adapter.getItem(name))
       } catch (error) {
         console.error('Storage getItem error:', error)
         return null
@@ -126,14 +147,14 @@ export function createZustandStorage() {
     },
     setItem: async (name: string, value: string): Promise<void> => {
       try {
-        await adapter.setItem(name, value)
+        await enqueue(name, () => adapter.setItem(name, value))
       } catch (error) {
         console.error('Storage setItem error:', error)
       }
     },
     removeItem: async (name: string): Promise<void> => {
       try {
-        await adapter.removeItem(name)
+        await enqueue(name, () => adapter.removeItem(name))
       } catch (error) {
         console.error('Storage removeItem error:', error)
       }

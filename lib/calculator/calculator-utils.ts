@@ -79,7 +79,8 @@ function toPostfix(tokens: string[]): string[] {
         const lastOp = operators[operators.length - 1]
         if (!lastOp || !operations[lastOp] || !operations[token]) break
         if (operations[lastOp].precedence < operations[token].precedence) break
-        output.push(operators.pop()!)
+        const popped = operators.pop()
+        if (popped) output.push(popped)
       }
       operators.push(token)
     } else {
@@ -88,7 +89,8 @@ function toPostfix(tokens: string[]): string[] {
   }
 
   while (operators.length > 0) {
-    output.push(operators.pop()!)
+    const popped = operators.pop()
+    if (popped) output.push(popped)
   }
 
   return output
@@ -99,9 +101,15 @@ function evaluatePostfix(tokens: string[]): number {
 
   for (const token of tokens) {
     if (isOperator(token) && operations[token]) {
-      const b = stack.pop()!
-      const a = stack.pop()!
-      stack.push(operations[token].execute(a, b))
+      const b = stack.pop()
+      const a = stack.pop()
+      
+      if (a !== undefined && b !== undefined) {
+        stack.push(operations[token].execute(a, b))
+      } else {
+        // Handle error case for fewer operands than needed
+        return NaN
+      }
     } else {
       stack.push(Number(token))
     }

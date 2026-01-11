@@ -6,7 +6,7 @@ import { Github, Bug } from "lucide-react"
 
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
+import Image from "next/image"
 interface Contributor {
   id: number
   login: string
@@ -70,7 +70,7 @@ export default function ContributePage() {
               <span className="text-xs text-muted-foreground block">Founder</span>
             </div>
             <Link href="https://github.com/puri-adityakumar" target="_blank" className="flex-shrink-0 hover:opacity-80 transition-opacity">
-              <img
+              <Image
                 src="https://github.com/puri-adityakumar.png"
                 alt="Aditya"
                 className="w-10 h-10 rounded-full border border-border bg-muted"

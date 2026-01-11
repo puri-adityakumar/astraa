@@ -37,11 +37,18 @@ export function CryptoConverter({
       setIsLoading(true)
       try {
         const price = await getCryptoPrice(cryptoCurrency, fiatCurrency)
+        
+        if (price === null) {
+          onResult("Error fetching price")
+          return
+        }
+
         const converted = (Number(amount) * price).toFixed(6) // More precision for crypto
         // Store numeric result string
         onResult(converted)
       } catch (error) {
         console.error(error)
+        onResult("Error")
       } finally {
         setIsLoading(false)
       }
