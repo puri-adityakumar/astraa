@@ -46,7 +46,7 @@ export function FiatConverter({
         
         if (rate === null) {
           onResult("Error")
-          throw new Error("Failed to fetch rate")
+          return;
         }
 
         const converted = (Number(amount) * rate).toFixed(2)

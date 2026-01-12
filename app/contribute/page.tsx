@@ -73,6 +73,8 @@ export default function ContributePage() {
               <Image
                 src="https://github.com/puri-adityakumar.png"
                 alt="Aditya"
+                width={40}
+                height={40}
                 className="w-10 h-10 rounded-full border border-border bg-muted"
               />
             </Link>
