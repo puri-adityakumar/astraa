@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { CalculatorDisplay } from "@/components/calculator/calculator-display"
@@ -71,6 +71,61 @@ export default function Calculator() {
       setIsNewNumber(true)
     }
   }
+
+  useEffect(() => {
+    const handleKeyDown = (e : KeyboardEvent) => {
+      // e.preventDefault();
+      const key = e.key;
+      if (
+      /[0-9+\-*/.^]/.test(key) ||
+      key === "Enter" ||
+      key === "Backspace" ||
+      key === "Escape"
+    ) {
+      e.preventDefault()
+    }
+
+    // Numbers
+    if (key >= "0" && key <= "9") {
+      appendNumber(key)
+      return
+    }
+
+    // Decimal
+    if (key === ".") {
+      appendNumber(".")
+      return
+    }
+
+    // Operators
+    if (["+","-","*","/","^"].includes(key)) {
+      appendOperator(key)
+      return
+    }
+
+    // Calculate
+    if (key === "Enter" || key === "=") {
+      calculate()
+      return
+    }
+
+    // Clear
+    if (key === "Escape" || key.toLowerCase() === "c") {
+      clear()
+      return
+    }
+
+    // Backspace
+    if (key === "Backspace") {
+      setDisplay(prev => prev.slice(0, -1) || "")
+      return
+    }
+  }
+
+  window.addEventListener("keydown", handleKeyDown)
+  return () => window.removeEventListener("keydown", handleKeyDown)
+    },[display,expression]
+  );
 
   return (
     <div className="container max-w-5xl pt-24 pb-12 space-y-8">
