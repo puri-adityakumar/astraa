@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { CalculatorDisplay } from "@/components/calculator/calculator-display"
@@ -72,60 +72,75 @@ export default function Calculator() {
     }
   }
 
+  // Create a ref to hold latest state to avoid re-binding event listener
+  const stateRef = useRef({
+    display,
+    expression,
+    isNewNumber,
+    angleMode,
+  });
+
+  // Update ref when state changes
   useEffect(() => {
-    const handleKeyDown = (e : KeyboardEvent) => {
-      // e.preventDefault();
+    stateRef.current = {
+      display,
+      expression,
+      isNewNumber,
+      angleMode,
+    };
+  }, [display, expression, isNewNumber, angleMode]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
       const key = e.key;
-      if (
-      /[0-9+\-*/.^]/.test(key) ||
-      key === "Enter" ||
-      key === "Backspace" ||
-      key === "Escape"
-    ) {
-      e.preventDefault()
+
+      // Access latest state from ref
+      const current = stateRef.current;
+
+      const { display: currDisplay, expression: currExpression, isNewNumber: currIsNewNumber } = current;
+
+      if (key >= "0" && key <= "9") {
+        if (currIsNewNumber) {
+          setDisplay(key)
+          setIsNewNumber(false)
+        } else {
+          setDisplay(currDisplay + key)
+        }
+      } else if (key === ".") {
+         if (currIsNewNumber) {
+          setDisplay(".")
+          setIsNewNumber(false)
+        } else {
+          setDisplay(currDisplay + ".")
+        }
+      } else if (["+", "-", "*", "/", "^"].includes(key)) {
+         setExpression(currExpression + currDisplay + key)
+         setIsNewNumber(true)
+      } else if (key === "Enter" || key === "=") {
+         try {
+          const fullExpression = currExpression + currDisplay
+          const result = evaluateExpression(fullExpression)
+          setDisplay(result.toString())
+          setExpression("")
+          setIsNewNumber(true)
+        } catch (error) {
+          setDisplay("Error")
+          setExpression("")
+          setIsNewNumber(true)
+        }
+      } else if (key === "Backspace") {
+         setDisplay(currDisplay.slice(0, -1) || "0")
+      } else if (key === "Escape" || key.toLowerCase() === "c") {
+         setDisplay("")
+         setExpression("")
+         setIsNewNumber(true)
+      }
     }
 
-    // Numbers
-    if (key >= "0" && key <= "9") {
-      appendNumber(key)
-      return
-    }
-
-    // Decimal
-    if (key === ".") {
-      appendNumber(".")
-      return
-    }
-
-    // Operators
-    if (["+","-","*","/","^"].includes(key)) {
-      appendOperator(key)
-      return
-    }
-
-    // Calculate
-    if (key === "Enter" || key === "=") {
-      calculate()
-      return
-    }
-
-    // Clear
-    if (key === "Escape" || key.toLowerCase() === "c") {
-      clear()
-      return
-    }
-
-    // Backspace
-    if (key === "Backspace") {
-      setDisplay(prev => prev.slice(0, -1) || "")
-      return
-    }
-  }
-
-  window.addEventListener("keydown", handleKeyDown)
-  return () => window.removeEventListener("keydown", handleKeyDown)
-    },[display,expression]
-  );
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, []) 
 
   return (
     <div className="container max-w-5xl pt-24 pb-12 space-y-8">
