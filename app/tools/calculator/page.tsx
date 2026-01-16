@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { CalculatorDisplay } from "@/components/calculator/calculator-display"
@@ -71,6 +71,88 @@ export default function Calculator() {
       setIsNewNumber(true)
     }
   }
+
+  // Create a ref to hold latest state to avoid re-binding event listener
+  const stateRef = useRef({
+    display,
+    expression,
+    isNewNumber,
+    angleMode,
+  });
+
+  // Update ref when state changes
+  useEffect(() => {
+    stateRef.current = {
+      display,
+      expression,
+      isNewNumber,
+      angleMode,
+    };
+  }, [display, expression, isNewNumber, angleMode]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key;
+      const isCalculatorKey = (key >= "0" && key <= "9") || key === "." || 
+                             ["+", "-", "*", "/", "^", "Enter", "=", "Backspace", "Escape"].includes(key) || 
+                             key.toLowerCase() === "c";
+      
+      if (!isCalculatorKey) {
+        return;
+      }
+      
+      e.preventDefault();
+
+      // Access latest state from ref
+      const current = stateRef.current;
+
+      const { display: currDisplay, expression: currExpression, isNewNumber: currIsNewNumber } = current;
+
+      if (key >= "0" && key <= "9") {
+        if (currIsNewNumber) {
+          setDisplay(key)
+          setIsNewNumber(false)
+        } else {
+          setDisplay(currDisplay + key)
+        }
+      } else if (key === ".") {
+         if (currIsNewNumber) {
+          setDisplay("0.")
+          setIsNewNumber(false)
+        } else if (!currDisplay.includes(".")) {
+          setDisplay(currDisplay + ".")
+        }
+      } else if (["+", "-", "*", "/", "^"].includes(key)) {
+        if(currDisplay){
+          setExpression(currExpression + currDisplay + key)
+          setIsNewNumber(true)
+        }
+      } else if (key === "Enter" || key === "=") {
+        if(currDisplay || currExpression){
+          try {
+           const fullExpression = currExpression + currDisplay
+           const result = evaluateExpression(fullExpression)
+           setDisplay(result.toString())
+           setExpression("")
+           setIsNewNumber(true)
+         } catch (error) {
+           setDisplay("Error")
+           setExpression("")
+           setIsNewNumber(true)
+         }
+        }
+      } else if (key === "Backspace") {
+         setDisplay(currDisplay.slice(0, -1) || "0")
+      } else if (key === "Escape" || key.toLowerCase() === "c") {
+         setDisplay("")
+         setExpression("")
+         setIsNewNumber(true)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, []) 
 
   return (
     <div className="container max-w-5xl pt-24 pb-12 space-y-8">
