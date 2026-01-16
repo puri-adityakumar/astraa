@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Copy } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { copyToClipboard } from "@/lib/clipboard"
 import { hashAlgorithms } from "@/lib/hash"
 
 interface HashOutputProps {
@@ -16,12 +17,20 @@ export function HashOutput({ type, hash }: HashOutputProps) {
   const { toast } = useToast()
   const algorithm = hashAlgorithms.find(algo => algo.id === type)
 
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(hash)
-    toast({
-      title: "Copied!",
-      description: `${algorithm?.name || type.toUpperCase()} hash copied to clipboard`
-    })
+  const handleCopyToClipboard = async () => {
+    const result = await copyToClipboard(hash)
+    if (result.success) {
+      toast({
+        title: "Copied!",
+        description: `${algorithm?.name || type.toUpperCase()} hash copied to clipboard`
+      })
+    } else {
+      toast({
+        title: "Copy failed",
+        description: result.error,
+        variant: "destructive"
+      })
+    }
   }
 
   return (
@@ -37,7 +46,7 @@ export function HashOutput({ type, hash }: HashOutputProps) {
         <Button
           variant="outline"
           size="icon"
-          onClick={copyToClipboard}
+          onClick={handleCopyToClipboard}
           disabled={!hash}
           className="shrink-0"
         >

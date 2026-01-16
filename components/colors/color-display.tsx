@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Copy } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { copyToClipboard } from "@/lib/clipboard"
 
 interface ColorDisplayProps {
   color: string
@@ -13,13 +14,21 @@ interface ColorDisplayProps {
 export function ColorDisplay({ color, label, onClick }: ColorDisplayProps) {
   const { toast } = useToast()
 
-  const copyToClipboard = async (e: React.MouseEvent) => {
+  const handleCopyToClipboard = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    await navigator.clipboard.writeText(color)
-    toast({
-      title: "Copied!",
-      description: `${color} copied to clipboard`
-    })
+    const result = await copyToClipboard(color)
+    if (result.success) {
+      toast({
+        title: "Copied!",
+        description: `${color} copied to clipboard`
+      })
+    } else {
+      toast({
+        title: "Copy failed",
+        description: result.error,
+        variant: "destructive"
+      })
+    }
   }
 
   return (
@@ -36,7 +45,7 @@ export function ColorDisplay({ color, label, onClick }: ColorDisplayProps) {
           variant="outline"
           size="icon"
           className="absolute top-2 right-2"
-          onClick={copyToClipboard}
+          onClick={handleCopyToClipboard}
         >
           <Copy className="h-4 w-4" />
         </Button>
