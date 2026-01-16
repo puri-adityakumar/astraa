@@ -5,8 +5,7 @@ import { Card } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { ImagePreview } from "./image-preview"
 import { ImageControls } from "./image-controls"
-import { calculateDimensions } from "@/lib/image/resize-utils"
-import { resizeImage, downloadImage } from "@/lib/image/transform-utils"
+import { calculateDimensions, resizeImage, downloadImage } from "@/lib/image/image-utils"
 import type { ImageOptions } from "@/lib/image/types"
 
 export function ImageResizerClient() {
