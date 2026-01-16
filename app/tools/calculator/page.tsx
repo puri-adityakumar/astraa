@@ -92,8 +92,16 @@ export default function Calculator() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
       const key = e.key;
+      const isCalculatorKey = (key >= "0" && key <= "9") || key === "." || 
+                             ["+", "-", "*", "/", "^", "Enter", "=", "Backspace", "Escape"].includes(key) || 
+                             key.toLowerCase() === "c";
+      
+      if (!isCalculatorKey) {
+        return;
+      }
+      
+      e.preventDefault();
 
       // Access latest state from ref
       const current = stateRef.current;
@@ -109,25 +117,29 @@ export default function Calculator() {
         }
       } else if (key === ".") {
          if (currIsNewNumber) {
-          setDisplay(".")
+          setDisplay("0.")
           setIsNewNumber(false)
-        } else {
+        } else if (!currDisplay.includes(".")) {
           setDisplay(currDisplay + ".")
         }
       } else if (["+", "-", "*", "/", "^"].includes(key)) {
-         setExpression(currExpression + currDisplay + key)
-         setIsNewNumber(true)
+        if(currDisplay){
+          setExpression(currExpression + currDisplay + key)
+          setIsNewNumber(true)
+        }
       } else if (key === "Enter" || key === "=") {
-         try {
-          const fullExpression = currExpression + currDisplay
-          const result = evaluateExpression(fullExpression)
-          setDisplay(result.toString())
-          setExpression("")
-          setIsNewNumber(true)
-        } catch (error) {
-          setDisplay("Error")
-          setExpression("")
-          setIsNewNumber(true)
+        if(currDisplay || currExpression){
+          try {
+           const fullExpression = currExpression + currDisplay
+           const result = evaluateExpression(fullExpression)
+           setDisplay(result.toString())
+           setExpression("")
+           setIsNewNumber(true)
+         } catch (error) {
+           setDisplay("Error")
+           setExpression("")
+           setIsNewNumber(true)
+         }
         }
       } else if (key === "Backspace") {
          setDisplay(currDisplay.slice(0, -1) || "0")
