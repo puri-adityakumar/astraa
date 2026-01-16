@@ -19,8 +19,8 @@
 ```bash
 git clone https://github.com/puri-adityakumar/astraa.git
 cd astraa
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)

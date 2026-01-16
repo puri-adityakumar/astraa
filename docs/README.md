@@ -32,10 +32,10 @@ git clone https://github.com/puri-adityakumar/astraa.git
 cd astraa
 
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -45,7 +45,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### Prerequisites
 
 - Node.js 18.17 or later
-- npm 9.0 or later
+- pnpm 9.0 or later
 
 ### Steps
 
@@ -57,7 +57,7 @@ git clone https://github.com/puri-adityakumar/astraa.git
 cd astraa
 
 # 3. Install dependencies
-npm install
+pnpm install
 
 # 4. Copy environment variables (optional)
 cp .env.sample .env.local
@@ -77,7 +77,7 @@ cp .env.sample .env.local
 ### Development
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Starts the development server at `http://localhost:3000` with hot reload.
@@ -85,14 +85,14 @@ Starts the development server at `http://localhost:3000` with hot reload.
 ### Production Build
 
 ```bash
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ### Linting
 
 ```bash
-npm run lint
+pnpm lint
 ```
 
 ## Documentation Index

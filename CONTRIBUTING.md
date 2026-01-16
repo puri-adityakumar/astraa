@@ -26,18 +26,18 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear an
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | A new feature |
-| `fix` | A bug fix |
-| `docs` | Documentation only changes |
-| `style` | Code style changes (formatting, semicolons, etc.) |
+| Type       | Description                                             |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | A new feature                                           |
+| `fix`      | A bug fix                                               |
+| `docs`     | Documentation only changes                              |
+| `style`    | Code style changes (formatting, semicolons, etc.)       |
 | `refactor` | Code change that neither fixes a bug nor adds a feature |
-| `perf` | Performance improvements |
-| `test` | Adding or updating tests |
-| `chore` | Maintenance tasks, dependency updates, etc. |
-| `ci` | CI/CD configuration changes |
-| `build` | Build system or external dependency changes |
+| `perf`     | Performance improvements                                |
+| `test`     | Adding or updating tests                                |
+| `chore`    | Maintenance tasks, dependency updates, etc.             |
+| `ci`       | CI/CD configuration changes                             |
+| `build`    | Build system or external dependency changes             |
 
 ### Examples
 
@@ -78,7 +78,7 @@ chore: update dependencies
 ### Prerequisites
 
 - Node.js 18+
-- npm or pnpm
+- pnpm
 
 ### Setup
 
@@ -88,16 +88,16 @@ git clone https://github.com/puri-adityakumar/astraa.git
 cd astraa
 
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm run dev
+pnpm dev
 ```
 
 ### Build
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ## Project Structure

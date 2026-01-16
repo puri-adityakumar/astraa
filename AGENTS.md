@@ -4,10 +4,11 @@
 
 ### Development
 ```bash
-npm run dev          # Start development server (http://localhost:3000)
-npm run build        # Production build
-npm start            # Start production server
-npm run lint         # Run ESLint
+pnpm dev             # Start development server (http://localhost:3000)
+pnpm build           # Production build
+pnpm start           # Start production server
+pnpm lint            # Run Biome linter
+pnpm format          # Format code with Biome
 ```
 
 ### Testing

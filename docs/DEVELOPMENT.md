@@ -328,7 +328,7 @@ npx lighthouse http://localhost:3000 --view
 ### Development Server
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Starts at `http://localhost:3000` with hot reload.
@@ -336,8 +336,8 @@ Starts at `http://localhost:3000` with hot reload.
 ### Production Build
 
 ```bash
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ### Build Output
@@ -372,11 +372,12 @@ npx vercel
 ```dockerfile
 FROM node:20-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npm run build
-CMD ["npm", "start"]
+RUN pnpm build
+CMD ["pnpm", "start"]
 ```
 
 ## Common Workflows
@@ -504,13 +505,13 @@ import { slideIn } from "@/lib/animations/variants"
 ### Linting
 
 ```bash
-npm run lint
+pnpm lint
 ```
 
 Fix issues automatically where possible:
 
 ```bash
-npm run lint -- --fix
+pnpm lint:fix
 ```
 
 ### Git Workflow
