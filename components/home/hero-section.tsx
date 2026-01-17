@@ -5,6 +5,7 @@ import { ShimmerButton } from "@/components/ui/shimmer-button"
 import Link from "next/link"
 import { HiArrowRight } from "react-icons/hi2"
 import { useEffect, useState } from "react"
+import { StatsBar } from "./stats-bar"
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -100,6 +101,11 @@ export function HeroSection() {
           <kbd className="rounded border bg-muted px-2 py-0.5 font-mono text-xs font-medium">K</kbd>
           {" "}for quick access
         </motion.p>
+
+        {/* Stats */}
+        <motion.div variants={fadeInUp} className="mt-6">
+          <StatsBar />
+        </motion.div>
       </motion.div>
     </section>
   )
