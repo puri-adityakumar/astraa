@@ -10,7 +10,6 @@ import { ToolsProvider } from '@/lib/tools-context';
 import { ActivityProvider } from '@/lib/activity-tracker';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LandingBackground } from '@/components/landing-background';
-
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -18,6 +17,16 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 export const metadata: Metadata = {
   title: 'astraa - Utility Tools Suite',
   description: 'A collection of helpful utility tools for developers and creators',
+  icons: {
+    icon: '/assets/astraa_pfp.png',
+  },
+  openGraph: {
+    images: ['/assets/astraa_banner.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/assets/astraa_banner.png'],
+  },
 };
 
 export default function RootLayout({
