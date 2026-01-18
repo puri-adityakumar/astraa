@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { createZustandStorage } from './storage'
 import type { ToolSettings, KeyboardShortcut, ExportFormat, ImportFormat } from './types'
 
 interface ToolSettingsState {
@@ -108,7 +109,7 @@ export const useToolSettings = create<ToolSettingsState>()(
     }),
     {
       name: 'tool-settings',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createZustandStorage()),
       version: 1,
       migrate: (persistedState: any, version: number) => {
         if (version === 0) {

@@ -47,6 +47,7 @@
         "./src/lib/*"
       ],
       "@/types/*": [
+        "./types/*",
         "./src/types/*"
       ],
       "@/config/*": [

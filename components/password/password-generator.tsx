@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { generatePassword, generateMemorablePassword, generatePin } from "@/lib/password/password-utils"
+import { copyToClipboard } from "@/lib/clipboard"
 import { cn } from "@/lib/utils"
 import { Shuffle, Lightbulb, Hash } from "lucide-react"
 
@@ -60,13 +61,21 @@ export function PasswordGeneratorClient() {
     generate()
   }, [generate])
 
-  const copyToClipboard = async () => {
+  const handleCopyToClipboard = async () => {
     if (!password) return
-    await navigator.clipboard.writeText(password)
-    toast({
-      title: "Copied!",
-      description: "Password copied to clipboard",
-    })
+    const result = await copyToClipboard(password)
+    if (result.success) {
+      toast({
+        title: "Copied!",
+        description: "Password copied to clipboard",
+      })
+    } else {
+      toast({
+        title: "Copy failed",
+        description: result.error,
+        variant: "destructive",
+      })
+    }
   }
 
   return (
@@ -216,7 +225,7 @@ export function PasswordGeneratorClient() {
             <Button
               size="lg"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base h-12"
-              onClick={copyToClipboard}
+              onClick={handleCopyToClipboard}
             >
               Copy password
             </Button>

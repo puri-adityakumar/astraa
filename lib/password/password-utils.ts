@@ -1,97 +1,126 @@
+import niceware from 'niceware';
 
 interface PasswordOptions {
-  uppercase: boolean
-  lowercase: boolean
-  numbers: boolean
-  symbols: boolean
+    uppercase: boolean
+    lowercase: boolean
+    numbers: boolean
+    symbols: boolean
 }
 
 type PasswordResult =
-  | { success: true; password: string }
-  | { success: false; error: string }
+    | { success: true; password: string }
+    | { success: false; error: string }
 
-const words = [
-  "apple", "brave", "cloud", "delta", "eagle", "flame", "grape", "house",
-  "input", "jolly", "kite", "lemon", "mango", "night", "ocean", "piano",
-  "quest", "river", "stone", "tiger", "unity", "vivid", "water", "xenon",
-  "yacht", "zebra", "amber", "beach", "coral", "dawn", "earth", "field",
-  "giant", "hazel", "ivory", "jewel", "knack", "lunar", "misty", "nova",
-  "orbit", "pearl", "quiet", "ruby", "solar", "topic", "urban", "vault",
-  "whale", "youth", "azure", "bloom", "chart", "drift", "entry", "forge",
-  "grove", "haven", "image", "jump", "koala", "laser", "march", "noble",
-  "oasis", "pilot", "quake", "radar", "scale", "tank", "ultra", "vocal",
-  "wheat", "xerox", "yearn", "zinc", "baker", "chef", "diver", "early",
-  "fable", "ghost", "happy", "iron", "joker", "karma", "light", "magic",
-  "nurse", "opera", "paint", "quick", "radio", "snake", "toast", "uncle",
-  "video", "world", "xray", "yoga", "zone", "action", "balance", "circle",
-  "dream", "energy", "future", "garden", "harbor", "island", "jacket"
-]
+const CHAR_SETS = {
+    uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    lowercase: "abcdefghijklmnopqrstuvwxyz",
+    numbers: "0123456789",
+    symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?"
+}
+
+function getSecureRandomInt(max: number): number {
+    if (max <= 0) throw new Error("Max must be positive");
+    if (max === 1) return 0;
+    
+    const array = new Uint32Array(1);
+    let randomValue: number;
+    const limit = Math.floor(0x100000000 / max) * max;
+
+    do {
+        crypto.getRandomValues(array);
+        randomValue = array[0]!;
+    } while (randomValue >= limit);
+
+    return randomValue % max;
+}
+
+function secureShuffle(array: string[]): string[] {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = getSecureRandomInt(i + 1);
+        [array[i], array[j]] = [array[j]!, array[i]!];
+    }
+    return array;
+}
 
 export function generatePassword(length: number, options: PasswordOptions): PasswordResult {
-  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  const lowercase = "abcdefghijklmnopqrstuvwxyz"
-  const numbers = "0123456789"
-  const symbols = "!@#$%^&*()_+-=[]{}|;:,.<>?"
+    let allowedChars = "";
+    const guaranteedChars: string[] = [];
 
-  let chars = ""
-  if (options.uppercase) chars += uppercase
-  if (options.lowercase) chars += lowercase
-  if (options.numbers) chars += numbers
-  if (options.symbols) chars += symbols
-
-  if (chars === "") {
-    return {
-      success: false,
-      error: "Please select at least one character type"
+    if (options.uppercase) {
+        allowedChars += CHAR_SETS.uppercase;
+        guaranteedChars.push(CHAR_SETS.uppercase[getSecureRandomInt(CHAR_SETS.uppercase.length)]!);
     }
-  }
+    if (options.lowercase) {
+        allowedChars += CHAR_SETS.lowercase;
+        guaranteedChars.push(CHAR_SETS.lowercase[getSecureRandomInt(CHAR_SETS.lowercase.length)]!);
+    }
+    if (options.numbers) {
+        allowedChars += CHAR_SETS.numbers;
+        guaranteedChars.push(CHAR_SETS.numbers[getSecureRandomInt(CHAR_SETS.numbers.length)]!);
+    }
+    if (options.symbols) {
+        allowedChars += CHAR_SETS.symbols;
+        guaranteedChars.push(CHAR_SETS.symbols[getSecureRandomInt(CHAR_SETS.symbols.length)]!);
+    }
 
-  let password = ""
-  for (let i = 0; i < length; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
+    if (allowedChars.length === 0) {
+        return { success: false, error: "Please select at least one character type" };
+    }
 
-  return {
-    success: true,
-    password
-  }
+    if (length < guaranteedChars.length) {
+        return { 
+            success: false, 
+            error: `Password length ${length} is too short for ${guaranteedChars.length} required character types.` 
+        };
+    }
+
+    let passwordArray = [...guaranteedChars];
+    while (passwordArray.length < length) {
+        const idx = getSecureRandomInt(allowedChars.length);
+        passwordArray.push(allowedChars[idx]!);
+    }
+
+    passwordArray = secureShuffle(passwordArray);
+
+    return {
+        success: true,
+        password: passwordArray.join(""),
+    };
 }
 
 export function generateMemorablePassword(count: number, capitalize: boolean): PasswordResult {
-  if (count < 2) count = 2
-  if (count > 10) count = 10
+    const safeCount = Math.max(2, Math.min(count, 10));
 
-  const selectedWords: string[] = []
+    try {
+        const bytes = crypto.getRandomValues(new Uint8Array(safeCount * 2));
+        const words = niceware.bytesToPassphrase(bytes);
 
-  for (let i = 0; i < count; i++) {
-    let word = words[Math.floor(Math.random() * words.length)] ?? ""
-    if (capitalize) {
-      word = word.charAt(0).toUpperCase() + word.slice(1)
+        const formattedWords = words.map((word: string) => {
+            return capitalize ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+        })
+
+        return {
+            success: true,
+            password: formattedWords.join("-")
+        }
+    } catch (error) {
+        return {
+            success: false,
+            error: "Failed to generate memorable password"
+        };
     }
-    selectedWords.push(word)
-  }
-
-  // If "fullWords" is false, maybe we shouldn't use dashes? 
-  // The screenshot shows "full words" toggle and example "mixture-tells...".
-  // Let's assume the toggle is for the separator.
-  // Actually, in standard memorable generators "Full Words" usually means avoid truncating or using logic.
-  // BUT, closer look at screenshot: "Use full words" is ON and text is "mixture-tells...".
-  // Let's assume separator is "-" by default for memorable.
-
-  return {
-    success: true,
-    password: selectedWords.join("-")
-  }
 }
 
 export function generatePin(length: number): PasswordResult {
-  const numbers = "0123456789"
-  let pin = ""
-  for (let i = 0; i < length; i++) {
-    pin += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  }
-  return {
-    success: true,
-    password: pin
-  }
+    const numbers = CHAR_SETS.numbers;
+    let pin = "";
+    for (let i = 0; i < length; i++) {
+        const idx = getSecureRandomInt(numbers.length);
+        pin += numbers[idx];
+    }
+
+    return {
+        success: true,
+        password: pin
+    }
 }

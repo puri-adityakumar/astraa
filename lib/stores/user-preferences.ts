@@ -35,6 +35,8 @@ const defaultPreferences: UserPreferences = {
   toolDefaults: {}
 }
 
+import { createZustandStorage } from './storage'
+
 export const useUserPreferences = create<UserPreferencesState>()(
   persist(
     (set) => ({
@@ -79,7 +81,7 @@ export const useUserPreferences = create<UserPreferencesState>()(
     }),
     {
       name: 'user-preferences',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createZustandStorage()),
       version: 1,
       migrate: (persistedState: any, version: number) => {
         // Handle migration between versions if needed

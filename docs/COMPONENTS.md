@@ -27,11 +27,14 @@ graph TB
         Tools[Tools Page]
         Games[Games Page]
         ToolPage[Tool Pages]
+        Explore[Explore Page]
+        Contribute[Contribute Page]
     end
 
     subgraph Navigation
         LandingNav[LandingNavigation]
         FloatingNav[FloatingNavbar]
+        CommandMenu[CommandMenu]
     end
 
     Landing --> LandingNav
@@ -42,6 +45,9 @@ graph TB
         Hash[HashGenerator]
         Currency[CurrencyConverter]
         Text[TextGenerator]
+        Calculator[Calculator]
+        Image[ImageResizer]
+        Units[UnitConverter]
     end
 
     ToolPage --> ToolComponents

@@ -1,4 +1,4 @@
-import { useToast } from './use-toast'
+import { useToast } from '@/components/ui/use-toast'
 import { getUserFriendlyError, logError } from '@/lib/error-handler'
 import { useCallback } from 'react'
 

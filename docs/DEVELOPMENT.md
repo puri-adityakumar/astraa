@@ -19,21 +19,43 @@ astraa/
 │   ├── layout.tsx            # Root layout
 │   ├── page.tsx              # Landing page
 │   ├── error.tsx             # Error boundary
+│   ├── global-error.tsx      # Global error boundary
 │   ├── not-found.tsx         # 404 page
+│   ├── api/                  # API routes
 │   ├── tools/                # Tool pages
 │   │   ├── page.tsx          # Tools listing
-│   │   └── [tool]/page.tsx   # Individual tools
+│   │   ├── password/         # Password generator
+│   │   ├── hash/             # Hash generator
+│   │   ├── currency/         # Currency converter
+│   │   ├── text/             # Text generator
+│   │   ├── image/            # Image resizer
+│   │   ├── units/            # Unit converter
+│   │   ├── calculator/       # Calculator
+│   │   ├── json/             # JSON validator
+│   │   ├── sql/              # SQL formatter
+│   │   └── music/            # Lofi Focus Studio
 │   ├── games/                # Game pages
 │   │   ├── page.tsx          # Games listing
-│   │   └── [game]/page.tsx   # Individual games
-│   └── explore/page.tsx      # Activity feed
+│   │   ├── snake/            # Snake game
+│   │   ├── memory/           # Memory game
+│   │   ├── dino/             # Dino game
+│   │   ├── pacman/           # Pacman game
+│   │   ├── sudoku/           # Sudoku game
+│   │   └── word-search/      # Word Search game
+│   ├── explore/              # Activity feed
+│   ├── contribute/           # Contribution page
+│   └── privacy/              # Privacy policy
 ├── components/               # React components
 │   ├── ui/                   # Shadcn/UI components
 │   ├── home/                 # Landing page components
 │   ├── password/             # Password tool components
 │   ├── hash/                 # Hash tool components
 │   ├── currency/             # Currency tool components
-│   └── ...                   # Other feature components
+│   ├── calculator/           # Calculator components
+│   ├── colors/               # Color picker components
+│   ├── image/                # Image resizer components
+│   ├── music/                # Music player components
+│   └── units/                # Unit converter components
 ├── lib/                      # Utilities and logic
 │   ├── tools.ts              # Tools catalog
 │   ├── games.ts              # Games catalog
@@ -41,14 +63,22 @@ astraa/
 │   ├── activity-tracker.tsx  # Activity tracking
 │   ├── api.ts                # External API calls
 │   ├── openrouter.ts         # AI text generation
+│   ├── redis.ts              # Upstash Redis client
 │   ├── utils.ts              # General utilities
+│   ├── clipboard.ts          # Clipboard utilities
 │   ├── error-handler.ts      # Error handling
+│   ├── crypto-data.ts        # Cryptocurrency data
+│   ├── currency-data.ts      # Currency data
+│   ├── unit-conversions.ts   # Unit conversion logic
 │   ├── stores/               # Zustand stores
 │   ├── animations/           # Framer Motion utilities
 │   ├── password/             # Password generation logic
 │   ├── hash/                 # Hash generation logic
-│   └── games/                # Game-specific logic
+│   ├── calculator/           # Calculator logic
+│   ├── image/                # Image processing logic
+│   └── games/                # Game-specific logic (snake, memory, dino)
 ├── hooks/                    # Custom React hooks
+├── types/                    # TypeScript type definitions
 ├── public/                   # Static assets
 ├── tailwind.config.ts        # Tailwind configuration
 ├── tsconfig.json             # TypeScript configuration
@@ -387,12 +417,16 @@ CMD ["npm", "start"]
 
 ```typescript
 // lib/tools.ts
+import { ToolIcon } from "lucide-react"
+
+// Add to appropriate category in toolCategories array
 {
   name: "New Tool",
   description: "Tool description",
   path: "/tools/new-tool",
-  icon: IconName,
-  comingSoon: false
+  icon: ToolIcon,
+  wip: false,        // Optional: show as work in progress
+  comingSoon: false  // Optional: show as coming soon
 }
 ```
 

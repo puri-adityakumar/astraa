@@ -8,6 +8,7 @@ External API integrations and server actions used in Astraa.
 - [Currency Exchange API](#currency-exchange-api)
 - [Cryptocurrency API](#cryptocurrency-api)
 - [AI Text Generation](#ai-text-generation)
+- [Redis (Upstash)](#redis-upstash)
 - [Error Handling](#error-handling)
 
 ## Overview
@@ -269,6 +270,58 @@ type TextGenerationResult =
 | `topic` | string | Subject for text generation |
 | `wordCount` | number | Approximate word count |
 
+## Redis (Upstash)
+
+Server-side data persistence using Upstash Redis.
+
+### Configuration
+
+**Provider:** [Upstash](https://upstash.com)
+
+**Package:** `@upstash/redis`
+
+**Authentication:** Environment variables
+
+```bash
+# .env.local
+UPSTASH_REDIS_REST_URL=your_redis_url
+UPSTASH_REDIS_REST_TOKEN=your_redis_token
+```
+
+### Usage
+
+```typescript
+import { redis } from "@/lib/redis"
+
+// Set a value
+await redis.set("key", "value")
+
+// Get a value
+const value = await redis.get("key")
+
+// Set with expiration (seconds)
+await redis.set("key", "value", { ex: 3600 })
+```
+
+### Implementation
+
+```typescript
+// lib/redis.ts
+import { Redis } from "@upstash/redis"
+
+export const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+})
+```
+
+### Use Cases
+
+- Activity tracking persistence
+- Rate limiting
+- Caching API responses
+- Session data
+
 ## Error Handling
 
 ### API Error Pattern
@@ -341,6 +394,12 @@ export async function getExchangeRate(from: string, to: string) {
 ```bash
 # .env.local
 OPENROUTER_API_KEY=your_api_key_here
+UPSTASH_REDIS_REST_URL=your_redis_url
+UPSTASH_REDIS_REST_TOKEN=your_redis_token
 ```
 
-Required only for AI text generation feature.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENROUTER_API_KEY` | Optional | AI text generation |
+| `UPSTASH_REDIS_REST_URL` | Optional | Redis database URL |
+| `UPSTASH_REDIS_REST_TOKEN` | Optional | Redis authentication token |

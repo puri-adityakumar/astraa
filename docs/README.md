@@ -1,6 +1,6 @@
 # Astraa Documentation
 
-A modern, browser-based utility tools and games suite built with Next.js 16, TypeScript, and React 19.
+A modern, browser-based utility tools and games suite built with Next.js 15, TypeScript, and React 19.
 
 ## Table of Contents
 
@@ -112,8 +112,9 @@ npm run lint
 | Language | TypeScript 5.9 |
 | Styling | Tailwind CSS 3.4, Framer Motion |
 | UI Components | Radix UI, Shadcn/UI |
-| State | Zustand, React Context |
-| Forms | React Hook Form, Zod |
+| State | Zustand 5, React Context |
+| Forms | React Hook Form, Zod 4 |
+| Database | Upstash Redis |
 | Monitoring | Sentry, Vercel Analytics |
 
 ## License

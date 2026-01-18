@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Copy, Check, X } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { copyToClipboard } from "@/lib/clipboard"
 import { WorkInProgress } from "@/components/wip"
 export default function JsonValidator() {
   const { toast } = useToast()
@@ -30,12 +31,20 @@ export default function JsonValidator() {
     }
   }
 
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(formattedJson)
-    toast({
-      title: "Copied!",
-      description: "JSON copied to clipboard"
-    })
+  const handleCopyToClipboard = async () => {
+    const result = await copyToClipboard(formattedJson)
+    if (result.success) {
+      toast({
+        title: "Copied!",
+        description: "JSON copied to clipboard"
+      })
+    } else {
+      toast({
+        title: "Copy failed",
+        description: result.error,
+        variant: "destructive"
+      })
+    }
   }
 
   return (
@@ -87,7 +96,7 @@ export default function JsonValidator() {
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={copyToClipboard}
+                  onClick={handleCopyToClipboard}
                   disabled={!formattedJson}
                 >
                   <Copy className="h-4 w-4" />

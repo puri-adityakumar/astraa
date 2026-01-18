@@ -18,11 +18,6 @@ interface ActivityTrackingState {
   generateSessionId: () => string
 }
 
-// Simulated locations for demo
-const locations = [
-  'New York', 'London', 'Tokyo', 'Paris', 'Berlin', 'Sydney', 'Toronto', 
-  'Mumbai', 'São Paulo', 'Singapore', 'Dubai', 'Amsterdam', 'Stockholm'
-]
 
 const generateSessionId = (): string => {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -59,19 +54,18 @@ export const useActivityTracking = create<ActivityTrackingState>()(
       stats: defaultStats,
       analytics: defaultAnalytics,
       sessionId: generateSessionId(),
-      
+
       trackActivity: (type, name, metadata = {}) => {
         const { sessionId } = get()
         const now = new Date()
         const dateKey = getDateKey(now)
-        
+
         const newActivity: Activity = {
           id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           type,
           name,
           icon: 'Circle', // Default icon, should be updated based on tool
           timestamp: now,
-          location: locations[Math.floor(Math.random() * locations.length)] || 'Unknown',
           sessionId,
           metadata
         }
@@ -79,14 +73,14 @@ export const useActivityTracking = create<ActivityTrackingState>()(
         set((state) => {
           // Update stats
           const updatedRecentActivities = [newActivity, ...state.stats.recentActivities].slice(0, 50)
-          
+
           // Update popular tools
           const toolCounts = new Map<string, { count: number; icon: string }>()
           updatedRecentActivities.forEach(activity => {
             const current = toolCounts.get(activity.name) || { count: 0, icon: activity.icon }
             toolCounts.set(activity.name, { ...current, count: current.count + 1 })
           })
-          
+
           const popularTools = Array.from(toolCounts.entries())
             .map(([name, data]) => ({ name, count: data.count, icon: data.icon }))
             .sort((a, b) => b.count - a.count)
@@ -119,7 +113,7 @@ export const useActivityTracking = create<ActivityTrackingState>()(
           }
         })
       },
-      
+
       trackPerformance: (metric) => {
         set((state) => ({
           analytics: {
@@ -131,7 +125,7 @@ export const useActivityTracking = create<ActivityTrackingState>()(
           }
         }))
       },
-      
+
       trackError: (toolId, _error) => {
         set((state) => ({
           analytics: {
@@ -147,27 +141,27 @@ export const useActivityTracking = create<ActivityTrackingState>()(
           }
         }))
       },
-      
+
       getPopularTools: (limit = 5) => {
         const { stats } = get()
         return stats.popularTools.slice(0, limit)
       },
-      
+
       getRecentActivities: (limit = 10) => {
         const { stats } = get()
         return stats.recentActivities.slice(0, limit)
       },
-      
+
       getDailyUsage: (date = new Date()) => {
         const { stats } = get()
         const dateKey = getDateKey(date)
         return stats.dailyUsage[dateKey] || 0
       },
-      
+
       clearOldActivities: (daysToKeep = 30) => {
         const cutoffDate = new Date()
         cutoffDate.setDate(cutoffDate.getDate() - daysToKeep)
-        
+
         set((state) => ({
           stats: {
             ...state.stats,
@@ -177,12 +171,12 @@ export const useActivityTracking = create<ActivityTrackingState>()(
           }
         }))
       },
-      
+
       exportAnalytics: () => {
         const { stats, analytics } = get()
         return JSON.stringify({ stats, analytics }, null, 2)
       },
-      
+
       generateSessionId
     }),
     {

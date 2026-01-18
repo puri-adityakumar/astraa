@@ -51,23 +51,32 @@ app/
 ├── layout.tsx              # Root layout with providers
 ├── page.tsx                # Landing page
 ├── error.tsx               # Error boundary
+├── global-error.tsx        # Global error boundary
 ├── not-found.tsx           # 404 page
+├── api/                    # API routes
 ├── tools/
 │   ├── page.tsx            # Tools listing
-│   ├── password/page.tsx   # Password generator
-│   ├── hash/page.tsx       # Hash generator
-│   ├── currency/page.tsx   # Currency converter
-│   ├── text/page.tsx       # Text generator
-│   ├── image/page.tsx      # Image resizer
-│   ├── units/page.tsx      # Unit converter
-│   ├── calculator/page.tsx # Calculator
-│   └── ...
+│   ├── password/           # Password generator
+│   ├── hash/               # Hash generator
+│   ├── currency/           # Currency converter
+│   ├── text/               # Text generator
+│   ├── image/              # Image resizer
+│   ├── units/              # Unit converter
+│   ├── calculator/         # Calculator
+│   ├── json/               # JSON validator
+│   ├── sql/                # SQL formatter
+│   └── music/              # Lofi Focus Studio
 ├── games/
 │   ├── page.tsx            # Games listing
-│   ├── snake/page.tsx      # Snake game
-│   ├── memory/page.tsx     # Memory game
-│   └── ...
-└── explore/page.tsx        # Activity feed
+│   ├── snake/              # Snake game
+│   ├── memory/             # Memory game
+│   ├── dino/               # Dino game
+│   ├── pacman/             # Pacman game
+│   ├── sudoku/             # Sudoku game
+│   └── word-search/        # Word Search game
+├── explore/                # Activity feed
+├── contribute/             # Contribution page
+└── privacy/                # Privacy policy
 ```
 
 ### Page Component Pattern
@@ -111,6 +120,8 @@ graph LR
         Tools["/tools"]
         Games["/games"]
         Explore["/explore"]
+        Contribute["/contribute"]
+        Privacy["/privacy"]
     end
 
     subgraph Tool["Tool Routes"]
@@ -121,12 +132,18 @@ graph LR
         Image["/tools/image"]
         Units["/tools/units"]
         Calculator["/tools/calculator"]
+        JSON["/tools/json"]
+        SQL["/tools/sql"]
+        Music["/tools/music"]
     end
 
     subgraph Game["Game Routes"]
         Snake["/games/snake"]
         Memory["/games/memory"]
         Dino["/games/dino"]
+        Pacman["/games/pacman"]
+        Sudoku["/games/sudoku"]
+        WordSearch["/games/word-search"]
     end
 
     Home --> Tools

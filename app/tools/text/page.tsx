@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2, Copy, Sparkles } from "lucide-react"
 import { generateText } from "@/lib/openrouter"
+import { copyToClipboard } from "@/lib/clipboard"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -32,10 +33,14 @@ export default function TextGeneratorPage() {
     })
   }
 
-  const copyToClipboard = () => {
+  const handleCopyToClipboard = async () => {
     if (!generatedText) return
-    navigator.clipboard.writeText(generatedText)
-    toast.success("Copied to clipboard")
+    const result = await copyToClipboard(generatedText)
+    if (result.success) {
+      toast.success("Copied to clipboard")
+    } else {
+      toast.error(result.error || "Failed to copy")
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -122,7 +127,7 @@ export default function TextGeneratorPage() {
               size="icon"
               variant="outline"
               className="absolute top-4 right-4 h-9 w-9 bg-background/80 backdrop-blur-md hover:bg-background transition-colors"
-              onClick={copyToClipboard}
+              onClick={handleCopyToClipboard}
               title="Copy to clipboard"
             >
               <Copy className="h-4 w-4" />

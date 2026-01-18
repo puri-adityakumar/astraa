@@ -61,7 +61,7 @@ export interface Activity {
   name: string
   icon: string
   timestamp: Date
-  location: string
+  location?: string  // Optional - only populated if real location tracking is implemented
   sessionId: string
   metadata?: Record<string, any>
 }

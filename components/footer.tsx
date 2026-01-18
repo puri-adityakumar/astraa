@@ -106,8 +106,28 @@ export function Footer() {
 
             {/* Text Links */}
             <div className="flex items-center gap-4 md:gap-6 text-sm text-muted-foreground">
+
+
               <Link
-                href="/changelog"
+                href="https://astraa.notion.site/roadmap"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                Roadmap
+              </Link>
+              <Link
+                href="https://astraa.notion.site/roadmap"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                Docs
+              </Link>
+              <Link
+                href="https://astraa.notion.site/changelog"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
               >
                 Changelog
