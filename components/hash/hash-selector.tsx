@@ -1,29 +1,34 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { HelpCircle } from "lucide-react"
-import { hashAlgorithms } from "@/lib/hash"
+} from "@/components/ui/tooltip";
+import { hashAlgorithms } from "@/lib/hash";
 
 interface HashSelectorProps {
-  selectedHash: string
-  onHashChange: (value: string) => void
+  selectedHash: string;
+  onHashChange: (value: string) => void;
 }
 
-export function HashSelector({ selectedHash, onHashChange }: HashSelectorProps) {
-  const selectedAlgorithm = hashAlgorithms.find(algo => algo.id === selectedHash)
+export function HashSelector({
+  selectedHash,
+  onHashChange,
+}: HashSelectorProps) {
+  const selectedAlgorithm = hashAlgorithms.find(
+    (algo) => algo.id === selectedHash,
+  );
 
   return (
     <div className="flex items-center gap-2">
@@ -55,5 +60,5 @@ export function HashSelector({ selectedHash, onHashChange }: HashSelectorProps) 
         </TooltipProvider>
       )}
     </div>
-  )
+  );
 }

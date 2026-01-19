@@ -1,50 +1,52 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState } from 'react'
-import { tools, toolCategories, type Tool, type ToolCategory } from './tools'
+import { createContext, useContext, useState } from "react";
+import { tools, toolCategories, type Tool, type ToolCategory } from "./tools";
 
 interface ToolsContextType {
-  tools: Tool[]
-  categories: ToolCategory[]
-  updateTools: (newTools: Tool[]) => void
-  updateCategories: (newCategories: ToolCategory[]) => void
+  tools: Tool[];
+  categories: ToolCategory[];
+  updateTools: (newTools: Tool[]) => void;
+  updateCategories: (newCategories: ToolCategory[]) => void;
 }
 
 const ToolsContext = createContext<ToolsContextType>({
   tools: [],
   categories: [],
   updateTools: () => {},
-  updateCategories: () => {}
-})
+  updateCategories: () => {},
+});
 
 export function ToolsProvider({ children }: { children: React.ReactNode }) {
-  const [currentTools, setCurrentTools] = useState(tools)
-  const [currentCategories, setCurrentCategories] = useState(toolCategories)
+  const [currentTools, setCurrentTools] = useState(tools);
+  const [currentCategories, setCurrentCategories] = useState(toolCategories);
 
   const updateTools = (newTools: Tool[]) => {
-    setCurrentTools(newTools)
-  }
+    setCurrentTools(newTools);
+  };
 
   const updateCategories = (newCategories: ToolCategory[]) => {
-    setCurrentCategories(newCategories)
-  }
+    setCurrentCategories(newCategories);
+  };
 
   return (
-    <ToolsContext.Provider value={{
-      tools: currentTools,
-      categories: currentCategories,
-      updateTools,
-      updateCategories
-    }}>
+    <ToolsContext.Provider
+      value={{
+        tools: currentTools,
+        categories: currentCategories,
+        updateTools,
+        updateCategories,
+      }}
+    >
       {children}
     </ToolsContext.Provider>
-  )
+  );
 }
 
 export function useTools() {
-  const context = useContext(ToolsContext)
+  const context = useContext(ToolsContext);
   if (!context) {
-    throw new Error('useTools must be used within a ToolsProvider')
+    throw new Error("useTools must be used within a ToolsProvider");
   }
-  return context
+  return context;
 }

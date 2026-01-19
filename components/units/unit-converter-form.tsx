@@ -1,27 +1,26 @@
-"use client"
+"use client";
 
-
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { ArrowRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { ArrowRight } from "lucide-react"
-import type { Unit } from "@/lib/unit-conversions"
+} from "@/components/ui/select";
+import type { Unit } from "@/lib/unit-conversions";
 
 interface UnitConverterFormProps {
-  units: Unit[]
-  value: string
-  fromUnit: Unit
-  toUnit: Unit
-  onValueChange: (value: string) => void
-  onFromUnitChange: (unit: Unit) => void
-  onToUnitChange: (unit: Unit) => void
-  resultValue?: string
+  units: Unit[];
+  value: string;
+  fromUnit: Unit;
+  toUnit: Unit;
+  onValueChange: (value: string) => void;
+  onFromUnitChange: (unit: Unit) => void;
+  onToUnitChange: (unit: Unit) => void;
+  resultValue?: string;
 }
 
 export function UnitConverterForm({
@@ -32,7 +31,7 @@ export function UnitConverterForm({
   onValueChange,
   onFromUnitChange,
   onToUnitChange,
-  resultValue
+  resultValue,
 }: UnitConverterFormProps) {
   return (
     <div className="space-y-6">
@@ -40,7 +39,7 @@ export function UnitConverterForm({
         {/* From Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">From</Label>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <div className="flex-1">
               <Input
                 type="number"
@@ -54,8 +53,8 @@ export function UnitConverterForm({
               <Select
                 value={fromUnit.symbol}
                 onValueChange={(value) => {
-                  const unit = units.find(u => u.symbol === value)
-                  if (unit) onFromUnitChange(unit)
+                  const unit = units.find((u) => u.symbol === value);
+                  if (unit) onFromUnitChange(unit);
                 }}
               >
                 <SelectTrigger className="h-11">
@@ -63,7 +62,11 @@ export function UnitConverterForm({
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit) => (
-                    <SelectItem key={unit.symbol} value={unit.symbol} className="text-sm">
+                    <SelectItem
+                      key={unit.symbol}
+                      value={unit.symbol}
+                      className="text-sm"
+                    >
                       {unit.name} ({unit.symbol})
                     </SelectItem>
                   ))}
@@ -75,29 +78,29 @@ export function UnitConverterForm({
 
         {/* Swap/Direction Indicator */}
         <div className="flex justify-center">
-          <div className="bg-muted p-2 rounded-full">
-            <ArrowRight className="h-4 w-4 text-muted-foreground rotate-90" />
+          <div className="rounded-full bg-muted p-2">
+            <ArrowRight className="h-4 w-4 rotate-90 text-muted-foreground" />
           </div>
         </div>
 
         {/* To Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">To</Label>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <div className="flex-1">
               <Input
                 readOnly
                 value={resultValue || ""}
                 placeholder="Result will appear here"
-                className="h-11 font-mono text-base sm:text-lg bg-muted/50"
+                className="h-11 bg-muted/50 font-mono text-base sm:text-lg"
               />
             </div>
             <div className="w-full sm:w-[180px]">
               <Select
                 value={toUnit.symbol}
                 onValueChange={(value) => {
-                  const unit = units.find(u => u.symbol === value)
-                  if (unit) onToUnitChange(unit)
+                  const unit = units.find((u) => u.symbol === value);
+                  if (unit) onToUnitChange(unit);
                 }}
               >
                 <SelectTrigger className="h-11">
@@ -105,7 +108,11 @@ export function UnitConverterForm({
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit) => (
-                    <SelectItem key={unit.symbol} value={unit.symbol} className="text-sm">
+                    <SelectItem
+                      key={unit.symbol}
+                      value={unit.symbol}
+                      className="text-sm"
+                    >
                       {unit.name} ({unit.symbol})
                     </SelectItem>
                   ))}
@@ -116,5 +123,5 @@ export function UnitConverterForm({
         </div>
       </div>
     </div>
-  )
+  );
 }

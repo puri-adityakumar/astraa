@@ -1,20 +1,21 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { useSnakeGame } from "@/lib/games/snake/useSnakeGame"
-import { RefreshCw } from "lucide-react"
-import { WorkInProgress } from "@/components/wip"
+import { motion } from "framer-motion";
+import { RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { WorkInProgress } from "@/components/wip";
+import { useSnakeGame } from "@/lib/games/snake/useSnakeGame";
+
 export default function SnakeGame() {
-  const { gameState, resetGame, GRID_SIZE } = useSnakeGame()
-  const { snake, food, isGameOver, score } = gameState
+  const { gameState, resetGame, GRID_SIZE } = useSnakeGame();
+  const { snake, food, isGameOver, score } = gameState;
 
   return (
     <WorkInProgress>
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="mx-auto max-w-2xl space-y-8">
         <motion.div
-          className="text-center space-y-4"
+          className="space-y-4 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -25,7 +26,7 @@ export default function SnakeGame() {
           </p>
         </motion.div>
 
-        <Card className="p-6 space-y-6">
+        <Card className="space-y-6 p-6">
           <div className="flex items-center justify-between">
             <p className="text-xl font-semibold">Score: {score}</p>
             <Button onClick={resetGame} variant="outline" size="icon">
@@ -34,35 +35,36 @@ export default function SnakeGame() {
           </div>
 
           <div
-            className="relative aspect-square bg-muted rounded-lg overflow-hidden"
+            className="relative aspect-square overflow-hidden rounded-lg bg-muted"
             style={{
-              display: 'grid',
+              display: "grid",
               gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
-              gap: '1px'
+              gap: "1px",
             }}
           >
             {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
-              const x = index % GRID_SIZE
-              const y = Math.floor(index / GRID_SIZE)
-              const isSnake = snake.some(segment => segment.x === x && segment.y === y)
-              const isFood = food.x === x && food.y === y
+              const x = index % GRID_SIZE;
+              const y = Math.floor(index / GRID_SIZE);
+              const isSnake = snake.some(
+                (segment) => segment.x === x && segment.y === y,
+              );
+              const isFood = food.x === x && food.y === y;
 
               return (
                 <div
                   key={index}
-                  className={`
-                  ${isSnake ? 'bg-primary' : 'bg-transparent'}
-                  ${isFood ? 'bg-accent' : ''}
-                `}
+                  className={` ${isSnake ? "bg-primary" : "bg-transparent"} ${isFood ? "bg-accent" : ""} `}
                 />
-              )
+              );
             })}
 
             {isGameOver && (
-              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
-                  <p className="text-muted-foreground mb-4">Final Score: {score}</p>
+                  <h2 className="mb-4 text-2xl font-bold">Game Over!</h2>
+                  <p className="mb-4 text-muted-foreground">
+                    Final Score: {score}
+                  </p>
                   <Button onClick={resetGame}>Play Again</Button>
                 </div>
               </div>
@@ -71,5 +73,5 @@ export default function SnakeGame() {
         </Card>
       </div>
     </WorkInProgress>
-  )
+  );
 }

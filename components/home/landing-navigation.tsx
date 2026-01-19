@@ -1,67 +1,67 @@
-"use client"
+"use client";
 
-import { CommandMenu } from '@/components/command-menu'
-import { Logo } from '@/components/logo'
-import { ThemeToggle } from '@/components/theme-toggle'
-import Link from 'next/link'
-import { Github, Menu, X, Home, Compass } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Github, Menu, X, Home, Compass } from "lucide-react";
+import Link from "next/link";
+import { CommandMenu } from "@/components/command-menu";
+import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // Mobile navigation - simplified list
 const mobileNavigationLinks = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/explore', label: 'Explore', icon: Compass },
-  { href: '/contribute', label: 'Contribute', icon: Github },
-]
+  { href: "/", label: "Home", icon: Home },
+  { href: "/explore", label: "Explore", icon: Compass },
+  { href: "/contribute", label: "Contribute", icon: Github },
+];
 
 export function LandingNavigation() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
+      setIsScrolled(window.scrollY > 10);
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close menu when clicking outside or pressing Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsMenuOpen(false)
-    }
+      if (e.key === "Escape") setIsMenuOpen(false);
+    };
 
     if (isMenuOpen) {
-      document.addEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'hidden'
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = "";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = ''
-    }
-  }, [isMenuOpen])
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   return (
     <nav
       className={cn(
         "sticky top-0 z-50 transition-all duration-300",
         isScrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
-          : "bg-transparent border-b border-transparent"
+          ? "border-b border-border bg-background/90 shadow-sm backdrop-blur-md"
+          : "border-b border-transparent bg-transparent",
       )}
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4 lg:grid lg:grid-cols-3">
+      <div className="container mx-auto max-w-7xl px-4 md:px-6">
+        <div className="flex h-14 items-center justify-between gap-2 sm:h-16 sm:gap-4 lg:grid lg:grid-cols-3">
           {/* Left Section: Logo */}
           <div className="flex items-center justify-start gap-4">
             <div className="flex-shrink-0">
@@ -70,7 +70,7 @@ export function LandingNavigation() {
           </div>
 
           {/* Center Section: Command Menu (Search) */}
-          <div className="hidden md:flex justify-center">
+          <div className="hidden justify-center md:flex">
             <CommandMenu />
           </div>
 
@@ -83,7 +83,7 @@ export function LandingNavigation() {
               variant="ghost"
               size="icon"
               asChild
-              className="hidden sm:inline-flex min-h-touch min-w-touch hover:bg-primary/10 hover:text-primary transition-colors duration-200"
+              className="hidden min-h-touch min-w-touch transition-colors duration-200 hover:bg-primary/10 hover:text-primary sm:inline-flex"
             >
               <Link href="/contribute" aria-label="Contribute on GitHub">
                 <Github className="h-5 w-5" aria-hidden="true" />
@@ -94,7 +94,7 @@ export function LandingNavigation() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden min-h-touch min-w-touch hover:bg-primary/10 transition-colors duration-200"
+              className="min-h-touch min-w-touch transition-colors duration-200 hover:bg-primary/10 lg:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMenuOpen}
@@ -139,7 +139,7 @@ export function LandingNavigation() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 bg-background/80 backdrop-blur-sm lg:hidden"
-              style={{ top: 'var(--nav-height, 64px)' }}
+              style={{ top: "var(--nav-height, 64px)" }}
               onClick={() => setIsMenuOpen(false)}
               aria-hidden="true"
             />
@@ -151,14 +151,14 @@ export function LandingNavigation() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="fixed left-0 right-0 lg:hidden bg-background border-b border-border shadow-lg"
-              style={{ top: 'var(--nav-height, 64px)' }}
+              className="fixed left-0 right-0 border-b border-border bg-background shadow-lg lg:hidden"
+              style={{ top: "var(--nav-height, 64px)" }}
               role="menu"
               aria-orientation="vertical"
             >
-              <div className="container mx-auto px-4 py-4 space-y-2 max-h-[calc(100vh-var(--nav-height,64px))] overflow-y-auto">
+              <div className="container mx-auto max-h-[calc(100vh-var(--nav-height,64px))] space-y-2 overflow-y-auto px-4 py-4">
                 {/* Command Menu - Mobile */}
-                <div className="md:hidden mb-4">
+                <div className="mb-4 md:hidden">
                   <CommandMenu />
                 </div>
 
@@ -174,10 +174,10 @@ export function LandingNavigation() {
                       <Link
                         href={link.href}
                         className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium",
-                          "hover:bg-primary/10 hover:text-primary transition-all duration-200",
+                          "flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium",
+                          "transition-all duration-200 hover:bg-primary/10 hover:text-primary",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                          "min-h-touch group"
+                          "group min-h-touch",
                         )}
                         onClick={() => setIsMenuOpen(false)}
                         role="menuitem"
@@ -197,5 +197,5 @@ export function LandingNavigation() {
         )}
       </AnimatePresence>
     </nav>
-  )
+  );
 }

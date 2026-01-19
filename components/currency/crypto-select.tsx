@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Select,
@@ -6,18 +6,18 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { cryptocurrencies } from "@/lib/crypto-data"
+} from "@/components/ui/select";
+import { cryptocurrencies } from "@/lib/crypto-data";
 
 interface CryptoSelectProps {
-  value: string
-  onValueChange: (value: string) => void
+  value: string;
+  onValueChange: (value: string) => void;
 }
 
 export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="w-full h-11">
+      <SelectTrigger className="h-11 w-full">
         <SelectValue placeholder="Select cryptocurrency" />
       </SelectTrigger>
       <SelectContent className="max-h-[300px]">
@@ -31,12 +31,13 @@ export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
                 alt={`${crypto.name} icon`}
                 className="rounded-full object-cover"
                 onError={(e) => {
-                  e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/1213/1213032.png" // Fallback generic coin
-                  e.currentTarget.onerror = null
+                  e.currentTarget.src =
+                    "https://cdn-icons-png.flaticon.com/512/1213/1213032.png"; // Fallback generic coin
+                  e.currentTarget.onerror = null;
                 }}
               />
               <span className="font-medium">{crypto.symbol}</span>
-              <span className="text-muted-foreground text-xs hidden sm:inline-block">
+              <span className="hidden text-xs text-muted-foreground sm:inline-block">
                 - {crypto.name}
               </span>
             </div>
@@ -44,5 +45,5 @@ export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
         ))}
       </SelectContent>
     </Select>
-  )
+  );
 }

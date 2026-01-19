@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import type { CropArea } from "@/lib/image/types"
+import { useState, useEffect } from "react";
+import type { CropArea } from "@/lib/image/types";
 
 interface CropOverlayProps {
   enabled: boolean;
@@ -34,7 +34,7 @@ export function CropOverlay({
     <div
       className="absolute inset-0 cursor-move"
       style={{
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
       }}
       onMouseDown={(e) => {
         setIsDragging(true);
@@ -45,11 +45,17 @@ export function CropOverlay({
       }}
       onMouseMove={(e) => {
         if (!isDragging) return;
-        
-        const newX = Math.max(0, Math.min(e.clientX - dragStart.x, containerSize.width - crop.width));
-        const newY = Math.max(0, Math.min(e.clientY - dragStart.y, containerSize.height - crop.height));
-        
-        setCrop(prev => ({
+
+        const newX = Math.max(
+          0,
+          Math.min(e.clientX - dragStart.x, containerSize.width - crop.width),
+        );
+        const newY = Math.max(
+          0,
+          Math.min(e.clientY - dragStart.y, containerSize.height - crop.height),
+        );
+
+        setCrop((prev) => ({
           ...prev,
           x: newX,
           y: newY,

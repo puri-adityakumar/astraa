@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ShimmerButton } from "@/components/ui/shimmer-button"
-import Link from "next/link"
-import { HiArrowRight } from "react-icons/hi2"
-import { useEffect, useState } from "react"
-import { StatsBar } from "./stats-bar"
+import { useEffect, useState } from "react";
+import { HiArrowRight } from "react-icons/hi2";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { StatsBar } from "./stats-bar";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -14,41 +14,41 @@ const fadeInUp = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1]
-    }
-  }
-}
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
 
 export function HeroSection() {
-  const [isMac, setIsMac] = useState(false)
+  const [isMac, setIsMac] = useState(false);
 
   useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0)
-  }, [])
+    setIsMac(navigator.platform.toUpperCase().indexOf("MAC") >= 0);
+  }, []);
 
   return (
-    <section className="relative flex-1 flex items-center justify-center -my-6 sm:-my-8 lg:-my-12">
+    <section className="relative -my-6 flex flex-1 items-center justify-center sm:-my-8 lg:-my-12">
       <motion.div
-        className="text-center max-w-3xl mx-auto px-4 relative z-10"
+        className="relative z-10 mx-auto max-w-3xl px-4 text-center"
         initial="hidden"
         animate="show"
         variants={{
           hidden: {},
           show: {
             transition: {
-              staggerChildren: 0.1
-            }
-          }
+              staggerChildren: 0.1,
+            },
+          },
         }}
       >
         {/* Main Heading */}
         <motion.h1
           variants={fadeInUp}
-          className="font-bold tracking-tight text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
+          className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
         >
           <span className="text-foreground">Stop Searching, Start Solving</span>
           <br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-400">
+          <span className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 bg-clip-text text-transparent dark:from-purple-400 dark:via-blue-400 dark:to-cyan-400">
             अस्त्र at your command
           </span>
         </motion.h1>
@@ -56,23 +56,22 @@ export function HeroSection() {
         {/* Tagline */}
         <motion.p
           variants={fadeInUp}
-          className="mt-6 text-muted-foreground text-lg sm:text-xl max-w-xl mx-auto"
+          className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl"
         >
           Your all-in-one utility suite. A{" "}
-          <span className="text-foreground font-medium">vast collection</span>{" "}
+          <span className="font-medium text-foreground">vast collection</span>{" "}
           of powerful tools{" "}
-          <span className="text-foreground font-medium">compiled in one place</span>
+          <span className="font-medium text-foreground">
+            compiled in one place
+          </span>
           ,{" "}
-          <span className="text-foreground font-medium">
+          <span className="font-medium text-foreground">
             running entirely in your browser.
           </span>
         </motion.p>
 
         {/* CTA Button */}
-        <motion.div
-          variants={fadeInUp}
-          className="mt-10 flex justify-center"
-        >
+        <motion.div variants={fadeInUp} className="mt-10 flex justify-center">
           <Link href="/explore">
             <ShimmerButton
               className="shadow-2xl"
@@ -80,7 +79,7 @@ export function HeroSection() {
               borderRadius="100px"
               shimmerDuration="2s"
             >
-              <span className="flex items-center gap-2 text-base font-medium px-4 py-1">
+              <span className="flex items-center gap-2 px-4 py-1 text-base font-medium">
                 Explore
                 <HiArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </span>
@@ -98,8 +97,10 @@ export function HeroSection() {
             {isMac ? "⌘" : "Ctrl"}
           </kbd>
           {" + "}
-          <kbd className="rounded border bg-muted px-2 py-0.5 font-mono text-xs font-medium">K</kbd>
-          {" "}for quick access
+          <kbd className="rounded border bg-muted px-2 py-0.5 font-mono text-xs font-medium">
+            K
+          </kbd>{" "}
+          for quick access
         </motion.p>
 
         {/* Stats */}
@@ -108,5 +109,5 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
     </section>
-  )
+  );
 }

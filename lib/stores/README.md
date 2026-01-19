@@ -5,6 +5,7 @@ This directory contains the enhanced state management implementation using Zusta
 ## Overview
 
 The new state management system provides:
+
 - **Better Performance**: Zustand is more efficient than Context API for frequent updates
 - **Persistence**: Automatic persistence to localStorage/IndexedDB with migration support
 - **Type Safety**: Full TypeScript support with proper type definitions
@@ -14,7 +15,9 @@ The new state management system provides:
 ## Store Structure
 
 ### 1. User Preferences Store (`user-preferences.ts`)
+
 Manages user settings and preferences:
+
 - Theme preferences (light/dark/system)
 - Accessibility settings (reduced motion, high contrast, font size)
 - Privacy settings (analytics, error reporting, cloud sync)
@@ -22,14 +25,18 @@ Manages user settings and preferences:
 - Tool defaults
 
 ### 2. Tool Settings Store (`tool-settings.ts`)
+
 Manages individual tool configurations:
+
 - Tool-specific settings
 - Usage tracking and statistics
 - Last used timestamps
 - Export/import functionality for tool configurations
 
 ### 3. Activity Tracking Store (`activity-tracking.ts`)
+
 Handles user activity and analytics:
+
 - Activity logging and history
 - Usage statistics and popular tools
 - Performance metrics
@@ -46,23 +53,23 @@ import { useUserPreferences, useToolSettings, useActivityTracking } from '@/lib/
 function MyComponent() {
   // User preferences
   const { preferences, updatePreferences } = useUserPreferences()
-  
+
   // Tool settings
   const { getToolSettings, updateToolSettings } = useToolSettings()
-  
+
   // Activity tracking
   const { trackActivity, stats } = useActivityTracking()
-  
+
   // Update theme
   const handleThemeChange = (theme: 'light' | 'dark' | 'system') => {
     updatePreferences({ theme })
   }
-  
+
   // Track tool usage
   const handleToolUse = (toolName: string) => {
     trackActivity('tool', toolName)
   }
-  
+
   return (
     <div>
       <p>Current theme: {preferences.theme}</p>
@@ -78,12 +85,12 @@ The stores include compatibility hooks that maintain the same interface as the o
 
 ```typescript
 // Old way (still works during migration)
-import { useActivity, useTools } from '@/lib/stores'
+import { useActivity, useTools } from "@/lib/stores";
 
 function LegacyComponent() {
-  const { stats, trackActivity } = useActivity() // Same interface as before
-  const { tools, categories } = useTools() // Same interface as before
-  
+  const { stats, trackActivity } = useActivity(); // Same interface as before
+  const { tools, categories } = useTools(); // Same interface as before
+
   // Your existing code works unchanged
 }
 ```
@@ -91,25 +98,25 @@ function LegacyComponent() {
 ### Advanced Usage
 
 ```typescript
-import { useStores } from '@/lib/stores'
+import { useStores } from "@/lib/stores";
 
 function AdvancedComponent() {
   // Access all stores at once
-  const { userPreferences, toolSettings, activityTracking } = useStores()
-  
+  const { userPreferences, toolSettings, activityTracking } = useStores();
+
   // Complex operations across multiple stores
   const handleComplexAction = () => {
     // Update preferences
-    userPreferences.updatePreferences({ theme: 'dark' })
-    
+    userPreferences.updatePreferences({ theme: "dark" });
+
     // Track the action
-    activityTracking.trackActivity('tool', 'theme-switcher')
-    
+    activityTracking.trackActivity("tool", "theme-switcher");
+
     // Update tool settings
-    toolSettings.updateToolSettings('theme-switcher', {
-      settings: { lastTheme: 'dark' }
-    })
-  }
+    toolSettings.updateToolSettings("theme-switcher", {
+      settings: { lastTheme: "dark" },
+    });
+  };
 }
 ```
 
@@ -148,11 +155,11 @@ import { useMigration } from '@/lib/stores'
 
 function App() {
   const { migrationNeeded } = useMigration()
-  
+
   if (migrationNeeded) {
     console.log('Migrating from Context API to Zustand...')
   }
-  
+
   return <YourApp />
 }
 ```
@@ -168,11 +175,13 @@ You can migrate components gradually:
 ## Persistence
 
 ### localStorage (Default)
+
 - User preferences and tool settings use localStorage
 - Automatic serialization/deserialization
 - Version migration support
 
 ### IndexedDB (Enhanced)
+
 - Activity tracking uses IndexedDB for better performance with large datasets
 - Automatic fallback to localStorage if IndexedDB is unavailable
 - Suitable for storing large amounts of activity data
@@ -180,43 +189,49 @@ You can migrate components gradually:
 ### Data Management
 
 ```typescript
-import { exportAllStoredData, importStoredData, clearAllStoredData } from '@/lib/stores/storage'
+import {
+  exportAllStoredData,
+  importStoredData,
+  clearAllStoredData,
+} from "@/lib/stores/storage";
 
 // Export all data for backup
-const backup = await exportAllStoredData()
+const backup = await exportAllStoredData();
 
 // Import data from backup
-await importStoredData(backup)
+await importStoredData(backup);
 
 // Clear all data (useful for testing or reset)
-await clearAllStoredData()
+await clearAllStoredData();
 ```
 
 ## Performance Considerations
 
 ### Selective Subscriptions
+
 Zustand allows components to subscribe only to the data they need:
 
 ```typescript
 // Only re-render when theme changes
-const theme = useUserPreferences(state => state.preferences.theme)
+const theme = useUserPreferences((state) => state.preferences.theme);
 
 // Only re-render when total usage changes
-const totalUsage = useActivityTracking(state => state.stats.totalUsage)
+const totalUsage = useActivityTracking((state) => state.stats.totalUsage);
 ```
 
 ### Batch Updates
+
 Multiple updates are automatically batched:
 
 ```typescript
-const { updatePreferences } = useUserPreferences()
+const { updatePreferences } = useUserPreferences();
 
 // These updates are batched together
-updatePreferences({ 
-  theme: 'dark',
-  language: 'en',
-  accessibility: { ...newAccessibilitySettings }
-})
+updatePreferences({
+  theme: "dark",
+  language: "en",
+  accessibility: { ...newAccessibilitySettings },
+});
 ```
 
 ## Testing
@@ -224,22 +239,22 @@ updatePreferences({
 The stores are designed to be easily testable:
 
 ```typescript
-import { useUserPreferences } from '@/lib/stores'
+import { useUserPreferences } from "@/lib/stores";
 
 // In tests, you can directly access and modify store state
-const { getState, setState } = useUserPreferences
+const { getState, setState } = useUserPreferences;
 
 // Set initial state for testing
 setState({
   preferences: {
-    theme: 'light',
+    theme: "light",
     // ... other preferences
-  }
-})
+  },
+});
 
 // Test component behavior
-const result = getState().preferences.theme
-expect(result).toBe('light')
+const result = getState().preferences.theme;
+expect(result).toBe("light");
 ```
 
 ## Best Practices
@@ -263,7 +278,7 @@ expect(result).toBe('light')
 Enable debug logging by setting localStorage:
 
 ```javascript
-localStorage.setItem('zustand-debug', 'true')
+localStorage.setItem("zustand-debug", "true");
 ```
 
 This will log all store actions and state changes to the console.

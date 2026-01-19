@@ -4,13 +4,13 @@
  */
 
 // Configuration
-export { ANIMATION_CONFIG, shouldReduceMotion } from './config';
+export { ANIMATION_CONFIG, shouldReduceMotion } from "./config";
 
 // Variants
-export * from './variants';
+export * from "./variants";
 
 // Hooks
-export * from './hooks';
+export * from "./hooks";
 
 // Presets
-export * from './presets';
+export * from "./presets";

@@ -1,42 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Plus, X } from "lucide-react"
+import { useState } from "react";
+import { Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 
 interface Todo {
-  id: number
-  text: string
-  completed: boolean
+  id: number;
+  text: string;
+  completed: boolean;
 }
 
 export function TodoList() {
-  const [todos, setTodos] = useState<Todo[]>([])
-  const [input, setInput] = useState("")
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [input, setInput] = useState("");
 
   const addTodo = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (input.trim()) {
-      setTodos([...todos, { id: Date.now(), text: input.trim(), completed: false }])
-      setInput("")
+      setTodos([
+        ...todos,
+        { id: Date.now(), text: input.trim(), completed: false },
+      ]);
+      setInput("");
     }
-  }
+  };
 
   const toggleTodo = (id: number) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ))
-  }
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
+    );
+  };
 
   const removeTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id))
-  }
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
 
   return (
-    <Card className="p-6 glass">
+    <Card className="glass p-6">
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Todo List</h2>
 
@@ -56,20 +61,22 @@ export function TodoList() {
           {todos.map((todo) => (
             <div
               key={todo.id}
-              className="flex items-center gap-2 p-2 rounded-lg glass-hover group"
+              className="glass-hover group flex items-center gap-2 rounded-lg p-2"
             >
               <Checkbox
                 checked={todo.completed}
                 onCheckedChange={() => toggleTodo(todo.id)}
               />
-              <span className={`flex-1 ${todo.completed ? "line-through text-muted-foreground" : ""}`}>
+              <span
+                className={`flex-1 ${todo.completed ? "text-muted-foreground line-through" : ""}`}
+              >
                 {todo.text}
               </span>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => removeTodo(todo.id)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                className="opacity-0 transition-opacity group-hover:opacity-100"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -78,5 +85,5 @@ export function TodoList() {
         </div>
       </div>
     </Card>
-  )
+  );
 }

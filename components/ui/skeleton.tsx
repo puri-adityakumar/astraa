@@ -2,31 +2,26 @@
  * Skeleton Loading Components
  * Animated placeholder components for loading states
  */
-
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Whether to animate the skeleton
    * @default true
    */
-  animate?: boolean
+  animate?: boolean;
 }
 
 /**
  * Base skeleton component with shimmer animation
  */
-function Skeleton({
-  className,
-  animate = true,
-  ...props
-}: SkeletonProps) {
+function Skeleton({ className, animate = true, ...props }: SkeletonProps) {
   return (
     <div
       className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
-  )
+  );
 }
 
 /**
@@ -44,12 +39,12 @@ function SkeletonText({
           key={i}
           className={cn(
             "h-4",
-            i === lines - 1 && "w-4/5" // Last line is shorter
+            i === lines - 1 && "w-4/5", // Last line is shorter
           )}
         />
       ))}
     </div>
-  )
+  );
 }
 
 /**
@@ -58,10 +53,7 @@ function SkeletonText({
 function SkeletonCard({ className, ...props }: SkeletonProps) {
   return (
     <div
-      className={cn(
-        "rounded-lg border bg-card p-6 space-y-4",
-        className
-      )}
+      className={cn("space-y-4 rounded-lg border bg-card p-6", className)}
       {...props}
     >
       <Skeleton className="h-12 w-12 rounded-full" />
@@ -71,7 +63,7 @@ function SkeletonCard({ className, ...props }: SkeletonProps) {
       </div>
       <Skeleton className="h-20 w-full" />
     </div>
-  )
+  );
 }
 
 /**
@@ -86,14 +78,14 @@ function SkeletonAvatar({
     sm: "h-8 w-8",
     md: "h-12 w-12",
     lg: "h-16 w-16",
-  }
+  };
 
   return (
     <Skeleton
       className={cn("rounded-full", sizeClasses[size], className)}
       {...props}
     />
-  )
+  );
 }
 
 /**
@@ -108,14 +100,14 @@ function SkeletonButton({
     sm: "h-9 w-20",
     default: "h-10 w-24",
     lg: "h-11 w-28",
-  }
+  };
 
   return (
     <Skeleton
       className={cn("rounded-md", sizeClasses[size], className)}
       {...props}
     />
-  )
+  );
 }
 
 /**
@@ -123,11 +115,8 @@ function SkeletonButton({
  */
 function SkeletonInput({ className, ...props }: SkeletonProps) {
   return (
-    <Skeleton
-      className={cn("h-10 w-full rounded-md", className)}
-      {...props}
-    />
-  )
+    <Skeleton className={cn("h-10 w-full rounded-md", className)} {...props} />
+  );
 }
 
 /**
@@ -151,12 +140,15 @@ function SkeletonTable({
       {Array.from({ length: rows }).map((_, rowIndex) => (
         <div key={`row-${rowIndex}`} className="flex gap-4">
           {Array.from({ length: columns }).map((_, colIndex) => (
-            <Skeleton key={`cell-${rowIndex}-${colIndex}`} className="h-12 flex-1" />
+            <Skeleton
+              key={`cell-${rowIndex}-${colIndex}`}
+              className="h-12 flex-1"
+            />
           ))}
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 /**
@@ -173,14 +165,14 @@ function SkeletonGrid({
     2: "grid-cols-1 sm:grid-cols-2",
     3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
     4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-  }
+  };
 
   return (
     <div
       className={cn(
         "grid gap-4",
         gridClasses[columns as keyof typeof gridClasses] || "grid-cols-3",
-        className
+        className,
       )}
       {...props}
     >
@@ -188,7 +180,7 @@ function SkeletonGrid({
         <SkeletonCard key={i} />
       ))}
     </div>
-  )
+  );
 }
 
 export {
@@ -200,4 +192,4 @@ export {
   SkeletonInput,
   SkeletonTable,
   SkeletonGrid,
-}
+};

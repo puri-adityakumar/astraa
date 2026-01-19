@@ -3,31 +3,31 @@
  * List with staggered entrance animations
  */
 
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ReactNode } from "react"
-import { useReducedMotion } from "@/lib/animations/hooks"
-import { staggerItem } from "@/lib/animations/variants"
+import { ReactNode } from "react";
+import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/animations/hooks";
+import { staggerItem } from "@/lib/animations/variants";
 
 interface AnimatedListProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
   /**
    * Stagger delay between items (in seconds)
    * @default 0.08
    */
-  staggerDelay?: number
+  staggerDelay?: number;
   /**
    * Initial delay before animation starts (in seconds)
    * @default 0.1
    */
-  delayChildren?: number
+  delayChildren?: number;
   /**
    * Whether to animate only once when in view
    * @default true
    */
-  once?: boolean
+  once?: boolean;
 }
 
 export function AnimatedList({
@@ -37,10 +37,10 @@ export function AnimatedList({
   delayChildren = 0.1,
   once = true,
 }: AnimatedListProps) {
-  const shouldReduce = useReducedMotion()
+  const shouldReduce = useReducedMotion();
 
   if (shouldReduce) {
-    return <div className={className}>{children}</div>
+    return <div className={className}>{children}</div>;
   }
 
   const containerVariants = {
@@ -50,9 +50,9 @@ export function AnimatedList({
       transition: {
         staggerChildren: staggerDelay,
         delayChildren,
-      }
+      },
     },
-  }
+  };
 
   return (
     <motion.div
@@ -64,16 +64,16 @@ export function AnimatedList({
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 interface AnimatedListItemProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
   /**
    * Custom animation variant
    */
-  variant?: "default" | "scale" | "slide"
+  variant?: "default" | "scale" | "slide";
 }
 
 export function AnimatedListItem({
@@ -81,10 +81,10 @@ export function AnimatedListItem({
   className,
   variant = "default",
 }: AnimatedListItemProps) {
-  const shouldReduce = useReducedMotion()
+  const shouldReduce = useReducedMotion();
 
   if (shouldReduce) {
-    return <div className={className}>{children}</div>
+    return <div className={className}>{children}</div>;
   }
 
   const variants = {
@@ -98,7 +98,7 @@ export function AnimatedListItem({
           type: "spring",
           stiffness: 300,
           damping: 20,
-        }
+        },
       },
     },
     slide: {
@@ -110,17 +110,14 @@ export function AnimatedListItem({
           type: "spring",
           stiffness: 300,
           damping: 20,
-        }
+        },
       },
     },
-  }
+  };
 
   return (
-    <motion.div
-      className={className}
-      variants={variants[variant]}
-    >
+    <motion.div className={className} variants={variants[variant]}>
       {children}
     </motion.div>
-  )
+  );
 }

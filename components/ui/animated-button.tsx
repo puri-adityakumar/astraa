@@ -3,58 +3,57 @@
  * Button with built-in hover and tap animations
  */
 
-"use client"
+"use client";
 
-import { motion, HTMLMotionProps } from "framer-motion"
-import { cn } from "@/lib/utils"
-import { useReducedMotion } from "@/lib/animations/hooks"
-import { Button, ButtonProps } from "./button"
-import { forwardRef } from "react"
+import { forwardRef } from "react";
+import { motion, HTMLMotionProps } from "framer-motion";
+import { useReducedMotion } from "@/lib/animations/hooks";
+import { cn } from "@/lib/utils";
+import { Button, ButtonProps } from "./button";
 
-interface AnimatedButtonProps extends Omit<HTMLMotionProps<"button">, keyof ButtonProps>, ButtonProps {
+interface AnimatedButtonProps
+  extends Omit<HTMLMotionProps<"button">, keyof ButtonProps>, ButtonProps {
   /**
    * Animation effect type
    * @default "scale"
    */
-  effect?: "scale" | "lift" | "pulse" | "shine" | "none"
+  effect?: "scale" | "lift" | "pulse" | "shine" | "none";
 }
 
 const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(
-  (
-    {
-      className,
-      effect = "scale",
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const shouldReduce = useReducedMotion()
+  ({ className, effect = "scale", children, ...props }, ref) => {
+    const shouldReduce = useReducedMotion();
 
     const hoverVariants = {
-      scale: shouldReduce ? {} : {
-        scale: 1.05,
-        transition: { duration: 0.2, ease: "easeOut" }
-      },
-      lift: shouldReduce ? {} : {
-        y: -2,
-        transition: { duration: 0.2, ease: "easeOut" }
-      },
-      pulse: shouldReduce ? {} : {
-        scale: [1, 1.05, 1],
-        transition: { duration: 0.6, repeat: Infinity }
-      },
+      scale: shouldReduce
+        ? {}
+        : {
+            scale: 1.05,
+            transition: { duration: 0.2, ease: "easeOut" },
+          },
+      lift: shouldReduce
+        ? {}
+        : {
+            y: -2,
+            transition: { duration: 0.2, ease: "easeOut" },
+          },
+      pulse: shouldReduce
+        ? {}
+        : {
+            scale: [1, 1.05, 1],
+            transition: { duration: 0.6, repeat: Infinity },
+          },
       shine: shouldReduce ? {} : {},
-      none: {}
-    }
+      none: {},
+    };
 
     const tapVariants = {
       scale: shouldReduce ? {} : { scale: 0.95 },
       lift: shouldReduce ? {} : { y: 0 },
       pulse: shouldReduce ? {} : { scale: 0.95 },
       shine: shouldReduce ? {} : { scale: 0.95 },
-      none: {}
-    }
+      none: {},
+    };
 
     return (
       <motion.div
@@ -66,7 +65,7 @@ const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(
           ref={ref}
           className={cn(
             "relative overflow-hidden",
-            effect === "shine" && "group"
+            effect === "shine" && "group",
           )}
           {...props}
         >
@@ -76,17 +75,17 @@ const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(
               initial={{ x: "-100%" }}
               whileHover={{
                 x: "100%",
-                transition: { duration: 0.6, ease: "easeInOut" }
+                transition: { duration: 0.6, ease: "easeInOut" },
               }}
             />
           )}
           <span className="relative z-10">{children}</span>
         </Button>
       </motion.div>
-    )
-  }
-)
+    );
+  },
+);
 
-AnimatedButton.displayName = "AnimatedButton"
+AnimatedButton.displayName = "AnimatedButton";
 
-export { AnimatedButton }
+export { AnimatedButton };

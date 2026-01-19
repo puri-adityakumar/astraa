@@ -2,9 +2,8 @@
  * Animation Hooks
  * Custom hooks for animation-related functionality
  */
-
-import { useReducedMotion as useFramerReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { useReducedMotion as useFramerReducedMotion } from "framer-motion";
 
 /**
  * Hook to check if user prefers reduced motion
@@ -19,10 +18,10 @@ export function useReducedMotion(): boolean {
  * Returns empty object if reduced motion is preferred
  */
 export function useAnimationVariants<T extends Record<string, any>>(
-  variants: T
+  variants: T,
 ): T | Record<string, never> {
   const shouldReduce = useReducedMotion();
-  return shouldReduce ? {} as Record<string, never> : variants;
+  return shouldReduce ? ({} as Record<string, never>) : variants;
 }
 
 /**
@@ -30,7 +29,7 @@ export function useAnimationVariants<T extends Record<string, any>>(
  * Returns the animation props if animations are enabled, otherwise returns empty object
  */
 export function useConditionalAnimation(
-  animationProps: Record<string, any>
+  animationProps: Record<string, any>,
 ): Record<string, any> {
   const shouldReduce = useReducedMotion();
   return shouldReduce ? {} : animationProps;
@@ -56,7 +55,7 @@ export function useInView(options?: IntersectionObserverInit) {
       {
         threshold: 0.1,
         ...options,
-      }
+      },
     );
 
     observer.observe(node);
@@ -72,7 +71,10 @@ export function useInView(options?: IntersectionObserverInit) {
 /**
  * Hook to get stagger delay for list items
  */
-export function useStaggerDelay(index: number, baseDelay: number = 0.05): number {
+export function useStaggerDelay(
+  index: number,
+  baseDelay: number = 0.05,
+): number {
   const shouldReduce = useReducedMotion();
   return shouldReduce ? 0 : index * baseDelay;
 }

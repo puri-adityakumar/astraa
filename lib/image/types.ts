@@ -1,4 +1,4 @@
-export type ImageFormat = 'image/jpeg' | 'image/png' | 'image/webp';
+export type ImageFormat = "image/jpeg" | "image/png" | "image/webp";
 
 export interface ImageDimensions {
   width: number;

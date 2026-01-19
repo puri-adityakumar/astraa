@@ -1,26 +1,25 @@
-import { ArrowUpRight } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { ArrowUpRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export type ChangelogEntry = {
-  version: string
-  date: string
-  title: string
-  description: string
-  items?: string[]
-  image?: string
+  version: string;
+  date: string;
+  title: string;
+  description: string;
+  items?: string[];
+  image?: string;
   button?: {
-    url: string
-    text: string
-  }
-}
+    url: string;
+    text: string;
+  };
+};
 
 export interface ChangelogProps {
-  title?: string
-  description?: string
-  entries?: ChangelogEntry[]
-  className?: string
+  title?: string;
+  description?: string;
+  entries?: ChangelogEntry[];
+  className?: string;
 }
 
 export const defaultEntries: ChangelogEntry[] = [
@@ -38,7 +37,7 @@ export const defaultEntries: ChangelogEntry[] = [
       "Initial launch with core feature set",
     ],
   },
-]
+];
 
 export const Changelog = ({
   title = "Changelog",
@@ -71,14 +70,14 @@ export const Changelog = ({
                 </span>
               </div>
               <div className="flex flex-col">
-                <h2 className="mb-3 text-lg leading-tight font-bold text-foreground/90 md:text-2xl">
+                <h2 className="mb-3 text-lg font-bold leading-tight text-foreground/90 md:text-2xl">
                   {entry.title}
                 </h2>
                 <p className="text-sm text-muted-foreground md:text-base">
                   {entry.description}
                 </p>
                 {entry.items && entry.items.length > 0 && (
-                  <ul className="mt-4 ml-4 space-y-1.5 text-sm text-muted-foreground md:text-base">
+                  <ul className="ml-4 mt-4 space-y-1.5 text-sm text-muted-foreground md:text-base">
                     {entry.items.map((item, itemIndex) => (
                       <li key={itemIndex} className="list-disc">
                         {item}
@@ -106,5 +105,5 @@ export const Changelog = ({
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
