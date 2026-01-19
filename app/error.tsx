@@ -1,69 +1,79 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { AlertTriangle, RefreshCw, Home, ArrowLeft, Copy, Check } from "lucide-react"
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  AlertTriangle,
+  RefreshCw,
+  Home,
+  ArrowLeft,
+  Copy,
+  Check,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
-  const [copied, setCopied] = useState(false)
-  const [showDetails, setShowDetails] = useState(false)
+  const [copied, setCopied] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     // Log error for debugging
-    console.error('Application error:', error)
-  }, [error])
+    console.error("Application error:", error);
+  }, [error]);
 
   const copyErrorDetails = async () => {
-    const errorDetails = `Error: ${error.message}\nDigest: ${error.digest || 'N/A'}\nTimestamp: ${new Date().toISOString()}`
+    const errorDetails = `Error: ${error.message}\nDigest: ${error.digest || "N/A"}\nTimestamp: ${new Date().toISOString()}`;
     try {
-      await navigator.clipboard.writeText(errorDetails)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(errorDetails);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy error details:', err)
+      console.error("Failed to copy error details:", err);
     }
-  }
+  };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-4">
+    <div className="flex min-h-[70vh] items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-2xl"
       >
-        <Card className="glass p-6 md:p-10 text-center space-y-8">
+        <Card className="glass space-y-8 p-6 text-center md:p-10">
           {/* Animated Icon */}
-          <motion.div 
-            animate={{ 
+          <motion.div
+            animate={{
               scale: [1, 1.1, 1],
             }}
-            transition={{ 
+            transition={{
               duration: 1.5,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             className="relative"
           >
-            <div className="absolute inset-0 bg-destructive/20 rounded-full blur-xl" />
-            <div className="relative mx-auto bg-destructive/10 w-20 h-20 rounded-full flex items-center justify-center">
-              <AlertTriangle className="h-10 w-10 text-destructive" aria-hidden="true" />
+            <div className="absolute inset-0 rounded-full bg-destructive/20 blur-xl" />
+            <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10">
+              <AlertTriangle
+                className="h-10 w-10 text-destructive"
+                aria-hidden="true"
+              />
             </div>
           </motion.div>
-          
+
           {/* Error Message */}
           <div className="space-y-4">
-            <motion.h1 
-              className="text-3xl md:text-4xl font-bold text-destructive"
+            <motion.h1
+              className="text-3xl font-bold text-destructive md:text-4xl"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -71,8 +81,10 @@ export default function Error({
               Oops!
             </motion.h1>
             <div className="space-y-2">
-              <h2 className="text-2xl md:text-3xl font-semibold">Something went wrong</h2>
-              <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
+              <h2 className="text-2xl font-semibold md:text-3xl">
+                Something went wrong
+              </h2>
+              <p className="mx-auto max-w-md text-sm text-muted-foreground md:text-base">
                 Don't worry, it's not your fault. An unexpected error occurred.
                 Try refreshing the page or go back to continue.
               </p>
@@ -80,20 +92,20 @@ export default function Error({
           </div>
 
           {/* Primary Actions */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button 
-              size="lg" 
+          <div className="flex flex-col justify-center gap-3 sm:flex-row">
+            <Button
+              size="lg"
               onClick={reset}
-              className="min-w-[140px] flex items-center gap-2"
+              className="flex min-w-[140px] items-center gap-2"
             >
               <RefreshCw className="h-4 w-4" aria-hidden="true" />
               Try Again
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="lg"
               onClick={() => window.history.back()}
-              className="min-w-[140px] flex items-center gap-2"
+              className="flex min-w-[140px] items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Go Back
@@ -101,8 +113,8 @@ export default function Error({
           </div>
 
           {/* Secondary Actions */}
-          <div className="pt-4 border-t border-border space-y-4">
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="space-y-4 border-t border-border pt-4">
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
               <Button
                 asChild
                 variant="ghost"
@@ -120,7 +132,7 @@ export default function Error({
                 onClick={() => setShowDetails(!showDetails)}
                 className="flex items-center gap-2"
               >
-                {showDetails ? 'Hide' : 'Show'} Error Details
+                {showDetails ? "Hide" : "Show"} Error Details
               </Button>
             </div>
 
@@ -128,18 +140,20 @@ export default function Error({
             {showDetails && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
+                animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 className="text-left"
               >
-                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="space-y-2 rounded-lg bg-muted/50 p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Error Details</p>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">
+                      Error Details
+                    </p>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={copyErrorDetails}
-                      className="h-8 px-2 flex items-center gap-1"
+                      className="flex h-8 items-center gap-1 px-2"
                     >
                       {copied ? (
                         <>
@@ -154,13 +168,15 @@ export default function Error({
                       )}
                     </Button>
                   </div>
-                  <div className="text-sm space-y-1">
-                    <p className="font-mono text-xs break-all">
-                      <span className="font-semibold">Message:</span> {error.message}
+                  <div className="space-y-1 text-sm">
+                    <p className="break-all font-mono text-xs">
+                      <span className="font-semibold">Message:</span>{" "}
+                      {error.message}
                     </p>
                     {error.digest && (
-                      <p className="font-mono text-xs break-all">
-                        <span className="font-semibold">Digest:</span> {error.digest}
+                      <p className="break-all font-mono text-xs">
+                        <span className="font-semibold">Digest:</span>{" "}
+                        {error.digest}
                       </p>
                     )}
                   </div>
@@ -171,5 +187,5 @@ export default function Error({
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }

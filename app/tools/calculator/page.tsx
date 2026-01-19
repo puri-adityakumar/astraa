@@ -1,198 +1,336 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
-import { CalculatorDisplay } from "@/components/calculator/calculator-display"
-import { CalculatorButton } from "@/components/calculator/calculator-button"
-import { evaluateExpression, scientificFunctions } from "@/lib/calculator/calculator-utils"
+import { useState } from "react";
+import { CalculatorButton } from "@/components/calculator/calculator-button";
+import { CalculatorDisplay } from "@/components/calculator/calculator-display";
+import { Card } from "@/components/ui/card";
+import {
+  evaluateExpression,
+  scientificFunctions,
+} from "@/lib/calculator/calculator-utils";
+import { cn } from "@/lib/utils";
 
 export default function Calculator() {
-  const [display, setDisplay] = useState("")
-  const [expression, setExpression] = useState("")
-  const [isNewNumber, setIsNewNumber] = useState(true)
-  const [angleMode, setAngleMode] = useState<'RAD' | 'DEG'>('RAD')
+  const [display, setDisplay] = useState("");
+  const [expression, setExpression] = useState("");
+  const [isNewNumber, setIsNewNumber] = useState(true);
+  const [angleMode, setAngleMode] = useState<"RAD" | "DEG">("RAD");
 
   const appendNumber = (num: string) => {
     if (isNewNumber) {
-      setDisplay(num)
-      setIsNewNumber(false)
+      setDisplay(num);
+      setIsNewNumber(false);
     } else {
-      setDisplay(display + num)
+      setDisplay(display + num);
     }
-  }
+  };
 
   const appendOperator = (op: string) => {
-    setExpression(expression + display + op)
-    setIsNewNumber(true)
-  }
+    setExpression(expression + display + op);
+    setIsNewNumber(true);
+  };
 
   const calculate = () => {
     try {
-      const fullExpression = expression + display
-      const result = evaluateExpression(fullExpression)
-      setDisplay(result.toString())
-      setExpression("")
-      setIsNewNumber(true)
+      const fullExpression = expression + display;
+      const result = evaluateExpression(fullExpression);
+      setDisplay(result.toString());
+      setExpression("");
+      setIsNewNumber(true);
     } catch (error) {
-      setDisplay("Error")
-      setExpression("")
-      setIsNewNumber(true)
+      setDisplay("Error");
+      setExpression("");
+      setIsNewNumber(true);
     }
-  }
+  };
 
   const clear = () => {
-    setDisplay("")
-    setExpression("")
-    setIsNewNumber(true)
-  }
+    setDisplay("");
+    setExpression("");
+    setIsNewNumber(true);
+  };
 
   const applyFunction = (fn: keyof typeof scientificFunctions) => {
     try {
-      const num = parseFloat(display)
-      let result: number
+      const num = parseFloat(display);
+      let result: number;
 
-      if (fn === 'sin' || fn === 'cos' || fn === 'tan') {
-        const input = angleMode === 'DEG' ? num * (Math.PI / 180) : num
-        result = scientificFunctions[fn](input)
+      if (fn === "sin" || fn === "cos" || fn === "tan") {
+        const input = angleMode === "DEG" ? num * (Math.PI / 180) : num;
+        result = scientificFunctions[fn](input);
 
         // Fix precision errors
-        if (Math.abs(result) < 1e-10) result = 0
-        if (Math.abs(result - 1) < 1e-10) result = 1
-        if (Math.abs(result + 1) < 1e-10) result = -1
+        if (Math.abs(result) < 1e-10) result = 0;
+        if (Math.abs(result - 1) < 1e-10) result = 1;
+        if (Math.abs(result + 1) < 1e-10) result = -1;
       } else {
-        result = scientificFunctions[fn](num)
+        result = scientificFunctions[fn](num);
       }
 
-      setDisplay(result.toString())
-      setIsNewNumber(true)
+      setDisplay(result.toString());
+      setIsNewNumber(true);
     } catch (error) {
-      setDisplay("Error")
-      setIsNewNumber(true)
+      setDisplay("Error");
+      setIsNewNumber(true);
     }
-  }
+  };
 
   return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
+    <div className="container max-w-5xl space-y-8 pb-12 pt-24">
       <div className="space-y-4 text-center sm:text-left">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Scientific Calculator
         </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl">
-          Perform complex math calculations with our Google-style scientific calculator.
+        <p className="max-w-2xl text-lg text-muted-foreground">
+          Perform complex math calculations with our Google-style scientific
+          calculator.
         </p>
       </div>
 
-      <Card className="max-w-3xl border-border/50 shadow-sm overflow-hidden bg-background">
-        <CalculatorDisplay
-          value={display}
-          expression={expression}
-        />
+      <Card className="max-w-3xl overflow-hidden border-border/50 bg-background shadow-sm">
+        <CalculatorDisplay value={display} expression={expression} />
 
         {/* Toolbar */}
-        <div className="bg-muted/30 p-2 flex items-center gap-2 border-b border-border/50 min-h-[50px]">
-          <div className="flex bg-muted/50 rounded-md p-1">
+        <div className="flex min-h-[50px] items-center gap-2 border-b border-border/50 bg-muted/30 p-2">
+          <div className="flex rounded-md bg-muted/50 p-1">
             <button
-              onClick={() => setAngleMode('RAD')}
+              onClick={() => setAngleMode("RAD")}
               className={cn(
-                "px-3 py-1 text-xs font-medium rounded-sm transition-all",
-                angleMode === 'RAD'
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                "rounded-sm px-3 py-1 text-xs font-medium transition-all",
+                angleMode === "RAD"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               RAD
             </button>
             <button
-              onClick={() => setAngleMode('DEG')}
+              onClick={() => setAngleMode("DEG")}
               className={cn(
-                "px-3 py-1 text-xs font-medium rounded-sm transition-all",
-                angleMode === 'DEG'
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                "rounded-sm px-3 py-1 text-xs font-medium transition-all",
+                angleMode === "DEG"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               DEG
             </button>
           </div>
-          <div className="h-4 w-[1px] bg-border mx-1" />
+          <div className="mx-1 h-4 w-[1px] bg-border" />
 
-          <span className="text-xl font-semibold text-muted-foreground ml-auto">
+          <span className="ml-auto text-xl font-semibold text-muted-foreground">
             Ans = {display}
           </span>
         </div>
 
-        <div className="grid md:grid-cols-[1.2fr_1fr] bg-muted/10">
+        <div className="grid bg-muted/10 md:grid-cols-[1.2fr_1fr]">
           {/* Scientific Keypad (Left) */}
-          <div className="p-2 grid grid-cols-3 gap-1 content-start border-r border-border/50">
+          <div className="grid grid-cols-3 content-start gap-1 border-r border-border/50 p-2">
             {/* Row 1 */}
             <CalculatorButton
               value="rad"
-              onClick={() => setAngleMode('RAD')}
+              onClick={() => setAngleMode("RAD")}
               variant="secondary"
-              className={cn("text-sm", angleMode === 'RAD' && "bg-muted text-foreground font-semibold")}
+              className={cn(
+                "text-sm",
+                angleMode === "RAD" && "bg-muted font-semibold text-foreground",
+              )}
             />
             <CalculatorButton
               value="deg"
-              onClick={() => setAngleMode('DEG')}
+              onClick={() => setAngleMode("DEG")}
               variant="secondary"
-              className={cn("text-sm", angleMode === 'DEG' && "bg-muted text-foreground font-semibold")}
+              className={cn(
+                "text-sm",
+                angleMode === "DEG" && "bg-muted font-semibold text-foreground",
+              )}
             />
-            <CalculatorButton value="x!" onClick={() => applyFunction("fact")} variant="secondary" className="text-sm" />
+            <CalculatorButton
+              value="x!"
+              onClick={() => applyFunction("fact")}
+              variant="secondary"
+              className="text-sm"
+            />
 
             {/* Row 2 */}
-            <CalculatorButton value="(" onClick={() => appendOperator("(")} variant="secondary" />
-            <CalculatorButton value=")" onClick={() => appendOperator(")")} variant="secondary" />
-            <CalculatorButton value="%" onClick={() => appendOperator("%")} variant="secondary" />
+            <CalculatorButton
+              value="("
+              onClick={() => appendOperator("(")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value=")"
+              onClick={() => appendOperator(")")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value="%"
+              onClick={() => appendOperator("%")}
+              variant="secondary"
+            />
 
             {/* Row 3 */}
-            <CalculatorButton value="sin" onClick={() => applyFunction("sin")} variant="secondary" />
-            <CalculatorButton value="cos" onClick={() => applyFunction("cos")} variant="secondary" />
-            <CalculatorButton value="tan" onClick={() => applyFunction("tan")} variant="secondary" />
+            <CalculatorButton
+              value="sin"
+              onClick={() => applyFunction("sin")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value="cos"
+              onClick={() => applyFunction("cos")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value="tan"
+              onClick={() => applyFunction("tan")}
+              variant="secondary"
+            />
 
             {/* Row 4 */}
-            <CalculatorButton value="ln" onClick={() => applyFunction("ln")} variant="secondary" />
-            <CalculatorButton value="log" onClick={() => applyFunction("log")} variant="secondary" />
-            <CalculatorButton value="√" onClick={() => applyFunction("sqrt")} variant="secondary" />
+            <CalculatorButton
+              value="ln"
+              onClick={() => applyFunction("ln")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value="log"
+              onClick={() => applyFunction("log")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value="√"
+              onClick={() => applyFunction("sqrt")}
+              variant="secondary"
+            />
 
             {/* Row 5 */}
-            <CalculatorButton value="π" onClick={() => appendNumber("3.14159")} variant="secondary" />
-            <CalculatorButton value="e" onClick={() => appendNumber("2.71828")} variant="secondary" />
-            <CalculatorButton value="^" onClick={() => appendOperator("^")} variant="secondary" />
+            <CalculatorButton
+              value="π"
+              onClick={() => appendNumber("3.14159")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value="e"
+              onClick={() => appendNumber("2.71828")}
+              variant="secondary"
+            />
+            <CalculatorButton
+              value="^"
+              onClick={() => appendOperator("^")}
+              variant="secondary"
+            />
           </div>
 
           {/* Numeric Keypad (Right) */}
-          <div className="p-2 grid grid-cols-4 gap-1">
-            <CalculatorButton value="C" onClick={clear} variant="secondary" className="text-destructive font-bold" />
-            <CalculatorButton value="÷" onClick={() => appendOperator("/")} variant="secondary" className="text-primary font-bold bg-muted/50" />
-            <CalculatorButton value="×" onClick={() => appendOperator("*")} variant="secondary" className="text-primary font-bold bg-muted/50" />
-            <CalculatorButton value="⌫" onClick={() => {
-              setDisplay(prev => prev.slice(0, -1) || "0")
-            }} variant="secondary" className="text-primary font-bold bg-muted/50" />
+          <div className="grid grid-cols-4 gap-1 p-2">
+            <CalculatorButton
+              value="C"
+              onClick={clear}
+              variant="secondary"
+              className="font-bold text-destructive"
+            />
+            <CalculatorButton
+              value="÷"
+              onClick={() => appendOperator("/")}
+              variant="secondary"
+              className="bg-muted/50 font-bold text-primary"
+            />
+            <CalculatorButton
+              value="×"
+              onClick={() => appendOperator("*")}
+              variant="secondary"
+              className="bg-muted/50 font-bold text-primary"
+            />
+            <CalculatorButton
+              value="⌫"
+              onClick={() => {
+                setDisplay((prev) => prev.slice(0, -1) || "0");
+              }}
+              variant="secondary"
+              className="bg-muted/50 font-bold text-primary"
+            />
 
+            <CalculatorButton
+              value="7"
+              onClick={() => appendNumber("7")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="8"
+              onClick={() => appendNumber("8")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="9"
+              onClick={() => appendNumber("9")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="-"
+              onClick={() => appendOperator("-")}
+              variant="secondary"
+              className="bg-muted/50 font-bold text-primary"
+            />
 
-            <CalculatorButton value="7" onClick={() => appendNumber("7")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="8" onClick={() => appendNumber("8")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="9" onClick={() => appendNumber("9")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="-" onClick={() => appendOperator("-")} variant="secondary" className="text-primary font-bold bg-muted/50" />
+            <CalculatorButton
+              value="4"
+              onClick={() => appendNumber("4")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="5"
+              onClick={() => appendNumber("5")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="6"
+              onClick={() => appendNumber("6")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="+"
+              onClick={() => appendOperator("+")}
+              variant="secondary"
+              className="bg-muted/50 font-bold text-primary"
+            />
 
-            <CalculatorButton value="4" onClick={() => appendNumber("4")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="5" onClick={() => appendNumber("5")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="6" onClick={() => appendNumber("6")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="+" onClick={() => appendOperator("+")} variant="secondary" className="text-primary font-bold bg-muted/50" />
-
-            <CalculatorButton value="1" onClick={() => appendNumber("1")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="2" onClick={() => appendNumber("2")} className="bg-background hover:bg-muted/50" />
-            <CalculatorButton value="3" onClick={() => appendNumber("3")} className="bg-background hover:bg-muted/50" />
+            <CalculatorButton
+              value="1"
+              onClick={() => appendNumber("1")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="2"
+              onClick={() => appendNumber("2")}
+              className="bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="3"
+              onClick={() => appendNumber("3")}
+              className="bg-background hover:bg-muted/50"
+            />
 
             {/* Equals button spans 2 rows vertically in some designs, but here we just fill grid */}
-            <CalculatorButton value="=" onClick={calculate} variant="default" className="row-span-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl" />
+            <CalculatorButton
+              value="="
+              onClick={calculate}
+              variant="default"
+              className="row-span-2 bg-primary text-xl font-bold text-primary-foreground hover:bg-primary/90"
+            />
 
-            <CalculatorButton value="0" onClick={() => appendNumber("0")} className="col-span-2 bg-background hover:bg-muted/50" />
-            <CalculatorButton value="." onClick={() => appendNumber(".")} className="bg-background hover:bg-muted/50" />
+            <CalculatorButton
+              value="0"
+              onClick={() => appendNumber("0")}
+              className="col-span-2 bg-background hover:bg-muted/50"
+            />
+            <CalculatorButton
+              value="."
+              onClick={() => appendNumber(".")}
+              className="bg-background hover:bg-muted/50"
+            />
           </div>
         </div>
       </Card>
     </div>
-  )
+  );
 }

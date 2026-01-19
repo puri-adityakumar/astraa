@@ -26,18 +26,18 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear an
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | A new feature |
-| `fix` | A bug fix |
-| `docs` | Documentation only changes |
-| `style` | Code style changes (formatting, semicolons, etc.) |
+| Type       | Description                                             |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | A new feature                                           |
+| `fix`      | A bug fix                                               |
+| `docs`     | Documentation only changes                              |
+| `style`    | Code style changes (formatting, semicolons, etc.)       |
 | `refactor` | Code change that neither fixes a bug nor adds a feature |
-| `perf` | Performance improvements |
-| `test` | Adding or updating tests |
-| `chore` | Maintenance tasks, dependency updates, etc. |
-| `ci` | CI/CD configuration changes |
-| `build` | Build system or external dependency changes |
+| `perf`     | Performance improvements                                |
+| `test`     | Adding or updating tests                                |
+| `chore`    | Maintenance tasks, dependency updates, etc.             |
+| `ci`       | CI/CD configuration changes                             |
+| `build`    | Build system or external dependency changes             |
 
 ### Examples
 
@@ -133,26 +133,32 @@ astraa/
 When merging the `development` branch to `main`, follow this convention:
 
 **PR Title Format:**
+
 ```
 release(v<VERSION>): merge development to main
 ```
 
 **Examples:**
+
 - `release(v0.1.0): merge development to main`
 - `release(v0.2.0): merge development to main`
 - `release(v1.0.0): merge development to main`
 
 **PR Description Template:**
+
 ```markdown
 ## Version: v<VERSION>
 
 ### Summary
+
 Merging development branch to main for release v<VERSION>
 
 ### Key Changes
+
 - List major changes (features, fixes, improvements)
 
 ### Checklist
+
 - [ ] All CI checks passing
 - [ ] Tested on mobile and desktop
 - [ ] Build successful
@@ -160,6 +166,7 @@ Merging development branch to main for release v<VERSION>
 ```
 
 **Versioning:**
+
 - Use [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`
 - `v0.x.x` = Pre-release (alpha/beta)
 - `v1.0.0` = First stable production release

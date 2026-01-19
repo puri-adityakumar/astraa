@@ -1,43 +1,45 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { useDinoGame } from "@/lib/games/dino/useDinoGame"
-import { Gamepad2, Globe } from "lucide-react"
-import { WorkInProgress } from "@/components/wip"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Gamepad2, Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { WorkInProgress } from "@/components/wip";
+import { useDinoGame } from "@/lib/games/dino/useDinoGame";
+
 export default function DinoGame() {
-  const [mode, setMode] = useState<'custom' | 'original'>('original')
-  const { gameState, startGame, jump, config } = useDinoGame()
-  const { score, highScore, isGameOver, dinoY, obstacles, groundX } = gameState
+  const [mode, setMode] = useState<"custom" | "original">("original");
+  const { gameState, startGame, jump, config } = useDinoGame();
+  const { score, highScore, isGameOver, dinoY, obstacles, groundX } = gameState;
 
   return (
     <WorkInProgress>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="mx-auto max-w-4xl space-y-8">
         <motion.div
-          className="text-center space-y-4"
+          className="space-y-4 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <h1 className="text-4xl font-bold">Chrome Dino</h1>
           <p className="text-muted-foreground">
-            The famous Chrome dinosaur game. Choose between the original or our custom version!
+            The famous Chrome dinosaur game. Choose between the original or our
+            custom version!
           </p>
 
           <div className="flex items-center justify-center gap-4">
             <Button
-              variant={mode === 'original' ? 'default' : 'outline'}
-              onClick={() => setMode('original')}
+              variant={mode === "original" ? "default" : "outline"}
+              onClick={() => setMode("original")}
               className="gap-2"
             >
               <Globe className="h-4 w-4" />
               Original
             </Button>
             <Button
-              variant={mode === 'custom' ? 'default' : 'outline'}
-              onClick={() => setMode('custom')}
+              variant={mode === "custom" ? "default" : "outline"}
+              onClick={() => setMode("custom")}
               className="gap-2"
             >
               <Gamepad2 className="h-4 w-4" />
@@ -46,21 +48,21 @@ export default function DinoGame() {
           </div>
         </motion.div>
 
-        {mode === 'original' ? (
-          <Card className="aspect-[2/1] relative overflow-hidden">
+        {mode === "original" ? (
+          <Card className="relative aspect-[2/1] overflow-hidden">
             <iframe
               src="https://chromedino.com/"
-              className="absolute inset-0 w-full h-full"
-              style={{ border: 'none' }}
+              className="absolute inset-0 h-full w-full"
+              style={{ border: "none" }}
             />
           </Card>
         ) : (
           <Card
-            className="p-6 relative h-[400px] overflow-hidden cursor-pointer"
-            onClick={() => isGameOver ? startGame() : jump()}
+            className="relative h-[400px] cursor-pointer overflow-hidden p-6"
+            onClick={() => (isGameOver ? startGame() : jump())}
           >
             {/* Score Display */}
-            <div className="absolute top-4 right-4 font-mono text-lg">
+            <div className="absolute right-4 top-4 font-mono text-lg">
               Score: {score}
               {highScore > 0 && (
                 <div className="text-sm text-muted-foreground">
@@ -71,13 +73,15 @@ export default function DinoGame() {
 
             {/* Game Over Screen */}
             {isGameOver && (
-              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
-                  <p className="text-muted-foreground mb-4">
+                  <h2 className="mb-4 text-2xl font-bold">Game Over!</h2>
+                  <p className="mb-4 text-muted-foreground">
                     Score: {score}
                     {score === highScore && score > 0 && (
-                      <span className="block text-primary">New High Score!</span>
+                      <span className="block text-primary">
+                        New High Score!
+                      </span>
                     )}
                   </p>
                   <p className="text-sm">Press Space or click to play again</p>
@@ -87,7 +91,7 @@ export default function DinoGame() {
 
             {/* Dino Character */}
             <motion.div
-              className="absolute left-12 bottom-0 w-10 h-[60px] bg-primary"
+              className="absolute bottom-0 left-12 h-[60px] w-10 bg-primary"
               animate={{ y: -dinoY }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
               style={{ bottom: config.groundHeight }}
@@ -102,7 +106,7 @@ export default function DinoGame() {
                   left: obstacle.x,
                   width: obstacle.width,
                   height: obstacle.height,
-                  bottom: config.groundHeight
+                  bottom: config.groundHeight,
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -113,22 +117,26 @@ export default function DinoGame() {
             <div
               className="absolute bottom-0 left-0 right-0 h-[20px] bg-muted"
               style={{
-                backgroundImage: 'linear-gradient(to right, #ccc 50%, transparent 50%)',
-                backgroundSize: '20px 100%',
-                backgroundPosition: `${groundX}px 0`
+                backgroundImage:
+                  "linear-gradient(to right, #ccc 50%, transparent 50%)",
+                backgroundSize: "20px 100%",
+                backgroundPosition: `${groundX}px 0`,
               }}
             />
           </Card>
         )}
 
         <div className="text-center text-sm text-muted-foreground">
-          {mode === 'custom' ? (
+          {mode === "custom" ? (
             <p>Tip: Use the spacebar to jump, or click/tap the game area</p>
           ) : (
-            <p>Tip: Press Space to start and jump. The game works just like in Chrome!</p>
+            <p>
+              Tip: Press Space to start and jump. The game works just like in
+              Chrome!
+            </p>
           )}
         </div>
       </div>
     </WorkInProgress>
-  )
+  );
 }

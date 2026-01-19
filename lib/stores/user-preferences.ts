@@ -1,86 +1,91 @@
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import type { UserPreferences, AccessibilitySettings, PrivacySettings } from './types'
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { createZustandStorage } from "./storage";
+import type {
+  UserPreferences,
+  AccessibilitySettings,
+  PrivacySettings,
+} from "./types";
 
 interface UserPreferencesState {
-  preferences: UserPreferences
-  updatePreferences: (updates: Partial<UserPreferences>) => void
-  updateAccessibilitySettings: (updates: Partial<AccessibilitySettings>) => void
-  updatePrivacySettings: (updates: Partial<PrivacySettings>) => void
-  resetToDefaults: () => void
+  preferences: UserPreferences;
+  updatePreferences: (updates: Partial<UserPreferences>) => void;
+  updateAccessibilitySettings: (
+    updates: Partial<AccessibilitySettings>,
+  ) => void;
+  updatePrivacySettings: (updates: Partial<PrivacySettings>) => void;
+  resetToDefaults: () => void;
 }
 
 const defaultPreferences: UserPreferences = {
-  theme: 'system',
-  language: 'en',
+  theme: "system",
+  language: "en",
   accessibility: {
     reducedMotion: false,
     highContrast: false,
-    fontSize: 'medium',
-    screenReader: false
+    fontSize: "medium",
+    screenReader: false,
   },
   privacy: {
     analytics: false,
     errorReporting: true,
     cloudSync: false,
-    dataSharing: false
+    dataSharing: false,
   },
   shortcuts: {
-    'global.search': 'cmd+k',
-    'global.theme': 'cmd+shift+t',
-    'tool.copy': 'cmd+c',
-    'tool.export': 'cmd+e',
-    'tool.clear': 'cmd+shift+c'
+    "global.search": "cmd+k",
+    "global.theme": "cmd+shift+t",
+    "tool.copy": "cmd+c",
+    "tool.export": "cmd+e",
+    "tool.clear": "cmd+shift+c",
   },
-  toolDefaults: {}
-}
-
-import { createZustandStorage } from './storage'
+  toolDefaults: {},
+};
 
 export const useUserPreferences = create<UserPreferencesState>()(
   persist(
     (set) => ({
       preferences: defaultPreferences,
-      
+
       updatePreferences: (updates) => {
         set((state) => ({
           preferences: {
             ...state.preferences,
-            ...updates
-          }
-        }))
+            ...updates,
+          },
+        }));
       },
-      
+
       updateAccessibilitySettings: (updates) => {
         set((state) => ({
           preferences: {
             ...state.preferences,
             accessibility: {
               ...state.preferences.accessibility,
-              ...updates
-            }
-          }
-        }))
+              ...updates,
+            },
+          },
+        }));
       },
-      
+
       updatePrivacySettings: (updates) => {
         set((state) => ({
           preferences: {
             ...state.preferences,
             privacy: {
               ...state.preferences.privacy,
-              ...updates
-            }
-          }
-        }))
+              ...updates,
+            },
+          },
+        }));
       },
-      
+
       resetToDefaults: () => {
-        set({ preferences: defaultPreferences })
-      }
+        set({ preferences: defaultPreferences });
+      },
     }),
     {
-      name: 'user-preferences',
+      name: "user-preferences",
       storage: createJSONStorage(() => createZustandStorage()),
       version: 1,
       migrate: (persistedState: any, version: number) => {
@@ -91,12 +96,12 @@ export const useUserPreferences = create<UserPreferencesState>()(
             ...persistedState,
             preferences: {
               ...defaultPreferences,
-              ...persistedState.preferences
-            }
-          }
+              ...persistedState.preferences,
+            },
+          };
         }
-        return persistedState
-      }
-    }
-  )
-)
+        return persistedState;
+      },
+    },
+  ),
+);

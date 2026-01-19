@@ -15,16 +15,12 @@ A comprehensive animation system built with Framer Motion that respects user pre
 ### Basic Usage
 
 ```tsx
-import { motion } from 'framer-motion';
-import { fadeInUp, staggerContainer } from '@/lib/animations/variants';
+import { motion } from "framer-motion";
+import { fadeInUp, staggerContainer } from "@/lib/animations/variants";
 
 function MyComponent() {
   return (
-    <motion.div
-      initial="hidden"
-      animate="show"
-      variants={fadeInUp}
-    >
+    <motion.div initial="hidden" animate="show" variants={fadeInUp}>
       <h1>Hello World</h1>
     </motion.div>
   );
@@ -34,13 +30,13 @@ function MyComponent() {
 ### With Reduced Motion Support
 
 ```tsx
-import { motion } from 'framer-motion';
-import { fadeInUp } from '@/lib/animations/variants';
-import { useReducedMotion } from '@/lib/animations/hooks';
+import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/animations/hooks";
+import { fadeInUp } from "@/lib/animations/variants";
 
 function MyComponent() {
   const shouldReduce = useReducedMotion();
-  
+
   return (
     <motion.div
       initial="hidden"
@@ -56,6 +52,7 @@ function MyComponent() {
 ## Available Variants
 
 ### Fade Animations
+
 - `fadeIn` - Simple fade in
 - `fadeInUp` - Fade in with upward motion
 - `fadeInDown` - Fade in with downward motion
@@ -63,20 +60,24 @@ function MyComponent() {
 - `fadeInRight` - Fade in from right
 
 ### Scale Animations
+
 - `scaleIn` - Scale in animation
 - `scaleInBounce` - Scale in with bounce effect
 
 ### Slide Animations
+
 - `slideInBottom` - Slide in from bottom
 - `slideInTop` - Slide in from top
 
 ### Stagger Animations
+
 - `staggerContainer` - Container for staggered children (normal speed)
 - `staggerContainerFast` - Fast stagger container
 - `staggerContainerSlow` - Slow stagger container
 - `staggerItem` - Item for staggered animations
 
 ### Special Effects
+
 - `rotateIn` - Rotate in animation
 - `flipIn` - Flip in animation
 - `expand` - Expand animation (for accordions, dropdowns)
@@ -86,6 +87,7 @@ function MyComponent() {
 ## Hooks
 
 ### useReducedMotion()
+
 Check if user prefers reduced motion:
 
 ```tsx
@@ -93,6 +95,7 @@ const shouldReduce = useReducedMotion();
 ```
 
 ### useAnimationVariants()
+
 Get animation-safe variants:
 
 ```tsx
@@ -101,16 +104,18 @@ const variants = useAnimationVariants(fadeInUp);
 ```
 
 ### useConditionalAnimation()
+
 Conditionally apply animations:
 
 ```tsx
 const animationProps = useConditionalAnimation({
   initial: { opacity: 0 },
-  animate: { opacity: 1 }
+  animate: { opacity: 1 },
 });
 ```
 
 ### useStaggerDelay()
+
 Get stagger delay for list items:
 
 ```tsx
@@ -132,21 +137,19 @@ import { Skeleton, SkeletonCard, SkeletonText } from '@/components/ui/skeleton';
 ### Animated Card
 
 ```tsx
-import { AnimatedCard } from '@/components/ui/animated-card';
+import { AnimatedCard } from "@/components/ui/animated-card";
 
 <AnimatedCard hoverEffect="lift" hoverGradient>
   <p>Content</p>
-</AnimatedCard>
+</AnimatedCard>;
 ```
 
 ### Animated Button
 
 ```tsx
-import { AnimatedButton } from '@/components/ui/animated-button';
+import { AnimatedButton } from "@/components/ui/animated-button";
 
-<AnimatedButton effect="scale">
-  Click me
-</AnimatedButton>
+<AnimatedButton effect="scale">Click me</AnimatedButton>;
 ```
 
 ### Loading Spinner
@@ -161,40 +164,38 @@ import { LoadingSpinner, LoadingOverlay } from '@/components/ui/loading-spinner'
 ### Scroll Reveal
 
 ```tsx
-import { ScrollReveal } from '@/components/ui/scroll-reveal';
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 <ScrollReveal direction="up" delay={0.2}>
   <p>This will animate when scrolled into view</p>
-</ScrollReveal>
+</ScrollReveal>;
 ```
 
 ### Animated List
 
 ```tsx
-import { AnimatedList, AnimatedListItem } from '@/components/ui/animated-list';
+import { AnimatedList, AnimatedListItem } from "@/components/ui/animated-list";
 
 <AnimatedList>
-  {items.map(item => (
-    <AnimatedListItem key={item.id}>
-      {item.content}
-    </AnimatedListItem>
+  {items.map((item) => (
+    <AnimatedListItem key={item.id}>{item.content}</AnimatedListItem>
   ))}
-</AnimatedList>
+</AnimatedList>;
 ```
 
 ### Hover Effects
 
 ```tsx
-import { 
-  HoverLift, 
-  HoverScale, 
+import {
+  HoverLift,
+  HoverScale,
   HoverGlow,
-  HoverShine 
-} from '@/components/ui/hover-effects';
+  HoverShine,
+} from "@/components/ui/hover-effects";
 
 <HoverLift>
   <Card>Content</Card>
-</HoverLift>
+</HoverLift>;
 ```
 
 ## Configuration
@@ -247,20 +248,20 @@ This ensures the application remains accessible to users with vestibular disorde
 ### Staggered List Animation
 
 ```tsx
-import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem } from '@/lib/animations/variants';
-import { useReducedMotion } from '@/lib/animations/hooks';
+import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/animations/hooks";
+import { staggerContainer, staggerItem } from "@/lib/animations/variants";
 
 function List({ items }) {
   const shouldReduce = useReducedMotion();
-  
+
   return (
     <motion.ul
       variants={shouldReduce ? {} : staggerContainer}
       initial="hidden"
       animate="show"
     >
-      {items.map(item => (
+      {items.map((item) => (
         <motion.li key={item.id} variants={shouldReduce ? {} : staggerItem}>
           {item.content}
         </motion.li>
@@ -273,22 +274,18 @@ function List({ items }) {
 ### Page Transition
 
 ```tsx
-import { PageTransition } from '@/components/ui/page-transition';
+import { PageTransition } from "@/components/ui/page-transition";
 
 function Layout({ children }) {
-  return (
-    <PageTransition type="fade">
-      {children}
-    </PageTransition>
-  );
+  return <PageTransition type="fade">{children}</PageTransition>;
 }
 ```
 
 ### Loading State
 
 ```tsx
-import { SkeletonCard } from '@/components/ui/skeleton';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { SkeletonCard } from "@/components/ui/skeleton";
 
 function MyComponent({ isLoading, data }) {
   if (isLoading) {
@@ -300,7 +297,7 @@ function MyComponent({ isLoading, data }) {
       </div>
     );
   }
-  
+
   return <div>{/* Render data */}</div>;
 }
 ```

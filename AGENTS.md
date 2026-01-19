@@ -3,6 +3,7 @@
 ## Commands
 
 ### Development
+
 ```bash
 npm run dev          # Start development server (http://localhost:3000)
 npm run build        # Production build
@@ -11,16 +12,19 @@ npm run lint         # Run ESLint
 ```
 
 ### Testing
+
 Currently no test suite is configured. Use manual testing during development.
 
 ## Code Style Guidelines
 
 ### TypeScript Configuration
+
 - Strict mode enabled with comprehensive type checking
 - Path aliases: `@/components/*`, `@/lib/*`, `@/hooks/*`, `@/app/*`, `@/types/*`, `@/config/*`
 - Always prefer `unknown` over `any` for type declarations
 
 ### File Organization
+
 - **Client Components**: Start with `"use client"` directive at top
 - **Server Actions**: Use `'use server'` directive
 - **Pages**: Server component in `app/` → renders client component from `components/`
@@ -29,24 +33,23 @@ Currently no test suite is configured. Use manual testing during development.
 - **Game Logic**: Custom hooks in `lib/games/[game-name]/` managing game state
 
 ### Import Order
+
 ```typescript
 // 1. External libraries (React, third-party)
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-
-// 2. Internal utilities (hooks, lib)
-import { useToast } from "@/components/ui/use-toast"
-import { cn } from "@/lib/utils"
-
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 // 3. Components (UI, feature components)
-import { Button } from "@/components/ui/button"
-import { HashInput } from "./hash-input"
-
+import { Button } from "@/components/ui/button";
+// 2. Internal utilities (hooks, lib)
+import { useToast } from "@/components/ui/use-toast";
 // 4. Types
-import type { Tool } from "@/lib/tools"
+import type { Tool } from "@/lib/tools";
+import { cn } from "@/lib/utils";
+import { HashInput } from "./hash-input";
 ```
 
 ### Naming Conventions
+
 - **Components**: PascalCase (`PasswordGenerator`, `HashOutput`)
 - **Functions/Variables**: camelCase (`generatePassword`, `handleGenerateHash`)
 - **Constants**: UPPER_SNAKE_CASE (`TOAST_LIMIT`, `ANIMATION_CONFIG`)
@@ -55,6 +58,7 @@ import type { Tool } from "@/lib/tools"
 - **Props**: Descriptive, avoid generic names (`handleGenerate` not `handleClick`)
 
 ### Component Structure
+
 ```typescript
 "use client"
 
@@ -78,11 +82,13 @@ export function ComponentName() {
 ```
 
 ### State Management
+
 - **Local State**: React hooks (`useState`, `useReducer`) for component-specific state
 - **Global State**: Zustand stores in `lib/stores/` (user preferences, tool settings, activity tracking)
 - **Context**: Tools context (`lib/tools-context.tsx`) for tool navigation and categories
 
 ### Styling
+
 - Use `cn()` utility for conditional className merging: `cn("base-class", isActive && "active-class")`
 - Tailwind CSS with fluid typography: `text-fluid-base`, `text-fluid-xl`
 - Responsive breakpoints: `xs:475px`, `sm:640px`, `md:768px`, `lg:1024px`, `xl:1280px`
@@ -90,20 +96,21 @@ export function ComponentName() {
 - Colors: HSL semantic variables (`background`, `foreground`, `primary`, `muted`, `border`, etc.)
 
 ### Error Handling
+
 ```typescript
 // User-facing errors
-import { getUserFriendlyError, logError } from "@/lib/error-handler"
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
 
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
-  const details = getUserFriendlyError(error)
+  const details = getUserFriendlyError(error);
   toast({
     title: details.title,
     description: details.message,
-    variant: "destructive"
-  })
-  logError(error, { context: "additional context" })
+    variant: "destructive",
+  });
+  logError(error, { context: "additional context" });
 }
 ```
 
@@ -112,6 +119,7 @@ try {
 - Never expose technical details to users
 
 ### Animations
+
 ```typescript
 import { motion } from "framer-motion"
 import { fadeInUp, staggerContainer } from "@/lib/animations/variants"
@@ -137,14 +145,15 @@ export function AnimatedComponent() {
 - For lists: `staggerContainer` parent with `staggerItem` children
 
 ### Sentry Integration
+
 ```typescript
-import * as Sentry from "@sentry/nextjs"
+import * as Sentry from "@sentry/nextjs";
 
 // Capture exceptions
 try {
   // code
 } catch (error) {
-  Sentry.captureException(error)
+  Sentry.captureException(error);
 }
 
 // Performance tracing
@@ -152,9 +161,9 @@ const result = await Sentry.startSpan(
   { op: "function.name", name: "Descriptive Name" },
   async () => {
     // traced operation
-    return data
-  }
-)
+    return data;
+  },
+);
 ```
 
 - Use meaningful operation names and attributes
@@ -163,6 +172,7 @@ const result = await Sentry.startSpan(
 - Edge initialization: `sentry.edge.config.ts`
 
 ### Utility Patterns
+
 - **Text Generation**: Use OpenRouter API via `lib/openrouter.ts`
 - **Currency/Crypto**: Use `lib/api.ts` for exchange rates and crypto prices
 - **Toast Notifications**: `useToast()` hook from `@/components/ui/use-toast`
@@ -170,6 +180,7 @@ const result = await Sentry.startSpan(
 - **Password Generation**: Import from `@/lib/password/password-utils`
 
 ### Accessibility
+
 - Minimum touch targets: `44px` (use `min-h-touch`, `min-w-touch`)
 - Use semantic HTML (`<button>`, `<input>`, `<label>`)
 - Respect reduced motion preference
@@ -177,6 +188,7 @@ const result = await Sentry.startSpan(
 - Keyboard navigation support for all interactive elements
 
 ### Tool/Game Page Pattern
+
 ```typescript
 // app/tools/my-tool/page.tsx
 import { Metadata } from "next"
@@ -197,11 +209,13 @@ export default function MyToolPage() {
 ```
 
 ### Component Exports
+
 - Index files export types and utilities: `export * from './types'`, `export * from './utils'`
 - Named exports for components: `export function ComponentName() {}`
 - Avoid default exports for better tree-shaking
 
 ### Comments
+
 - JSDoc for public functions: `/** Description */`
 - Inline comments only for complex logic or edge cases
 - Keep comments concise and actionable

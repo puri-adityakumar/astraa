@@ -1,0 +1,26 @@
+# Default: node_modules is already ignored, but adding it here is safe
+node_modules/
+
+# Ignore build and distribution folders
+dist/
+build/
+.next/
+out/
+.github
+.cursor
+.zed
+.husky
+.antigravity
+
+# Ignore environment and secret files
+.env*
+
+# Ignore lock files (usually not helpful to format)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lock
+
+# Ignore generated documentation or coverage reports
+coverage/
+docs/

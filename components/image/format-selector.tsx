@@ -1,21 +1,24 @@
-"use client"
+"use client";
 
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import type { ImageFormat } from "@/lib/image/types"
+} from "@/components/ui/select";
+import type { ImageFormat } from "@/lib/image/types";
 
 interface FormatSelectorProps {
   format: ImageFormat;
   onFormatChange: (format: ImageFormat) => void;
 }
 
-export function FormatSelector({ format, onFormatChange }: FormatSelectorProps) {
+export function FormatSelector({
+  format,
+  onFormatChange,
+}: FormatSelectorProps) {
   return (
     <div className="space-y-2">
       <Label>Format</Label>

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { HeroSection } from "@/components/home"
+import { HeroSection } from "@/components/home";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-8rem)]">
+    <div className="flex min-h-[calc(100vh-8rem)] flex-col">
       <HeroSection />
     </div>
-  )
+  );
 }

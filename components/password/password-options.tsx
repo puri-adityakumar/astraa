@@ -1,20 +1,19 @@
-"use client"
+"use client";
 
-import { Slider } from "@/components/ui/slider"
-
-import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
 
 interface PasswordOptionsProps {
-  length: number[]
+  length: number[];
   options: {
-    uppercase: boolean
-    lowercase: boolean
-    numbers: boolean
-    symbols: boolean
-  }
-  onLengthChange: (value: number[]) => void
-  onOptionsChange: (options: any) => void
+    uppercase: boolean;
+    lowercase: boolean;
+    numbers: boolean;
+    symbols: boolean;
+  };
+  onLengthChange: (value: number[]) => void;
+  onOptionsChange: (options: any) => void;
 }
 
 export function PasswordOptions({
@@ -28,10 +27,10 @@ export function PasswordOptions({
     { key: "lowercase", label: "abc", title: "Lowercase" },
     { key: "numbers", label: "123", title: "Numbers" },
     { key: "symbols", label: "#!@", title: "Symbols" },
-  ] as const
+  ] as const;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-6 rounded-xl bg-muted/30 border border-border/50">
+    <div className="flex flex-col gap-6 rounded-xl border border-border/50 bg-muted/30 p-6 lg:flex-row">
       {/* Length Slider Section - Takes more space */}
       <div className="flex-1 space-y-4">
         <div className="flex items-center justify-between">
@@ -48,7 +47,7 @@ export function PasswordOptions({
           step={1}
           className="py-4"
         />
-        <div className="flex justify-between text-xs text-muted-foreground px-1">
+        <div className="flex justify-between px-1 text-xs text-muted-foreground">
           <span>6</span>
           <span>12</span>
           <span>24</span>
@@ -58,33 +57,36 @@ export function PasswordOptions({
       </div>
 
       {/* Divider */}
-      <div className="hidden lg:block w-px bg-border my-2" />
-      <div className="block lg:hidden h-px bg-border" />
+      <div className="my-2 hidden w-px bg-border lg:block" />
+      <div className="block h-px bg-border lg:hidden" />
 
       {/* Options Toggles Section - Compact Grid */}
-      <div className="flex-shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-[320px]">
+      <div className="grid min-w-[320px] flex-shrink-0 grid-cols-2 gap-3 sm:grid-cols-4">
         {toggles.map(({ key, label, title }) => (
           <div
             key={key}
             onClick={() => {
               // Prevent disabling the last option
-              const enabledCount = Object.values(options).filter(Boolean).length
+              const enabledCount =
+                Object.values(options).filter(Boolean).length;
               if (!options[key] || enabledCount > 1) {
-                onOptionsChange({ ...options, [key]: !options[key] })
+                onOptionsChange({ ...options, [key]: !options[key] });
               }
             }}
             className={cn(
-              "flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-all duration-200 select-none",
+              "flex cursor-pointer select-none flex-col items-center justify-center rounded-lg border p-3 transition-all duration-200",
               options[key]
-                ? "bg-background border-primary/50 text-foreground shadow-sm ring-1 ring-primary/20"
-                : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted/80"
+                ? "border-primary/50 bg-background text-foreground shadow-sm ring-1 ring-primary/20"
+                : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted/80",
             )}
           >
-            <span className="text-lg font-bold mb-1">{label}</span>
-            <span className="text-[10px] uppercase tracking-wider opacity-70">{title}</span>
+            <span className="mb-1 text-lg font-bold">{label}</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-70">
+              {title}
+            </span>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }

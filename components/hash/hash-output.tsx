@@ -1,37 +1,37 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Copy } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import { copyToClipboard } from "@/lib/clipboard"
-import { hashAlgorithms } from "@/lib/hash"
+import { Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { copyToClipboard } from "@/lib/clipboard";
+import { hashAlgorithms } from "@/lib/hash";
 
 interface HashOutputProps {
-  type: string
-  hash: string
+  type: string;
+  hash: string;
 }
 
 export function HashOutput({ type, hash }: HashOutputProps) {
-  const { toast } = useToast()
-  const algorithm = hashAlgorithms.find(algo => algo.id === type)
+  const { toast } = useToast();
+  const algorithm = hashAlgorithms.find((algo) => algo.id === type);
 
   const handleCopyToClipboard = async () => {
-    const result = await copyToClipboard(hash)
+    const result = await copyToClipboard(hash);
     if (result.success) {
       toast({
         title: "Copied!",
-        description: `${algorithm?.name || type.toUpperCase()} hash copied to clipboard`
-      })
+        description: `${algorithm?.name || type.toUpperCase()} hash copied to clipboard`,
+      });
     } else {
       toast({
         title: "Copy failed",
         description: result.error,
-        variant: "destructive"
-      })
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   return (
     <div className="space-y-2">
@@ -54,5 +54,5 @@ export function HashOutput({ type, hash }: HashOutputProps) {
         </Button>
       </div>
     </div>
-  )
+  );
 }

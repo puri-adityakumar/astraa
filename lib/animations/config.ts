@@ -12,7 +12,7 @@ export const ANIMATION_CONFIG = {
     slow: 0.5,
     slower: 0.8,
   },
-  
+
   // Easing functions
   ease: {
     default: [0.4, 0, 0.2, 1], // ease-out
@@ -20,14 +20,14 @@ export const ANIMATION_CONFIG = {
     spring: { type: "spring" as const, stiffness: 300, damping: 20 },
     bounce: { type: "spring" as const, stiffness: 400, damping: 10 },
   },
-  
+
   // Stagger delays for list animations
   stagger: {
     fast: 0.05,
     normal: 0.08,
     slow: 0.1,
   },
-  
+
   // Viewport settings for scroll animations
   viewport: {
     once: true,
@@ -39,6 +39,6 @@ export const ANIMATION_CONFIG = {
  * Check if animations should be disabled based on user preferences
  */
 export function shouldReduceMotion(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -85,6 +87,14 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@types/three": "^0.182.0"
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@types/three": "^0.182.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.0",
+    "prettier-plugin-tailwindcss": "^0.7.2"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }

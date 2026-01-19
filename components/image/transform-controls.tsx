@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Switch } from "@/components/ui/switch"
-import { RotateCw, FlipHorizontal, FlipVertical } from "lucide-react"
+import { RotateCw, FlipHorizontal, FlipVertical } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 
 interface TransformControlsProps {
   rotation: number;
@@ -30,7 +30,9 @@ export function TransformControls({
         <div className="flex items-center gap-2">
           <Slider
             value={[rotation]}
-            onValueChange={([value]) => value !== undefined && onRotationChange(value)}
+            onValueChange={([value]) =>
+              value !== undefined && onRotationChange(value)
+            }
             min={0}
             max={360}
             step={90}
@@ -61,10 +63,7 @@ export function TransformControls({
           <FlipVertical className="h-4 w-4" />
           <Label>Flip Vertical</Label>
         </div>
-        <Switch
-          checked={flipVertical}
-          onCheckedChange={onFlipVerticalChange}
-        />
+        <Switch checked={flipVertical} onCheckedChange={onFlipVerticalChange} />
       </div>
     </div>
   );

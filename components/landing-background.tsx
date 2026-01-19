@@ -1,37 +1,37 @@
-"use client"
+"use client";
 
-import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
-import { usePathname } from "next/navigation"
-import dynamic from "next/dynamic"
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
+import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 
 const PixelBlast = dynamic(() => import("@/components/ui/pixel-blast"), {
   ssr: false,
-})
+});
 
 export function LandingBackground() {
-  const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const pathname = usePathname()
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    setMounted(true)
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+    setMounted(true);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Only show on landing page and disable on mobile
-  if (pathname !== "/") return null
-  if (!mounted) return null
-  if (isMobile) return null
+  if (pathname !== "/") return null;
+  if (!mounted) return null;
+  if (isMobile) return null;
 
-  const pixelColor = resolvedTheme === "dark" ? "#B19EEF" : "#22c55e"
+  const pixelColor = resolvedTheme === "dark" ? "#B19EEF" : "#22c55e";
 
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none">
+    <div className="pointer-events-none fixed inset-0 -z-10">
       <PixelBlast
         variant="circle"
         pixelSize={4}
@@ -49,5 +49,5 @@ export function LandingBackground() {
         transparent
       />
     </div>
-  )
+  );
 }

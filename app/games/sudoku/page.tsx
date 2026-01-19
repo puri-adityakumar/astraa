@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { WorkInProgress } from "@/components/wip"
+import { WorkInProgress } from "@/components/wip";
 
 export default function SudokuGame() {
-  return <WorkInProgress />
+  return <WorkInProgress />;
 }

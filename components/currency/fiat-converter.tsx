@@ -1,60 +1,60 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowDownUp } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import { CurrencySelect } from "./currency-select"
-import type { CurrencyCode } from "@/lib/currency-data"
-import { getExchangeRate } from "@/lib/api"
+import { useState, useEffect } from "react";
+import { ArrowDownUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { getExchangeRate } from "@/lib/api";
+import type { CurrencyCode } from "@/lib/currency-data";
+import { CurrencySelect } from "./currency-select";
 
 interface FiatConverterProps {
-  amount: string
-  onAmountChange: (value: string) => void
-  onResult: (value: string) => void
-  result: string
+  amount: string;
+  onAmountChange: (value: string) => void;
+  onResult: (value: string) => void;
+  result: string;
 }
 
 export function FiatConverter({
   amount,
   onAmountChange,
   onResult,
-  result
+  result,
 }: FiatConverterProps) {
-  const { toast } = useToast()
-  const [fromCurrency, setFromCurrency] = useState<CurrencyCode>("USD")
-  const [toCurrency, setToCurrency] = useState<CurrencyCode>("EUR")
-  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast();
+  const [fromCurrency, setFromCurrency] = useState<CurrencyCode>("USD");
+  const [toCurrency, setToCurrency] = useState<CurrencyCode>("EUR");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSwap = () => {
-    setFromCurrency(toCurrency)
-    setToCurrency(fromCurrency)
-  }
+    setFromCurrency(toCurrency);
+    setToCurrency(fromCurrency);
+  };
 
   useEffect(() => {
     const calculate = async () => {
       if (!amount || isNaN(Number(amount))) {
-        onResult("")
-        return
+        onResult("");
+        return;
       }
 
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const rate = await getExchangeRate(fromCurrency, toCurrency)
-        
+        const rate = await getExchangeRate(fromCurrency, toCurrency);
+
         if (rate === null) {
           onResult("Error");
           toast({
             title: "Error",
             description: "Failed to fetch exchange rates. Please try again.",
             variant: "destructive",
-          })
+          });
           return;
         }
 
-        const converted = (Number(amount) * rate).toFixed(2)
+        const converted = (Number(amount) * rate).toFixed(2);
         // Store just the numeric result or formatted string?
         // UnitConverter stores "1 USD = X EUR".
         // Let's store nicely formatted string in parent, but for the Input value?
@@ -68,25 +68,25 @@ export function FiatConverter({
         // Or just the number "123.45".
         // Let's go with just the number for the Input value.
 
-        onResult(converted) // Just the number string
+        onResult(converted); // Just the number string
       } catch (error) {
-        console.error(error)
+        console.error(error);
         toast({
           title: "Error",
           description: "Failed to fetch exchange rates. Please try again.",
           variant: "destructive",
-        })
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
     const timer = setTimeout(() => {
-      calculate()
-    }, 500) // Debounce
+      calculate();
+    }, 500); // Debounce
 
-    return () => clearTimeout(timer)
-  }, [amount, fromCurrency, toCurrency, onResult, toast])
+    return () => clearTimeout(timer);
+  }, [amount, fromCurrency, toCurrency, onResult, toast]);
 
   return (
     <div className="space-y-6">
@@ -94,7 +94,7 @@ export function FiatConverter({
         {/* From Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">From</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
               <Input
                 id="fiat-amount"
@@ -108,7 +108,9 @@ export function FiatConverter({
             <div className="w-full sm:w-[280px]">
               <CurrencySelect
                 value={fromCurrency}
-                onValueChange={(value) => setFromCurrency(value as CurrencyCode)}
+                onValueChange={(value) =>
+                  setFromCurrency(value as CurrencyCode)
+                }
                 label="currency"
               />
             </div>
@@ -130,7 +132,7 @@ export function FiatConverter({
         {/* To Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">To</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             {/* Result Display directly in 'To' section if possible, or keep separate.
                  Since onResult is passed up, we might display it here as a read-only input or
                  just pass the props. But wait, the parent handles result display.
@@ -147,12 +149,12 @@ export function FiatConverter({
                 Currently `onResult` sets a string in parent.
                 Let's simplify: Display a readonly Input here that shows the loading state or result.
              */}
-            <div className="flex-1 relative">
+            <div className="relative flex-1">
               <Input
                 readOnly
                 placeholder="Result"
                 value={isLoading ? "Converting..." : result}
-                className="h-11 font-mono text-lg bg-muted/50"
+                className="h-11 bg-muted/50 font-mono text-lg"
               />
               {/*
                   Wait, the parent `CurrencyConverterClient` displays the result in a separate box below.
@@ -174,5 +176,5 @@ export function FiatConverter({
         </div>
       </div>
     </div>
-  )
+  );
 }
