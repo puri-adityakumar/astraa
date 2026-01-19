@@ -1,4 +1,4 @@
-import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Binary, type LucideIcon } from "lucide-react"
+import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Binary, FileText, type LucideIcon } from "lucide-react"
 
 export type ToolCategory = {
   name: string
@@ -67,12 +67,29 @@ export const toolCategories: ToolCategory[] = [
         icon: Music,
         comingSoon: true
       },
-
     ]
   },
   {
     name: "Developer Tools",
     items: [
+      {
+        name: 'JSON Editor',
+        description: 'Validate, format, and edit JSON with syntax highlighting',
+        path: '/tools/json',
+        icon: FileJson
+      },
+      {
+        name: 'Markdown Viewer',
+        description: 'Live markdown preview with GFM support',
+        path: '/tools/markdown',
+        icon: FileText
+      },
+      {
+        name: 'Regex Tester',
+        description: 'Real-time pattern matching with explanations',
+        path: '/tools/regex',
+        icon: Terminal
+      },
       {
         name: 'Base64 Encoder/Decoder',
         description: 'Encode and decode Base64 strings',
@@ -88,24 +105,10 @@ export const toolCategories: ToolCategory[] = [
         comingSoon: true
       },
       {
-        name: 'JSON Validator',
-        description: 'Validate and format JSON data',
-        path: '/tools/json',
-        icon: FileJson,
-        comingSoon: true
-      },
-      {
         name: 'SQL Formatter',
         description: 'Format and validate SQL queries',
         path: '/tools/sql',
         icon: Database,
-        comingSoon: true
-      },
-      {
-        name: 'Regex Tester',
-        description: 'Test and validate regular expressions',
-        path: '/tools/regex',
-        icon: Terminal,
         comingSoon: true
       }
     ]

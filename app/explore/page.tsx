@@ -10,10 +10,16 @@ import type { ContentItem } from "@/components/content-grid"
 export default function ExplorePage() {
   const { tools } = useTools()
 
-  const toolItems: ContentItem[] = tools.map(tool => ({
-    ...tool,
-    category: "tool"
-  }))
+  const toolItems: ContentItem[] = [...tools]
+    .sort((a, b) => {
+      const aUnavailable = (a.comingSoon || a.wip) ? 1 : 0
+      const bUnavailable = (b.comingSoon || b.wip) ? 1 : 0
+      return aUnavailable - bUnavailable
+    })
+    .map(tool => ({
+      ...tool,
+      category: "tool"
+    }))
 
   const gameItems: ContentItem[] = games.map(game => ({
     ...game,

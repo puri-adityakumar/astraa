@@ -31,8 +31,7 @@ export default function ToolsPage() {
         </div>
       </motion.div>
 
-      {/* Categorized Tools List */}
-      {categories.map((category, categoryIndex) => (
+    {categories.map((category, categoryIndex) => (
         <motion.div
           key={category.name}
           initial={{ opacity: 0 }}
@@ -45,7 +44,13 @@ export default function ToolsPage() {
             <span className="text-muted-foreground text-sm">({category.items.length})</span>
           </div>
           <ContentGrid
-            items={category.items.map(tool => ({ ...tool, category: category.name.toLowerCase() }))}
+            items={[...category.items]
+              .sort((a, b) => {
+                const aUnavailable = (a.comingSoon || a.wip) ? 1 : 0
+                const bUnavailable = (b.comingSoon || b.wip) ? 1 : 0
+                return aUnavailable - bUnavailable
+              })
+              .map(tool => ({ ...tool, category: category.name.toLowerCase() }))}
           />
         </motion.div>
       ))}
