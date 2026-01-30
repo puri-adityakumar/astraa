@@ -163,7 +163,6 @@ export default function Calculator() {
           setIsNewNumber(true)
         }
       } else if (key === "Backspace") {
-        if (currIsNewNumber) return
         setDisplay((prev) => {
           if (prev.length <= 1) return "0"
           return prev.slice(0, -1)
