@@ -8,26 +8,41 @@ import { CalculatorButton } from "@/components/calculator/calculator-button"
 import { evaluateExpression, scientificFunctions } from "@/lib/calculator/calculator-utils"
 
 export default function Calculator() {
-  const [display, setDisplay] = useState("")
+  const [display, setDisplay] = useState("0")
   const [expression, setExpression] = useState("")
   const [isNewNumber, setIsNewNumber] = useState(true)
   const [angleMode, setAngleMode] = useState<'RAD' | 'DEG'>('RAD')
 
   const appendNumber = (num: string) => {
     if (isNewNumber) {
-      setDisplay(num)
+      if (num === ".") {
+        setDisplay("0.")
+      } else {
+        setDisplay(num)
+      }
       setIsNewNumber(false)
     } else {
-      setDisplay(display + num)
+      if (num === ".") {
+        if (display.includes(".")) return
+        setDisplay(display + ".")
+      } else {
+        setDisplay(display === "0" ? num : display + num)
+      }
     }
   }
 
   const appendOperator = (op: string) => {
-    setExpression(expression + display + op)
-    setIsNewNumber(true)
+    if (isNewNumber && expression) {
+      setExpression(prev => prev.slice(0, -1) + op)
+    } else {
+      setExpression(expression + display + op)
+      setIsNewNumber(true)
+    }
   }
 
   const calculate = () => {
+    if (!expression && isNewNumber) return
+
     try {
       const fullExpression = expression + display
       const result = evaluateExpression(fullExpression)
@@ -42,7 +57,7 @@ export default function Calculator() {
   }
 
   const clear = () => {
-    setDisplay("")
+    setDisplay("0")
     setExpression("")
     setIsNewNumber(true)
   }
@@ -92,61 +107,71 @@ export default function Calculator() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const key = e.key;
-      const isCalculatorKey = (key >= "0" && key <= "9") || key === "." || 
-                             ["+", "-", "*", "/", "^", "Enter", "=", "Backspace", "Escape"].includes(key) || 
-                             key.toLowerCase() === "c";
-      
+      // Allow browser shortcuts
+      if (e.ctrlKey || e.metaKey || e.altKey) return
+
+      const key = e.key
+      const isCalculatorKey =
+        (key >= "0" && key <= "9") ||
+        key === "." ||
+        ["+", "-", "*", "/", "^", "Enter", "=", "Backspace", "Escape"].includes(key) ||
+        key.toLowerCase() === "c"
+
       if (!isCalculatorKey) {
-        return;
+        return
       }
-      
-      e.preventDefault();
+
+      e.preventDefault()
 
       // Access latest state from ref
-      const current = stateRef.current;
-
-      const { display: currDisplay, expression: currExpression, isNewNumber: currIsNewNumber } = current;
+      const current = stateRef.current
+      const { display: currDisplay, expression: currExpression, isNewNumber: currIsNewNumber } = current
 
       if (key >= "0" && key <= "9") {
         if (currIsNewNumber) {
           setDisplay(key)
           setIsNewNumber(false)
         } else {
-          setDisplay(currDisplay + key)
+          setDisplay(currDisplay === "0" ? key : currDisplay + key)
         }
       } else if (key === ".") {
-         if (currIsNewNumber) {
+        if (currIsNewNumber) {
           setDisplay("0.")
           setIsNewNumber(false)
         } else if (!currDisplay.includes(".")) {
           setDisplay(currDisplay + ".")
         }
       } else if (["+", "-", "*", "/", "^"].includes(key)) {
-        if(currDisplay){
+        if (currIsNewNumber && currExpression) {
+          setExpression(currExpression.slice(0, -1) + key)
+        } else {
           setExpression(currExpression + currDisplay + key)
           setIsNewNumber(true)
         }
       } else if (key === "Enter" || key === "=") {
-        if(currDisplay || currExpression){
-          try {
-           const fullExpression = currExpression + currDisplay
-           const result = evaluateExpression(fullExpression)
-           setDisplay(result.toString())
-           setExpression("")
-           setIsNewNumber(true)
-         } catch (error) {
-           setDisplay("Error")
-           setExpression("")
-           setIsNewNumber(true)
-         }
+        if (!currExpression && currIsNewNumber) return
+
+        try {
+          const fullExpression = currExpression + currDisplay
+          const result = evaluateExpression(fullExpression)
+          setDisplay(result.toString())
+          setExpression("")
+          setIsNewNumber(true)
+        } catch (error) {
+          setDisplay("Error")
+          setExpression("")
+          setIsNewNumber(true)
         }
       } else if (key === "Backspace") {
-         setDisplay(currDisplay.slice(0, -1) || "0")
+        if (currIsNewNumber) return
+        setDisplay((prev) => {
+          if (prev.length <= 1) return "0"
+          return prev.slice(0, -1)
+        })
       } else if (key === "Escape" || key.toLowerCase() === "c") {
-         setDisplay("")
-         setExpression("")
-         setIsNewNumber(true)
+        setDisplay("0")
+        setExpression("")
+        setIsNewNumber(true)
       }
     }
 
