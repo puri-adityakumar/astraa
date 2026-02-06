@@ -90,35 +90,89 @@ cd astraa
 # Install dependencies
 npm install
 
+# Copy environment variables
+cp .env.sample .env.local
+
 # Start development server
 npm run dev
 ```
 
-### Build
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_ENV` | Yes | `dev` shows WIP features for testing, `prod` shows "Coming Soon" cards |
+| `OPENROUTER_API_KEY` | Optional | API key for AI text generation ([get one here](https://openrouter.ai/keys)) |
+| `SENTRY_AUTH_TOKEN` | Optional | Sentry error tracking token |
+
+### Available Commands
 
 ```bash
-npm run build
+npm run dev      # Start dev server (http://localhost:3000)
+npm run build    # Production build
+npm start        # Start production server
+npm run lint     # Run ESLint — run this before submitting a PR
 ```
+
+### No Test Suite
+
+There is no automated test suite. Use manual testing during development — verify your changes work across mobile/desktop and dark/light themes.
+
+## Using AI Agents (Claude Code)
+
+This project includes a `CLAUDE.md` file that provides context to AI coding agents like [Claude Code](https://claude.ai/code).
+
+**If you use Claude Code or similar AI agents to contribute:**
+
+1. Run `/init` at the start of your session so the agent reads `CLAUDE.md` and understands the project conventions (code style, architecture patterns, naming, etc.)
+2. The agent will follow the project's double-quote, semicolon, 2-space indent formatting automatically
+3. Verify AI-generated code still follows the server page → client component pattern described below
+4. Always review AI output before committing — don't blindly trust generated code
 
 ## Project Structure
 
 ```
 astraa/
-├── app/                 # Next.js app directory
-│   ├── tools/          # Tool pages
+├── app/                 # Next.js App Router pages
+│   ├── tools/          # Tool pages (server components)
 │   ├── games/          # Game pages
-│   └── ...
-├── components/         # React components
-├── lib/                # Utility functions and helpers
-└── public/             # Static assets
+│   └── api/            # API routes
+├── components/         # React components (client components)
+│   └── ui/             # Shadcn/UI primitives
+├── lib/                # Utilities, logic, stores
+│   ├── stores/         # Zustand stores (IndexedDB-persisted)
+│   ├── animations/     # Framer Motion variants and hooks
+│   └── games/          # Game logic hooks
+├── hooks/              # Custom React hooks
+├── types/              # TypeScript type definitions
+└── middleware.ts        # Edge middleware (visitor counting)
+```
+
+### Core Architecture Pattern
+
+Server component pages render client components — this is the standard for all tools and games:
+
+```
+app/tools/[tool]/page.tsx          → Server component (metadata + renders client)
+components/[tool]/[tool]-client.tsx → Client component ("use client", UI logic)
+lib/[tool]/                        → Pure logic, no React
 ```
 
 ## Adding a New Tool
 
-1. Create a new directory in `app/tools/[tool-name]/`
-2. Add the tool's `page.tsx`
-3. Create components in `components/[tool-name]/` if needed
-4. Register the tool in `lib/tools.ts`
+1. Register in `lib/tools.ts` — add to appropriate `ToolCategory` with `name`, `description`, `path`, `icon`
+2. Create `app/tools/[tool-name]/page.tsx` with metadata
+3. Create `components/[tool-name]/[tool-name]-client.tsx` with `"use client"`
+4. Add tool logic to `lib/[tool-name]/` if needed
+
+## Development Tips
+
+- **State persistence** uses IndexedDB (primary) with localStorage fallback — not plain localStorage
+- **WIP features** are controlled by `NEXT_PUBLIC_ENV` in `.env.local` — set to `dev` to see them
+- **Animations** must respect `useReducedMotion()` from `lib/animations/hooks.ts`
+- **Error handling** — use `getUserFriendlyError()` and `logError()` from `lib/error-handler.ts`, not raw try/catch with console.error
+- **Styling** — use `cn()` from `lib/utils` for conditional Tailwind classes, not string concatenation
+- **No `any`** — TypeScript strict mode is on, prefer `unknown` and narrow types
 
 ## Review Process
 

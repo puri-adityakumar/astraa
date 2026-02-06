@@ -3,36 +3,34 @@
 ## Commands
 
 ```bash
-npm run dev          # Start development server (http://localhost:3000)
-npm run build        # Production build
-npm start            # Start production server
-npm run lint         # Run ESLint
+npm run dev      # Start development server (http://localhost:3000)
+npm run build    # Production build
+npm start        # Start production server
+npm run lint     # Run ESLint
 ```
 
 **Testing**: No test suite configured. Use manual testing.
 
 ## TypeScript Configuration
 
-- Strict mode enabled with comprehensive type checking (`noUnusedLocals`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, etc.)
+- Strict mode enabled with comprehensive type checking (`noUnusedLocals`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`)
 - Path aliases: `@/components/*`, `@/lib/*`, `@/hooks/*`, `@/app/*`, `@/types/*`, `@/config/*`
 - Prefer `unknown` over `any` for type declarations
 - Use explicit return types for public functions
 
-## Import Order
+## Code Style
 
+**Formatting**: Always use **double quotes**, **semicolons**, **2-space** indentation, **trailing commas** in multi-line objects/arrays, max 100 character line length.
+
+**Import Order**:
 ```typescript
 // 1. External libraries
 import { useState } from "react"
 import { motion } from "framer-motion"
-
 // 2. Internal utilities
-import { useToast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
-
 // 3. Components
 import { Button } from "@/components/ui/button"
-import { HashInput } from "./hash-input"
-
 // 4. Types
 import type { Tool } from "@/lib/tools"
 ```
@@ -44,28 +42,19 @@ import type { Tool } from "@/lib/tools"
 - **Constants**: UPPER_SNAKE_CASE (`TOAST_LIMIT`, `ANIMATION_CONFIG`)
 - **Types/Interfaces**: PascalCase (`Tool`, `PasswordResult`)
 - **Files**: kebab-case (`password-generator.tsx`, `hash-utils.ts`)
-- **Props**: Descriptive names (`handleGenerate` not `handleClick`)
+- **Props**: Descriptive names (`handleGenerate` not `onClick`)
 
 ## Component Structure
 
 ```typescript
 "use client"
-
 import { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 
 export function ComponentName() {
   const [state, setState] = useState(initialValue)
-
-  const handleClick = useCallback(() => {
-    // logic
-  }, [dependencies])
-
-  return (
-    <div className="container max-w-2xl pt-24 pb-12 space-y-8">
-      {/* content */}
-    </div>
-  )
+  const handleClick = useCallback(() => {}, [deps])
+  return <div className="container max-w-2xl pt-24 pb-12 space-y-8">...</div>
 }
 ```
 
@@ -81,25 +70,22 @@ export function ComponentName() {
 ## Styling
 
 - Use `cn()` from `@/lib/utils` for conditional className merging
-- Tailwind CSS with fluid typography: `text-fluid-base`, `text-fluid-xl`
+- Tailwind class order: layout → spacing → sizing → typography → colors/backgrounds → borders → effects → states → responsive
+- Fluid typography: `text-fluid-base`, `text-fluid-xl`
 - Responsive breakpoints: `xs:475px`, `sm:640px`, `md:768px`, `lg:1024px`, `xl:1280px`
 - Glass morphism: `glass`, `glass-hover` classes
 - Colors: HSL semantic variables (`background`, `foreground`, `primary`, `muted`, `border`)
+- Minimum touch targets: `44px` (`min-h-touch`, `min-w-touch`)
 
 ## Error Handling
 
 ```typescript
 import { getUserFriendlyError, logError } from "@/lib/error-handler"
-
 try {
   await riskyOperation()
 } catch (error) {
   const details = getUserFriendlyError(error)
-  toast({
-    title: details.title,
-    description: details.message,
-    variant: "destructive"
-  })
+  toast({ title: details.title, description: details.message, variant: "destructive" })
   logError(error, { context: "additional context" })
 }
 ```
@@ -116,13 +102,8 @@ import { useReducedMotion } from "@/lib/animations/hooks"
 
 export function AnimatedComponent() {
   const shouldReduce = useReducedMotion()
-
   return (
-    <motion.div
-      variants={shouldReduce ? {} : fadeInUp}
-      initial="hidden"
-      animate="show"
-    >
+    <motion.div variants={shouldReduce ? {} : fadeInUp} initial="hidden" animate="show">
       {/* content */}
     </motion.div>
   )
@@ -136,16 +117,14 @@ export function AnimatedComponent() {
 
 Import: `import * as Sentry from "@sentry/nextjs"`
 
-**Exception Capturing**:
-```typescript
-Sentry.captureException(error)
-```
+**Exception Capturing**: `Sentry.captureException(error)`
 
 **Performance Tracing**:
 ```typescript
 const result = await Sentry.startSpan(
   { op: "function.name", name: "Descriptive Name" },
-  async () => {
+  async (span) => {
+    span.setAttribute("key", value)
     return data
   }
 )
@@ -168,16 +147,15 @@ import { MyToolClient } from "@/components/my-tool/my-tool-client"
 export const metadata: Metadata = {
   title: "Tool Name | astraa",
   description: "One-line description",
-  openGraph: {
-    title: "Tool Name",
-    description: "One-line description",
-  },
+  openGraph: { title: "Tool Name", description: "One-line description" },
 }
 
 export default function MyToolPage() {
   return <MyToolClient />
 }
 ```
+
+Register tools in `lib/tools.ts` and games in `lib/games.ts`.
 
 ## Git Workflow
 

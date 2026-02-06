@@ -30,7 +30,7 @@ This same pattern applies to games (`app/games/[game]/page.tsx` → `components/
 
 ### Tool & Game Registry
 
-Tools are registered in `lib/tools.ts` as `ToolCategory` objects with items containing `name`, `description`, `path`, `icon` (LucideIcon), and optional `isNew`/`comingSoon` flags. Games are registered in `lib/games.ts`. The `ToolsContext` (`lib/tools-context.tsx`) provides the catalog to the app.
+Tools are registered in `lib/tools.ts` as `ToolCategory` objects with items containing `name`, `description`, `path`, `icon` (LucideIcon), and optional `wip`/`comingSoon` flags. Games are registered in `lib/games.ts` with optional `comingSoon` flag. The `ToolsContext` (`lib/tools-context.tsx`) provides the catalog to the app.
 
 ### State Management
 
@@ -81,11 +81,12 @@ try {
 - Always use **semicolons**
 - **2-space** indentation
 - Use **trailing commas** in multi-line objects and arrays
+- Maximum line length: **100 characters**
 
 ### TypeScript
 
 - Strict mode enabled
-- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`
+- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`, `@/config`
 - Prefer `unknown` over `any`
 
 ### Naming Conventions
@@ -230,7 +231,7 @@ logger.debug(logger.fmt`Cache miss for user: ${userId}`)  // use logger.fmt for 
 1. Create `app/tools/[tool-name]/page.tsx` with metadata
 2. Create `components/[tool-name]/[tool-name]-client.tsx` with `"use client"`
 3. Add tool logic to `lib/[tool-name]/` if needed
-4. Register in `lib/tools.ts` — add to appropriate `ToolCategory` with `name`, `description`, `path`, `icon`, and optional `isNew: true`
+4. Register in `lib/tools.ts` — add to appropriate `ToolCategory` with `name`, `description`, `path`, `icon`, and optional `wip: true`
 
 ## Contribution Workflow
 

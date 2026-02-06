@@ -1,6 +1,6 @@
 # Astraa Documentation
 
-A modern, browser-based utility tools and games suite built with Next.js 15, TypeScript, and React 19.
+A modern, browser-based utility tools and games suite built with Next.js 16, TypeScript, and React 19.
 
 ## Table of Contents
 
