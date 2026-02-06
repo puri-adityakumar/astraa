@@ -16,14 +16,17 @@ export function useMemoryGame() {
 
   function shuffleCards(): Card[] {
     const pairs = [...EMOJIS, ...EMOJIS]
-    return pairs
-      .sort(() => Math.random() - 0.5)
-      .map((value, index) => ({
-        id: index,
-        value,
-        isFlipped: false,
-        isMatched: false
-      }))
+    // Fisher-Yates shuffle for unbiased randomization
+    for (let i = pairs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pairs[i], pairs[j]] = [pairs[j]!, pairs[i]!]
+    }
+    return pairs.map((value, index) => ({
+      id: index,
+      value,
+      isFlipped: false,
+      isMatched: false,
+    }))
   }
 
   const flipCard = (card: Card) => {

@@ -62,8 +62,12 @@ export default function RootLayout({
                   <Footer />
                 </div>
                 <Toaster />
-                <Analytics />
-                <SpeedInsights />
+                {process.env.NODE_ENV === "production" && (
+                  <>
+                    <Analytics />
+                    <SpeedInsights />
+                  </>
+                )}
               </ActivityProvider>
             </ToolsProvider>
           </TooltipProvider>

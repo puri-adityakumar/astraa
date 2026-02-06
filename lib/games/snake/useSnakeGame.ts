@@ -9,6 +9,13 @@ const INITIAL_FOOD: Food = { x: 15, y: 15 }
 const INITIAL_DIRECTION: Direction = 'RIGHT'
 const GAME_SPEED = 150
 
+const OPPOSITES: Record<Direction, Direction> = {
+  UP: 'DOWN',
+  DOWN: 'UP',
+  LEFT: 'RIGHT',
+  RIGHT: 'LEFT',
+}
+
 export function useSnakeGame() {
   const [gameState, setGameState] = useState<GameState>({
     snake: INITIAL_SNAKE,
@@ -79,14 +86,7 @@ export function useSnakeGame() {
   }, [gameState])
 
   const changeDirection = useCallback((newDirection: Direction) => {
-    const opposites = {
-      UP: 'DOWN',
-      DOWN: 'UP',
-      LEFT: 'RIGHT',
-      RIGHT: 'LEFT'
-    }
-
-    if (opposites[newDirection] !== gameState.direction) {
+    if (OPPOSITES[newDirection] !== gameState.direction) {
       setGameState(prev => ({ ...prev, direction: newDirection }))
     }
   }, [gameState.direction])
