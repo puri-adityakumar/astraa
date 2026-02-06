@@ -28,15 +28,17 @@ export function CommandMenu() {
 
   React.useEffect(() => {
     setMounted(true)
+  }, [])
+
+  React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       // Cmd/Ctrl + K to open command menu
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
-        setOpen((open) => !open)
+        setOpen((prev) => !prev)
       }
       // Escape to close
-      if (e.key === "Escape" && open) {
-        e.preventDefault()
+      if (e.key === "Escape") {
         setOpen(false)
       }
       // Cmd/Ctrl + / for quick search focus
@@ -47,7 +49,7 @@ export function CommandMenu() {
     }
     document.addEventListener("keydown", down)
     return () => document.removeEventListener("keydown", down)
-  }, [open])
+  }, [])
 
   // Reset search when dialog closes
   React.useEffect(() => {

@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { Redis } from '@upstash/redis'
 
@@ -24,20 +24,21 @@ export async function middleware(request: NextRequest) {
     const hasVisited = request.cookies.get(COOKIE_NAME)
 
     if (!hasVisited) {
-        try {
-            // Increment visitor count
-            await redis.incr(VISITOR_COUNT_KEY)
+        // Set cookie immediately so we don't double-count
+        response.cookies.set(COOKIE_NAME, 'true', {
+            maxAge: COOKIE_MAX_AGE,
+            httpOnly: true,
+            sameSite: 'lax',
+        })
 
-            // Set cookie to prevent counting same visitor within 24h
-            response.cookies.set(COOKIE_NAME, 'true', {
-                maxAge: COOKIE_MAX_AGE,
-                httpOnly: true,
-                sameSite: 'lax',
-            })
-        } catch (error) {
-            // Silent fail - don't break the site if Redis is down
-            console.error('Failed to increment visitor count:', error)
-        }
+        // Increment visitor count after response is sent (non-blocking)
+        after(async () => {
+            try {
+                await redis.incr(VISITOR_COUNT_KEY)
+            } catch (error) {
+                console.error('Failed to increment visitor count:', error)
+            }
+        })
     }
 
     return response

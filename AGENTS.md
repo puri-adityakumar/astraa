@@ -2,7 +2,6 @@
 
 ## Commands
 
-### Development
 ```bash
 npm run dev          # Start development server (http://localhost:3000)
 npm run build        # Production build
@@ -10,35 +9,27 @@ npm start            # Start production server
 npm run lint         # Run ESLint
 ```
 
-### Testing
-Currently no test suite is configured. Use manual testing during development.
+**Testing**: No test suite configured. Use manual testing.
 
-## Code Style Guidelines
+## TypeScript Configuration
 
-### TypeScript Configuration
-- Strict mode enabled with comprehensive type checking
+- Strict mode enabled with comprehensive type checking (`noUnusedLocals`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, etc.)
 - Path aliases: `@/components/*`, `@/lib/*`, `@/hooks/*`, `@/app/*`, `@/types/*`, `@/config/*`
-- Always prefer `unknown` over `any` for type declarations
+- Prefer `unknown` over `any` for type declarations
+- Use explicit return types for public functions
 
-### File Organization
-- **Client Components**: Start with `"use client"` directive at top
-- **Server Actions**: Use `'use server'` directive
-- **Pages**: Server component in `app/` → renders client component from `components/`
-  - Example: `app/tools/password/page.tsx` → `components/password/password-generator.tsx`
-- **Utilities**: Pure functions in `lib/` organized by feature (e.g., `lib/password/`, `lib/hash/`)
-- **Game Logic**: Custom hooks in `lib/games/[game-name]/` managing game state
+## Import Order
 
-### Import Order
 ```typescript
-// 1. External libraries (React, third-party)
-import { useState, useEffect } from "react"
+// 1. External libraries
+import { useState } from "react"
 import { motion } from "framer-motion"
 
-// 2. Internal utilities (hooks, lib)
+// 2. Internal utilities
 import { useToast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
 
-// 3. Components (UI, feature components)
+// 3. Components
 import { Button } from "@/components/ui/button"
 import { HashInput } from "./hash-input"
 
@@ -46,15 +37,17 @@ import { HashInput } from "./hash-input"
 import type { Tool } from "@/lib/tools"
 ```
 
-### Naming Conventions
+## Naming Conventions
+
 - **Components**: PascalCase (`PasswordGenerator`, `HashOutput`)
-- **Functions/Variables**: camelCase (`generatePassword`, `handleGenerateHash`)
+- **Functions/Variables**: camelCase (`generatePassword`, `handleClick`)
 - **Constants**: UPPER_SNAKE_CASE (`TOAST_LIMIT`, `ANIMATION_CONFIG`)
 - **Types/Interfaces**: PascalCase (`Tool`, `PasswordResult`)
 - **Files**: kebab-case (`password-generator.tsx`, `hash-utils.ts`)
-- **Props**: Descriptive, avoid generic names (`handleGenerate` not `handleClick`)
+- **Props**: Descriptive names (`handleGenerate` not `handleClick`)
 
-### Component Structure
+## Component Structure
+
 ```typescript
 "use client"
 
@@ -64,7 +57,6 @@ import { Button } from "@/components/ui/button"
 export function ComponentName() {
   const [state, setState] = useState(initialValue)
 
-  // Handlers grouped together
   const handleClick = useCallback(() => {
     // logic
   }, [dependencies])
@@ -77,21 +69,26 @@ export function ComponentName() {
 }
 ```
 
-### State Management
-- **Local State**: React hooks (`useState`, `useReducer`) for component-specific state
-- **Global State**: Zustand stores in `lib/stores/` (user preferences, tool settings, activity tracking)
-- **Context**: Tools context (`lib/tools-context.tsx`) for tool navigation and categories
+## File Organization
 
-### Styling
-- Use `cn()` utility for conditional className merging: `cn("base-class", isActive && "active-class")`
+- **Client Components**: Start with `"use client"` directive
+- **Server Actions**: Use `'use server'` directive
+- **Pages**: Server component in `app/` → renders client component from `components/`
+- **Utilities**: Pure functions in `lib/` organized by feature
+- **Game Logic**: Custom hooks in `lib/games/[game-name]/`
+- **State Management**: Local (`useState`, `useReducer`), Global (Zustand in `lib/stores/`), Context (`lib/tools-context.tsx`)
+
+## Styling
+
+- Use `cn()` from `@/lib/utils` for conditional className merging
 - Tailwind CSS with fluid typography: `text-fluid-base`, `text-fluid-xl`
 - Responsive breakpoints: `xs:475px`, `sm:640px`, `md:768px`, `lg:1024px`, `xl:1280px`
 - Glass morphism: `glass`, `glass-hover` classes
-- Colors: HSL semantic variables (`background`, `foreground`, `primary`, `muted`, `border`, etc.)
+- Colors: HSL semantic variables (`background`, `foreground`, `primary`, `muted`, `border`)
 
-### Error Handling
+## Error Handling
+
 ```typescript
-// User-facing errors
 import { getUserFriendlyError, logError } from "@/lib/error-handler"
 
 try {
@@ -108,10 +105,10 @@ try {
 ```
 
 - Use result types for async operations: `{ success: true, data } | { success: false, error }`
-- Always log errors with context for debugging
 - Never expose technical details to users
 
-### Animations
+## Animations
+
 ```typescript
 import { motion } from "framer-motion"
 import { fadeInUp, staggerContainer } from "@/lib/animations/variants"
@@ -132,51 +129,37 @@ export function AnimatedComponent() {
 }
 ```
 
-- Use pre-defined variants from `lib/animations/variants.ts`
 - Always check `useReducedMotion()` before animating
-- For lists: `staggerContainer` parent with `staggerItem` children
+- Use pre-defined variants from `lib/animations/variants.ts`
 
-### Sentry Integration
+## Sentry Integration
+
+Import: `import * as Sentry from "@sentry/nextjs"`
+
+**Exception Capturing**:
 ```typescript
-import * as Sentry from "@sentry/nextjs"
+Sentry.captureException(error)
+```
 
-// Capture exceptions
-try {
-  // code
-} catch (error) {
-  Sentry.captureException(error)
-}
-
-// Performance tracing
+**Performance Tracing**:
+```typescript
 const result = await Sentry.startSpan(
   { op: "function.name", name: "Descriptive Name" },
   async () => {
-    // traced operation
     return data
   }
 )
 ```
 
-- Use meaningful operation names and attributes
-- Client initialization: `instrumentation-client.ts`
-- Server initialization: `sentry.server.config.ts`
-- Edge initialization: `sentry.edge.config.ts`
+**Structured Logging**:
+```typescript
+const { logger } = Sentry
+logger.info("Action completed", { key: "value" })
+logger.debug(logger.fmt`User: ${userId}`)
+```
 
-### Utility Patterns
-- **Text Generation**: Use OpenRouter API via `lib/openrouter.ts`
-- **Currency/Crypto**: Use `lib/api.ts` for exchange rates and crypto prices
-- **Toast Notifications**: `useToast()` hook from `@/components/ui/use-toast`
-- **Hash Generation**: Import from `@/lib/hash` (exports types and utils)
-- **Password Generation**: Import from `@/lib/password/password-utils`
+## Tool/Game Page Pattern
 
-### Accessibility
-- Minimum touch targets: `44px` (use `min-h-touch`, `min-w-touch`)
-- Use semantic HTML (`<button>`, `<input>`, `<label>`)
-- Respect reduced motion preference
-- Use `aria-label` for icon-only buttons
-- Keyboard navigation support for all interactive elements
-
-### Tool/Game Page Pattern
 ```typescript
 // app/tools/my-tool/page.tsx
 import { Metadata } from "next"
@@ -196,12 +179,29 @@ export default function MyToolPage() {
 }
 ```
 
-### Component Exports
-- Index files export types and utilities: `export * from './types'`, `export * from './utils'`
+## Git Workflow
+
+- PRs must target `development` branch
+- Must be assigned to an issue before submitting PR
+- Use Conventional Commits: `feat(scope): description`, `fix(scope): description`
+- Commit types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`
+- Release format: `release(vX.Y.Z): merge development to main`
+
+## Accessibility
+
+- Minimum touch targets: `44px` (use `min-h-touch`, `min-w-touch`)
+- Use semantic HTML (`<button>`, `<input>`, `<label>`)
+- Respect reduced motion preference
+- Use `aria-label` for icon-only buttons
+
+## Component Exports
+
+- Index files export types and utilities: `export * from './types'`
 - Named exports for components: `export function ComponentName() {}`
 - Avoid default exports for better tree-shaking
 
-### Comments
+## Comments
+
 - JSDoc for public functions: `/** Description */`
-- Inline comments only for complex logic or edge cases
-- Keep comments concise and actionable
+- Inline comments only for complex logic
+- Keep comments concise

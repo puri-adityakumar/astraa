@@ -12,24 +12,26 @@ async function getGitHubStats() {
     }
 
     try {
-        // Fetch repo info for stars
-        const repoResponse = await fetch(
-            'https://api.github.com/repos/puri-adityakumar/astraa',
-            { next: { revalidate: 300 } } // Cache for 5 minutes
-        )
-
-        // Fetch contributors
-        const contributorsResponse = await fetch(
-            'https://api.github.com/repos/puri-adityakumar/astraa/contributors?per_page=100',
-            { next: { revalidate: 300 } }
-        )
+        // Fetch repo info and contributors in parallel
+        const [repoResponse, contributorsResponse] = await Promise.all([
+            fetch(
+                'https://api.github.com/repos/puri-adityakumar/astraa',
+                { next: { revalidate: 300 } }
+            ),
+            fetch(
+                'https://api.github.com/repos/puri-adityakumar/astraa/contributors?per_page=100',
+                { next: { revalidate: 300 } }
+            ),
+        ])
 
         if (!repoResponse.ok || !contributorsResponse.ok) {
             throw new Error('GitHub API request failed')
         }
 
-        const repoData = await repoResponse.json()
-        const contributorsData = await contributorsResponse.json()
+        const [repoData, contributorsData] = await Promise.all([
+            repoResponse.json(),
+            contributorsResponse.json(),
+        ])
 
         const stars = repoData.stargazers_count || 0
         const contributors = Array.isArray(contributorsData) ? contributorsData.length : 0
@@ -48,17 +50,20 @@ async function getGitHubStats() {
 }
 
 export async function GET() {
-    // Fetch visitor count from Redis (with fallback)
-    let visitors = 0
-    try {
-        visitors = await redis.get<number>(REDIS_KEYS.VISITOR_COUNT) || 0
-    } catch (error) {
-        console.error('Failed to fetch visitor count from Redis:', error)
-        // Continue with visitors = 0
-    }
+    // Fetch Redis visitor count and GitHub stats in parallel
+    const [visitorsResult, githubResult] = await Promise.allSettled([
+        redis.get<number>(REDIS_KEYS.VISITOR_COUNT),
+        getGitHubStats(),
+    ])
 
-    // Fetch GitHub stats (has its own error handling)
-    const { stars, contributors } = await getGitHubStats()
+    const visitors = visitorsResult.status === 'fulfilled' ? (visitorsResult.value || 0) : 0
+    const { stars, contributors } = githubResult.status === 'fulfilled'
+        ? githubResult.value
+        : { stars: 0, contributors: 0 }
+
+    if (visitorsResult.status === 'rejected') {
+        console.error('Failed to fetch visitor count from Redis:', visitorsResult.reason)
+    }
 
     return NextResponse.json({
         visitors,

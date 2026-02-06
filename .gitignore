@@ -44,3 +44,10 @@ next-env.d.ts
 .bolt/
 # Sentry Config File
 .env.sentry-build-plugin
+
+
+#agents
+.agents/
+.agent/
+.claude/
+
