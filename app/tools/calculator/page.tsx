@@ -141,7 +141,7 @@ export default function Calculator() {
       } else if (key === ".") {
         e.preventDefault();
         appendNumber(".");
-      } else if (["+", "-", "*", "/", "^"].includes(key)) {
+      } else if (["+", "-", "*", "/", "^", "(", ")", "%"].includes(key)) {
         e.preventDefault();
         appendOperator(key);
       } else if (key === "Enter" || key === "=") {
