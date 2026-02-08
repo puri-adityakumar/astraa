@@ -150,7 +150,7 @@ export default function Calculator() {
       } else if (key === "Backspace") {
         e.preventDefault();
         handleBackspace();
-      } else if (key === "Escape" || key.toLowerCase() === "c") {
+      } else if (key === "Escape" || key === "C") {
         e.preventDefault();
         clear();
       }
