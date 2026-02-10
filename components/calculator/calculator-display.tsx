@@ -1,11 +1,16 @@
-"use client"
+"use client";
+
+import { memo } from "react";
 
 interface CalculatorDisplayProps {
-  value: string
-  expression: string
+  value: string;
+  expression: string;
 }
 
-export function CalculatorDisplay({ value, expression }: CalculatorDisplayProps) {
+export const CalculatorDisplay = memo(function CalculatorDisplay({
+  value,
+  expression,
+}: CalculatorDisplayProps) {
   return (
     <div className="space-y-2 p-4 bg-muted/50 rounded-lg font-mono">
       <div className="text-sm text-muted-foreground h-6 text-right">
@@ -15,5 +20,5 @@ export function CalculatorDisplay({ value, expression }: CalculatorDisplayProps)
         {value || "0"}
       </div>
     </div>
-  )
-}
+  );
+});

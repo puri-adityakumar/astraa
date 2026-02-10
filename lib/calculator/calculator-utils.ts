@@ -29,10 +29,13 @@ export const scientificFunctions = {
   }
 }
 
+const WHITESPACE_RE = /\s+/g;
+const OPERATOR_SET = new Set(["+", "-", "*", "/", "^"]);
+
 export function evaluateExpression(expression: string): number {
   // Remove whitespace and validate
-  expression = expression.replace(/\s+/g, '')
-  if (!expression) return 0
+  expression = expression.replace(WHITESPACE_RE, "");
+  if (!expression) return 0;
 
   // Tokenize the expression
   const tokens = tokenize(expression)
@@ -66,7 +69,7 @@ function tokenize(expression: string): string[] {
 }
 
 function isOperator(char: string): boolean {
-  return '+-*/^'.includes(char)
+  return OPERATOR_SET.has(char);
 }
 
 function toPostfix(tokens: string[]): string[] {
