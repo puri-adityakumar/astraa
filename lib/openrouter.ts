@@ -2,7 +2,27 @@
 
 import { OpenRouter } from '@openrouter/sdk';
 
+const MAX_TOPIC_LENGTH = 500;
+const MIN_WORD_COUNT = 10;
+const MAX_WORD_COUNT = 5000;
+
 export async function generateText(topic: string, wordCount: number) {
+    if (typeof topic !== "string" || topic.trim().length === 0) {
+        return { success: false, error: "Topic must be a non-empty string." };
+    }
+
+    if (topic.length > MAX_TOPIC_LENGTH) {
+        return { success: false, error: `Topic must be under ${MAX_TOPIC_LENGTH} characters.` };
+    }
+
+    if (typeof wordCount !== "number" || !Number.isFinite(wordCount)) {
+        return { success: false, error: "Word count must be a valid number." };
+    }
+
+    if (wordCount < MIN_WORD_COUNT || wordCount > MAX_WORD_COUNT) {
+        return { success: false, error: `Word count must be between ${MIN_WORD_COUNT} and ${MAX_WORD_COUNT}.` };
+    }
+
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {

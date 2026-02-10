@@ -4,13 +4,53 @@
  */
 
 // Configuration
-export { ANIMATION_CONFIG, shouldReduceMotion } from './config';
+export { ANIMATION_CONFIG, shouldReduceMotion } from "./config";
 
 // Variants
-export * from './variants';
+export {
+  fadeIn,
+  fadeInUp,
+  fadeInDown,
+  fadeInLeft,
+  fadeInRight,
+  scaleIn,
+  scaleInBounce,
+  slideInBottom,
+  slideInTop,
+  staggerContainer,
+  staggerContainerFast,
+  staggerContainerSlow,
+  staggerItem,
+  rotateIn,
+  flipIn,
+  expand,
+  blurIn,
+  shimmer,
+} from "./variants";
 
 // Hooks
-export * from './hooks';
+export {
+  useReducedMotion,
+  useAnimationVariants,
+  useConditionalAnimation,
+  useInView,
+  useStaggerDelay,
+  usePageTransition,
+} from "./hooks";
 
 // Presets
-export * from './presets';
+export {
+  pageTransitions,
+  cardHoverAnimations,
+  buttonHoverAnimations,
+  listItemAnimation,
+  modalAnimations,
+  notificationAnimations,
+  loadingAnimations,
+  scrollAnimations,
+  iconAnimations,
+  backgroundAnimations,
+  counterAnimation,
+  progressBarAnimation,
+  skeletonShimmer,
+} from "./presets";

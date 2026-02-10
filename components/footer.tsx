@@ -2,8 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect, useMemo } from "react"
-import { Github } from "lucide-react"
-import { BsTwitterX, BsTelegram } from "react-icons/bs"
+import { Github, Twitter, Send } from "lucide-react"
 import { Logo } from "@/components/logo"
 import { AvatarCircles } from "@/components/ui/avatar-circles"
 
@@ -91,7 +90,7 @@ export function Footer() {
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="X (Twitter)"
               >
-                <BsTwitterX className="h-4 w-4" />
+                <Twitter className="h-4 w-4" />
               </Link>
               <Link
                 href="https://t.me/astraadottech"
@@ -100,7 +99,7 @@ export function Footer() {
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Telegram"
               >
-                <BsTelegram className="h-5 w-5" />
+                <Send className="h-5 w-5" />
               </Link>
             </div>
 

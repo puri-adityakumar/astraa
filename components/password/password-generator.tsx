@@ -54,9 +54,9 @@ export function PasswordGeneratorClient() {
     if (result.success) {
       setPassword(result.password)
     }
-  }, [mode, length, options, wordCount, memOptions, pinLength])
+  }, [mode, length, options, wordCount, memOptions.capitalize, pinLength])
 
-  // Initial generate
+  // Auto-generate on option changes
   useEffect(() => {
     generate()
   }, [generate])
