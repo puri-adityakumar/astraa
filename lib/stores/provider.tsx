@@ -13,42 +13,38 @@ interface StoreProviderProps {
  */
 export function StoreProvider({ children }: StoreProviderProps) {
   const { preferences } = useUserPreferences()
-  const { trackPerformance } = useActivityTracking()
-  
-  // Initialize performance tracking
+
+  // Initialize performance tracking (uses getState to avoid re-render subscription)
   useEffect(() => {
     const startTime = performance.now()
-    
-    // Track initial load performance
+
     const handleLoad = () => {
       const loadTime = performance.now() - startTime
-      trackPerformance({ loadTime })
+      useActivityTracking.getState().trackPerformance({ loadTime })
     }
-    
-    // Track memory usage if available
+
     const trackMemoryUsage = () => {
       if ('memory' in performance) {
-        const memory = (performance as any).memory
-        trackPerformance({
-          memoryUsage: memory.usedJSHeapSize
+        const memory = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory
+        useActivityTracking.getState().trackPerformance({
+          memoryUsage: memory.usedJSHeapSize,
         })
       }
     }
-    
+
     if (document.readyState === 'complete') {
       handleLoad()
     } else {
       window.addEventListener('load', handleLoad)
     }
-    
-    // Track memory usage periodically
-    const memoryInterval = setInterval(trackMemoryUsage, 30000) // Every 30 seconds
-    
+
+    const memoryInterval = setInterval(trackMemoryUsage, 30000)
+
     return () => {
       window.removeEventListener('load', handleLoad)
       clearInterval(memoryInterval)
     }
-  }, [trackPerformance])
+  }, [])
   
   // Apply accessibility preferences to document
   useEffect(() => {

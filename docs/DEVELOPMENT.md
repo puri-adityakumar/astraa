@@ -56,6 +56,7 @@ astraa/
 │   ├── image/                # Image resizer components
 │   ├── music/                # Music player components
 │   └── units/                # Unit converter components
+├── middleware.ts              # Edge middleware (visitor counting via Upstash Redis)
 ├── lib/                      # Utilities and logic
 │   ├── tools.ts              # Tools catalog
 │   ├── games.ts              # Games catalog
@@ -77,6 +78,8 @@ astraa/
 │   ├── calculator/           # Calculator logic
 │   ├── image/                # Image processing logic
 │   └── games/                # Game-specific logic (snake, memory, dino)
+├── instrumentation-client.ts  # Sentry client-side instrumentation
+├── instrumentation.ts         # Sentry server-side instrumentation
 ├── hooks/                    # Custom React hooks
 ├── types/                    # TypeScript type definitions
 ├── public/                   # Static assets
@@ -551,21 +554,27 @@ npm run lint -- --fix
 
 ```bash
 # Create feature branch
-git checkout -b feature/new-tool
+git checkout -b feat/new-tool
 
 # Make changes and commit
 git add .
-git commit -m "feat: add new tool"
+git commit -m "feat(tools): add new tool"
 
-# Push and create PR
-git push origin feature/new-tool
+# Push and create PR targeting development branch
+git push origin feat/new-tool
 ```
 
-Commit message format:
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation
-- `style:` Code style changes
-- `refactor:` Code refactoring
-- `test:` Adding tests
-- `chore:` Maintenance tasks
+**PRs must target the `development` branch** and must be assigned to an issue before submitting.
+
+Commit message format (Conventional Commits with scope):
+- `feat(scope):` New feature
+- `fix(scope):` Bug fix
+- `docs(scope):` Documentation
+- `style(scope):` Code style changes
+- `refactor(scope):` Code refactoring
+- `perf(scope):` Performance improvement
+- `test(scope):` Adding tests
+- `chore(scope):` Maintenance tasks
+- `ci(scope):` CI changes
+- `build(scope):` Build system changes
+- `release(vX.Y.Z):` Merge development to main

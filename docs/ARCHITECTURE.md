@@ -39,10 +39,11 @@ graph TB
 **Architecture Type:** Client-side rendered SPA with Next.js App Router
 
 **Key Characteristics:**
-- No backend API routes
+- Minimal backend — server actions for AI text generation, API routes for specific integrations
 - Browser-based processing for tools
 - External APIs for live data
-- Client-side state persistence
+- Client-side state persistence (IndexedDB primary, localStorage fallback)
+- Edge middleware for visitor counting (Upstash Redis)
 
 ## Frontend Structure
 
@@ -154,6 +155,16 @@ graph LR
 
 **No authentication required** - all routes are public.
 
+### Middleware
+
+```typescript
+// middleware.ts
+// Edge middleware for visitor counting via Upstash Redis
+// - Tracks unique visitors on the home page
+// - Uses 24-hour dedup cookie to prevent double-counting
+// - Non-blocking increment using Next.js after() API
+```
+
 ### Navigation Components
 
 | Route Type | Navigation Component |
@@ -179,14 +190,16 @@ graph TB
     end
 
     subgraph Storage["Persistence"]
-        LS[(localStorage)]
+        IDB[(IndexedDB)]
+        LS[(localStorage fallback)]
     end
 
     TC --> Components
     AC --> Components
-    UP --> LS
-    TS --> LS
-    AT --> LS
+    UP --> IDB
+    TS --> IDB
+    AT --> IDB
+    IDB -.->|fallback| LS
 ```
 
 ### Zustand Stores

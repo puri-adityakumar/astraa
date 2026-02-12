@@ -11,6 +11,16 @@ import { useReducedMotion } from "@/lib/animations/hooks"
 import { Card } from "./card"
 import { forwardRef, ReactNode } from "react"
 
+const HOVER_VARIANTS = {
+  lift: { y: -8, transition: { duration: 0.2, ease: "easeOut" } },
+  scale: { scale: 1.02, transition: { duration: 0.2, ease: "easeOut" } },
+  glow: { boxShadow: "0 0 20px rgba(var(--primary), 0.3)", transition: { duration: 0.3, ease: "easeOut" } },
+  tilt: { rotateX: 5, rotateY: 5, transition: { duration: 0.2, ease: "easeOut" } },
+  none: {},
+} as const
+
+const EMPTY_VARIANT = {}
+
 interface AnimatedCardProps extends Omit<HTMLMotionProps<"div">, "children"> {
   /**
    * Hover effect type
@@ -51,32 +61,11 @@ const AnimatedCard = forwardRef<HTMLDivElement, AnimatedCardProps>(
   ) => {
     const shouldReduce = useReducedMotion()
 
-    const hoverVariants = {
-      lift: shouldReduce ? {} : {
-        y: -8,
-        transition: { duration: 0.2, ease: "easeOut" }
-      },
-      scale: shouldReduce ? {} : {
-        scale: 1.02,
-        transition: { duration: 0.2, ease: "easeOut" }
-      },
-      glow: shouldReduce ? {} : {
-        boxShadow: "0 0 20px rgba(var(--primary), 0.3)",
-        transition: { duration: 0.3, ease: "easeOut" }
-      },
-      tilt: shouldReduce ? {} : {
-        rotateX: 5,
-        rotateY: 5,
-        transition: { duration: 0.2, ease: "easeOut" }
-      },
-      none: {}
-    }
-
     return (
       <motion.div
         ref={ref}
         className={cn("relative group", className)}
-        whileHover={hoverVariants[hoverEffect]}
+        whileHover={shouldReduce ? EMPTY_VARIANT : HOVER_VARIANTS[hoverEffect]}
         {...props}
       >
         <Card className="h-full relative overflow-hidden">

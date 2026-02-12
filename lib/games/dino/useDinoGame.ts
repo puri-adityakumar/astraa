@@ -85,6 +85,8 @@ export function useDinoGame() {
     if (!gameState.isPlaying) return
 
     const gameLoop = setInterval(() => {
+      const viewportWidth = window.innerWidth
+
       setGameState(prev => {
         // Update dino position
         let newDinoY = prev.dinoY
@@ -105,13 +107,13 @@ export function useDinoGame() {
 
         // Generate new obstacles
         const lastObstacle = newObstacles[newObstacles.length - 1]
-        if (newObstacles.length === 0 || 
-            (lastObstacle && lastObstacle.x < 
-            window.innerWidth - Math.random() * 
-            (GAME_CONFIG.maxObstacleDistance - GAME_CONFIG.minObstacleDistance) - 
+        if (newObstacles.length === 0 ||
+            (lastObstacle && lastObstacle.x <
+            viewportWidth - Math.random() *
+            (GAME_CONFIG.maxObstacleDistance - GAME_CONFIG.minObstacleDistance) -
             GAME_CONFIG.minObstacleDistance)) {
           newObstacles.push({
-            x: window.innerWidth,
+            x: viewportWidth,
             width: 20,
             height: 50,
             type: Math.random() > 0.7 ? 'bird' : 'cactus'

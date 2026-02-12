@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react'
 import { tools } from './tools'
 import { games } from './games'
 
@@ -37,18 +37,21 @@ const ActivityContext = createContext<ActivityContextType>({
 
 // Simulated locations for demo
 const locations = [
-  'New York', 'London', 'Tokyo', 'Paris', 'Berlin', 'Sydney', 'Toronto', 
+  'New York', 'London', 'Tokyo', 'Paris', 'Berlin', 'Sydney', 'Toronto',
   'Mumbai', 'São Paulo', 'Singapore', 'Dubai', 'Amsterdam', 'Stockholm'
 ]
 
+// Pre-compute combined items array once at module level
+const allItems = [...tools, ...games]
+const gameNames = new Set(games.map(g => g.name))
+
 // Generate realistic demo data
 const generateDemoActivity = (): Activity | null => {
-  const allItems = [...tools, ...games]
   const randomItem = allItems[Math.floor(Math.random() * allItems.length)]
-  
+
   if (!randomItem) return null
-  
-  const isGame = games.some(g => g.name === randomItem.name)
+
+  const isGame = gameNames.has(randomItem.name)
   
   return {
     id: Math.random().toString(36).substr(2, 9),
@@ -84,7 +87,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
     }
   })
 
-  const trackActivity = (type: 'tool' | 'game', name: string) => {
+  const trackActivity = useCallback((type: 'tool' | 'game', name: string) => {
     const newActivity: Activity = {
       id: Math.random().toString(36).substr(2, 9),
       type,
@@ -99,29 +102,49 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
       totalUsage: prev.totalUsage + 1,
       recentActivities: [newActivity, ...prev.recentActivities].slice(0, 10)
     }))
-  }
-
-  // Simulate real-time activity
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.7) { // 30% chance every 3 seconds
-        const newActivity = generateDemoActivity()
-        if (newActivity) {
-          setStats(prev => ({
-            ...prev,
-            totalUsage: prev.totalUsage + 1,
-            recentActivities: [newActivity, ...prev.recentActivities].slice(0, 10),
-            activeUsers: Math.max(15, prev.activeUsers + (Math.random() > 0.5 ? 1 : -1))
-          }))
-        }
-      }
-    }, 3000)
-
-    return () => clearInterval(interval)
   }, [])
 
+  // Simulate real-time activity (pauses when tab is hidden)
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>
+
+    const startPolling = () => {
+      interval = setInterval(() => {
+        if (Math.random() > 0.7) { // 30% chance every 3 seconds
+          const newActivity = generateDemoActivity()
+          if (newActivity) {
+            setStats(prev => ({
+              ...prev,
+              totalUsage: prev.totalUsage + 1,
+              recentActivities: [newActivity, ...prev.recentActivities].slice(0, 10),
+              activeUsers: Math.max(15, prev.activeUsers + (Math.random() > 0.5 ? 1 : -1))
+            }))
+          }
+        }
+      }, 3000)
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearInterval(interval)
+      } else {
+        startPolling()
+      }
+    }
+
+    startPolling()
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+    }
+  }, [])
+
+  const contextValue = useMemo(() => ({ stats, trackActivity }), [stats, trackActivity])
+
   return (
-    <ActivityContext.Provider value={{ stats, trackActivity }}>
+    <ActivityContext.Provider value={contextValue}>
       {children}
     </ActivityContext.Provider>
   )

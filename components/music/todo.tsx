@@ -20,19 +20,19 @@ export function TodoList() {
   const addTodo = (e: React.FormEvent) => {
     e.preventDefault()
     if (input.trim()) {
-      setTodos([...todos, { id: Date.now(), text: input.trim(), completed: false }])
+      setTodos(prev => [...prev, { id: Date.now(), text: input.trim(), completed: false }])
       setInput("")
     }
   }
 
   const toggleTodo = (id: number) => {
-    setTodos(todos.map(todo =>
+    setTodos(prev => prev.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     ))
   }
 
   const removeTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id))
+    setTodos(prev => prev.filter(todo => todo.id !== id))
   }
 
   return (

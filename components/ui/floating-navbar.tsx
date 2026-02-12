@@ -56,16 +56,7 @@ export function FloatingNav({ className }: { className?: string }) {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setSearchOpen((open) => !open)
-      }
-    }
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+  // Cmd+K is handled globally by CommandMenu — no duplicate listener needed here
 
   const runCommand = React.useCallback((command: () => unknown) => {
     setSearchOpen(false)

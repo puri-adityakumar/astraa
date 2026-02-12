@@ -18,6 +18,7 @@ graph TB
     App[RootLayout]
     App --> Providers
     Providers --> ThemeProvider
+    Providers --> TooltipProvider
     Providers --> ToolsProvider
     Providers --> ActivityProvider
     Providers --> StoreProvider
@@ -62,22 +63,29 @@ Root layout with all providers and global elements.
 ```typescript
 // app/layout.tsx
 import { ThemeProvider } from "@/components/theme-provider"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { ToolsProvider } from "@/lib/tools-context"
 import { ActivityProvider } from "@/lib/activity-tracker"
 import { Toaster } from "@/components/ui/toaster"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ToolsProvider>
-            <ActivityProvider>
-              {children}
-              <Toaster />
-            </ActivityProvider>
-          </ToolsProvider>
+          <TooltipProvider>
+            <ToolsProvider>
+              <ActivityProvider>
+                {children}
+                <Toaster />
+              </ActivityProvider>
+            </ToolsProvider>
+          </TooltipProvider>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

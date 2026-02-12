@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { ShimmerButton } from "@/components/ui/shimmer-button"
 import Link from "next/link"
-import { HiArrowRight } from "react-icons/hi2"
+import { ArrowRight } from "lucide-react"
 import { useEffect, useState } from "react"
 import { StatsBar } from "./stats-bar"
 
@@ -82,7 +82,7 @@ export function HeroSection() {
             >
               <span className="flex items-center gap-2 text-base font-medium px-4 py-1">
                 Explore
-                <HiArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </span>
             </ShimmerButton>
           </Link>
