@@ -163,6 +163,9 @@ export function CalculatorClient() {
           Perform complex math calculations with our Google-style scientific
           calculator.
         </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
       </div>
 
       <Card className="max-w-3xl border-border/50 shadow-sm overflow-hidden bg-background">

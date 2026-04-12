@@ -55,6 +55,9 @@ export function ContributeClient() {
           Built by developers, for developers. Help us shape the future of
           this open-source collection of tools.
         </p>
+        <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+          Open-source, privacy-first utility toolkit. All tools run locally in your browser with no data collection.
+        </p>
         <div className="flex items-center justify-center gap-4 pt-4">
           <Button asChild size="lg" className="rounded-full px-8">
             <Link
@@ -82,6 +85,11 @@ export function ContributeClient() {
             </Link>
           </Button>
         </div>
+        <p className="text-xs text-muted-foreground">
+          {contributors.length > 0
+            ? `${contributors.length} contributors and growing`
+            : "Join our growing community of contributors"}
+        </p>
 
         <div className="pt-8 max-w-xl mx-auto space-y-6">
           <blockquote className="font-mono text-sm sm:text-base text-muted-foreground leading-relaxed italic">

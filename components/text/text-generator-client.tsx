@@ -61,6 +61,9 @@ export function TextGeneratorClient() {
           The modern alternative to Lorem Ipsum. Generate meaningful,
           context-aware placeholder text tailored to your specific topic.
         </p>
+        <p className="text-xs text-muted-foreground/70">
+          Text generated via OpenRouter API. No personal data stored.
+        </p>
       </div>
 
       {/* Input Bar */}

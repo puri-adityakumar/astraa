@@ -151,6 +151,26 @@ We will let You know via email and/or a prominent notice on Our Service, prior t
 
 You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
 
+## Tool-Specific Data Handling
+
+Astraa is designed with privacy in mind. Most tools process data entirely in your browser with no server communication.
+
+### Client-Side Tools (No Data Transmitted)
+The following tools run entirely in your browser. No input data is sent to any server:
+*   **Scientific Calculator** — All calculations performed locally
+*   **Hash Generator** — All hashing runs client-side using the Web Crypto API
+*   **Password Generator** — Passwords generated locally using cryptographically secure randomness
+*   **Image Resizer** — Images processed in-browser using Canvas API, never uploaded
+*   **Unit Converter** — All conversions computed locally
+*   **JSON Validator** — JSON parsing and formatting happens in your browser
+
+### Tools Using External APIs
+*   **Currency Converter** — Fetches exchange rates from CoinGecko (cryptocurrency) and exchangerate-api (fiat currencies). Only currency pair identifiers are sent; no personal data is transmitted.
+*   **AI Text Generator** — Sends your topic prompt to OpenRouter API (Meta Llama 3.3 70B model) for text generation. No personal data or conversation history is stored.
+
+### Data Storage
+Astraa uses browser-local storage (IndexedDB with localStorage fallback) for user preferences, tool settings, and usage statistics. This data never leaves your device and can be cleared through your browser settings at any time.
+
 ## Contact Us
 If you have any questions about this Privacy Policy, You can contact us:
 

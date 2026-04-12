@@ -56,6 +56,9 @@ export function JsonValidatorClient() {
           <p className="text-muted-foreground">
             Validate and format JSON data
           </p>
+          <p className="text-xs text-muted-foreground/70">
+            All processing happens locally in your browser
+          </p>
         </div>
 
         <Card className="p-6">
