@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description:
       "Format and beautify SQL queries instantly. Free browser-based developer tool.",
     url: "/tools/sql",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

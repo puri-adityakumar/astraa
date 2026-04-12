@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: "Tools",
     description: "Free utility tools for developers and creators.",
     url: "/tools",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

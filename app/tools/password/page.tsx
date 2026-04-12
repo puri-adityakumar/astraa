@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Generate strong, secure passwords with customizable options. Free and private.",
     url: "/tools/password",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

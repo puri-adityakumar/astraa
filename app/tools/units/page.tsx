@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description:
       "Convert length, weight, temperature, and more. Free online unit conversion tool.",
     url: "/tools/units",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

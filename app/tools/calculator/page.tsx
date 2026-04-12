@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
     url: "/tools/calculator",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

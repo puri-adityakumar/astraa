@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Resize and convert images to JPEG, PNG, or WebP with quality control. Free and private.",
     url: "/tools/image",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

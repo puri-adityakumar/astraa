@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description:
       "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
     url: "/tools/music",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

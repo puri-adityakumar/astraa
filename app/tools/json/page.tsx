@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Validate and format JSON data instantly. Free browser-based developer tool.",
     url: "/tools/json",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

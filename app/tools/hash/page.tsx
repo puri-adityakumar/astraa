@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
     url: "/tools/hash",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

@@ -1,23 +1,18 @@
-"use client"
-
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import Link from "next/link";
 
 export default function NotFound() {
-  const router = useRouter()
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push("/")
-    }, 15000)
-
-    return () => clearTimeout(timer)
-  }, [router])
-
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center">
+    <div className="min-h-[70vh] flex flex-col items-center justify-center gap-6">
       <h1 className="text-9xl font-bold font-mono">404</h1>
-      <h3 className="text-xl text-muted-foreground mt-4">Something went wrong</h3>
+      <p className="text-xl text-muted-foreground">
+        This page could not be found.
+      </p>
+      <Link
+        href="/"
+        className="text-primary underline underline-offset-4 hover:text-primary/80"
+      >
+        Go back home
+      </Link>
     </div>
-  )
+  );
 }

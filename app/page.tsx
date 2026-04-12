@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description:
       "15+ free browser-based utility tools for developers and creators.",
     url: "/",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary_large_image",

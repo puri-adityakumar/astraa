@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: "Explore",
     description: "Discover all tools and games on Astraa.",
     url: "/explore",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Convert currencies and crypto with real-time exchange rates. Free and accurate.",
     url: "/tools/currency",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

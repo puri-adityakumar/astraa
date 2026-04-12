@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Generate context-aware placeholder text with AI. The modern Lorem Ipsum alternative.",
     url: "/tools/text",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

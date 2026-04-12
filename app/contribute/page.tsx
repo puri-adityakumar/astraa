@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description:
       "Join our open-source community and help build free utility tools.",
     url: "/contribute",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",

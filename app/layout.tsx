@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     "generator",
     "browser tools",
   ],
+  manifest: "/manifest.json",
   icons: {
     icon: "/assets/astraa_pfp.png",
     apple: "/assets/astraa_pfp.png",
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
       "15+ free online utility tools for developers and creators. No signup required.",
     images: [
       {
-        url: "/assets/astraa_banner.png",
+        url: "/assets/astraa_banner.jpg",
         width: 1200,
         height: 630,
         alt: "Astraa - Free utility tools suite for developers and creators",
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Astraa - Free Online Utility Tools",
     description: "15+ free online utility tools for developers and creators.",
-    images: ["/assets/astraa_banner.png"],
+    images: ["/assets/astraa_banner.jpg"],
   },
   alternates: {
     canonical: "https://www.astraa.tech",
@@ -105,6 +106,8 @@ export default function RootLayout({
                 "url": "https://www.astraa.tech",
                 "applicationCategory": "UtilityApplication",
                 "operatingSystem": "Web",
+                "datePublished": "2025-01-01",
+                "dateModified": new Date().toISOString().split("T")[0],
                 "offers": {
                   "@type": "Offer",
                   "price": "0",
