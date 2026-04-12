@@ -32,6 +32,7 @@ export function CurrencySelect({ value, onValueChange, label }: CurrencySelectPr
                 height={15}
                 alt={`${currency.name} flag`}
                 className="rounded-sm object-cover shadow-sm"
+                loading="lazy"
               />
               <span className="font-medium">{currency.code}</span>
               <span className="text-muted-foreground text-xs hidden sm:inline-block">

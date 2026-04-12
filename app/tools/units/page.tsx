@@ -1,9 +1,10 @@
-import { Metadata } from "next"
-import { UnitConverterClient } from "@/components/units/unit-converter"
+import type { Metadata } from "next";
+import { UnitConverterClient } from "@/components/units/unit-converter";
 
 export const metadata: Metadata = {
-  title: "Unit Converter | astraa",
-  description: "Convert between different units of measurement including length, weight, and temperature. Free online unit conversion tool.",
+  title: "Unit Converter",
+  description:
+    "Convert between different units of measurement including length, weight, temperature, and more. Free online unit conversion tool with metric and imperial support.",
   keywords: [
     "unit converter",
     "measurement converter",
@@ -14,21 +15,26 @@ export const metadata: Metadata = {
     "imperial converter",
     "conversion tool",
     "unit conversion calculator",
-    "measurement tool"
+    "measurement tool",
   ],
   openGraph: {
     title: "Unit Converter",
-    description: "Convert between different units of measurement including length, weight, and temperature. Free online unit conversion tool.",
-    type: "website",
-    url: "https://astraa.me/tools/units",
+    description:
+      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
+    url: "/tools/units",
+    images: ["/assets/astraa_banner.png"],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Unit Converter",
-    description: "Convert between different units of measurement including length, weight, and temperature. Free online unit conversion tool.",
-  }
-}
+    description:
+      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
+  },
+  alternates: {
+    canonical: "/tools/units",
+  },
+};
 
 export default function UnitConverterPage() {
-  return <UnitConverterClient />
+  return <UnitConverterClient />;
 }

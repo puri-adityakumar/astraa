@@ -46,6 +46,7 @@ export function ColorDisplay({ color, label, onClick }: ColorDisplayProps) {
           size="icon"
           className="absolute top-2 right-2"
           onClick={handleCopyToClipboard}
+          aria-label="Copy color value"
         >
           <Copy className="h-4 w-4" />
         </Button>

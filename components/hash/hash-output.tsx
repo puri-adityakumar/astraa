@@ -49,6 +49,7 @@ export function HashOutput({ type, hash }: HashOutputProps) {
           onClick={handleCopyToClipboard}
           disabled={!hash}
           className="shrink-0"
+          aria-label="Copy hash"
         >
           <Copy className="h-4 w-4" />
         </Button>

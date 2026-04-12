@@ -122,6 +122,7 @@ export function FiatConverter({
             size="icon"
             onClick={handleSwap}
             className="rounded-full hover:bg-muted"
+            aria-label="Swap currencies"
           >
             <ArrowDownUp className="h-4 w-4 text-muted-foreground" />
           </Button>
