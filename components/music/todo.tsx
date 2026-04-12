@@ -47,7 +47,7 @@ export function TodoList() {
             placeholder="Add a task..."
             className="flex-1"
           />
-          <Button type="submit" size="icon">
+          <Button type="submit" size="icon" aria-label="Add todo">
             <Plus className="h-4 w-4" />
           </Button>
         </form>
@@ -70,6 +70,7 @@ export function TodoList() {
                 size="icon"
                 onClick={() => removeTodo(todo.id)}
                 className="opacity-0 group-hover:opacity-100 transition-opacity"
+                aria-label="Delete todo"
               >
                 <X className="h-4 w-4" />
               </Button>

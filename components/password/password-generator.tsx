@@ -88,6 +88,9 @@ export function PasswordGeneratorClient() {
         <p className="text-muted-foreground text-base sm:text-lg text-pretty">
           Generate secure, random passwords, memorable passphrases, or PIN codes instantly.
         </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
       </div>
 
       <div className="bg-card border border-border/50 rounded-xl shadow-sm p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">

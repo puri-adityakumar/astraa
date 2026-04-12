@@ -70,6 +70,7 @@ export function MusicPlayer() {
               size="icon"
               onClick={toggleMute}
               className="rounded-full"
+              aria-label={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? (
                 <VolumeX className="h-4 w-4" />
@@ -82,6 +83,7 @@ export function MusicPlayer() {
               size="icon"
               onClick={togglePlay}
               className="h-12 w-12 rounded-full"
+              aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
                 <Pause className="h-6 w-6" />

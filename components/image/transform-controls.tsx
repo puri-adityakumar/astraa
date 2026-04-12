@@ -39,6 +39,7 @@ export function TransformControls({
             variant="outline"
             size="icon"
             onClick={() => onRotationChange((rotation + 90) % 360)}
+            aria-label="Rotate image"
           >
             <RotateCw className="h-4 w-4" />
           </Button>

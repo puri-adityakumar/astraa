@@ -58,6 +58,9 @@ export function UnitConverterClient() {
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
           Seamlessly convert between different units of measurement. Select a category from the menu to get started.
         </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 sm:gap-8">
