@@ -71,6 +71,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.astraa.tech",
   },
+  verification: {
+    google: "K3dnShfyPnbR7ZmBYsPTffM4BNv8F3IFSfQ2Mp1_UGs",
+    other: { "msvalidate.01": "FD086326818E5E4305514B1A1379C444" },
+  },
 };
 
 export default function RootLayout({

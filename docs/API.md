@@ -27,7 +27,7 @@ graph LR
     Client --> |Server Action| AI
 ```
 
-**No internal API routes** - the application is fully client-side with external integrations.
+**One internal API route** (`/api/stats`) returns visitor count, GitHub stars, and contributor count. All other data flows through client-side calls or server actions.
 
 ## Currency Exchange API
 
@@ -278,49 +278,34 @@ Server-side data persistence using Upstash Redis.
 
 **Provider:** [Upstash](https://upstash.com)
 
-**Package:** `@upstash/redis`
+**Package:** `@upstash/redis` (Vercel KV compatible)
 
 **Authentication:** Environment variables
 
 ```bash
 # .env.local
-UPSTASH_REDIS_REST_URL=your_redis_url
-UPSTASH_REDIS_REST_TOKEN=your_redis_token
+KV_REST_API_URL=your_redis_url
+KV_REST_API_TOKEN=your_redis_token
 ```
 
 ### Usage
 
-```typescript
-import { redis } from "@/lib/redis"
-
-// Set a value
-await redis.set("key", "value")
-
-// Get a value
-const value = await redis.get("key")
-
-// Set with expiration (seconds)
-await redis.set("key", "value", { ex: 3600 })
-```
-
-### Implementation
+Redis is used directly in `middleware.ts` (Edge runtime) — it cannot import from `lib/`. The client is instantiated inline:
 
 ```typescript
-// lib/redis.ts
+// middleware.ts
 import { Redis } from "@upstash/redis"
 
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
 })
 ```
 
 ### Use Cases
 
-- Activity tracking persistence
-- Rate limiting
-- Caching API responses
-- Session data
+- Visitor counting on home page (24-hour dedup cookie)
+- Stats API (`/api/stats`) returns visitor count alongside GitHub data
 
 ## Error Handling
 
@@ -393,13 +378,17 @@ export async function getExchangeRate(from: string, to: string) {
 
 ```bash
 # .env.local
+NEXT_PUBLIC_ENV=dev
 OPENROUTER_API_KEY=your_api_key_here
-UPSTASH_REDIS_REST_URL=your_redis_url
-UPSTASH_REDIS_REST_TOKEN=your_redis_token
+KV_REST_API_URL=your_redis_url
+KV_REST_API_TOKEN=your_redis_token
+# SENTRY_AUTH_TOKEN=your_sentry_token  # optional
 ```
 
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
 | `OPENROUTER_API_KEY` | Optional | AI text generation |
-| `UPSTASH_REDIS_REST_URL` | Optional | Redis database URL |
-| `UPSTASH_REDIS_REST_TOKEN` | Optional | Redis authentication token |
+| `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL |
+| `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
+| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |
