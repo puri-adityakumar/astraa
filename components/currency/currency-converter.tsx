@@ -27,6 +27,9 @@ export function CurrencyConverterClient() {
         <p className="text-muted-foreground text-lg max-w-2xl">
           Convert between different currencies and cryptocurrencies using real-time rates.
         </p>
+        <p className="text-xs text-muted-foreground/70">
+          Exchange rates from CoinGecko and exchangerate-api. No personal data transmitted.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">

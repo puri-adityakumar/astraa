@@ -21,7 +21,9 @@ astraa/
 │   ├── error.tsx             # Error boundary
 │   ├── global-error.tsx      # Global error boundary
 │   ├── not-found.tsx         # 404 page
-│   ├── api/                  # API routes
+│   ├── robots.ts             # robots.txt generation
+│   ├── sitemap.ts            # sitemap.xml generation
+│   ├── api/                  # API routes (stats endpoint)
 │   ├── tools/                # Tool pages
 │   │   ├── page.tsx          # Tools listing
 │   │   ├── password/         # Password generator
@@ -385,12 +387,12 @@ npm start
 ### Environment Variables
 
 ```bash
-# .env.local (development)
+# .env.local (development) — see .env.sample
+NEXT_PUBLIC_ENV=dev
 OPENROUTER_API_KEY=your_key_here
-
-# Production (set in deployment platform)
-OPENROUTER_API_KEY=production_key
-SENTRY_DSN=your_sentry_dsn
+KV_REST_API_URL=your_redis_url
+KV_REST_API_TOKEN=your_redis_token
+# SENTRY_AUTH_TOKEN=your_sentry_token  # optional
 ```
 
 ### Deployment Platforms
@@ -401,16 +403,7 @@ SENTRY_DSN=your_sentry_dsn
 npx vercel
 ```
 
-**Docker**
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-CMD ["npm", "start"]
-```
+**Docker** (not currently configured — no Dockerfile in repo)
 
 ## Common Workflows
 

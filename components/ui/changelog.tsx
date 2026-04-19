@@ -91,11 +91,12 @@ export const Changelog = ({
                     src={entry.image}
                     alt={`${entry.version} visual`}
                     className="mt-8 w-full rounded-lg object-cover"
+                    loading="lazy"
                   />
                 )}
                 {entry.button && (
                   <Button variant="link" className="mt-4 self-end" asChild>
-                    <a href={entry.button.url} target="_blank">
+                    <a href={entry.button.url} target="_blank" rel="noopener noreferrer">
                       {entry.button.text} <ArrowUpRight className="h-4 w-4" />
                     </a>
                   </Button>

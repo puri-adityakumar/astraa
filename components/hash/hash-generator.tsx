@@ -37,6 +37,9 @@ export function HashGeneratorClient() {
         <p className="text-muted-foreground text-base sm:text-lg">
           Generate secure hash outputs from your text input
         </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
       </div>
 
       <Card className="p-4 sm:p-6 space-y-6">

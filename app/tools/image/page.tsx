@@ -1,19 +1,10 @@
-import { Metadata } from "next"
-import { ImageResizerClient } from "@/components/image/image-resizer"
+import type { Metadata } from "next";
+import { ImageResizerClient } from "@/components/image/image-resizer";
 
 export const metadata: Metadata = {
-  title: "Image Resizer | astraa",
-  description: "Upload and resize your images with multiple format options. Support for JPEG, PNG, and WebP formats with quality control.",
-  openGraph: {
-    title: "Image Resizer",
-    description: "Upload and resize your images with multiple format options. Support for JPEG, PNG, and WebP formats with quality control.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Image Resizer",
-    description: "Upload and resize your images with multiple format options. Support for JPEG, PNG, and WebP formats with quality control.",
-  },
+  title: "Image Resizer",
+  description:
+    "Upload and resize your images with multiple format options. Support for JPEG, PNG, and WebP formats with quality control. Free browser-based image tool.",
   keywords: [
     "image resizer",
     "image converter",
@@ -21,10 +12,39 @@ export const metadata: Metadata = {
     "jpeg optimizer",
     "png optimizer",
     "image compression",
-    "image tools"
-  ]
-}
+    "image tools",
+    "resize image online",
+  ],
+  openGraph: {
+    title: "Image Resizer",
+    description:
+      "Resize and convert images to JPEG, PNG, or WebP with quality control. Free and private.",
+    url: "/tools/image",
+    images: ["/assets/astraa_banner.jpg"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Image Resizer",
+    description:
+      "Resize and convert images to JPEG, PNG, or WebP with quality control. Free and private.",
+  },
+  alternates: {
+    canonical: "/tools/image",
+  },
+};
 
 export default function ImageResizerPage() {
-  return <ImageResizerClient />
+  const lastUpdated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <>
+      <ImageResizerClient />
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        Last updated: {lastUpdated}
+      </p>
+    </>
+  );
 }

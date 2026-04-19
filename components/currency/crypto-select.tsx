@@ -30,6 +30,7 @@ export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
                 height={20}
                 alt={`${crypto.name} icon`}
                 className="rounded-full object-cover"
+                loading="lazy"
                 onError={(e) => {
                   e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/1213/1213032.png" // Fallback generic coin
                   e.currentTarget.onerror = null

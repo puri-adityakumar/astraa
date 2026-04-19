@@ -125,6 +125,9 @@ export function ImageResizerClient() {
         <p className="text-muted-foreground text-lg">
           Upload and resize your images with format options.
         </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
       </div>
 
       <Card className="p-6">

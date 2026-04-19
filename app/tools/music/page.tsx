@@ -1,30 +1,54 @@
-"use client"
+import type { Metadata } from "next";
+import { LofiStudioClient } from "@/components/music/lofi-studio-client";
 
-import { MusicPlayer } from "@/components/music/player"
-import { Pomodoro } from "@/components/music/pomodoro"
-import { TodoList } from "@/components/music/todo"
-import { WorkInProgress } from "@/components/wip"
+export const metadata: Metadata = {
+  title: "Lofi Focus Studio",
+  description:
+    "Stay productive with lofi beats, a built-in pomodoro timer, and task management. Free browser-based focus tool to boost concentration and workflow.",
+  keywords: [
+    "lofi music",
+    "focus music",
+    "pomodoro timer",
+    "productivity tool",
+    "study music",
+    "lofi beats",
+    "task manager",
+    "focus studio",
+  ],
+  robots: {
+    index: false,
+    follow: true,
+  },
+  openGraph: {
+    title: "Lofi Focus Studio",
+    description:
+      "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
+    url: "/tools/music",
+    images: ["/assets/astraa_banner.jpg"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Lofi Focus Studio",
+    description:
+      "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
+  },
+  alternates: {
+    canonical: "/tools/music",
+  },
+};
 
 export default function LofiPage() {
+  const lastUpdated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
   return (
-    <WorkInProgress>
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold">Lofi Focus Studio</h1>
-          <p className="text-muted-foreground">
-            Stay productive with lofi beats, pomodoro timer, and task management
-          </p>
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
-          <MusicPlayer />
-
-          <div className="space-y-8">
-            <Pomodoro />
-            <TodoList />
-          </div>
-        </div>
-      </div>
-    </WorkInProgress>
-  )
+    <>
+      <LofiStudioClient />
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        Last updated: {lastUpdated}
+      </p>
+    </>
+  );
 }
