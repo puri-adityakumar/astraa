@@ -21,8 +21,6 @@ graph TB
     Providers --> TooltipProvider
     Providers --> ToolsProvider
     Providers --> ActivityProvider
-    Providers --> StoreProvider
-
     subgraph Pages
         Landing[Landing Page]
         Tools[Tools Page]
@@ -67,7 +65,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { ToolsProvider } from "@/lib/tools-context"
 import { ActivityProvider } from "@/lib/activity-tracker"
 import { Toaster } from "@/components/ui/toaster"
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -102,7 +100,7 @@ Route-aware navigation wrapper.
 
 import { usePathname } from "next/navigation"
 import { LandingNavigation } from "@/components/home/landing-navigation"
-import { FloatingNavbar } from "@/components/ui/floating-navbar"
+import { FloatingNav } from "@/components/ui/floating-navbar"
 
 export function Navigation() {
   const pathname = usePathname()
@@ -112,11 +110,11 @@ export function Navigation() {
     return <LandingNavigation />
   }
 
-  return <FloatingNavbar />
+  return <FloatingNav />
 }
 ```
 
-### FloatingNavbar
+### FloatingNav
 
 Minimal navigation for tool and game pages.
 
@@ -124,7 +122,7 @@ Minimal navigation for tool and game pages.
 
 **Usage:**
 ```tsx
-<FloatingNavbar />
+<FloatingNav />
 ```
 
 **Features:**
@@ -370,7 +368,7 @@ export function MyComponent() {
 
 Toast notification management.
 
-**Location:** `hooks/use-toast.ts`
+**Location:** `components/ui/use-toast.ts`
 
 ```typescript
 import { useToast } from "@/hooks/use-toast"

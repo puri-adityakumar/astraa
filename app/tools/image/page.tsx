@@ -34,5 +34,17 @@ export const metadata: Metadata = {
 };
 
 export default function ImageResizerPage() {
-  return <ImageResizerClient />;
+  const lastUpdated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <>
+      <ImageResizerClient />
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        Last updated: {lastUpdated}
+      </p>
+    </>
+  );
 }

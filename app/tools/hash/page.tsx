@@ -34,5 +34,17 @@ export const metadata: Metadata = {
 };
 
 export default function HashGeneratorPage() {
-  return <HashGeneratorClient />;
+  const lastUpdated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <>
+      <HashGeneratorClient />
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        Last updated: {lastUpdated}
+      </p>
+    </>
+  );
 }

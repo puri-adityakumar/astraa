@@ -70,7 +70,11 @@ cp .env.sample .env.local
 
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
 | `OPENROUTER_API_KEY` | Optional | API key for AI-powered text generation |
+| `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL (visitor counting) |
+| `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
+| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |
 
 ## Running the Application
 

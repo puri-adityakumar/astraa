@@ -335,8 +335,8 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
 }
 
 export function logError(error: unknown, context?: Record<string, unknown>) {
-  // Log to Sentry with context
-  Sentry.captureException(error, { extra: context })
+  // Log to console (Sentry captures errors at boundary level via global-error.tsx)
+  console.error(error, context)
 }
 ```
 
@@ -368,6 +368,8 @@ graph LR
     Server --> |sentry.server.config.ts| Sentry
     Edge --> |sentry.edge.config.ts| Sentry
 ```
+
+**Note:** `logError()` in `lib/error-handler.ts` logs to console only. Sentry captures errors at boundary level via `global-error.tsx` and the instrumentation files above.
 
 **Configuration:**
 - Trace sample rate: 100% (development)
