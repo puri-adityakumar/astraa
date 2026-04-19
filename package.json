@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --max-warnings 50",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -86,6 +86,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@types/three": "^0.182.0",
     "@vitejs/plugin-react": "^6.0.1",
     "vitest": "^4.1.4"
