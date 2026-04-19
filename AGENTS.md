@@ -3,20 +3,38 @@
 ## Commands
 
 ```bash
-npm run dev      # Start development server (http://localhost:3000)
-npm run build    # Production build
-npm start        # Start production server
-npm run lint     # Run ESLint
+npm run dev        # Start development server (http://localhost:3000)
+npm run build      # Production build
+npm start          # Start production server
+npm run lint       # Run ESLint (flat config, eslint.config.mjs)
+npm test           # Run unit tests (Vitest)
+npm run test:watch # Run tests in watch mode
 ```
 
-**Testing**: No test suite configured. Use manual testing.
+**Testing**: Unit tests cover pure utility functions in `lib/` (calculator, hash, password, unit conversions, error handler). Test files are co-located (e.g., `lib/calculator/calculator-utils.test.ts`). Run `npm test` before committing changes to these modules. CI runs tests and build on every PR.
+
+## Architecture
+
+**Core pattern**: Server component pages render client components:
+- `app/tools/[tool]/page.tsx` → exports metadata, renders client component
+- `components/[tool]/[tool]-client.tsx` → `"use client"` directive, UI logic
+- `lib/[tool]/` → pure logic, utilities, types (no React)
+
+**State**: Zustand stores in `lib/stores/` (UserPreferences, ToolSettings, ActivityTracking) persisted via IndexedDB with localStorage fallback. Context: ToolsContext (`lib/tools-context.tsx`), ActivityProvider (`lib/activity-tracker.tsx`).
+
+**External APIs**:
+- OpenRouter (`lib/openrouter.ts`): Server action, AI text generation
+- CoinGecko (`lib/crypto-data.ts`): Crypto prices
+- Currency APIs (`lib/api.ts`): Exchange rates with fallback
+- Upstash Redis (`middleware.ts`): Visitor counting, Edge runtime — cannot import from `lib/`
+
+**Registry**: Tools in `lib/tools.ts`, games in `lib/games.ts`.
 
 ## TypeScript Configuration
 
-- Strict mode enabled with comprehensive type checking (`noUnusedLocals`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`)
-- Path aliases: `@/components/*`, `@/lib/*`, `@/hooks/*`, `@/app/*`, `@/types/*`, `@/config/*`
-- Prefer `unknown` over `any` for type declarations
-- Use explicit return types for public functions
+- Strict mode with `noUnusedLocals`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`
+- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`, `@/config`
+- Prefer `unknown` over `any`; explicit return types for public functions
 
 ## Code Style
 
@@ -42,30 +60,50 @@ import type { Tool } from "@/lib/tools"
 - **Constants**: UPPER_SNAKE_CASE (`TOAST_LIMIT`, `ANIMATION_CONFIG`)
 - **Types/Interfaces**: PascalCase (`Tool`, `PasswordResult`)
 - **Files**: kebab-case (`password-generator.tsx`, `hash-utils.ts`)
-- **Props**: Descriptive names (`handleGenerate` not `onClick`)
 
-## Component Structure
+## Tool/Game Page Pattern
 
 ```typescript
-"use client"
-import { useState, useCallback } from "react"
-import { Button } from "@/components/ui/button"
+// app/tools/my-tool/page.tsx
+import type { Metadata } from "next"
+import { MyToolClient } from "@/components/my-tool/my-tool-client"
 
-export function ComponentName() {
-  const [state, setState] = useState(initialValue)
-  const handleClick = useCallback(() => {}, [deps])
-  return <div className="container max-w-2xl pt-24 pb-12 space-y-8">...</div>
+export const metadata: Metadata = {
+  title: "Tool Name",
+  description: "150-160 char description for SEO.",
+  keywords: ["relevant", "keywords"],
+  openGraph: {
+    title: "Tool Name",
+    description: "Short OG description.",
+    url: "/tools/my-tool",
+    images: ["/assets/astraa_banner.jpg"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Tool Name",
+    description: "Short Twitter description.",
+  },
+  alternates: {
+    canonical: "/tools/my-tool",
+  },
+}
+
+export default function MyToolPage() {
+  const lastUpdated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <>
+      <MyToolClient />
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        Last updated: {lastUpdated}
+      </p>
+    </>
+  );
 }
 ```
-
-## File Organization
-
-- **Client Components**: Start with `"use client"` directive
-- **Server Actions**: Use `'use server'` directive
-- **Pages**: Server component in `app/` → renders client component from `components/`
-- **Utilities**: Pure functions in `lib/` organized by feature
-- **Game Logic**: Custom hooks in `lib/games/[game-name]/`
-- **State Management**: Local (`useState`, `useReducer`), Global (Zustand in `lib/stores/`), Context (`lib/tools-context.tsx`)
 
 ## Styling
 
@@ -75,7 +113,6 @@ export function ComponentName() {
 - Responsive breakpoints: `xs:475px`, `sm:640px`, `md:768px`, `lg:1024px`, `xl:1280px`
 - Glass morphism: `glass`, `glass-hover` classes
 - Colors: HSL semantic variables (`background`, `foreground`, `primary`, `muted`, `border`)
-- Minimum touch targets: `44px` (`min-h-touch`, `min-w-touch`)
 
 ## Error Handling
 
@@ -90,8 +127,8 @@ try {
 }
 ```
 
-- Use result types for async operations: `{ success: true, data } | { success: false, error }`
-- Never expose technical details to users
+- Error boundaries: global (`app/global-error.tsx`), page-level (`app/error.tsx`)
+- Sentry: client (`instrumentation-client.ts`), server (`sentry.server.config.ts`), edge (`sentry.edge.config.ts`)
 
 ## Animations
 
@@ -110,52 +147,12 @@ export function AnimatedComponent() {
 }
 ```
 
+## Accessibility
+
+- Minimum touch targets: 44px (`min-h-touch`, `min-w-touch`)
+- Use semantic HTML (`<button>`, `<input>`, `<label>`)
+- Use `aria-label` for icon-only buttons
 - Always check `useReducedMotion()` before animating
-- Use pre-defined variants from `lib/animations/variants.ts`
-
-## Sentry Integration
-
-Import: `import * as Sentry from "@sentry/nextjs"`
-
-**Exception Capturing**: `Sentry.captureException(error)`
-
-**Performance Tracing**:
-```typescript
-const result = await Sentry.startSpan(
-  { op: "function.name", name: "Descriptive Name" },
-  async (span) => {
-    span.setAttribute("key", value)
-    return data
-  }
-)
-```
-
-**Structured Logging**:
-```typescript
-const { logger } = Sentry
-logger.info("Action completed", { key: "value" })
-logger.debug(logger.fmt`User: ${userId}`)
-```
-
-## Tool/Game Page Pattern
-
-```typescript
-// app/tools/my-tool/page.tsx
-import { Metadata } from "next"
-import { MyToolClient } from "@/components/my-tool/my-tool-client"
-
-export const metadata: Metadata = {
-  title: "Tool Name | astraa",
-  description: "One-line description",
-  openGraph: { title: "Tool Name", description: "One-line description" },
-}
-
-export default function MyToolPage() {
-  return <MyToolClient />
-}
-```
-
-Register tools in `lib/tools.ts` and games in `lib/games.ts`.
 
 ## Git Workflow
 
@@ -164,22 +161,3 @@ Register tools in `lib/tools.ts` and games in `lib/games.ts`.
 - Use Conventional Commits: `feat(scope): description`, `fix(scope): description`
 - Commit types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`
 - Release format: `release(vX.Y.Z): merge development to main`
-
-## Accessibility
-
-- Minimum touch targets: `44px` (use `min-h-touch`, `min-w-touch`)
-- Use semantic HTML (`<button>`, `<input>`, `<label>`)
-- Respect reduced motion preference
-- Use `aria-label` for icon-only buttons
-
-## Component Exports
-
-- Index files export types and utilities: `export * from './types'`
-- Named exports for components: `export function ComponentName() {}`
-- Avoid default exports for better tree-shaking
-
-## Comments
-
-- JSDoc for public functions: `/** Description */`
-- Inline comments only for complex logic
-- Keep comments concise

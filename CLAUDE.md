@@ -147,20 +147,43 @@ export function ComponentName() {
 
 ```typescript
 // app/tools/my-tool/page.tsx
-import { Metadata } from "next"
+import type { Metadata } from "next"
 import { MyToolClient } from "@/components/my-tool/my-tool-client"
 
 export const metadata: Metadata = {
-  title: "Tool Name | astraa",
-  description: "One-line description",
+  title: "Tool Name",
+  description: "150-160 char description for SEO.",
+  keywords: ["relevant", "keywords"],
   openGraph: {
     title: "Tool Name",
-    description: "One-line description",
+    description: "Short OG description.",
+    url: "/tools/my-tool",
+    images: ["/assets/astraa_banner.jpg"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Tool Name",
+    description: "Short Twitter description.",
+  },
+  alternates: {
+    canonical: "/tools/my-tool",
   },
 }
 
 export default function MyToolPage() {
-  return <MyToolClient />
+  const lastUpdated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <>
+      <MyToolClient />
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        Last updated: {lastUpdated}
+      </p>
+    </>
+  );
 }
 ```
 
