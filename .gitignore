@@ -48,3 +48,6 @@ next-env.d.ts
 .agent/
 .claude/
 
+# superpowers plans
+docs/superpowers/
+

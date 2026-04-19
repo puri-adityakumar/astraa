@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/assets/astraa.png" alt="astraa" />
+  <img src="public/assets/astraa.jpg" alt="astraa" />
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge" alt="Next.js" />

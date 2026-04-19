@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s | Astraa",
   },
   description:
-    "Discover 15+ free online utility tools including calculator, currency converter, password generator, hash tools, and browser games. No signup required. All processing happens in your browser.",
+    "Discover 15+ free online utility tools including calculator, currency converter, password generator, and hash tools. No signup required.",
   creator: "Aditya Kumar",
   keywords: [
     "utility tools",
