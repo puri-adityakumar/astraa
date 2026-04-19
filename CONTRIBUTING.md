@@ -108,15 +108,26 @@ npm run dev
 ### Available Commands
 
 ```bash
-npm run dev      # Start dev server (http://localhost:3000)
-npm run build    # Production build
-npm start        # Start production server
-npm run lint     # Run ESLint — run this before submitting a PR
+npm run dev        # Start dev server (http://localhost:3000)
+npm run build      # Production build
+npm start          # Start production server
+npm run lint       # Run ESLint
+npm test           # Run unit tests (Vitest)
+npm run test:watch # Run tests in watch mode
 ```
 
-### No Test Suite
+### Testing
 
-There is no automated test suite. Use manual testing during development — verify your changes work across mobile/desktop and dark/light themes.
+Unit tests cover pure utility functions in `lib/` (calculator, hash, password, unit conversions, error handler).
+
+**Before submitting a PR:**
+1. Run `npm test` and ensure all tests pass
+2. Run `npm run lint` and fix any lint errors
+3. Run `npm run build` to verify the production build succeeds
+4. If you modify a function in `lib/`, add or update its tests in the corresponding `.test.ts` file
+5. Manually verify your changes across mobile/desktop and dark/light themes
+
+Test files are co-located with source files (e.g., `lib/calculator/calculator-utils.test.ts`). CI runs lint, tests, and build automatically on every PR.
 
 ## Using AI Agents (Claude Code)
 
@@ -228,4 +239,4 @@ Merging development branch to main for release v<VERSION>
 - **X (Twitter)**: [@astraadottech](https://x.com/astraadottech)
 - **Email**: contact@astraa.tech
 
-Thank you for contributing to astraa! 🚀
+Thank you for contributing to astraa!
