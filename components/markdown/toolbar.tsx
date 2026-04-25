@@ -33,7 +33,6 @@ type ToolbarProps = {
 };
 
 export function Toolbar({ editorRef }: ToolbarProps) {
-  void editorRef; // wired up in Plan Task 10
   const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentFileId));
   const viewMode = useMarkdownEditor((s) => s.viewMode);
   const setViewMode = useMarkdownEditor((s) => s.setViewMode);
@@ -101,9 +100,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="Bold"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => editorRef.current?.wrapSelection("**")}
         >
           <Bold className="h-4 w-4" />
         </Button>
@@ -111,9 +109,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="Italic"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => editorRef.current?.wrapSelection("*")}
         >
           <Italic className="h-4 w-4" />
         </Button>
@@ -121,9 +118,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="Heading"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => editorRef.current?.insertAtCursor("\n## ")}
         >
           <Heading1 className="h-4 w-4" />
         </Button>
@@ -131,9 +127,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="List"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => editorRef.current?.insertAtCursor("\n- ")}
         >
           <List className="h-4 w-4" />
         </Button>
@@ -141,9 +136,11 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="Link"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => {
+            const url = window.prompt("URL:");
+            if (url) editorRef.current?.wrapSelection("[", `](${url})`);
+          }}
         >
           <Link2 className="h-4 w-4" />
         </Button>
@@ -151,9 +148,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="Code"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => editorRef.current?.wrapSelection("`")}
         >
           <Code className="h-4 w-4" />
         </Button>
@@ -161,9 +157,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="Quote"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => editorRef.current?.insertAtCursor("\n> ")}
         >
           <Quote className="h-4 w-4" />
         </Button>
@@ -171,9 +166,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           variant="ghost"
           size="icon"
           aria-label="Find"
-          disabled
-          title="Coming soon"
           className="min-h-touch min-w-touch"
+          onClick={() => editorRef.current?.openSearch()}
         >
           <Search className="h-4 w-4" />
         </Button>
