@@ -31,8 +31,9 @@ function CodeBlock({ className, children }: ComponentProps<"code">) {
   const { resolvedTheme } = useTheme();
   const [html, setHtml] = useState<string | null>(null);
   const code = String(children ?? "");
-  const lang = (className?.match(/language-(\w+)/)?.[1] ?? "text").toLowerCase();
-  const inline = !className;
+  const match = className?.match(/language-(\w+)/);
+  const lang = (match?.[1] ?? "text").toLowerCase();
+  const inline = !match && !code.includes("\n");
 
   useEffect(() => {
     if (inline) return;
