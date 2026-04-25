@@ -217,7 +217,7 @@ export function Toolbar({ editorRef }: ToolbarProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuItem disabled>Export as .md</DropdownMenuItem>
             <DropdownMenuItem disabled>Export as .html</DropdownMenuItem>
-            <DropdownMenuItem disabled>Print → PDF</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.print()}>Print → PDF</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

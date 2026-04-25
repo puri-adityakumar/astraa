@@ -1,0 +1,17 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .markdown-preview,
+  .markdown-preview * {
+    visibility: visible;
+  }
+  .markdown-preview {
+    position: absolute;
+    inset: 0;
+    padding: 1rem;
+    overflow: visible;
+    height: auto;
+    max-width: 100%;
+  }
+}

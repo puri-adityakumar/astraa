@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MarkdownEditorClient } from "@/components/markdown/markdown-editor-client";
+import "./print.css";
 
 export const metadata: Metadata = {
   title: "Markdown Editor | astraa",
