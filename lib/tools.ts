@@ -1,4 +1,4 @@
-import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Binary, type LucideIcon } from "lucide-react"
+import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Binary, FileText, type LucideIcon } from "lucide-react"
 
 export type ToolCategory = {
   name: string
@@ -59,6 +59,12 @@ export const toolCategories: ToolCategory[] = [
         description: 'Scientific calculator with advanced functions',
         path: '/tools/calculator',
         icon: Calculator
+      },
+      {
+        name: 'Markdown Editor',
+        description: 'Write Markdown with live preview',
+        path: '/tools/markdown',
+        icon: FileText
       },
       {
         name: 'Lofi Focus Studio',
