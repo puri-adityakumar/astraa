@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Bold,
   Italic,
@@ -35,8 +35,14 @@ export function Toolbar() {
 
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(file?.title ?? "");
+  const cancelledRef = useRef(false);
 
   const commitTitle = () => {
+    if (cancelledRef.current) {
+      cancelledRef.current = false;
+      setEditingTitle(false);
+      return;
+    }
     if (file?.pinned) renameFile(file.id, titleDraft);
     setEditingTitle(false);
   };
@@ -48,6 +54,7 @@ export function Toolbar() {
         size="icon"
         aria-label="Toggle file sidebar"
         onClick={toggleSidebar}
+        className="min-h-touch min-w-touch"
       >
         <PanelLeft className="h-4 w-4" />
       </Button>
@@ -60,7 +67,10 @@ export function Toolbar() {
           onBlur={commitTitle}
           onKeyDown={(e) => {
             if (e.key === "Enter") commitTitle();
-            if (e.key === "Escape") setEditingTitle(false);
+            if (e.key === "Escape") {
+              cancelledRef.current = true;
+              setEditingTitle(false);
+            }
           }}
           className="h-8 w-48"
         />
@@ -80,28 +90,84 @@ export function Toolbar() {
       )}
 
       <div className="ml-auto flex items-center gap-1">
-        <Button variant="ghost" size="icon" aria-label="Bold">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Bold"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <Bold className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Italic">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Italic"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <Italic className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Heading">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Heading"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <Heading1 className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="List">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="List"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <List className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Link">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Link"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <Link2 className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Code">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Code"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <Code className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Quote">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Quote"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <Quote className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Find">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Find"
+          disabled
+          title="Coming soon"
+          className="min-h-touch min-w-touch"
+        >
           <Search className="h-4 w-4" />
         </Button>
 
@@ -111,6 +177,7 @@ export function Toolbar() {
           aria-label="Editor only"
           aria-pressed={viewMode === "editor"}
           onClick={() => setViewMode("editor")}
+          className="min-h-touch min-w-touch"
         >
           <Edit className="h-4 w-4" />
         </Button>
@@ -120,6 +187,7 @@ export function Toolbar() {
           aria-label="Split view"
           aria-pressed={viewMode === "split"}
           onClick={() => setViewMode("split")}
+          className="min-h-touch min-w-touch"
         >
           <Columns2 className="h-4 w-4" />
         </Button>
@@ -129,13 +197,19 @@ export function Toolbar() {
           aria-label="Preview only"
           aria-pressed={viewMode === "preview"}
           onClick={() => setViewMode("preview")}
+          className="min-h-touch min-w-touch"
         >
           <Eye className="h-4 w-4" />
         </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Export">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Export"
+              className="min-h-touch min-w-touch"
+            >
               <Download className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
