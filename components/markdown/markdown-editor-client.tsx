@@ -6,6 +6,8 @@ import { Toolbar } from "./toolbar";
 import { FileSidebar } from "./file-sidebar";
 import { Preview } from "./preview";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
+import { useToast } from "@/components/ui/use-toast";
+import { processImageDrop } from "@/lib/markdown/image-utils";
 import type { EditorHandle } from "./editor";
 
 const Editor = dynamic(() => import("./editor").then((m) => m.Editor), {
@@ -21,6 +23,30 @@ export function MarkdownEditorClient() {
   const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentFileId));
   const updateContent = useMarkdownEditor((s) => s.updateContent);
   const editorRef = useRef<EditorHandle | null>(null);
+  const { toast } = useToast();
+
+  const handleDrop = async (droppedFile: File) => {
+    const result = await processImageDrop(droppedFile);
+    if (result.kind === "ok") {
+      editorRef.current?.insertAtCursor(`\n${result.markdown}\n`);
+      if (result.warning) {
+        toast({ title: "Large image", description: result.warning });
+      }
+    } else if (result.kind === "blocked") {
+      toast({
+        title: "Image rejected",
+        description: result.reason,
+        variant: "destructive",
+      });
+    } else if (result.kind === "error") {
+      toast({
+        title: "Couldn't read image",
+        description: result.message,
+        variant: "destructive",
+      });
+    }
+    // ignored → silent no-op (matches the spec)
+  };
 
   return (
     <div className="container max-w-7xl pt-20 pb-6">
@@ -40,6 +66,7 @@ export function MarkdownEditorClient() {
                 ref={editorRef}
                 value={file?.content ?? ""}
                 onChange={(v) => file && updateContent(file.id, v)}
+                onDropFile={handleDrop}
               />
             </div>
           )}
