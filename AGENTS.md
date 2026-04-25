@@ -157,6 +157,74 @@ export default function MyToolPage() {
 
 Register tools in `lib/tools.ts` and games in `lib/games.ts`.
 
+## Feature Spec Review Checklist
+
+Before turning a design/spec into an implementation plan, walk through these checks. Treat any "no" as either a gap to fix in the spec or a deliberate, documented decision in an "Out of scope" section.
+
+### Project alignment
+- Server page → client component pattern (`app/tools/[name]/page.tsx` → `components/[name]/[name]-client.tsx` → `lib/[name]/*`)
+- Global state lives in `lib/stores/[name].ts` using Zustand + `createZustandStorage()`
+- Tool registered in `lib/tools.ts` (or game in `lib/games.ts`) with `name`, `description`, `path`, `icon`, optional `wip`
+- Metadata uses `"Tool Name | astraa"` title format
+- Errors funnel through `getUserFriendlyError()` and `logError()` from `@/lib/error-handler`
+- File/function/component names follow casing conventions (kebab-case files, PascalCase components, camelCase functions)
+- Tailwind class order respected, classes composed via `cn()`
+
+### Design uniformity
+- Layout matches other tools — centered card (`max-w-2xl mx-auto`) is the default; any divergence is justified in the spec
+- Reuses `components/ui/*` primitives before introducing new ones
+- Includes heading + tagline + "All processing happens locally in your browser" line where applicable
+- Animations use `lib/animations/variants.ts` and `useReducedMotion()`
+- Dark/light follows `next-themes` and HSL semantic tokens
+
+### UX coverage
+- Empty state, loading state, error states are all specified
+- Mobile / small-screen behavior is specified — layout works below `640px`
+- Keyboard shortcuts enumerated
+- Focus management on state changes specified
+- Behavior on navigation/refresh mid-edit (unsaved data) specified
+- Destructive actions gated by confirmation
+
+### Accessibility
+- Touch targets ≥ 44px (`min-h-touch`/`min-w-touch`)
+- `aria-label` on icon-only buttons
+- Semantic HTML, every action keyboard-reachable
+- Animations respect `useReducedMotion()`
+- Dynamic content handled for screen readers (live regions, focus moves)
+
+### Security / data
+- User-supplied content rendered safely (no untrusted HTML)
+- Upload/storage size limits set
+- Data persisted only locally unless explicitly designed for sync
+- Sensitive data sanitized before logging
+
+### Performance / bundle
+- Heavy dependencies (>100KB) dynamic-imported and justified
+- Initial route bundle impact assessed
+- Hot-path renders debounced where appropriate
+
+### Complexity
+- Would a smaller v1 still hit the goal?
+- Each component does one thing
+- Abstractions earn their cost
+
+### Testing
+- Pure logic in `lib/` has unit tests, including boundary conditions
+- Manual verification checklist exists for UI behaviors not covered by units
+
+### Storage / migration
+- Schema version recorded and migration path planned (`lib/stores/migration.ts`)
+- Caps on stored data prevent quota issues
+- Fallback behavior when storage unavailable
+
+### Observability
+- Tool usage tracked via `updateToolUsage(toolId)`
+- Sentry instrumentation on meaningful flows
+- Errors logged with enough context to debug
+
+### Out-of-scope clarity
+- What's NOT being built is explicit, so deferred work is distinguishable from forgotten work
+
 ## Git Workflow
 
 - PRs must target `development` branch
