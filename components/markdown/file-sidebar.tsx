@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { formatDistanceToNow } from "date-fns";
 import { Pin, PinOff, Plus, Trash2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,14 +23,23 @@ import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 
 export function FileSidebar() {
   const open = useMarkdownEditor((s) => s.sidebarOpen);
-  const files = useMarkdownEditor((s) => s.files);
+  const rows = useMarkdownEditor(
+    useShallow((s) =>
+      s.files.map((f) => ({
+        id: f.id,
+        title: f.title,
+        pinned: f.pinned,
+        lastEditedAt: f.lastEditedAt,
+      })),
+    ),
+  );
   const currentId = useMarkdownEditor((s) => s.currentFileId);
   const createFile = useMarkdownEditor((s) => s.createFile);
   const selectFile = useMarkdownEditor((s) => s.selectFile);
   const deleteFile = useMarkdownEditor((s) => s.deleteFile);
   const renameFile = useMarkdownEditor((s) => s.renameFile);
 
-  const pinnedCount = files.filter((f) => f.pinned).length;
+  const pinnedCount = rows.filter((r) => r.pinned).length;
   const atCap = pinnedCount >= 10;
 
   if (!open) return null;
@@ -44,7 +54,7 @@ export function FileSidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span>
+              <span tabIndex={atCap ? 0 : -1} className="inline-flex">
                 <Button
                   size="icon"
                   variant="outline"
@@ -65,7 +75,7 @@ export function FileSidebar() {
       </div>
 
       <ul className="space-y-1">
-        {files.map((file) => (
+        {rows.map((file) => (
           <FileRow
             key={file.id}
             id={file.id}
@@ -105,7 +115,10 @@ function FileRow({ title, pinned, lastEditedAt, isCurrent, onSelect, onDelete, o
       setRenaming(false);
       return;
     }
-    onRename(draft);
+    const trimmed = draft.trim();
+    if (trimmed) {
+      onRename(trimmed);
+    }
     setRenaming(false);
   };
 
@@ -159,7 +172,7 @@ function FileRow({ title, pinned, lastEditedAt, isCurrent, onSelect, onDelete, o
             size="icon"
             variant="ghost"
             aria-label="Rename"
-            className="h-6 w-6 opacity-0 group-hover:opacity-100"
+            className="h-6 w-6 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
             onClick={() => {
               setDraft(title);
               setRenaming(true);
@@ -173,7 +186,7 @@ function FileRow({ title, pinned, lastEditedAt, isCurrent, onSelect, onDelete, o
                 size="icon"
                 variant="ghost"
                 aria-label="Delete"
-                className="h-6 w-6 opacity-0 group-hover:opacity-100"
+                className="h-6 w-6 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
               >
                 <Trash2 className="h-3 w-3" />
               </Button>
