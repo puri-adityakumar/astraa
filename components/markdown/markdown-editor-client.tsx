@@ -7,6 +7,7 @@ import { FileSidebar } from "./file-sidebar";
 import { Preview } from "./preview";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 import { useToast } from "@/components/ui/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { processImageDrop } from "@/lib/markdown/image-utils";
 import type { EditorHandle } from "./editor";
 
@@ -103,21 +104,43 @@ export function MarkdownEditorClient() {
       <div className="mt-3 flex h-[70vh] overflow-hidden rounded-md border">
         <FileSidebar />
         <div className="flex flex-1 overflow-hidden">
-          {viewMode !== "preview" && (
-            <div className="flex-1 border-r overflow-hidden">
+          {/* Desktop: side-by-side */}
+          <div className="hidden md:flex flex-1 overflow-hidden">
+            {viewMode !== "preview" && (
+              <div className="flex-1 border-r overflow-hidden">
+                <Editor
+                  ref={editorRef}
+                  value={file?.content ?? ""}
+                  onChange={(v) => file && updateContent(file.id, v)}
+                  onDropFile={handleDrop}
+                />
+              </div>
+            )}
+            {viewMode !== "editor" && (
+              <div className="flex-1 overflow-hidden">
+                <Preview key={currentFileId} />
+              </div>
+            )}
+          </div>
+
+          {/* Mobile: tabs */}
+          <Tabs defaultValue="editor" className="md:hidden flex-1 flex flex-col">
+            <TabsList className="m-2">
+              <TabsTrigger value="editor">Editor</TabsTrigger>
+              <TabsTrigger value="preview">Preview</TabsTrigger>
+            </TabsList>
+            <TabsContent value="editor" className="flex-1 overflow-hidden">
               <Editor
                 ref={editorRef}
                 value={file?.content ?? ""}
                 onChange={(v) => file && updateContent(file.id, v)}
                 onDropFile={handleDrop}
               />
-            </div>
-          )}
-          {viewMode !== "editor" && (
-            <div className="flex-1 overflow-hidden">
+            </TabsContent>
+            <TabsContent value="preview" className="flex-1 overflow-hidden">
               <Preview key={currentFileId} />
-            </div>
-          )}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
