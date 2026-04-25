@@ -2,8 +2,12 @@
 
 import { Toolbar } from "./toolbar";
 import { FileSidebar } from "./file-sidebar";
+import { Preview } from "./preview";
+import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 
 export function MarkdownEditorClient() {
+  const viewMode = useMarkdownEditor((s) => s.viewMode);
+
   return (
     <div className="container max-w-7xl pt-20 pb-6">
       <div className="mb-3">
@@ -15,8 +19,17 @@ export function MarkdownEditorClient() {
       <Toolbar />
       <div className="mt-3 flex h-[70vh] overflow-hidden rounded-md border">
         <FileSidebar />
-        <div className="flex-1 p-4 text-sm text-muted-foreground">
-          Editor + preview will appear here.
+        <div className="flex flex-1 overflow-hidden">
+          {viewMode !== "preview" && (
+            <div className="flex-1 border-r p-4 text-sm text-muted-foreground">
+              Editor coming in Task 9.
+            </div>
+          )}
+          {viewMode !== "editor" && (
+            <div className="flex-1 overflow-hidden">
+              <Preview />
+            </div>
+          )}
         </div>
       </div>
     </div>
