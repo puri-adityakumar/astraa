@@ -4,6 +4,7 @@ import { useEffect, useState, type ComponentProps } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useTheme } from "next-themes";
+import type { Pluggable } from "unified";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 
 const PRELOADED_LANGS = ["javascript", "typescript", "python", "bash", "json", "markdown"];
@@ -82,6 +83,27 @@ export function Preview() {
     return () => window.clearTimeout(t);
   }, [content]);
 
+  const hasMath = /\$[^$\n]+\$|\$\$[\s\S]+?\$\$/.test(debounced);
+  const [mathPlugins, setMathPlugins] = useState<{ remark: Pluggable; rehype: Pluggable } | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!hasMath || mathPlugins) return;
+    Promise.all([
+      import("remark-math"),
+      import("rehype-katex"),
+      // @ts-expect-error CSS module has no type declarations
+      import("katex/dist/katex.min.css"),
+    ])
+      .then(([rm, rk]) => {
+        setMathPlugins({ remark: rm.default, rehype: rk.default });
+      })
+      .catch(() => {
+        // leave raw — toast handled in a later task
+      });
+  }, [hasMath, mathPlugins]);
+
   return (
     <div
       className="markdown-preview prose prose-sm dark:prose-invert max-w-none p-4 overflow-auto h-full"
@@ -90,7 +112,11 @@ export function Preview() {
       {content.trim() === "" ? (
         <p className="text-muted-foreground">Preview will appear here as you type.</p>
       ) : (
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ code: CodeBlock }}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm, ...(mathPlugins ? [mathPlugins.remark] : [])]}
+          rehypePlugins={mathPlugins ? [mathPlugins.rehype] : []}
+          components={{ code: CodeBlock }}
+        >
           {debounced || content}
         </ReactMarkdown>
       )}
