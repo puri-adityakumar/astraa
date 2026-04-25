@@ -19,13 +19,12 @@ export function Preview() {
   return (
     <div
       className="markdown-preview prose prose-sm dark:prose-invert max-w-none p-4 overflow-auto h-full"
-      aria-live="polite"
       aria-label="Markdown preview"
     >
       {content.trim() === "" ? (
         <p className="text-muted-foreground">Preview will appear here as you type.</p>
       ) : (
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{debounced}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{debounced || content}</ReactMarkdown>
       )}
     </div>
   );

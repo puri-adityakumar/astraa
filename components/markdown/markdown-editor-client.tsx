@@ -7,6 +7,7 @@ import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 
 export function MarkdownEditorClient() {
   const viewMode = useMarkdownEditor((s) => s.viewMode);
+  const currentFileId = useMarkdownEditor((s) => s.currentFileId);
 
   return (
     <div className="container max-w-7xl pt-20 pb-6">
@@ -27,7 +28,7 @@ export function MarkdownEditorClient() {
           )}
           {viewMode !== "editor" && (
             <div className="flex-1 overflow-hidden">
-              <Preview />
+              <Preview key={currentFileId} />
             </div>
           )}
         </div>
