@@ -28,6 +28,54 @@ const getHighlighter = async () => {
   return highlighterPromise;
 };
 
+let mermaidPromise: Promise<typeof import("mermaid").default> | null = null;
+const getMermaid = () => {
+  if (!mermaidPromise) {
+    mermaidPromise = import("mermaid").then((m) => {
+      m.default.initialize({ startOnLoad: false, securityLevel: "strict" });
+      return m.default;
+    });
+  }
+  return mermaidPromise;
+};
+
+function MermaidBlock({ source }: { source: string }) {
+  const [svg, setSvg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getMermaid()
+      .then((mermaid) =>
+        mermaid.render(`m-${Math.random().toString(36).slice(2)}`, source),
+      )
+      .then((res) => {
+        if (!cancelled) {
+          setSvg(res.svg);
+          setError(null);
+        }
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : "Mermaid parse error");
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [source]);
+
+  if (error) {
+    return (
+      <pre className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-xs">
+        Mermaid error: {error}
+      </pre>
+    );
+  }
+  if (!svg) return <pre className="rounded-md bg-muted p-3 text-xs">Rendering diagram…</pre>;
+  return <div className="my-3 overflow-auto" dangerouslySetInnerHTML={{ __html: svg }} />;
+}
+
 function CodeBlock({ className, children }: ComponentProps<"code">) {
   const { resolvedTheme } = useTheme();
   const [html, setHtml] = useState<string | null>(null);
@@ -56,6 +104,10 @@ function CodeBlock({ className, children }: ComponentProps<"code">) {
       cancelled = true;
     };
   }, [code, lang, resolvedTheme, inline]);
+
+  if (!inline && lang === "mermaid") {
+    return <MermaidBlock source={code} />;
+  }
 
   if (inline) {
     return <code className="rounded bg-muted px-1 py-0.5">{children}</code>;
@@ -113,8 +165,11 @@ export function Preview() {
         <p className="text-muted-foreground">Preview will appear here as you type.</p>
       ) : (
         <ReactMarkdown
-          remarkPlugins={[remarkGfm, ...(mathPlugins ? [mathPlugins.remark] : [])]}
-          rehypePlugins={mathPlugins ? [mathPlugins.rehype] : []}
+          remarkPlugins={[
+            remarkGfm,
+            ...(hasMath && mathPlugins ? [mathPlugins.remark] : []),
+          ]}
+          rehypePlugins={hasMath && mathPlugins ? [mathPlugins.rehype] : []}
           components={{ code: CodeBlock }}
         >
           {debounced || content}
