@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import type { RefObject } from "react";
 import {
   Bold,
   Italic,
@@ -25,8 +26,14 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
+import type { EditorHandle } from "./editor";
 
-export function Toolbar() {
+type ToolbarProps = {
+  editorRef: RefObject<EditorHandle | null>;
+};
+
+export function Toolbar({ editorRef }: ToolbarProps) {
+  void editorRef; // wired up in Plan Task 10
   const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentFileId));
   const viewMode = useMarkdownEditor((s) => s.viewMode);
   const setViewMode = useMarkdownEditor((s) => s.setViewMode);
