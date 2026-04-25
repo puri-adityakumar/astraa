@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Toolbar } from "./toolbar";
 import { FileSidebar } from "./file-sidebar";
@@ -24,6 +24,49 @@ export function MarkdownEditorClient() {
   const updateContent = useMarkdownEditor((s) => s.updateContent);
   const editorRef = useRef<EditorHandle | null>(null);
   const { toast } = useToast();
+
+  const setViewMode = useMarkdownEditor((s) => s.setViewMode);
+  const toggleSidebar = useMarkdownEditor((s) => s.toggleSidebar);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const mod = e.ctrlKey || e.metaKey;
+      if (!mod) return;
+      const key = e.key.toLowerCase();
+      const handle = editorRef.current;
+      if (key === "b") {
+        e.preventDefault();
+        handle?.wrapSelection("**");
+      } else if (key === "i") {
+        e.preventDefault();
+        handle?.wrapSelection("*");
+      } else if (key === "k") {
+        e.preventDefault();
+        const url = window.prompt("URL:");
+        if (url) handle?.wrapSelection("[", `](${url})`);
+      } else if (key === "p") {
+        e.preventDefault();
+        window.print();
+      } else if (key === "s") {
+        e.preventDefault();
+        toast({ title: "Saved automatically" });
+      } else if (key === "1") {
+        e.preventDefault();
+        setViewMode("editor");
+      } else if (key === "2") {
+        e.preventDefault();
+        setViewMode("split");
+      } else if (key === "3") {
+        e.preventDefault();
+        setViewMode("preview");
+      } else if (key === "\\") {
+        e.preventDefault();
+        toggleSidebar();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [setViewMode, toggleSidebar, toast]);
 
   const handleDrop = async (droppedFile: File) => {
     const result = await processImageDrop(droppedFile);
