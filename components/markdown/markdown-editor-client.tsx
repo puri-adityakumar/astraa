@@ -1,12 +1,9 @@
 "use client";
 
 import { Toolbar } from "./toolbar";
-import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
+import { FileSidebar } from "./file-sidebar";
 
 export function MarkdownEditorClient() {
-  const currentFile = useMarkdownEditor((s) =>
-    s.files.find((f) => f.id === s.currentFileId),
-  );
   return (
     <div className="container max-w-7xl pt-20 pb-6">
       <div className="mb-3">
@@ -16,8 +13,11 @@ export function MarkdownEditorClient() {
         </p>
       </div>
       <Toolbar />
-      <div className="mt-3 rounded-md border p-4 text-sm text-muted-foreground">
-        Editor + preview will appear here. Current file: {currentFile?.title ?? "(none)"}
+      <div className="mt-3 flex h-[70vh] overflow-hidden rounded-md border">
+        <FileSidebar />
+        <div className="flex-1 p-4 text-sm text-muted-foreground">
+          Editor + preview will appear here.
+        </div>
       </div>
     </div>
   );
