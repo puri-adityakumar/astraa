@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useMarkdownEditor } from "./markdown-editor";
 
 describe("markdown-editor store", () => {
@@ -30,6 +30,7 @@ describe("markdown-editor store", () => {
     expect(state.files).toHaveLength(2);
     const created = state.files.find((f) => f.pinned);
     expect(created).toBeDefined();
+    expect(created?.title).toBe("Untitled 1");
     expect(state.currentFileId).toBe(created?.id);
   });
 
@@ -96,14 +97,16 @@ describe("markdown-editor store", () => {
     expect(useMarkdownEditor.getState().currentFileId).not.toBe(id);
   });
 
-  it("updateContent updates content and lastEditedAt", async () => {
+  it("updateContent updates content and lastEditedAt", () => {
+    vi.useFakeTimers();
     const id = useMarkdownEditor.getState().currentFileId;
     const before = useMarkdownEditor.getState().files.find((f) => f.id === id)?.lastEditedAt ?? 0;
-    await new Promise((r) => setTimeout(r, 5));
+    vi.setSystemTime(before + 1000);
     useMarkdownEditor.getState().updateContent(id, "hello");
     const after = useMarkdownEditor.getState().files.find((f) => f.id === id);
     expect(after?.content).toBe("hello");
     expect(after?.lastEditedAt).toBeGreaterThan(before);
+    vi.useRealTimers();
   });
 
   it("setViewMode and toggleSidebar update flags", () => {
