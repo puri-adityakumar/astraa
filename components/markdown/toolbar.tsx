@@ -32,12 +32,49 @@ type ToolbarProps = {
   editorRef: RefObject<EditorHandle | null>;
 };
 
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "untitled";
+
 export function Toolbar({ editorRef }: ToolbarProps) {
   const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentFileId));
   const viewMode = useMarkdownEditor((s) => s.viewMode);
   const setViewMode = useMarkdownEditor((s) => s.setViewMode);
   const toggleSidebar = useMarkdownEditor((s) => s.toggleSidebar);
   const renameFile = useMarkdownEditor((s) => s.renameFile);
+
+  const exportMd = () => {
+    if (!file) return;
+    downloadBlob(
+      new Blob([file.content], { type: "text/markdown" }),
+      `${slugify(file.title)}.md`,
+    );
+  };
+
+  const exportHtml = () => {
+    if (!file) return;
+    const previewEl = document.querySelector(".markdown-preview");
+    const body = previewEl?.innerHTML ?? "";
+    const html = `<!doctype html>
+<html><head>
+<meta charset="utf-8" />
+<title>${file.title}</title>
+<style>body{font-family:system-ui,sans-serif;max-width:760px;margin:2rem auto;padding:0 1rem;line-height:1.6;}pre{background:#f5f5f5;padding:1rem;border-radius:6px;overflow:auto;}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}img{max-width:100%;}</style>
+</head><body>${body}</body></html>`;
+    downloadBlob(new Blob([html], { type: "text/html" }), `${slugify(file.title)}.html`);
+  };
 
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(file?.title ?? "");
@@ -215,8 +252,8 @@ export function Toolbar({ editorRef }: ToolbarProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem disabled>Export as .md</DropdownMenuItem>
-            <DropdownMenuItem disabled>Export as .html</DropdownMenuItem>
+            <DropdownMenuItem onClick={exportMd}>Export as .md</DropdownMenuItem>
+            <DropdownMenuItem onClick={exportHtml}>Export as .html</DropdownMenuItem>
             <DropdownMenuItem onClick={() => window.print()}>Print → PDF</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
