@@ -9,6 +9,7 @@ import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { processImageDrop } from "@/lib/markdown/image-utils";
+import { cn } from "@/lib/utils";
 import type { EditorHandle } from "./editor";
 
 const Editor = dynamic(() => import("./editor").then((m) => m.Editor), {
@@ -33,6 +34,11 @@ export function MarkdownEditorClient() {
     const onKey = (e: KeyboardEvent) => {
       const mod = e.ctrlKey || e.metaKey;
       if (!mod) return;
+      const target = e.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA") return;
+      }
       const key = e.key.toLowerCase();
       const handle = editorRef.current;
       if (key === "b") {
@@ -107,7 +113,7 @@ export function MarkdownEditorClient() {
           {/* Desktop: side-by-side */}
           <div className="hidden md:flex flex-1 overflow-hidden">
             {viewMode !== "preview" && (
-              <div className="flex-1 border-r overflow-hidden">
+              <div className="flex-1 border-r overflow-hidden print:hidden">
                 <Editor
                   ref={editorRef}
                   value={file?.content ?? ""}
@@ -116,11 +122,14 @@ export function MarkdownEditorClient() {
                 />
               </div>
             )}
-            {viewMode !== "editor" && (
-              <div className="flex-1 overflow-hidden">
-                <Preview key={currentFileId} />
-              </div>
-            )}
+            <div
+              className={cn(
+                "flex-1 overflow-hidden print:block",
+                viewMode === "editor" && "hidden",
+              )}
+            >
+              <Preview key={currentFileId} />
+            </div>
           </div>
 
           {/* Mobile: tabs */}

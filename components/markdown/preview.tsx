@@ -73,6 +73,7 @@ function MermaidBlock({ source }: { source: string }) {
     );
   }
   if (!svg) return <pre className="rounded-md bg-muted p-3 text-xs">Rendering diagram…</pre>;
+  // SVG is sanitized by Mermaid (securityLevel: "strict" set in getMermaid)
   return <div className="my-3 overflow-auto" dangerouslySetInnerHTML={{ __html: svg }} />;
 }
 
