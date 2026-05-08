@@ -1,24 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import type { RefObject } from "react";
-import {
-  Bold,
-  Italic,
-  Link2,
-  List,
-  Code,
-  Heading1,
-  Quote,
-  Search,
-  Download,
-  PanelLeft,
-  Columns2,
-  Edit,
-  Eye,
-} from "lucide-react";
+import { Download, PanelLeft, Edit, Eye, Save, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -26,219 +9,95 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
-import type { EditorHandle } from "./editor";
+import { cn } from "@/lib/utils";
 
 type ToolbarProps = {
-  editorRef: RefObject<EditorHandle | null>;
+  onPickFile: () => void;
+  onToggleMode: () => void;
+  onSave: () => void;
+  onExportMd: () => void;
+  onExportHtml: () => void;
+  onExportPdf: () => void;
 };
 
-const downloadBlob = (blob: Blob, filename: string) => {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
-const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60) || "untitled";
-
-export function Toolbar({ editorRef }: ToolbarProps) {
-  const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentFileId));
-  const viewMode = useMarkdownEditor((s) => s.viewMode);
-  const setViewMode = useMarkdownEditor((s) => s.setViewMode);
+export function Toolbar({
+  onPickFile,
+  onToggleMode,
+  onSave,
+  onExportMd,
+  onExportHtml,
+  onExportPdf,
+}: ToolbarProps) {
+  const file = useMarkdownEditor((s) =>
+    s.files.find((f) => f.id === s.currentId),
+  );
+  const mode = useMarkdownEditor((s) => s.mode);
+  const draft = useMarkdownEditor((s) => s.draft);
   const toggleSidebar = useMarkdownEditor((s) => s.toggleSidebar);
-  const renameFile = useMarkdownEditor((s) => s.renameFile);
 
-  const exportMd = () => {
-    if (!file) return;
-    downloadBlob(
-      new Blob([file.content], { type: "text/markdown" }),
-      `${slugify(file.title)}.md`,
-    );
-  };
-
-  const exportHtml = () => {
-    if (!file) return;
-    const previewEl = document.querySelector(".markdown-preview");
-    const body = previewEl?.innerHTML ?? "";
-    const html = `<!doctype html>
-<html><head>
-<meta charset="utf-8" />
-<title>${file.title}</title>
-<style>body{font-family:system-ui,sans-serif;max-width:760px;margin:2rem auto;padding:0 1rem;line-height:1.6;}pre{background:#f5f5f5;padding:1rem;border-radius:6px;overflow:auto;}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}img{max-width:100%;}</style>
-</head><body>${body}</body></html>`;
-    downloadBlob(new Blob([html], { type: "text/html" }), `${slugify(file.title)}.html`);
-  };
-
-  const [editingTitle, setEditingTitle] = useState(false);
-  const [titleDraft, setTitleDraft] = useState(file?.title ?? "");
-  const cancelledRef = useRef(false);
-
-  const commitTitle = () => {
-    if (cancelledRef.current) {
-      cancelledRef.current = false;
-      setEditingTitle(false);
-      return;
-    }
-    if (file?.pinned) renameFile(file.id, titleDraft);
-    setEditingTitle(false);
-  };
+  const dirty = draft !== null && file !== undefined && draft !== file.content;
+  const hasFile = !!file;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b py-2">
+    <div className="flex flex-wrap items-center gap-2 border-b py-2 px-2 print:hidden">
       <Button
         variant="ghost"
         size="icon"
-        aria-label="Toggle file sidebar"
+        aria-label="Toggle recent files"
         onClick={toggleSidebar}
         className="min-h-touch min-w-touch"
       >
         <PanelLeft className="h-4 w-4" />
       </Button>
 
-      {editingTitle && file?.pinned ? (
-        <Input
-          autoFocus
-          value={titleDraft}
-          onChange={(e) => setTitleDraft(e.target.value)}
-          onBlur={commitTitle}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") commitTitle();
-            if (e.key === "Escape") {
-              cancelledRef.current = true;
-              setEditingTitle(false);
-            }
-          }}
-          className="h-8 w-48"
-        />
-      ) : (
-        <button
-          type="button"
-          className="text-sm font-medium hover:underline disabled:opacity-60"
-          disabled={!file?.pinned}
-          onClick={() => {
-            setTitleDraft(file?.title ?? "");
-            setEditingTitle(true);
-          }}
-          title={file?.pinned ? "Click to rename" : "Pin this draft to rename"}
-        >
-          {file?.title ?? "(no file)"}
-        </button>
-      )}
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="truncate text-sm font-medium" title={file?.name}>
+          {file?.name ?? "No file"}
+        </span>
+        {dirty && (
+          <span
+            className="h-2 w-2 rounded-full bg-amber-500"
+            aria-label="Unsaved changes"
+            title="Unsaved changes"
+          />
+        )}
+      </div>
 
       <div className="ml-auto flex items-center gap-1">
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Bold"
+          aria-label="Upload markdown file"
+          onClick={onPickFile}
           className="min-h-touch min-w-touch"
-          onClick={() => editorRef.current?.wrapSelection("**")}
         >
-          <Bold className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Italic"
-          className="min-h-touch min-w-touch"
-          onClick={() => editorRef.current?.wrapSelection("*")}
-        >
-          <Italic className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Heading"
-          className="min-h-touch min-w-touch"
-          onClick={() => editorRef.current?.insertAtCursor("\n## ")}
-        >
-          <Heading1 className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="List"
-          className="min-h-touch min-w-touch"
-          onClick={() => editorRef.current?.insertAtCursor("\n- ")}
-        >
-          <List className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Link"
-          className="min-h-touch min-w-touch"
-          onClick={() => {
-            const url = window.prompt("URL:");
-            if (url) editorRef.current?.wrapSelection("[", `](${url})`);
-          }}
-        >
-          <Link2 className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Code"
-          className="min-h-touch min-w-touch"
-          onClick={() => editorRef.current?.wrapSelection("`")}
-        >
-          <Code className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Quote"
-          className="min-h-touch min-w-touch"
-          onClick={() => editorRef.current?.insertAtCursor("\n> ")}
-        >
-          <Quote className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Find"
-          className="min-h-touch min-w-touch"
-          onClick={() => editorRef.current?.openSearch()}
-        >
-          <Search className="h-4 w-4" />
+          <Upload className="h-4 w-4" />
         </Button>
 
         <Button
-          variant={viewMode === "editor" ? "default" : "ghost"}
+          variant={mode === "edit" ? "default" : "ghost"}
           size="icon"
-          aria-label="Editor only"
-          aria-pressed={viewMode === "editor"}
-          onClick={() => setViewMode("editor")}
+          aria-label={mode === "edit" ? "Switch to view" : "Switch to edit"}
+          aria-pressed={mode === "edit"}
+          onClick={onToggleMode}
+          disabled={!hasFile}
           className="min-h-touch min-w-touch"
         >
-          <Edit className="h-4 w-4" />
+          {mode === "edit" ? <Eye className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
         </Button>
-        <Button
-          variant={viewMode === "split" ? "default" : "ghost"}
-          size="icon"
-          aria-label="Split view"
-          aria-pressed={viewMode === "split"}
-          onClick={() => setViewMode("split")}
-          className="min-h-touch min-w-touch"
-        >
-          <Columns2 className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={viewMode === "preview" ? "default" : "ghost"}
-          size="icon"
-          aria-label="Preview only"
-          aria-pressed={viewMode === "preview"}
-          onClick={() => setViewMode("preview")}
-          className="min-h-touch min-w-touch"
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
+
+        {mode === "edit" && (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={onSave}
+            disabled={!dirty}
+            className={cn("min-h-touch")}
+          >
+            <Save className="mr-1 h-4 w-4" />
+            Save
+          </Button>
+        )}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -246,15 +105,16 @@ export function Toolbar({ editorRef }: ToolbarProps) {
               variant="ghost"
               size="icon"
               aria-label="Export"
+              disabled={!hasFile}
               className="min-h-touch min-w-touch"
             >
               <Download className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={exportMd}>Export as .md</DropdownMenuItem>
-            <DropdownMenuItem onClick={exportHtml}>Export as .html</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => window.print()}>Print → PDF</DropdownMenuItem>
+            <DropdownMenuItem onClick={onExportMd}>Export as .md</DropdownMenuItem>
+            <DropdownMenuItem onClick={onExportHtml}>Export as .html</DropdownMenuItem>
+            <DropdownMenuItem onClick={onExportPdf}>Print → PDF</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
