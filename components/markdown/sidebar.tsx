@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -85,10 +85,23 @@ function FileList({ onSelect, onDelete }: SidebarProps) {
   );
 }
 
+function useIsMobile(breakpointPx = 768): boolean {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpointPx - 1}px)`);
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [breakpointPx]);
+  return isMobile;
+}
+
 export function Sidebar({ onSelect, onDelete }: SidebarProps) {
   const open = useMarkdownEditor((s) => s.sidebarOpen);
   const toggleSidebar = useMarkdownEditor((s) => s.toggleSidebar);
   const files = useMarkdownEditor((s) => s.files);
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -117,21 +130,23 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
         )}
       </aside>
 
-      <Sheet
-        open={open}
-        onOpenChange={(o) => {
-          if (!o) toggleSidebar();
-        }}
-      >
-        <SheetContent side="right" className="md:hidden w-72 p-0">
-          <SheetHeader className="border-b px-3 py-2">
-            <SheetTitle className="text-sm">
-              Recent files ({files.length}/10)
-            </SheetTitle>
-          </SheetHeader>
-          <FileList onSelect={onSelect} onDelete={onDelete} />
-        </SheetContent>
-      </Sheet>
+      {isMobile && (
+        <Sheet
+          open={open}
+          onOpenChange={(o) => {
+            if (!o) toggleSidebar();
+          }}
+        >
+          <SheetContent side="right" className="w-72 p-0">
+            <SheetHeader className="border-b px-3 py-2">
+              <SheetTitle className="text-sm">
+                Recent files ({files.length}/10)
+              </SheetTitle>
+            </SheetHeader>
+            <FileList onSelect={onSelect} onDelete={onDelete} />
+          </SheetContent>
+        </Sheet>
+      )}
     </>
   );
 }
