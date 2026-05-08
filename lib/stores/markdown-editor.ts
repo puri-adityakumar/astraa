@@ -13,7 +13,7 @@ export type FileEntry = {
 export type Mode = "view" | "edit";
 
 export type MarkdownEditorState = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   files: FileEntry[];
   currentId: string | null;
   mode: Mode;
@@ -36,7 +36,7 @@ const newId = (): string =>
     : Math.random().toString(36).slice(2);
 
 const initialState = {
-  schemaVersion: 2 as const,
+  schemaVersion: 3 as const,
   files: [] as FileEntry[],
   currentId: null as string | null,
   mode: "view" as Mode,
@@ -121,7 +121,7 @@ export const useMarkdownEditor = create<MarkdownEditorState>()(
         const next = files.map((f) =>
           f.id === currentId ? { ...f, content: draft, updatedAt: now } : f,
         );
-        set({ files: next, draft: null });
+        set({ files: next, draft: null, mode: "view" });
       },
 
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
@@ -129,13 +129,21 @@ export const useMarkdownEditor = create<MarkdownEditorState>()(
     {
       name: "markdown-editor",
       storage: createJSONStorage(() => createZustandStorage()),
-      version: 2,
-      migrate: () => initialState,
+      version: 3,
+      migrate: (persisted, version) => {
+        if (version < 3) {
+          const p = persisted as Partial<MarkdownEditorState> | null;
+          return {
+            ...initialState,
+            files: p?.files ?? [],
+            sidebarOpen: p?.sidebarOpen ?? false,
+          };
+        }
+        return persisted as MarkdownEditorState;
+      },
       partialize: (s) => ({
         schemaVersion: s.schemaVersion,
         files: s.files,
-        currentId: s.currentId,
-        mode: s.mode,
         sidebarOpen: s.sidebarOpen,
       }),
     },
