@@ -51,7 +51,7 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor(
         lineNumbers(),
         drawSelection(),
         highlightActiveLine(),
-        cmPlaceholder("Start writing Markdown… (drag images, $math$, ```mermaid``` diagrams supported)"),
+        cmPlaceholder("Type Markdown… (drop images, $math$, ```mermaid``` supported)"),
         keymap.of([...defaultKeymap, ...historyKeymap, ...searchKeymap, indentWithTab]),
         search(),
         markdown(),
@@ -133,5 +133,11 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor(
     [],
   );
 
-  return <div ref={hostRef} className="h-full overflow-auto text-sm" />;
+  return (
+    <div
+      ref={hostRef}
+      className="h-full overflow-auto bg-muted/30 text-sm"
+      style={{ fontFamily: "var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace" }}
+    />
+  );
 });
