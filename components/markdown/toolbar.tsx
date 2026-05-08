@@ -1,6 +1,16 @@
 "use client";
 
-import { Download, PanelLeft, Edit, Eye, Save, Upload, FileText } from "lucide-react";
+import {
+  Download,
+  PanelLeft,
+  Edit,
+  Eye,
+  Save,
+  Upload,
+  FileText,
+  Maximize2,
+  Minimize2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,6 +28,8 @@ type ToolbarProps = {
   onExportMd: () => void;
   onExportHtml: () => void;
   onExportPdf: () => void;
+  fullscreen: boolean;
+  onToggleFullscreen: () => void;
 };
 
 export function Toolbar({
@@ -27,6 +39,8 @@ export function Toolbar({
   onExportMd,
   onExportHtml,
   onExportPdf,
+  fullscreen,
+  onToggleFullscreen,
 }: ToolbarProps) {
   const file = useMarkdownEditor((s) =>
     s.files.find((f) => f.id === s.currentId),
@@ -94,6 +108,19 @@ export function Toolbar({
           className="h-9 w-9"
         >
           {mode === "edit" ? <Eye className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+        </Button>
+
+        <Button
+          variant={fullscreen ? "secondary" : "ghost"}
+          size="icon"
+          aria-label={fullscreen ? "Exit full screen" : "Enter full screen"}
+          aria-pressed={fullscreen}
+          onClick={onToggleFullscreen}
+          disabled={!hasFile}
+          className="h-9 w-9"
+          title={fullscreen ? "Exit full screen (Esc)" : "Full screen"}
+        >
+          {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
         </Button>
 
         <div className="mx-1 h-5 w-px bg-border" aria-hidden />

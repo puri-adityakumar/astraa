@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { FileText } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 import { Toolbar } from "./toolbar";
 import { Sidebar } from "./sidebar";
 import { Dropzone } from "./dropzone";
@@ -32,6 +34,7 @@ export function MarkdownEditorClient() {
   const file = useMarkdownEditor((s) =>
     s.files.find((f) => f.id === s.currentId),
   );
+  const files = useMarkdownEditor((s) => s.files);
   const mode = useMarkdownEditor((s) => s.mode);
   const draft = useMarkdownEditor((s) => s.draft);
   const sidebarOpen = useMarkdownEditor((s) => s.sidebarOpen);
@@ -50,6 +53,7 @@ export function MarkdownEditorClient() {
   const [pending, setPending] = useState<PendingAction | null>(null);
   const [pendingReplace, setPendingReplace] = useState<{ file: File } | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const dirty = draft !== null && file !== undefined && draft !== file.content;
 
@@ -116,6 +120,19 @@ export function MarkdownEditorClient() {
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [dirty]);
+
+  useEffect(() => {
+    if (!fullscreen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFullscreen(false);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [fullscreen]);
 
   const onToggleMode = useCallback(() => {
     if (mode === "edit") {
@@ -186,7 +203,11 @@ export function MarkdownEditorClient() {
     const node = document.querySelector<HTMLDivElement>(".markdown-preview");
     exportAsHtml(file.name, node);
   };
-  const onExportPdf = () => exportAsPdf();
+  const onExportPdf = () => {
+    if (!file) return;
+    const node = document.querySelector<HTMLDivElement>(".markdown-preview");
+    exportAsPdf(file.name, node);
+  };
 
   const pendingDescription = (() => {
     if (pending?.kind === "switch") return `Discard unsaved changes in "${file?.name}"?`;
@@ -199,48 +220,97 @@ export function MarkdownEditorClient() {
   })();
 
   return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
-      <div className="space-y-2 text-center sm:text-left">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Markdown</h1>
-        <p className="text-sm text-muted-foreground">
-          Drop, view, edit. All processing happens locally in your browser.
+    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
+      <div className="space-y-4 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Markdown
+        </h1>
+        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
+          Drop a markdown file to view it. Toggle to edit, then export as .md, .html, or PDF.
+        </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
         </p>
       </div>
 
-      <div
-        className={cn(
-          "grid gap-6 sm:gap-8 h-[72vh] min-h-[480px]",
-          sidebarOpen ? "md:grid-cols-[240px_1fr]" : "md:grid-cols-1",
-        )}
-      >
-        <Sidebar onSelect={onSelect} onDelete={onDelete} />
-        <div className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
-          <Toolbar
-            onPickFile={onPickFile}
-            onToggleMode={onToggleMode}
-            onSave={save}
-            onExportMd={onExportMd}
-            onExportHtml={onExportHtml}
-            onExportPdf={onExportPdf}
-          />
-          <div className="flex-1 overflow-auto" ref={previewWrapRef}>
-            {!file ? (
-              <div className="flex h-full items-center justify-center p-6">
-                <Dropzone onPick={tryIngest} variant="empty" />
+      {!file ? (
+        <div className="space-y-8 py-8">
+          <div className="flex justify-center">
+            <Dropzone onPick={tryIngest} variant="empty" />
+          </div>
+          {files.length > 0 && (
+            <div className="mx-auto w-full max-w-md space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Recent
+                </h2>
+                <span className="text-xs tabular-nums text-muted-foreground/70">
+                  {files.length}/10
+                </span>
               </div>
-            ) : mode === "view" ? (
-              <Preview content={file.content} />
-            ) : (
-              <Editor
-                ref={editorRef}
-                value={draft ?? ""}
-                onChange={setDraft}
-                onDropFile={onImageDrop}
-              />
+              <ul className="space-y-1">
+                {files.slice(0, 5).map((f) => (
+                  <li key={f.id}>
+                    <button
+                      type="button"
+                      onClick={() => selectFile(f.id)}
+                      className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <FileText className="h-4 w-4 shrink-0 text-muted-foreground/70" aria-hidden />
+                      <span className="min-w-0 flex-1 truncate font-medium text-foreground">
+                        {f.name}
+                      </span>
+                      <span className="shrink-0 text-xs text-muted-foreground/70">
+                        {formatDistanceToNow(f.updatedAt, { addSuffix: true })}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div
+          className={cn(
+            "grid gap-6 sm:gap-8 h-[72vh] min-h-[480px]",
+            sidebarOpen && !fullscreen ? "md:grid-cols-[240px_1fr]" : "md:grid-cols-1",
+          )}
+        >
+          {!fullscreen && <Sidebar onSelect={onSelect} onDelete={onDelete} />}
+          <div
+            className={cn(
+              "flex min-w-0 flex-col overflow-hidden bg-card",
+              fullscreen
+                ? "fixed inset-0 z-50 h-screen w-screen rounded-none border-0 shadow-none"
+                : "h-full rounded-xl border shadow-sm",
             )}
+          >
+            <Toolbar
+              onPickFile={onPickFile}
+              onToggleMode={onToggleMode}
+              onSave={save}
+              onExportMd={onExportMd}
+              onExportHtml={onExportHtml}
+              onExportPdf={onExportPdf}
+              fullscreen={fullscreen}
+              onToggleFullscreen={() => setFullscreen((v) => !v)}
+            />
+            <div className="flex-1 overflow-auto" ref={previewWrapRef}>
+              {mode === "view" ? (
+                <Preview content={file.content} />
+              ) : (
+                <Editor
+                  ref={editorRef}
+                  value={draft ?? ""}
+                  onChange={setDraft}
+                  onDropFile={onImageDrop}
+                />
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <Dropzone onPick={() => {}} variant="overlay" visible={dragOver} />
 
