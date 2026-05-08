@@ -205,8 +205,9 @@ export function MarkdownEditorClient() {
         </p>
       </div>
 
-      <div className="flex h-[72vh] min-h-[480px] gap-4">
-        <div className="flex flex-1 min-w-0 flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
+      <div className="relative h-[72vh] min-h-[480px]">
+        <Sidebar onSelect={onSelect} onDelete={onDelete} />
+        <div className="flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
           <Toolbar
             onPickFile={onPickFile}
             onToggleMode={onToggleMode}
@@ -232,7 +233,6 @@ export function MarkdownEditorClient() {
             )}
           </div>
         </div>
-        <Sidebar onSelect={onSelect} onDelete={onDelete} />
       </div>
 
       <Dropzone onPick={() => {}} variant="overlay" visible={dragOver} />

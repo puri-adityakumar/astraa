@@ -107,27 +107,26 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
     <>
       <aside
         className={cn(
-          "hidden md:flex shrink-0 flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200",
-          open ? "w-64 opacity-100" : "w-0 border-0 opacity-0",
+          "absolute top-0 z-20 hidden h-full w-60 flex-col overflow-hidden rounded-xl border bg-card shadow-lg transition-all duration-200 md:flex",
+          "right-[calc(100%+0.75rem)]",
+          open
+            ? "translate-x-0 opacity-100"
+            : "pointer-events-none -translate-x-2 opacity-0",
         )}
         aria-label="Recent files"
         aria-hidden={!open}
       >
-        {open && (
-          <>
-            <div className="flex items-center justify-between border-b bg-muted/20 px-3 py-2">
-              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Recent
-              </span>
-              <span className="text-xs tabular-nums text-muted-foreground/70">
-                {files.length}/10
-              </span>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              <FileList onSelect={onSelect} onDelete={onDelete} />
-            </div>
-          </>
-        )}
+        <div className="flex items-center justify-between border-b bg-muted/20 px-3 py-2">
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Recent
+          </span>
+          <span className="text-xs tabular-nums text-muted-foreground/70">
+            {files.length}/10
+          </span>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          <FileList onSelect={onSelect} onDelete={onDelete} />
+        </div>
       </aside>
 
       {isMobile && (
@@ -137,7 +136,7 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
             if (!o) toggleSidebar();
           }}
         >
-          <SheetContent side="right" className="w-72 p-0">
+          <SheetContent side="left" className="w-72 p-0">
             <SheetHeader className="border-b px-3 py-2">
               <SheetTitle className="text-sm">
                 Recent files ({files.length}/10)
