@@ -197,15 +197,15 @@ export function MarkdownEditorClient() {
   })();
 
   return (
-    <div className="pt-20 pb-6">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold tracking-tight">Markdown</h1>
-        <p className="text-xs text-muted-foreground/80">
+    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
+      <div className="space-y-2 text-center sm:text-left">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Markdown</h1>
+        <p className="text-sm text-muted-foreground">
           Drop, view, edit. All processing happens locally in your browser.
         </p>
-      </header>
+      </div>
 
-      <div className="flex h-[78vh] min-h-[480px] flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
+      <div className="flex h-[72vh] min-h-[480px] flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
         <Toolbar
           onPickFile={onPickFile}
           onToggleMode={onToggleMode}
