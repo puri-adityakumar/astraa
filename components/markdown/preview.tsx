@@ -5,7 +5,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useTheme } from "next-themes";
 import type { Pluggable } from "unified";
-import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 
 const PRELOADED_LANGS = ["javascript", "typescript", "python", "bash", "json", "markdown"];
 
@@ -125,14 +124,13 @@ function CodeBlock({ className, children }: ComponentProps<"code">) {
   );
 }
 
-export function Preview() {
-  const content = useMarkdownEditor((s) =>
-    s.files.find((f) => f.id === s.currentFileId)?.content ?? "",
-  );
+type PreviewProps = { content: string };
+
+export function Preview({ content }: PreviewProps) {
   const [debounced, setDebounced] = useState(content);
 
   useEffect(() => {
-    const t = window.setTimeout(() => setDebounced(content), 1000);
+    const t = window.setTimeout(() => setDebounced(content), 200);
     return () => window.clearTimeout(t);
   }, [content]);
 
@@ -163,7 +161,7 @@ export function Preview() {
       aria-label="Markdown preview"
     >
       {content.trim() === "" ? (
-        <p className="text-muted-foreground">Preview will appear here as you type.</p>
+        <p className="text-muted-foreground">Nothing to preview.</p>
       ) : (
         <ReactMarkdown
           remarkPlugins={[
