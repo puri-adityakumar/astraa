@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | Astraa",
   },
   description:
-    "Discover 15+ free online utility tools including calculator, currency converter, password generator, and hash tools. No signup required.",
+    "Discover 15+ free online utility tools including calculator, currency converter, password generator, hash tools, and markdown viewer. No signup required.",
   creator: "Aditya Kumar",
   keywords: [
     "utility tools",
@@ -39,6 +39,8 @@ export const metadata: Metadata = {
     "calculator",
     "converter",
     "generator",
+    "markdown viewer",
+    "markdown editor",
     "browser tools",
   ],
   manifest: "/manifest.json",
