@@ -8,6 +8,7 @@ import { Dropzone } from "./dropzone";
 import { ConfirmDialog } from "./confirm-dialog";
 import { Preview } from "./preview";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 import { acceptMarkdownFile } from "@/lib/markdown/file-accept";
 import { processImageDrop } from "@/lib/markdown/image-utils";
@@ -33,6 +34,7 @@ export function MarkdownEditorClient() {
   );
   const mode = useMarkdownEditor((s) => s.mode);
   const draft = useMarkdownEditor((s) => s.draft);
+  const sidebarOpen = useMarkdownEditor((s) => s.sidebarOpen);
   const uploadFile = useMarkdownEditor((s) => s.uploadFile);
   const selectFile = useMarkdownEditor((s) => s.selectFile);
   const deleteFile = useMarkdownEditor((s) => s.deleteFile);
@@ -205,9 +207,14 @@ export function MarkdownEditorClient() {
         </p>
       </div>
 
-      <div className="relative h-[72vh] min-h-[480px]">
+      <div
+        className={cn(
+          "grid gap-6 sm:gap-8 h-[72vh] min-h-[480px]",
+          sidebarOpen ? "md:grid-cols-[240px_1fr]" : "md:grid-cols-1",
+        )}
+      >
         <Sidebar onSelect={onSelect} onDelete={onDelete} />
-        <div className="flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
+        <div className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
           <Toolbar
             onPickFile={onPickFile}
             onToggleMode={onToggleMode}
