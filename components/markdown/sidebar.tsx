@@ -94,10 +94,11 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
     <>
       <aside
         className={cn(
-          "hidden md:flex flex-col border-r bg-background overflow-hidden transition-[width] duration-200",
-          open ? "w-72" : "w-0",
+          "hidden md:flex shrink-0 flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200",
+          open ? "w-64 opacity-100" : "w-0 border-0 opacity-0",
         )}
         aria-label="Recent files"
+        aria-hidden={!open}
       >
         {open && (
           <>
@@ -122,7 +123,7 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
           if (!o) toggleSidebar();
         }}
       >
-        <SheetContent side="left" className="md:hidden w-72 p-0">
+        <SheetContent side="right" className="md:hidden w-72 p-0">
           <SheetHeader className="border-b px-3 py-2">
             <SheetTitle className="text-sm">
               Recent files ({files.length}/10)

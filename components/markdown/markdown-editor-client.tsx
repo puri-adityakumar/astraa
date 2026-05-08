@@ -205,26 +205,23 @@ export function MarkdownEditorClient() {
         </p>
       </div>
 
-      <div className="flex h-[72vh] min-h-[480px] flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
-        <Toolbar
-          onPickFile={onPickFile}
-          onToggleMode={onToggleMode}
-          onSave={save}
-          onExportMd={onExportMd}
-          onExportHtml={onExportHtml}
-          onExportPdf={onExportPdf}
-        />
-        <div className="flex flex-1 overflow-hidden">
-          <Sidebar onSelect={onSelect} onDelete={onDelete} />
+      <div className="flex h-[72vh] min-h-[480px] gap-4">
+        <div className="flex flex-1 min-w-0 flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
+          <Toolbar
+            onPickFile={onPickFile}
+            onToggleMode={onToggleMode}
+            onSave={save}
+            onExportMd={onExportMd}
+            onExportHtml={onExportHtml}
+            onExportPdf={onExportPdf}
+          />
           <div className="flex-1 overflow-auto" ref={previewWrapRef}>
             {!file ? (
               <div className="flex h-full items-center justify-center p-6">
                 <Dropzone onPick={tryIngest} variant="empty" />
               </div>
             ) : mode === "view" ? (
-              <div className="mx-auto max-w-4xl">
-                <Preview content={file.content} />
-              </div>
+              <Preview content={file.content} />
             ) : (
               <Editor
                 ref={editorRef}
@@ -235,6 +232,7 @@ export function MarkdownEditorClient() {
             )}
           </div>
         </div>
+        <Sidebar onSelect={onSelect} onDelete={onDelete} />
       </div>
 
       <Dropzone onPick={() => {}} variant="overlay" visible={dragOver} />
