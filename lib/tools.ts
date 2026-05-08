@@ -61,8 +61,8 @@ export const toolCategories: ToolCategory[] = [
         icon: Calculator
       },
       {
-        name: 'Markdown Editor',
-        description: 'Write Markdown with live preview',
+        name: 'Markdown Viewer',
+        description: 'Drop a markdown file to view, edit, and export',
         path: '/tools/markdown',
         icon: FileText
       },
