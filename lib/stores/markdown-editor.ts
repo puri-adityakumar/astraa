@@ -2,133 +2,142 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { createZustandStorage } from "./storage";
 
-export type MarkdownFile = {
+export type FileEntry = {
   id: string;
-  title: string;
+  name: string;
   content: string;
-  pinned: boolean;
-  createdAt: number;
-  lastEditedAt: number;
+  uploadedAt: number;
+  updatedAt: number;
 };
 
-export type ViewMode = "split" | "editor" | "preview";
+export type Mode = "view" | "edit";
 
 export type MarkdownEditorState = {
-  schemaVersion: 1;
-  files: MarkdownFile[];
-  currentFileId: string;
-  viewMode: ViewMode;
+  schemaVersion: 2;
+  files: FileEntry[];
+  currentId: string | null;
+  mode: Mode;
   sidebarOpen: boolean;
-  createFile: () => void;
-  renameFile: (id: string, title: string) => void;
-  deleteFile: (id: string) => void;
+  draft: string | null;
+  uploadFile: (name: string, content: string) => void;
   selectFile: (id: string) => void;
-  updateContent: (id: string, content: string) => void;
-  setViewMode: (mode: ViewMode) => void;
+  deleteFile: (id: string) => void;
+  setMode: (mode: Mode) => void;
+  setDraft: (text: string) => void;
+  save: () => void;
   toggleSidebar: () => void;
 };
 
-const PINNED_CAP = 10;
+const MAX_FILES = 10;
 
 const newId = (): string =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2);
 
-const newDraft = (): MarkdownFile => {
-  const now = Date.now();
-  return {
-    id: newId(),
-    title: "Untitled draft",
-    content: "",
-    pinned: false,
-    createdAt: now,
-    lastEditedAt: now,
-  };
+const initialState = {
+  schemaVersion: 2 as const,
+  files: [] as FileEntry[],
+  currentId: null as string | null,
+  mode: "view" as Mode,
+  sidebarOpen: false,
+  draft: null as string | null,
 };
-
-const initialDraft = newDraft();
 
 export const useMarkdownEditor = create<MarkdownEditorState>()(
   persist(
     (set, get) => ({
-      schemaVersion: 1,
-      files: [initialDraft],
-      currentFileId: initialDraft.id,
-      viewMode: "split",
-      sidebarOpen: false,
+      ...initialState,
 
-      createFile: () => {
-        const { files } = get();
-        const pinnedCount = files.filter((f) => f.pinned).length;
-        if (pinnedCount >= PINNED_CAP) {
-          return;
-        }
+      uploadFile: (name, content) => {
         const now = Date.now();
-        const file: MarkdownFile = {
+        const lower = name.toLowerCase();
+        const { files } = get();
+        const existing = files.find((f) => f.name.toLowerCase() === lower);
+        if (existing) {
+          const updated: FileEntry = {
+            ...existing,
+            name,
+            content,
+            updatedAt: now,
+          };
+          const others = files.filter((f) => f.id !== existing.id);
+          set({
+            files: [updated, ...others],
+            currentId: updated.id,
+            mode: "view",
+            draft: null,
+          });
+          return;
+        }
+        const entry: FileEntry = {
           id: newId(),
-          title: `Untitled ${pinnedCount + 1}`,
-          content: "",
-          pinned: true,
-          createdAt: now,
-          lastEditedAt: now,
+          name,
+          content,
+          uploadedAt: now,
+          updatedAt: now,
         };
-        set({ files: [...files, file], currentFileId: file.id });
-      },
-
-      renameFile: (id, title) => {
-        const trimmed = title.trim();
-        if (!trimmed) {
-          return;
-        }
-        set((state) => ({
-          files: state.files.map((f) =>
-            f.id === id && f.pinned ? { ...f, title: trimmed } : f,
-          ),
-        }));
-      },
-
-      deleteFile: (id) => {
-        const { files, currentFileId } = get();
-        const target = files.find((f) => f.id === id);
-        if (!target || !target.pinned) {
-          return;
-        }
-        const remaining = files.filter((f) => f.id !== id);
-        if (remaining.length === 0) {
-          const draft = newDraft();
-          set({ files: [draft], currentFileId: draft.id });
-          return;
-        }
-        const nextCurrent =
-          currentFileId === id ? (remaining[0]?.id ?? "") : currentFileId;
-        set({ files: remaining, currentFileId: nextCurrent });
+        const next = [entry, ...files].slice(0, MAX_FILES);
+        set({ files: next, currentId: entry.id, mode: "view", draft: null });
       },
 
       selectFile: (id) => {
         const exists = get().files.some((f) => f.id === id);
-        if (!exists) {
-          return;
+        if (!exists) return;
+        set({ currentId: id, draft: null });
+      },
+
+      deleteFile: (id) => {
+        const { files, currentId } = get();
+        const remaining = files.filter((f) => f.id !== id);
+        if (currentId === id) {
+          set({
+            files: remaining,
+            currentId: remaining[0]?.id ?? null,
+            mode: "view",
+            draft: null,
+          });
+        } else {
+          set({ files: remaining });
         }
-        set({ currentFileId: id });
       },
 
-      updateContent: (id, content) => {
+      setMode: (mode) => {
+        const { files, currentId } = get();
+        if (mode === "edit") {
+          const current = files.find((f) => f.id === currentId);
+          set({ mode, draft: current?.content ?? "" });
+        } else {
+          set({ mode, draft: null });
+        }
+      },
+
+      setDraft: (text) => set({ draft: text }),
+
+      save: () => {
+        const { files, currentId, draft } = get();
+        if (draft === null || currentId === null) return;
         const now = Date.now();
-        set((state) => ({
-          files: state.files.map((f) =>
-            f.id === id ? { ...f, content, lastEditedAt: now } : f,
-          ),
-        }));
+        const next = files.map((f) =>
+          f.id === currentId ? { ...f, content: draft, updatedAt: now } : f,
+        );
+        set({ files: next, draft: null });
       },
 
-      setViewMode: (mode) => set({ viewMode: mode }),
-      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
     }),
     {
       name: "markdown-editor",
       storage: createJSONStorage(() => createZustandStorage()),
-      version: 1,
+      version: 2,
+      migrate: () => initialState,
+      partialize: (s) => ({
+        schemaVersion: s.schemaVersion,
+        files: s.files,
+        currentId: s.currentId,
+        mode: s.mode,
+        sidebarOpen: s.sidebarOpen,
+      }),
     },
   ),
 );
