@@ -34,30 +34,38 @@ function FileList({ onSelect, onDelete }: SidebarProps) {
 
   if (rows.length === 0) {
     return (
-      <p className="px-3 py-2 text-xs text-muted-foreground">
-        No files yet. Drop a markdown file to get started.
+      <p className="px-4 py-6 text-center text-xs text-muted-foreground">
+        No files yet.
+        <br />
+        Drop a markdown file to get started.
       </p>
     );
   }
 
   return (
-    <ul className="space-y-1 px-2 py-2">
+    <ul className="divide-y divide-border/60">
       {rows.map((f) => (
         <li
           key={f.id}
           className={cn(
-            "group flex items-center gap-1 rounded-md px-2 py-1 text-sm hover:bg-accent",
+            "group relative flex items-center gap-1 px-3 py-2.5 text-sm transition-colors hover:bg-accent/50",
             f.id === currentId && "bg-accent",
           )}
         >
+          {f.id === currentId && (
+            <span
+              className="absolute inset-y-2 left-0 w-0.5 rounded-r bg-primary"
+              aria-hidden
+            />
+          )}
           <button
             type="button"
-            className="flex-1 truncate text-left"
+            className="flex-1 min-w-0 truncate rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-current={f.id === currentId ? "true" : undefined}
             onClick={() => onSelect(f.id)}
             title={f.name}
           >
-            <span className="block truncate">{f.name}</span>
+            <span className="block truncate font-medium">{f.name}</span>
             <span className="block text-xs text-muted-foreground">
               {formatDistanceToNow(f.updatedAt, { addSuffix: true })}
             </span>
@@ -66,7 +74,7 @@ function FileList({ onSelect, onDelete }: SidebarProps) {
             size="icon"
             variant="ghost"
             aria-label={`Delete ${f.name}`}
-            className="h-7 w-7 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+            className="h-7 w-7 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
             onClick={() => onDelete(f.id)}
           >
             <X className="h-3.5 w-3.5" />
@@ -93,8 +101,13 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
       >
         {open && (
           <>
-            <div className="border-b px-3 py-2 text-xs text-muted-foreground">
-              Recent files ({files.length}/10)
+            <div className="flex items-center justify-between border-b bg-muted/20 px-3 py-2">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Recent
+              </span>
+              <span className="text-xs tabular-nums text-muted-foreground/70">
+                {files.length}/10
+              </span>
             </div>
             <div className="flex-1 overflow-y-auto">
               <FileList onSelect={onSelect} onDelete={onDelete} />

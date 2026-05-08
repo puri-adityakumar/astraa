@@ -197,8 +197,15 @@ export function MarkdownEditorClient() {
   })();
 
   return (
-    <div className="-mx-4 -my-6 sm:-mx-6 sm:-my-8 lg:-mx-8 lg:-my-12">
-      <div className="flex h-[calc(100vh-4rem)] flex-col">
+    <div className="pt-20 pb-6">
+      <header className="mb-4">
+        <h1 className="text-2xl font-bold tracking-tight">Markdown</h1>
+        <p className="text-xs text-muted-foreground/80">
+          Drop, view, edit. All processing happens locally in your browser.
+        </p>
+      </header>
+
+      <div className="flex h-[78vh] min-h-[480px] flex-col overflow-hidden rounded-xl border bg-card shadow-sm">
         <Toolbar
           onPickFile={onPickFile}
           onToggleMode={onToggleMode}
@@ -211,11 +218,11 @@ export function MarkdownEditorClient() {
           <Sidebar onSelect={onSelect} onDelete={onDelete} />
           <div className="flex-1 overflow-auto" ref={previewWrapRef}>
             {!file ? (
-              <div className="p-6">
+              <div className="flex h-full items-center justify-center p-6">
                 <Dropzone onPick={tryIngest} variant="empty" />
               </div>
             ) : mode === "view" ? (
-              <div className="mx-auto max-w-5xl">
+              <div className="mx-auto max-w-4xl">
                 <Preview content={file.content} />
               </div>
             ) : (

@@ -157,7 +157,7 @@ export function Preview({ content }: PreviewProps) {
 
   return (
     <div
-      className="markdown-preview prose prose-sm dark:prose-invert max-w-none p-4 overflow-auto h-full"
+      className="markdown-preview prose prose-sm dark:prose-invert max-w-none px-6 py-8 sm:px-8 overflow-auto h-full"
       aria-label="Markdown preview"
     >
       {content.trim() === "" ? (
