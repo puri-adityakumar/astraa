@@ -2,6 +2,14 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
+import { IBM_Plex_Mono } from 'next/font/google';
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
+});
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
@@ -84,7 +92,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`} suppressHydrationWarning>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} font-sans`} suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
