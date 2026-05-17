@@ -12,6 +12,13 @@ const stripExt = (name: string): string => {
   return idx > 0 ? name.slice(0, idx) : name;
 };
 
+const escapeHtml = (s: string): string =>
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
 export function exportAsMarkdown(name: string, content: string): void {
   downloadBlob(new Blob([content], { type: "text/markdown" }), `${stripExt(name)}.md`);
 }
@@ -19,7 +26,7 @@ export function exportAsMarkdown(name: string, content: string): void {
 const buildStandaloneHtml = (name: string, body: string): string => `<!doctype html>
 <html><head>
 <meta charset="utf-8" />
-<title>${stripExt(name)}</title>
+<title>${escapeHtml(stripExt(name))}</title>
 <style>
 body{font-family:system-ui,sans-serif;max-width:760px;margin:2rem auto;padding:0 1rem;line-height:1.6;color:#111;background:#fff;}
 pre{background:#f5f5f5;padding:1rem;border-radius:6px;overflow:auto;}
