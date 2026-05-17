@@ -84,7 +84,7 @@ export const useMarkdownEditor = create<MarkdownEditorState>()(
       selectFile: (id) => {
         const exists = get().files.some((f) => f.id === id);
         if (!exists) return;
-        set({ currentId: id, draft: null });
+        set({ currentId: id, mode: "view", draft: null });
       },
 
       deleteFile: (id) => {
