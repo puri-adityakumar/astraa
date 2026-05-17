@@ -149,8 +149,20 @@ export function Toolbar({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={onExportMd}>Export as .md</DropdownMenuItem>
-            <DropdownMenuItem onClick={onExportHtml}>Export as .html</DropdownMenuItem>
-            <DropdownMenuItem onClick={onExportPdf}>Print → PDF</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={onExportHtml}
+              disabled={mode === "edit"}
+              title={mode === "edit" ? "Switch to view to export rendered HTML" : undefined}
+            >
+              Export as .html
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={onExportPdf}
+              disabled={mode === "edit"}
+              title={mode === "edit" ? "Switch to view to print rendered PDF" : undefined}
+            >
+              Print → PDF
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
