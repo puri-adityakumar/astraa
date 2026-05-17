@@ -2,6 +2,14 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
+import { IBM_Plex_Mono } from 'next/font/google';
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
+});
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
@@ -21,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | Astraa",
   },
   description:
-    "Discover 15+ free online utility tools including calculator, currency converter, password generator, and hash tools. No signup required.",
+    "Discover 15+ free online utility tools including calculator, currency converter, password generator, hash tools, and markdown viewer. No signup required.",
   creator: "Aditya Kumar",
   keywords: [
     "utility tools",
@@ -31,6 +39,8 @@ export const metadata: Metadata = {
     "calculator",
     "converter",
     "generator",
+    "markdown viewer",
+    "markdown editor",
     "browser tools",
   ],
   manifest: "/manifest.json",
@@ -84,7 +94,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`} suppressHydrationWarning>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} font-sans`} suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

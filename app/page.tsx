@@ -4,7 +4,7 @@ import { HeroSection } from "@/components/home";
 export const metadata: Metadata = {
   title: "Free Online Utility Tools for Developers & Creators",
   description:
-    "Astraa is a free utility toolkit with 15+ tools: scientific calculator, currency converter, password generator, hash generator, unit converter, image resizer, and browser games. All processing happens locally in your browser.",
+    "Astraa is a free utility toolkit with 15+ tools: scientific calculator, currency converter, password generator, hash generator, unit converter, markdown viewer, image resizer, and browser games. All processing happens locally in your browser.",
   openGraph: {
     title: "Astraa - Free Online Utility Tools",
     description:
