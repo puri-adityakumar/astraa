@@ -12,6 +12,7 @@ import { Preview } from "./preview";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
+import { useToolSettings } from "@/lib/stores/tool-settings";
 import { acceptMarkdownFile } from "@/lib/markdown/file-accept";
 import { processImageDrop } from "@/lib/markdown/image-utils";
 import { exportAsHtml, exportAsMarkdown, exportAsPdf } from "@/lib/markdown/export";
@@ -120,6 +121,10 @@ export function MarkdownEditorClient() {
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [dirty]);
+
+  useEffect(() => {
+    useToolSettings.getState().updateToolUsage("/tools/markdown");
+  }, []);
 
   useEffect(() => {
     if (!fullscreen) return;
