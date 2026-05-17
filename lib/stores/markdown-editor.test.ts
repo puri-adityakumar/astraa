@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useMarkdownEditor } from "./markdown-editor";
 
-describe("markdown-editor store (v2)", () => {
+describe("markdown-editor store (v3)", () => {
   beforeEach(() => {
     useMarkdownEditor.setState(useMarkdownEditor.getInitialState(), true);
   });
@@ -13,7 +13,7 @@ describe("markdown-editor store (v2)", () => {
     expect(s.mode).toBe("view");
     expect(s.sidebarOpen).toBe(false);
     expect(s.draft).toBeNull();
-    expect(s.schemaVersion).toBe(2);
+    expect(s.schemaVersion).toBe(3);
   });
 
   it("uploadFile prepends new entry and selects it", () => {
@@ -87,7 +87,7 @@ describe("markdown-editor store (v2)", () => {
     expect(s.files[0]?.content).toBe("v2");
     expect(s.files[0]?.updatedAt).toBeGreaterThan(before);
     expect(s.draft).toBeNull();
-    expect(s.mode).toBe("edit");
+    expect(s.mode).toBe("view");
     vi.useRealTimers();
   });
 
