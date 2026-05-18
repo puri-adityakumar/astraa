@@ -4,7 +4,7 @@ import { ToolsClient } from "@/components/tools/tools-client";
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "Explore Astraa's complete collection of free utility tools: scientific calculator, currency converter, password generator, hash generator, unit converter, image resizer, and more. All tools run locally in your browser.",
+    "Explore Astraa's complete collection of free utility tools: scientific calculator, currency converter, password generator, hash generator, unit converter, markdown viewer, image resizer, and more. All tools run locally in your browser.",
   keywords: ["utility tools", "developer tools", "online tools", "free tools"],
   openGraph: {
     title: "Tools",

@@ -147,20 +147,43 @@ export function ComponentName() {
 
 ```typescript
 // app/tools/my-tool/page.tsx
-import { Metadata } from "next"
+import type { Metadata } from "next"
 import { MyToolClient } from "@/components/my-tool/my-tool-client"
 
 export const metadata: Metadata = {
-  title: "Tool Name | astraa",
-  description: "One-line description",
+  title: "Tool Name",
+  description: "150-160 char description for SEO.",
+  keywords: ["relevant", "keywords"],
   openGraph: {
     title: "Tool Name",
-    description: "One-line description",
+    description: "Short OG description.",
+    url: "/tools/my-tool",
+    images: ["/assets/astraa_banner.jpg"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Tool Name",
+    description: "Short Twitter description.",
+  },
+  alternates: {
+    canonical: "/tools/my-tool",
   },
 }
 
 export default function MyToolPage() {
-  return <MyToolClient />
+  const lastUpdated = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <>
+      <MyToolClient />
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        Last updated: {lastUpdated}
+      </p>
+    </>
+  );
 }
 ```
 
@@ -238,6 +261,79 @@ logger.debug(logger.fmt`Cache miss for user: ${userId}`)  // use logger.fmt for 
 2. Create `components/[tool-name]/[tool-name]-client.tsx` with `"use client"`
 3. Add tool logic to `lib/[tool-name]/` if needed
 4. Register in `lib/tools.ts` — add to appropriate `ToolCategory` with `name`, `description`, `path`, `icon`, and optional `wip: true`
+
+## Feature Spec Review Checklist
+
+Before turning a design/spec into an implementation plan, walk through these checks. Treat any "no" as either a gap to fix in the spec or a deliberate, documented decision in an "Out of scope" section.
+
+### Project alignment
+- Server page → client component pattern (`app/tools/[name]/page.tsx` → `components/[name]/[name]-client.tsx` → `lib/[name]/*`)
+- Global state lives in `lib/stores/[name].ts` using Zustand + `createZustandStorage()`
+- Tool registered in `lib/tools.ts` (or game in `lib/games.ts`) with `name`, `description`, `path`, `icon`, optional `wip`
+- Metadata uses `"Tool Name | astraa"` title format
+- Errors funnel through `getUserFriendlyError()` and `logError()` from `@/lib/error-handler`
+- File/function/component names follow casing conventions (kebab-case files, PascalCase components, camelCase functions)
+- Tailwind class order respected, classes composed via `cn()`
+
+### Design uniformity
+- Layout matches other tools — centered card (`max-w-2xl mx-auto`) is the default; any divergence is justified in the spec
+- Reuses `components/ui/*` primitives (Button, Card, AlertDialog, Tooltip, Toast) before introducing new ones
+- Includes heading + tagline + "All processing happens locally in your browser" line where applicable
+- Animations use `lib/animations/variants.ts` and `useReducedMotion()`
+- Dark/light follows `next-themes` and HSL semantic tokens (`background`, `foreground`, `primary`, `muted`, `border`)
+
+### UX coverage
+- Empty state (first visit, no data) is specified
+- Loading / hydration state is specified
+- Error states (recoverable + unrecoverable) are specified
+- Mobile / small-screen behavior is specified — layout works below `640px`
+- Keyboard shortcuts enumerated
+- Focus management on state changes (modal open, file switch, route change) is specified
+- Behavior on navigation/refresh mid-edit (unsaved data) is specified
+- Destructive actions (delete, overwrite) gated by confirmation
+
+### Accessibility
+- Touch targets ≥ 44px (`min-h-touch`/`min-w-touch`)
+- `aria-label` on icon-only buttons
+- Semantic HTML for interactive elements
+- Every animation respects `useReducedMotion()`
+- Every action keyboard-reachable
+- Dynamic content updates handled for screen readers (live regions, focus moves)
+
+### Security / data
+- User-supplied content rendered safely (no untrusted HTML, sanitization where needed)
+- Upload/storage size limits set
+- Data persisted only locally unless explicitly designed for sync
+- Sensitive data sanitized before logging (`getUserFriendlyError()` already does this)
+
+### Performance / bundle
+- Heavy dependencies (>100KB) dynamic-imported on demand and justified
+- Initial route bundle impact assessed
+- Hot-path renders debounced (typing, resize, scroll) where appropriate
+- Memoization where re-renders are expensive
+
+### Complexity
+- Would a smaller v1 still hit the goal? Components/features that could move to "out of scope"?
+- Each component does one thing
+- Abstractions earn their cost (inlining isn't simpler)
+
+### Testing
+- Pure logic in `lib/` has unit tests
+- Boundary conditions tested (empty, max, malformed input)
+- Manual verification checklist exists for UI behavior not covered by unit tests
+
+### Storage / migration
+- Schema version recorded and migration path planned (`lib/stores/migration.ts`)
+- Caps on stored data to prevent quota issues
+- Fallback behavior when storage unavailable
+
+### Observability
+- Tool usage tracked via `updateToolUsage(toolId)`
+- Sentry instrumentation on meaningful flows (`Sentry.startSpan`, `Sentry.captureException`)
+- Errors logged with enough context to debug
+
+### Out-of-scope clarity
+- What's NOT being built is explicit, so deferred work is distinguishable from forgotten work
 
 ## Contribution Workflow
 
