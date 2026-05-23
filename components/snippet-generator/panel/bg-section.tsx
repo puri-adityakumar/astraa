@@ -86,7 +86,7 @@ export function BgSection() {
               aria-label={p.name}
               aria-pressed={active}
               className={cn(
-                "h-16 w-full rounded-md border-2 transition",
+                "h-16 w-full rounded-md border-2",
                 active ? "border-primary ring-2 ring-primary/40" : "border-transparent",
               )}
               style={{ background: p.css }}
@@ -111,13 +111,13 @@ export function BgSection() {
                 maxLength={9}
               />
             </div>
-            <div className="grid grid-cols-8 gap-1">
+            <div className="grid grid-cols-4 gap-2">
               {SOLID_QUICK.map((c) => (
                 <button
                   key={c}
                   onClick={() => setBg({ kind: "solid", color: c })}
                   aria-label={`Solid ${c}`}
-                  className="h-7 w-7 rounded border"
+                  className="h-11 w-full rounded border"
                   style={{ background: c }}
                 />
               ))}
