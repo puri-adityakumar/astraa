@@ -6,6 +6,18 @@ import type {
   SnippetState,
 } from "./types";
 
+const MESH_AURORA_CSS =
+  "radial-gradient(at 0% 0%, #ff006e 0%, transparent 50%), " +
+  "radial-gradient(at 100% 100%, #3a86ff 0%, transparent 50%), #0d1117";
+
+const MESH_CANDY_CSS =
+  "radial-gradient(at 20% 80%, #ffafbd 0%, transparent 50%), " +
+  "radial-gradient(at 80% 20%, #ffc3a0 0%, transparent 50%), #fff5e1";
+
+const MESH_ARCTIC_CSS =
+  "radial-gradient(at 50% 0%, #a1c4fd 0%, transparent 60%), " +
+  "radial-gradient(at 50% 100%, #c2e9fb 0%, transparent 60%), #e0f2fe";
+
 export const BG_PRESETS: BgPreset[] = [
   { id: "violet",      name: "Violet",   css: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
   { id: "sunset",      name: "Sunset",   css: "linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)" },
@@ -13,9 +25,9 @@ export const BG_PRESETS: BgPreset[] = [
   { id: "forest",      name: "Forest",   css: "linear-gradient(135deg, #134e5e 0%, #71b280 100%)" },
   { id: "rose",        name: "Rose",     css: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
   { id: "midnight",    name: "Midnight", css: "linear-gradient(135deg, #2c3e50 0%, #4a00e0 100%)" },
-  { id: "mesh-aurora", name: "Aurora",   css: "radial-gradient(at 0% 0%, #ff006e 0%, transparent 50%), radial-gradient(at 100% 100%, #3a86ff 0%, transparent 50%), #0d1117" },
-  { id: "mesh-candy",  name: "Candy",    css: "radial-gradient(at 20% 80%, #ffafbd 0%, transparent 50%), radial-gradient(at 80% 20%, #ffc3a0 0%, transparent 50%), #fff5e1" },
-  { id: "mesh-arctic", name: "Arctic",   css: "radial-gradient(at 50% 0%, #a1c4fd 0%, transparent 60%), radial-gradient(at 50% 100%, #c2e9fb 0%, transparent 60%), #e0f2fe" },
+  { id: "mesh-aurora", name: "Aurora",   css: MESH_AURORA_CSS },
+  { id: "mesh-candy",  name: "Candy",    css: MESH_CANDY_CSS },
+  { id: "mesh-arctic", name: "Arctic",   css: MESH_ARCTIC_CSS },
   { id: "solid-zinc",  name: "Zinc",     css: "#18181b" },
   { id: "solid-paper", name: "Paper",    css: "#fafaf9" },
   { id: "solid-brand", name: "Astraa",   css: "hsl(var(--primary))" },
