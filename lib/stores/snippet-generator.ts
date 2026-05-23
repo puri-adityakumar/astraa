@@ -15,23 +15,23 @@ import type {
 type Actions = {
   setMode: (mode: Mode) => void;
   setCode: (code: string) => void;
-  setLanguage: (lang: string) => void;
-  setFilename: (name: string) => void;
+  setLanguage: (language: string) => void;
+  setFilename: (filename: string) => void;
   setTheme: (theme: string) => void;
   setFont: (font: FontConfig) => void;
-  setPadding: (p: Padding) => void;
-  setWindowChrome: (c: WindowChrome) => void;
-  setLineNumbers: (on: boolean) => void;
-  setDropShadow: (on: boolean) => void;
-  setAspect: (a: AspectRatio) => void;
-  setBackground: (b: BackgroundState) => void;
-  setScreenshot: (dataUrl: string | null) => void;
+  setPadding: (padding: Padding) => void;
+  setWindowChrome: (windowChrome: WindowChrome) => void;
+  setLineNumbers: (lineNumbers: boolean) => void;
+  setDropShadow: (dropShadow: boolean) => void;
+  setAspect: (aspect: AspectRatio) => void;
+  setBackground: (background: BackgroundState) => void;
+  setScreenshot: (screenshotDataUrl: string | null) => void;
   reset: () => void;
 };
 
 export type SnippetStore = SnippetState & Actions;
 
-function stripVolatile(state: SnippetState): SnippetState {
+export function stripVolatile(state: SnippetState): SnippetState {
   const next: SnippetState = { ...state, screenshotDataUrl: null };
   if (next.background.kind === "image") {
     next.background = { ...DEFAULT_STATE.background };
@@ -62,8 +62,8 @@ export const useSnippetGenerator = create<SnippetStore>()(
       name: "snippet-generator",
       version: 1,
       storage: createJSONStorage(() => createZustandStorage()),
-      partialize: (state) =>
-        stripVolatile({
+      partialize: (state) => {
+        const persistable: SnippetState = {
           schemaVersion: state.schemaVersion,
           mode: state.mode,
           code: state.code,
@@ -78,7 +78,9 @@ export const useSnippetGenerator = create<SnippetStore>()(
           aspect: state.aspect,
           background: state.background,
           screenshotDataUrl: state.screenshotDataUrl,
-        }) as unknown as SnippetStore,
+        };
+        return stripVolatile(persistable);
+      },
     },
   ),
 );

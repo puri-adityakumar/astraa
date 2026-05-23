@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useSnippetGenerator } from "./snippet-generator";
+import { useSnippetGenerator, stripVolatile } from "./snippet-generator";
 import { DEFAULT_STATE } from "@/lib/snippet-generator/defaults";
+import { DEFAULT_STATE as DEFAULTS } from "@/lib/snippet-generator/defaults";
 
 describe("useSnippetGenerator", () => {
   beforeEach(() => {
@@ -48,5 +49,39 @@ describe("useSnippetGenerator", () => {
     useSnippetGenerator.getState().setCode("changed");
     useSnippetGenerator.getState().reset();
     expect(useSnippetGenerator.getState().code).toBe(DEFAULT_STATE.code);
+  });
+});
+
+describe("stripVolatile", () => {
+  it("nulls screenshotDataUrl", () => {
+    const input = { ...DEFAULTS, screenshotDataUrl: "data:image/png;base64,xxx" } as const;
+    const out = stripVolatile(input);
+    expect(out.screenshotDataUrl).toBeNull();
+  });
+
+  it("preserves preset background unchanged", () => {
+    const input = { ...DEFAULTS, background: { kind: "preset" as const, id: "ocean" } };
+    const out = stripVolatile(input);
+    expect(out.background).toEqual({ kind: "preset", id: "ocean" });
+  });
+
+  it("demotes image background to default preset", () => {
+    const input = {
+      ...DEFAULTS,
+      background: { kind: "image" as const, dataUrl: "data:image/png;base64,abc", opacity: 0.5 },
+    };
+    const out = stripVolatile(input);
+    expect(out.background).toEqual(DEFAULTS.background);
+  });
+
+  it("does not mutate input state", () => {
+    const input = {
+      ...DEFAULTS,
+      background: { kind: "image" as const, dataUrl: "data:x", opacity: 1 },
+      screenshotDataUrl: "data:img",
+    };
+    const snapshot = JSON.parse(JSON.stringify(input));
+    stripVolatile(input);
+    expect(JSON.parse(JSON.stringify(input))).toEqual(snapshot);
   });
 });
