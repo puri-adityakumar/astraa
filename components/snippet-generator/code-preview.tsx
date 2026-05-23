@@ -7,6 +7,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { logError } from "@/lib/error-handler";
 import type { HighlightResult } from "@/lib/snippet-generator/types";
 
+const LINE_HEIGHT = 1.5;
+
 type Props = {
   code: string;
   language: string;
@@ -33,11 +35,16 @@ export function CodePreview({
   const { toast } = useToast();
 
   useEffect(() => {
+    let cancelled = false;
     window.clearTimeout(debounce.current);
     debounce.current = window.setTimeout(() => {
       highlight(code, language, theme)
-        .then(setResult)
+        .then((next) => {
+          if (cancelled) return;
+          setResult(next);
+        })
         .catch((e) => {
+          if (cancelled) return;
           logError(e, { context: "snippet-generator/highlight" });
           setResult({
             lines: code.split("\n").map((line) => [{ content: line }]),
@@ -46,7 +53,10 @@ export function CodePreview({
           });
         });
     }, 150);
-    return () => window.clearTimeout(debounce.current);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(debounce.current);
+    };
   }, [code, language, theme]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -70,12 +80,19 @@ export function CodePreview({
   return (
     <div
       className="relative font-mono"
-      style={{ fontFamily, fontSize, padding, background: bg, color: fg }}
+      style={{
+        fontFamily,
+        fontSize,
+        lineHeight: LINE_HEIGHT,
+        padding,
+        background: bg,
+        color: fg,
+      }}
     >
       {lineNumbers && (
         <div
-          className="absolute left-0 top-0 text-right text-zinc-500 select-none"
-          style={{ padding, paddingRight: 8, fontSize, width: 48 }}
+          className="absolute text-right text-zinc-500 select-none"
+          style={{ top: padding, left: padding, fontSize, lineHeight: LINE_HEIGHT, width: 48 }}
           aria-hidden
         >
           {Array.from({ length: lineCount }, (_, i) => (
@@ -85,7 +102,10 @@ export function CodePreview({
       )}
       <pre
         className="relative m-0 whitespace-pre"
-        style={{ paddingLeft: lineNumbers ? 56 : 0 }}
+        style={{
+          lineHeight: LINE_HEIGHT,
+          paddingLeft: lineNumbers ? 56 : 0,
+        }}
       >
         {result
           ? result.lines.map((line, i) => (
@@ -107,14 +127,16 @@ export function CodePreview({
         spellCheck={false}
         aria-label="Code editor"
         className={
-          "absolute inset-0 w-full h-full resize-none bg-transparent " +
-          "text-transparent caret-white outline-none whitespace-pre"
+          "absolute inset-0 w-full h-full resize-none bg-transparent text-transparent " +
+          "outline-none whitespace-pre"
         }
         style={{
           fontFamily,
           fontSize,
+          lineHeight: LINE_HEIGHT,
           padding,
           paddingLeft: lineNumbers ? padding + 56 : padding,
+          caretColor: fg,
         }}
       />
     </div>
