@@ -7,9 +7,13 @@ let highlighterPromise: Promise<Highlighter> | null = null;
 async function getHighlighter(): Promise<Highlighter> {
   if (!highlighterPromise) {
     const { createHighlighter } = await import("shiki");
-    highlighterPromise = createHighlighter({
+    const created = createHighlighter({
       themes: ["github-dark"],
       langs: ["typescript"],
+    });
+    highlighterPromise = created.catch((err) => {
+      highlighterPromise = null;
+      throw err;
     });
   }
   return highlighterPromise;
