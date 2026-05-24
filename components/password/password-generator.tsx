@@ -236,7 +236,7 @@ export function PasswordGeneratorClient() {
             <Button
               size="lg"
               variant="outline"
-              className="w-full font-semibold text-base h-12"
+              className="w-full font-semibold text-base h-12 hover:bg-muted/50 hover:text-foreground"
               onClick={generate}
             >
               Refresh password
