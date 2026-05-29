@@ -1,13 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
+import { PatternRow } from "./pattern-row";
+import { useRegexTester } from "@/lib/stores/regex-tester";
+import { compileRegex } from "@/lib/regex-tester/compile";
 import { useToolSettings } from "@/lib/stores/tool-settings";
 
 export function RegexTesterClient() {
+  const pattern = useRegexTester((s) => s.pattern);
+  const flags = useRegexTester((s) => s.flags);
+
   useEffect(() => {
     useToolSettings.getState().updateToolUsage("regex-tester");
   }, []);
+
+  const compileResult = useMemo(
+    () => compileRegex(pattern, flags),
+    [pattern, flags],
+  );
+
+  const patternError =
+    !compileResult.ok && pattern.length > 0 ? compileResult.error : null;
 
   return (
     <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
@@ -22,7 +36,9 @@ export function RegexTesterClient() {
           All processing happens locally in your browser
         </p>
       </div>
-      <Card className="p-4 sm:p-6 space-y-6" />
+      <Card className="p-4 sm:p-6 space-y-6">
+        <PatternRow error={patternError} />
+      </Card>
     </div>
   );
 }
