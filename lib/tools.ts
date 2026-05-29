@@ -88,10 +88,9 @@ export const toolCategories: ToolCategory[] = [
       },
       {
         name: 'Code Snippet Generator',
-        description: 'Generate beautiful code snippets',
+        description: 'Generate beautiful code and screenshot images',
         path: '/tools/snippet-generator',
         icon: Code,
-        comingSoon: true
       },
       {
         name: 'JSON Validator',
