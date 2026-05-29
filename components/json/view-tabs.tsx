@@ -5,11 +5,16 @@ import { cn } from "@/lib/utils";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import type { View } from "@/lib/json/types";
 
-const VIEWS: { id: View; label: string; Icon: typeof FileCode }[] = [
-  { id: "text", label: "Text", Icon: FileCode },
-  { id: "tree", label: "Tree", Icon: Network },
-  { id: "convert", label: "Convert", Icon: ArrowLeftRight },
-  { id: "generate", label: "Generate", Icon: Wand2 },
+const VIEWS: {
+  id: View;
+  label: string;
+  short: string;
+  Icon: typeof FileCode;
+}[] = [
+  { id: "text", label: "Text", short: "Txt", Icon: FileCode },
+  { id: "tree", label: "Tree", short: "Tree", Icon: Network },
+  { id: "convert", label: "Convert", short: "Conv", Icon: ArrowLeftRight },
+  { id: "generate", label: "Generate", short: "Gen", Icon: Wand2 },
 ];
 
 export function ViewTabs() {
@@ -21,7 +26,7 @@ export function ViewTabs() {
       aria-label="JSON Editor view"
       className="inline-flex rounded-md border bg-muted p-0.5"
     >
-      {VIEWS.map(({ id, label, Icon }) => {
+      {VIEWS.map(({ id, label, short, Icon }) => {
         const active = view === id;
         return (
           <button
@@ -40,6 +45,7 @@ export function ViewTabs() {
           >
             <Icon className="h-3.5 w-3.5" aria-hidden />
             <span className="hidden sm:inline">{label}</span>
+            <span className="sm:hidden">{short}</span>
           </button>
         );
       })}
