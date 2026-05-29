@@ -30,9 +30,9 @@ export function GenerateView() {
 
   useEffect(() => {
     let cancelled = false;
-    setError(null);
-    setPending(true);
     (async () => {
+      setError(null);
+      setPending(true);
       try {
         let out = "";
         if (parsedValue === null) {

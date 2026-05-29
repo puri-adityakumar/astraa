@@ -28,6 +28,7 @@ export function TreeRow({ row, onToggle, onCopyPath, onEdit, onAdd, onRemove }: 
     <div
       role="treeitem"
       aria-expanded={row.hasChildren ? row.isExpanded : undefined}
+      aria-selected={false}
       className={cn(
         "group flex items-center gap-1 px-2 py-1 text-xs font-mono",
         "hover:bg-muted/50 rounded",

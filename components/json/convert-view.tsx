@@ -30,12 +30,15 @@ export function ConvertView() {
 
   useEffect(() => {
     let cancelled = false;
-    setError(null);
-    if (parsedValue === null) {
-      setOutput("");
-      return;
-    }
     (async () => {
+      if (parsedValue === null) {
+        if (!cancelled) {
+          setError(null);
+          setOutput("");
+        }
+        return;
+      }
+      setError(null);
       try {
         let out = "";
         if (convertFormat === "yaml") {
