@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import { logError, getUserFriendlyError } from "@/lib/error-handler";
@@ -18,9 +18,13 @@ export type ExportPending = "1x" | "2x" | "copy" | null;
 
 export function useExportActions(getNode: () => HTMLElement | null) {
   const [pending, setPending] = useState<ExportPending>(null);
+  const [clipboardSupported, setClipboardSupported] = useState(false);
   const filename = useSnippetGenerator((s) => s.filename);
   const { toast } = useToast();
-  const clipboardSupported = isClipboardSupported();
+
+  useEffect(() => {
+    setClipboardSupported(isClipboardSupported());
+  }, []);
 
   const doDownload = async (scale: ExportScale) => {
     const node = getNode();
