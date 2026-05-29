@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { repair } from "@/lib/json/repair";
 import {
@@ -21,50 +20,6 @@ import {
   MAX_DOCUMENT_BYTES,
 } from "@/lib/json/validators";
 import { logError } from "@/lib/error-handler";
-
-type ToolButtonProps = {
-  label: string;
-  kbd?: string;
-  Icon: typeof Sparkles;
-  variant?: "primary" | "outline" | "ghost";
-  onClick: () => void;
-};
-
-function ToolButton({
-  label,
-  kbd,
-  Icon,
-  variant = "outline",
-  onClick,
-}: ToolButtonProps) {
-  return (
-    <Button
-      size="sm"
-      variant={
-        variant === "primary" ? "default" : variant === "outline" ? "outline" : "ghost"
-      }
-      onClick={onClick}
-      className={cn(
-        "h-8 px-2.5 gap-1.5 text-xs font-medium",
-        "transition-colors duration-100 ease-out",
-      )}
-    >
-      <Icon className="h-3.5 w-3.5" aria-hidden />
-      <span>{label}</span>
-      {kbd && (
-        <kbd
-          className={cn(
-            "ml-0.5 hidden md:inline-flex items-center px-1 h-4 rounded-[3px]",
-            "bg-muted text-[9.5px] font-mono text-muted-foreground/80",
-            "border border-border/60",
-          )}
-        >
-          {kbd}
-        </kbd>
-      )}
-    </Button>
-  );
-}
 
 export function Toolbar() {
   const text = useJsonEditor((s) => s.text);
@@ -156,64 +111,36 @@ export function Toolbar() {
 
   return (
     <div
-      className={cn(
-        "flex flex-wrap items-center gap-1.5 p-1.5 rounded-md border border-border/70",
-        "bg-muted/30 backdrop-blur-sm",
-      )}
       role="toolbar"
       aria-label="JSON Editor actions"
+      className="flex flex-wrap items-center gap-2"
     >
-      <div className="flex flex-wrap items-center gap-1">
-        <ToolButton
-          variant="primary"
-          label="Format"
-          kbd="⌘S"
-          Icon={Sparkles}
-          onClick={format}
-        />
-        <ToolButton
-          label="Minify"
-          kbd="⌘M"
-          Icon={Minimize2}
-          onClick={minify}
-        />
-        <ToolButton
-          label="Repair"
-          kbd="⌘R"
-          Icon={Wrench}
-          onClick={onRepair}
-        />
-        <ToolButton
-          label="Sort"
-          kbd="⌘K"
-          Icon={ArrowDownAZ}
-          onClick={sortKeysAction}
-        />
-      </div>
-      <span
-        className="hidden sm:inline-block mx-1 h-5 w-px bg-border/60"
-        aria-hidden
-      />
-      <div className="flex flex-wrap items-center gap-1">
-        <ToolButton
-          variant="ghost"
-          label="Copy"
-          Icon={Copy}
-          onClick={onCopy}
-        />
-        <ToolButton
-          variant="ghost"
-          label="Download"
-          Icon={Download}
-          onClick={onDownload}
-        />
-        <ToolButton
-          variant="ghost"
-          label="Upload"
-          Icon={Upload}
-          onClick={() => fileInput.current?.click()}
-        />
-      </div>
+      <Button size="sm" onClick={format}>
+        <Sparkles className="h-4 w-4 mr-2" aria-hidden /> Format
+      </Button>
+      <Button size="sm" variant="outline" onClick={minify}>
+        <Minimize2 className="h-4 w-4 mr-2" aria-hidden /> Minify
+      </Button>
+      <Button size="sm" variant="outline" onClick={onRepair}>
+        <Wrench className="h-4 w-4 mr-2" aria-hidden /> Repair
+      </Button>
+      <Button size="sm" variant="outline" onClick={sortKeysAction}>
+        <ArrowDownAZ className="h-4 w-4 mr-2" aria-hidden /> Sort keys
+      </Button>
+      <span className="mx-1 h-5 w-px bg-border" aria-hidden />
+      <Button size="sm" variant="ghost" onClick={onCopy}>
+        <Copy className="h-4 w-4 mr-2" aria-hidden /> Copy
+      </Button>
+      <Button size="sm" variant="ghost" onClick={onDownload}>
+        <Download className="h-4 w-4 mr-2" aria-hidden /> Download
+      </Button>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={() => fileInput.current?.click()}
+      >
+        <Upload className="h-4 w-4 mr-2" aria-hidden /> Upload
+      </Button>
       <input
         ref={fileInput}
         type="file"

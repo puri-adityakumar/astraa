@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ShieldCheck, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import { ViewTabs } from "./view-tabs";
 import { Toolbar } from "./toolbar";
 import { StatusBar } from "./status-bar";
@@ -67,91 +66,34 @@ export function JsonEditorClient() {
   }, [text, setParseResult]);
 
   return (
-    <div className="relative">
-      {/* Subtle dotted background */}
-      <div
-        className={cn(
-          "pointer-events-none absolute inset-0 -z-10",
-          "[background-image:radial-gradient(circle_at_1px_1px,hsl(var(--muted-foreground)/0.08)_1px,transparent_0)]",
-          "[background-size:24px_24px]",
-        )}
-        aria-hidden
-      />
-      <div
-        className={cn(
-          "pointer-events-none absolute -top-32 right-0 -z-10 h-[420px] w-[520px]",
-          "rounded-full opacity-30 blur-3xl",
-          "bg-[radial-gradient(closest-side,hsl(var(--primary)/0.35),transparent)]",
-        )}
-        aria-hidden
-      />
-
-      <div className="container max-w-[1400px] pt-24 pb-12 space-y-4">
-        {/* Hero */}
-        <header className="flex flex-wrap items-end justify-between gap-4 pb-2">
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "inline-flex h-5 items-center gap-1 rounded-sm border border-primary/30",
-                  "bg-primary/10 px-1.5 font-mono text-[10px] uppercase tracking-[0.18em]",
-                  "text-primary",
-                )}
-              >
-                <ShieldCheck className="h-2.5 w-2.5" aria-hidden />
-                Local-first
-              </span>
-              <span
-                className={cn(
-                  "inline-flex h-5 items-center gap-1 rounded-sm border border-amber-500/30",
-                  "bg-amber-500/10 px-1.5 font-mono text-[10px] uppercase tracking-[0.18em]",
-                  "text-amber-500",
-                )}
-              >
-                <Zap className="h-2.5 w-2.5" aria-hidden />
-                Worker-parsed
-              </span>
-              <span
-                className={cn(
-                  "hidden sm:inline-flex h-5 items-center rounded-sm border border-border/60",
-                  "bg-muted/40 px-1.5 font-mono text-[10px] uppercase tracking-[0.18em]",
-                  "text-muted-foreground",
-                )}
-              >
-                Up to 50 MB
-              </span>
-            </div>
-            <h1
-              className={cn(
-                "font-mono text-[clamp(2rem,5vw,3.25rem)] font-medium leading-[0.95] tracking-tight",
-                "flex flex-wrap items-baseline gap-x-3",
-              )}
-            >
-              <span className="text-muted-foreground/30">{"{"}</span>
-              <span className="text-foreground">JSON</span>
-              <span className="text-primary/90">Editor</span>
-              <span className="text-muted-foreground/30">{"}"}</span>
-            </h1>
-            <p className="text-sm text-muted-foreground max-w-2xl">
-              Edit, format, convert and generate types from JSON — entirely in your
-              browser. Parsing runs in a Web Worker so the UI never blocks.
-            </p>
-          </div>
-          <ViewTabs />
-        </header>
-
-        <Toolbar />
-
-        <div className="space-y-3">
-          {view === "text" && <TextView />}
-          {view === "tree" && <TreeView />}
-          {view === "convert" && <ConvertView />}
-          {view === "generate" && <GenerateView />}
-          <StatusBar />
-        </div>
-
-        <DropzoneOverlay />
+    <div className="container px-4 sm:px-6 max-w-[1400px] pt-24 pb-12 space-y-8">
+      <div className="space-y-4 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          JSON Editor
+        </h1>
+        <p className="text-muted-foreground text-base sm:text-lg">
+          Edit, format, convert and generate types from JSON. Tree view,
+          YAML/CSV/Markdown converters, TypeScript and Zod generators. Up to
+          50&nbsp;MB, parsed off the main thread.
+        </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
       </div>
+
+      <Card className="p-4 sm:p-6 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <ViewTabs />
+        </div>
+        <Toolbar />
+        {view === "text" && <TextView />}
+        {view === "tree" && <TreeView />}
+        {view === "convert" && <ConvertView />}
+        {view === "generate" && <GenerateView />}
+        <StatusBar />
+      </Card>
+
+      <DropzoneOverlay />
     </div>
   );
 }
