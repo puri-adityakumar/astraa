@@ -1,16 +1,31 @@
 import type { IndentOption, View, ConvertFormat, GenerateFormat } from "./types";
 
-export const SAMPLE_JSON = `{
-  "name": "astraa",
-  "version": "1.1.0",
-  "tools": ["snippet", "markdown", "json"],
-  "stats": {
-    "downloads": 12450,
-    "stars": 87,
-    "active": true
+export const SAMPLE_JSON = `[
+  {
+    "slug": "snippet",
+    "name": "Code Snippet Generator",
+    "released": "2026-04-02",
+    "users": 12450,
+    "rating": 4.8,
+    "premium": false
   },
-  "tags": null
-}`;
+  {
+    "slug": "markdown",
+    "name": "Markdown Editor",
+    "released": "2026-03-18",
+    "users": 8560,
+    "rating": 4.6,
+    "premium": false
+  },
+  {
+    "slug": "json",
+    "name": "JSON Editor",
+    "released": "2026-05-29",
+    "users": 2100,
+    "rating": 4.9,
+    "premium": true
+  }
+]`;
 
 export const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
 export const MAX_PERSIST_BYTES = 256 * 1024;
@@ -34,7 +49,7 @@ export const DEFAULT_STATE = {
   parsedValue: null,
   diagnostics: [],
   parsedAt: 0,
-  expanded: [] as string[],
+  expanded: ["", "[0]", "[1]", "[2]"] as string[],
   convertFormat: "yaml" as ConvertFormat,
   generateFormat: "typescript" as GenerateFormat,
 };
