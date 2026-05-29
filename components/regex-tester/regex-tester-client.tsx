@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { PatternRow } from "./pattern-row";
+import { TestStringArea } from "./test-string-area";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { compileRegex } from "@/lib/regex-tester/compile";
+import { runMatches } from "@/lib/regex-tester/match";
 import { useToolSettings } from "@/lib/stores/tool-settings";
 
 export function RegexTesterClient() {
   const pattern = useRegexTester((s) => s.pattern);
   const flags = useRegexTester((s) => s.flags);
+  const testString = useRegexTester((s) => s.testString);
+
+  const [hoveredMatchId, setHoveredMatchId] = useState<number | null>(null);
 
   useEffect(() => {
     useToolSettings.getState().updateToolUsage("regex-tester");
@@ -22,6 +27,11 @@ export function RegexTesterClient() {
 
   const patternError =
     !compileResult.ok && pattern.length > 0 ? compileResult.error : null;
+
+  const matches = useMemo(() => {
+    if (!compileResult.ok) return [];
+    return runMatches(compileResult.regex, testString).results;
+  }, [compileResult, testString]);
 
   return (
     <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
@@ -38,6 +48,11 @@ export function RegexTesterClient() {
       </div>
       <Card className="p-4 sm:p-6 space-y-6">
         <PatternRow error={patternError} />
+        <TestStringArea
+          matches={matches}
+          hoveredMatchId={hoveredMatchId}
+          onHoverMatch={setHoveredMatchId}
+        />
       </Card>
     </div>
   );
