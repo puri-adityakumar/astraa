@@ -28,8 +28,8 @@ export function SnippetGeneratorClient() {
         </div>
         <ModeToggle />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-0">
-        <div className="min-w-0">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-0">
+        <div className="flex-1 min-w-0">
           <Canvas ref={canvasRef} />
         </div>
         <DesktopPanel getCanvasNode={getCanvasNode} />
