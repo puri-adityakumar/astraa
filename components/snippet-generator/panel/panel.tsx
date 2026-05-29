@@ -2,12 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import type { ReactNode } from "react";
+import { Palette, Monitor, Type, LayoutGrid, Share2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -28,48 +24,63 @@ type Props = {
   getCanvasNode: () => HTMLElement | null;
 };
 
+type GroupProps = {
+  icon: ReactNode;
+  title: string;
+  children: ReactNode;
+};
+
+function Group({ icon, title, children }: GroupProps) {
+  return (
+    <section className="px-4 py-5 border-b last:border-b-0">
+      <h3 className="flex items-center gap-2 mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <span className="text-muted-foreground/70" aria-hidden>
+          {icon}
+        </span>
+        {title}
+      </h3>
+      {children}
+    </section>
+  );
+}
+
 function PanelBody({ getCanvasNode }: Props) {
   const mode = useSnippetGenerator((s) => s.mode);
 
   return (
-    <Accordion type="multiple" defaultValue={["bg"]} className="w-full">
-      <AccordionItem value="bg">
-        <AccordionTrigger>Background</AccordionTrigger>
-        <AccordionContent><BgSection /></AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="window">
-        <AccordionTrigger>Window</AccordionTrigger>
-        <AccordionContent><WindowSection /></AccordionContent>
-      </AccordionItem>
+    <div className="w-full">
+      <Group icon={<Palette className="h-3.5 w-3.5" />} title="Background">
+        <BgSection />
+      </Group>
+      <Group icon={<Monitor className="h-3.5 w-3.5" />} title="Window">
+        <WindowSection />
+      </Group>
       {mode === "code" && (
-        <AccordionItem value="theme">
-          <AccordionTrigger>Theme & Language</AccordionTrigger>
-          <AccordionContent><ThemeSection /></AccordionContent>
-        </AccordionItem>
+        <Group icon={<ImageIcon className="h-3.5 w-3.5" />} title="Theme & language">
+          <ThemeSection />
+        </Group>
       )}
       {mode === "code" && (
-        <AccordionItem value="font">
-          <AccordionTrigger>Font</AccordionTrigger>
-          <AccordionContent><FontSection /></AccordionContent>
-        </AccordionItem>
+        <Group icon={<Type className="h-3.5 w-3.5" />} title="Font">
+          <FontSection />
+        </Group>
       )}
-      <AccordionItem value="layout">
-        <AccordionTrigger>Layout</AccordionTrigger>
-        <AccordionContent><LayoutSection /></AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="export">
-        <AccordionTrigger>Export</AccordionTrigger>
-        <AccordionContent>
-          <ExportSection getNode={getCanvasNode} />
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      <Group icon={<LayoutGrid className="h-3.5 w-3.5" />} title="Layout">
+        <LayoutSection />
+      </Group>
+      <Group icon={<Share2 className="h-3.5 w-3.5" />} title="Export">
+        <ExportSection getNode={getCanvasNode} />
+      </Group>
+    </div>
   );
 }
 
 export function DesktopPanel(props: Props) {
   return (
-    <aside className="hidden lg:block w-[320px] border-l overflow-y-auto p-4">
+    <aside
+      className="hidden lg:block w-[320px] border-l bg-muted/30 overflow-y-auto"
+      aria-label="Customize panel"
+    >
       <PanelBody {...props} />
     </aside>
   );
@@ -84,13 +95,11 @@ export function MobilePanelTrigger(props: Props) {
           Customize
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto">
-        <SheetHeader>
+      <SheetContent side="bottom" className="max-h-[70vh] overflow-y-auto p-0">
+        <SheetHeader className="px-4 py-4 border-b">
           <SheetTitle>Customize</SheetTitle>
         </SheetHeader>
-        <div className="pt-4">
-          <PanelBody {...props} />
-        </div>
+        <PanelBody {...props} />
       </SheetContent>
     </Sheet>
   );
