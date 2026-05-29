@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { Canvas } from "./canvas";
+import { CanvasStatus } from "./canvas-status";
 import { ModeToggle } from "./mode-toggle";
 import { TopExport } from "./top-export";
 import { DesktopPanel, MobilePanelTrigger } from "./panel/panel";
@@ -37,6 +38,7 @@ export function SnippetGeneratorClient() {
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-0">
         <div className="flex-1 min-w-0">
           <Canvas ref={canvasRef} />
+          <CanvasStatus />
         </div>
         <DesktopPanel getCanvasNode={getCanvasNode} />
       </div>
