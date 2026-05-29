@@ -44,6 +44,42 @@ export type ExplainNode = {
   children?: ExplainNode[];
 };
 
+export type PatternTokenType =
+  | "literal"
+  | "escape"
+  | "charClassOpen"
+  | "charClassClose"
+  | "range"
+  | "groupOpen"
+  | "namedGroupOpen"
+  | "nonCaptureGroupOpen"
+  | "groupClose"
+  | "lookaheadPositive"
+  | "lookaheadNegative"
+  | "lookbehindPositive"
+  | "lookbehindNegative"
+  | "alternation"
+  | "quantifier"
+  | "anchorStart"
+  | "anchorEnd"
+  | "wordBoundary"
+  | "nonWordBoundary"
+  | "backreference";
+
+export type PatternToken = {
+  id: string;
+  type: PatternTokenType;
+  value: string;
+  startIndex: number;
+  endIndex: number;
+  depth: number;
+};
+
+export type TokenizeResult = {
+  tokens: PatternToken[];
+  balanced: boolean;
+};
+
 export type MiniTestKind = "should-match" | "should-not-match";
 
 export type MiniTest = {
