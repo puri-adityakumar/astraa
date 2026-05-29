@@ -1,13 +1,70 @@
 "use client";
 
-import { useRef } from "react";
-import { Sparkles, Minimize2, Wrench, ArrowDownAZ, Copy, Download, Upload } from "lucide-react";
+import { useEffect, useRef } from "react";
+import {
+  Sparkles,
+  Minimize2,
+  Wrench,
+  ArrowDownAZ,
+  Copy,
+  Download,
+  Upload,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { repair } from "@/lib/json/repair";
-import { validateFile, readFileAsText, MAX_DOCUMENT_BYTES } from "@/lib/json/validators";
+import {
+  validateFile,
+  readFileAsText,
+  MAX_DOCUMENT_BYTES,
+} from "@/lib/json/validators";
 import { logError } from "@/lib/error-handler";
+
+type ToolButtonProps = {
+  label: string;
+  kbd?: string;
+  Icon: typeof Sparkles;
+  variant?: "primary" | "outline" | "ghost";
+  onClick: () => void;
+};
+
+function ToolButton({
+  label,
+  kbd,
+  Icon,
+  variant = "outline",
+  onClick,
+}: ToolButtonProps) {
+  return (
+    <Button
+      size="sm"
+      variant={
+        variant === "primary" ? "default" : variant === "outline" ? "outline" : "ghost"
+      }
+      onClick={onClick}
+      className={cn(
+        "h-8 px-2.5 gap-1.5 text-xs font-medium",
+        "transition-colors duration-100 ease-out",
+      )}
+    >
+      <Icon className="h-3.5 w-3.5" aria-hidden />
+      <span>{label}</span>
+      {kbd && (
+        <kbd
+          className={cn(
+            "ml-0.5 hidden md:inline-flex items-center px-1 h-4 rounded-[3px]",
+            "bg-muted text-[9.5px] font-mono text-muted-foreground/80",
+            "border border-border/60",
+          )}
+        >
+          {kbd}
+        </kbd>
+      )}
+    </Button>
+  );
+}
 
 export function Toolbar() {
   const text = useJsonEditor((s) => s.text);
@@ -25,7 +82,11 @@ export function Toolbar() {
       setText(r.text);
       toast({ title: "Repaired", description: "JSON cleaned up." });
     } else {
-      toast({ title: "Could not repair", description: r.error, variant: "destructive" });
+      toast({
+        title: "Could not repair",
+        description: r.error,
+        variant: "destructive",
+      });
     }
   };
 
@@ -69,30 +130,90 @@ export function Toolbar() {
     }
   };
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const mod = e.metaKey || e.ctrlKey;
+      if (!mod || e.shiftKey || e.altKey) return;
+      const key = e.key.toLowerCase();
+      if (key === "s") {
+        e.preventDefault();
+        format();
+      } else if (key === "m") {
+        e.preventDefault();
+        minify();
+      } else if (key === "r") {
+        e.preventDefault();
+        void onRepair();
+      } else if (key === "k") {
+        e.preventDefault();
+        sortKeysAction();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [format, minify, sortKeysAction, text]);
+
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Button size="sm" onClick={format}>
-        <Sparkles className="h-3.5 w-3.5 mr-1.5" /> Format
-      </Button>
-      <Button size="sm" variant="outline" onClick={minify}>
-        <Minimize2 className="h-3.5 w-3.5 mr-1.5" /> Minify
-      </Button>
-      <Button size="sm" variant="outline" onClick={onRepair}>
-        <Wrench className="h-3.5 w-3.5 mr-1.5" /> Repair
-      </Button>
-      <Button size="sm" variant="outline" onClick={sortKeysAction}>
-        <ArrowDownAZ className="h-3.5 w-3.5 mr-1.5" /> Sort keys
-      </Button>
-      <span className="mx-2 h-5 w-px bg-border" />
-      <Button size="sm" variant="ghost" onClick={onCopy}>
-        <Copy className="h-3.5 w-3.5 mr-1.5" /> Copy
-      </Button>
-      <Button size="sm" variant="ghost" onClick={onDownload}>
-        <Download className="h-3.5 w-3.5 mr-1.5" /> Download
-      </Button>
-      <Button size="sm" variant="ghost" onClick={() => fileInput.current?.click()}>
-        <Upload className="h-3.5 w-3.5 mr-1.5" /> Upload
-      </Button>
+    <div
+      className={cn(
+        "flex flex-wrap items-center gap-1.5 p-1.5 rounded-md border border-border/70",
+        "bg-muted/30 backdrop-blur-sm",
+      )}
+      role="toolbar"
+      aria-label="JSON Editor actions"
+    >
+      <div className="flex flex-wrap items-center gap-1">
+        <ToolButton
+          variant="primary"
+          label="Format"
+          kbd="⌘S"
+          Icon={Sparkles}
+          onClick={format}
+        />
+        <ToolButton
+          label="Minify"
+          kbd="⌘M"
+          Icon={Minimize2}
+          onClick={minify}
+        />
+        <ToolButton
+          label="Repair"
+          kbd="⌘R"
+          Icon={Wrench}
+          onClick={onRepair}
+        />
+        <ToolButton
+          label="Sort"
+          kbd="⌘K"
+          Icon={ArrowDownAZ}
+          onClick={sortKeysAction}
+        />
+      </div>
+      <span
+        className="hidden sm:inline-block mx-1 h-5 w-px bg-border/60"
+        aria-hidden
+      />
+      <div className="flex flex-wrap items-center gap-1">
+        <ToolButton
+          variant="ghost"
+          label="Copy"
+          Icon={Copy}
+          onClick={onCopy}
+        />
+        <ToolButton
+          variant="ghost"
+          label="Download"
+          Icon={Download}
+          onClick={onDownload}
+        />
+        <ToolButton
+          variant="ghost"
+          label="Upload"
+          Icon={Upload}
+          onClick={() => fileInput.current?.click()}
+        />
+      </div>
       <input
         ref={fileInput}
         type="file"
