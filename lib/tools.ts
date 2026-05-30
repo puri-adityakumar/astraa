@@ -83,8 +83,7 @@ export const toolCategories: ToolCategory[] = [
         name: 'Base64 Encoder/Decoder',
         description: 'Encode and decode Base64 strings',
         path: '/tools/base64',
-        icon: Binary,
-        comingSoon: true
+        icon: Binary
       },
       {
         name: 'Code Snippet Generator',
