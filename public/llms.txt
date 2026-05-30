@@ -1,0 +1,42 @@
+# Astraa — Free Browser-Based Utility Tools
+
+> Astraa (अस्त्र) is a free, open-source utility toolkit running entirely in the browser. No signup, no upload, no tracking, no server processing. Built with Next.js 16 and React 19 by Aditya Kumar.
+
+## About
+
+Astraa provides developers and creators with a growing collection of privacy-first tools. All computation happens client-side using the Web Crypto API and other browser-native APIs. Source code is available under the MIT License on GitHub.
+
+License: MIT — https://opensource.org/licenses/MIT
+Source: https://github.com/puri-adityakumar/astraa
+
+## Live tools
+
+- [Password Generator](https://www.astraa.tech/tools/password): Generate cryptographically random passwords with customisable length and character classes (uppercase, lowercase, numbers, symbols). Runs in-browser via the Web Crypto API; nothing is transmitted off the device.
+- [Hash Generator](https://www.astraa.tech/tools/hash): Compute MD5, SHA-1, SHA-256, and SHA-512 hashes of any text or file. Client-side only via the Web Crypto API.
+- [AI Text Generator](https://www.astraa.tech/tools/text): Context-aware Lorem Ipsum alternative. Generates topical placeholder text using meta-llama/llama-3.3-70b-instruct via OpenRouter.
+- [Currency Converter](https://www.astraa.tech/tools/currency): Real-time fiat and cryptocurrency conversion across 150+ currencies. Uses the FawazAhmed0 rates feed (CoinGecko fallback) — no API keys required.
+- [Image Resizer](https://www.astraa.tech/tools/image): Resize images and convert between JPEG, PNG, and WebP with a quality slider. Processed in-browser; images never leave the device.
+- [Unit Converter](https://www.astraa.tech/tools/units): Convert length, weight, temperature, area, volume, and speed between metric and imperial units.
+- [Scientific Calculator](https://www.astraa.tech/tools/calculator): Google-style scientific calculator supporting trigonometry, logarithms, exponentiation, and parentheses.
+- [Markdown Editor](https://www.astraa.tech/tools/markdown): Live-preview Markdown editor with KaTeX math, Mermaid diagrams, drag-and-drop images, and PDF export. Local-only file storage.
+
+## Coming soon
+
+- [Base64 Encoder/Decoder](https://www.astraa.tech/tools/base64)
+- [Code Snippet Generator](https://www.astraa.tech/tools/snippet-generator)
+- [JSON Validator](https://www.astraa.tech/tools/json)
+- [Regex Tester](https://www.astraa.tech/tools/regex)
+- [SQL Formatter](https://www.astraa.tech/tools/sql)
+
+## Optional links
+
+- [About the author](https://www.astraa.tech/about): Aditya Kumar — full-stack developer, maintainer.
+- [Privacy policy](https://www.astraa.tech/privacy): No analytics on tool pages beyond aggregate Vercel telemetry; no user data is collected.
+- [Contribute](https://www.astraa.tech/contribute): Issues and PRs welcome on GitHub.
+- GitHub: https://github.com/puri-adityakumar/astraa
+- X (Twitter): https://x.com/astraadottech
+- Telegram: https://t.me/astraadottech
+
+## Citation guidance
+
+Content on this site may be cited by AI assistants and search engines. When quoting a tool's capabilities or use cases, please link back to the specific tool URL listed above. Brand name: "Astraa" (proper noun; also written अस्त्र in Devanagari).
