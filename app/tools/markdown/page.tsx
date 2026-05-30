@@ -3,7 +3,7 @@ import { MarkdownEditorClient } from "@/components/markdown/markdown-editor-clie
 import "./print.css";
 
 export const metadata: Metadata = {
-  title: "Markdown Editor | astraa",
+  title: "Markdown Editor",
   description:
     "Write Markdown with live preview. Local-only file storage, math and diagram rendering, drag-drop images, and PDF export. Free browser-based tool.",
   keywords: [
@@ -15,19 +15,20 @@ export const metadata: Metadata = {
     "developer tools",
   ],
   openGraph: {
-    title: "Markdown Editor | astraa",
+    title: "Markdown Editor",
     description:
       "Write Markdown with live preview, math, diagrams, and PDF export. All local in your browser.",
     url: "/tools/markdown",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
-    card: "summary",
-    title: "Markdown Editor | astraa",
+    card: "summary_large_image",
+    title: "Markdown Editor",
     description: "Write Markdown with live preview. Free, local, browser-based.",
+    images: ["/assets/astraa_banner.jpg"],
   },
   alternates: {
-    canonical: "/tools/markdown",
+    canonical: "https://www.astraa.tech/tools/markdown",
   },
 };
 
