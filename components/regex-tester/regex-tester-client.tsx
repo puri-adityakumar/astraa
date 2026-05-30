@@ -294,6 +294,13 @@ export function RegexTesterClient() {
             ref={patternInputRef}
             error={patternError}
             onShare={handleShare}
+            exportSlot={
+              <SnippetCardExport
+                pattern={pattern}
+                flags={flags}
+                matches={matches}
+              />
+            }
           />
           <TestStringArea
             ref={testStringRef}
@@ -308,16 +315,6 @@ export function RegexTesterClient() {
             onJumpToMatch={handleJumpToMatch}
           />
           <ReplacePanel />
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
-            <span className="text-xs text-muted-foreground mr-2">
-              Share &amp; export:
-            </span>
-            <SnippetCardExport
-              pattern={pattern}
-              flags={flags}
-              matches={matches}
-            />
-          </div>
           <div className="hidden sm:block">
             <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
           </div>

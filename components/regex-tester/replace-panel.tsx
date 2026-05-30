@@ -39,20 +39,19 @@ export function ReplacePanel() {
   }, [pattern, flags, testString, replacement]);
 
   return (
-    <div className="rounded-md border border-border">
+    <div className="space-y-2">
       <button
         type="button"
         onClick={() => setReplaceOpen(!replaceOpen)}
         aria-expanded={replaceOpen}
         aria-controls="regex-replace-body"
         className={cn(
-          "w-full flex items-center justify-between gap-2 px-3 py-2",
+          "w-full flex items-center justify-between gap-2",
           "text-sm font-medium text-foreground text-left",
-          "min-h-touch",
-          "hover:bg-muted/50 transition-colors duration-100 ease-out",
+          "min-h-touch -mx-1 px-1 rounded",
+          "hover:text-foreground/80 transition-colors duration-100 ease-out",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          "rounded-md",
         )}
       >
         <span>Replace mode</span>
@@ -66,7 +65,7 @@ export function ReplacePanel() {
       </button>
 
       {replaceOpen && (
-        <div id="regex-replace-body" className="space-y-3 px-3 pb-3">
+        <div id="regex-replace-body" className="space-y-3">
           <div className="space-y-1.5">
             <label
               htmlFor="regex-replacement"

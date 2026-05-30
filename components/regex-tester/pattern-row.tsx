@@ -19,12 +19,13 @@ import { useRegexTester } from "@/lib/stores/regex-tester";
 export interface PatternRowProps {
   error: string | null;
   onShare?: () => void;
+  exportSlot?: React.ReactNode;
 }
 
 export const PatternRow = forwardRef<
   PatternHighlightInputHandle,
   PatternRowProps
->(function PatternRow({ error, onShare }, ref) {
+>(function PatternRow({ error, onShare, exportSlot }, ref) {
   const pattern = useRegexTester((s) => s.pattern);
   const flags = useRegexTester((s) => s.flags);
   const setPattern = useRegexTester((s) => s.setPattern);
@@ -84,6 +85,7 @@ export const PatternRow = forwardRef<
             </TooltipTrigger>
             <TooltipContent side="bottom">Copy shareable link</TooltipContent>
           </Tooltip>
+          {exportSlot}
         </div>
       </div>
 

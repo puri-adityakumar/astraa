@@ -122,7 +122,7 @@ export const HighlightOverlay = forwardRef<HTMLPreElement, HighlightOverlayProps
         className={cn(
           "absolute inset-0 m-0 px-3 py-2 overflow-auto pointer-events-none",
           "font-mono text-sm leading-relaxed whitespace-pre-wrap break-words",
-          "text-transparent select-none",
+          "text-foreground select-none",
           className,
         )}
       >
@@ -142,7 +142,7 @@ export const HighlightOverlay = forwardRef<HTMLPreElement, HighlightOverlayProps
               onMouseEnter={() => onHoverMatch(matchId)}
               onMouseLeave={() => onHoverMatch(null)}
               className={cn(
-                "rounded-sm pointer-events-auto bg-primary/15 text-transparent",
+                "rounded-sm pointer-events-auto bg-primary/15 text-foreground",
                 "transition-shadow",
                 isHovered && "ring-2 ring-primary",
               )}
@@ -159,7 +159,7 @@ export const HighlightOverlay = forwardRef<HTMLPreElement, HighlightOverlayProps
                 return (
                   <span
                     key={`p-${matchId}-${partIndex}`}
-                    className={cn("rounded-sm text-transparent", color)}
+                    className={cn("rounded-sm text-foreground", color)}
                   >
                     {part.text}
                   </span>

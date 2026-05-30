@@ -3,6 +3,11 @@
 import { useCallback, useState } from "react";
 import { ImageDown, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import type { MatchResult } from "@/lib/regex-tester/types";
@@ -224,20 +229,25 @@ export function SnippetCardExport({
   }, [pattern, flags, matches, toast]);
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      onClick={handleExport}
-      disabled={busy || pattern.length === 0}
-      className="min-h-touch"
-    >
-      {busy ? (
-        <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" />
-      ) : (
-        <ImageDown className="h-4 w-4 mr-2" aria-hidden="true" />
-      )}
-      Export PNG
-    </Button>
+    <Tooltip delayDuration={150}>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={handleExport}
+          disabled={busy || pattern.length === 0}
+          aria-label="Export pattern as PNG"
+          className="shrink-0 min-h-touch min-w-touch"
+        >
+          {busy ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <ImageDown className="h-4 w-4" aria-hidden="true" />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">Export pattern as PNG</TooltipContent>
+    </Tooltip>
   );
 }
