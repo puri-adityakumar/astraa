@@ -102,7 +102,9 @@ export function Base64Output({
         placeholder={
           mode === "encode"
             ? "Encoded base64 will appear here."
-            : "Decoded text will appear here."
+            : status.kind === "invalid" || status.kind === "error"
+              ? ""
+              : "Decoded text will appear here."
         }
         aria-label="Output"
         className={cn(
@@ -150,7 +152,7 @@ export function Base64Output({
         </Button>
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onClear}
           aria-label="Clear input and output"
