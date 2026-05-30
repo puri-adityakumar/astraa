@@ -10,6 +10,7 @@ export type Tool = {
   description: string
   path: string
   icon: LucideIcon
+  lastModified?: string
   wip?: boolean
   comingSoon?: boolean
 }
@@ -22,49 +23,57 @@ export const toolCategories: ToolCategory[] = [
         name: 'Password Generator',
         description: 'Create strong, secure passwords',
         path: '/tools/password',
-        icon: Key
+        icon: Key,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Hash Generator',
         description: 'Generate various hash outputs',
         path: '/tools/hash',
-        icon: Hash
+        icon: Hash,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Text Generator',
         description: 'Smart, context-aware Lorem Ipsum alternative',
         path: '/tools/text',
-        icon: Type
+        icon: Type,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Currency Converter',
         description: 'Real-time currency conversion',
         path: '/tools/currency',
-        icon: DollarSign
+        icon: DollarSign,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Image Resizer',
         description: 'Resize images easily',
         path: '/tools/image',
-        icon: ImageIcon
+        icon: ImageIcon,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Unit Converter',
         description: 'Convert between various units',
         path: '/tools/units',
-        icon: Ruler
+        icon: Ruler,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Calculator',
         description: 'Scientific calculator with advanced functions',
         path: '/tools/calculator',
-        icon: Calculator
+        icon: Calculator,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Markdown Viewer',
         description: 'Drop a markdown file to view, edit, and export',
         path: '/tools/markdown',
-        icon: FileText
+        icon: FileText,
+        lastModified: '2026-05-30',
       },
       {
         name: 'Lofi Focus Studio',
