@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/tools/json",
   },
+  robots: { index: false, follow: true },
 };
 
 export default function JsonValidatorPage() {
