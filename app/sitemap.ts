@@ -2,67 +2,43 @@ import { MetadataRoute } from "next";
 
 import { toolCategories } from "@/lib/tools";
 import { games } from "@/lib/games";
+import { SITE_LAST_MODIFIED } from "@/lib/site-meta";
 
 const BASE_URL = "https://www.astraa.tech";
+const DEFAULT_LAST_MODIFIED = SITE_LAST_MODIFIED;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const toolEntries: MetadataRoute.Sitemap = toolCategories
+  const liveTools = toolCategories
     .flatMap((category) => category.items)
-    .filter((tool) => !tool.comingSoon)
-    .map((tool) => ({
-      url: `${BASE_URL}${tool.path}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }));
+    .filter((tool) => !tool.comingSoon);
 
-  const gameEntries: MetadataRoute.Sitemap = games
-    .filter((game) => !game.comingSoon)
-    .map((game) => ({
-      url: `${BASE_URL}${game.path}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
+  const liveGames = games.filter((game) => !game.comingSoon);
 
-  return [
-    {
-      url: BASE_URL,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1.0,
-    },
-    {
-      url: `${BASE_URL}/tools`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/games`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/explore`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/contribute`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.3,
-    },
-    ...toolEntries,
-    ...gameEntries,
+  const toolEntries: MetadataRoute.Sitemap = liveTools.map((tool) => ({
+    url: `${BASE_URL}${tool.path}`,
+    lastModified: tool.lastModified ?? DEFAULT_LAST_MODIFIED,
+  }));
+
+  const gameEntries: MetadataRoute.Sitemap = liveGames.map((game) => ({
+    url: `${BASE_URL}${game.path}`,
+    lastModified: DEFAULT_LAST_MODIFIED,
+  }));
+
+  const baseEntries: MetadataRoute.Sitemap = [
+    { url: BASE_URL, lastModified: DEFAULT_LAST_MODIFIED },
+    { url: `${BASE_URL}/tools`, lastModified: DEFAULT_LAST_MODIFIED },
+    { url: `${BASE_URL}/about`, lastModified: DEFAULT_LAST_MODIFIED },
+    { url: `${BASE_URL}/explore`, lastModified: DEFAULT_LAST_MODIFIED },
+    { url: `${BASE_URL}/contribute`, lastModified: DEFAULT_LAST_MODIFIED },
+    { url: `${BASE_URL}/privacy`, lastModified: DEFAULT_LAST_MODIFIED },
   ];
+
+  if (liveGames.length > 0) {
+    baseEntries.splice(2, 0, {
+      url: `${BASE_URL}/games`,
+      lastModified: DEFAULT_LAST_MODIFIED,
+    });
+  }
+
+  return [...baseEntries, ...toolEntries, ...gameEntries];
 }
