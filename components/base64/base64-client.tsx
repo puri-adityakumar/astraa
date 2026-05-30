@@ -26,6 +26,13 @@ import { Base64Output } from "./base64-output";
 import { Base64StatusFooter } from "./base64-status-footer";
 import { Base64ImagePreview } from "./base64-image-preview";
 import { Base64HexPanel } from "./base64-hex-panel";
+import { motion } from "framer-motion";
+import {
+  fadeInUp,
+  staggerContainer,
+  staggerItem,
+} from "@/lib/animations/variants";
+import { useReducedMotion } from "@/lib/animations/hooks";
 
 const DEBOUNCE_MS = 150;
 
@@ -257,9 +264,44 @@ export function Base64Client() {
     return sniffImageMime(decodedBytes);
   }, [mode, decodedBytes]);
 
+  useEffect(() => {
+    const onKey = async (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (output.length === 0) return;
+        const result = await copyToClipboard(output);
+        toast(
+          result.success
+            ? { title: "Copied" }
+            : {
+                title: "Copy failed",
+                description: result.error,
+                variant: "destructive",
+              },
+        );
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [output, toast]);
+
+  const reduceMotion = useReducedMotion();
+  const containerVariants = reduceMotion ? {} : staggerContainer;
+  const itemVariants = reduceMotion ? {} : staggerItem;
+  const headerVariants = reduceMotion ? {} : fadeInUp;
+
   return (
-    <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
-      <div className="space-y-4 text-center sm:text-left">
+    <motion.div
+      className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div
+        className="space-y-4 text-center sm:text-left"
+        variants={headerVariants}
+      >
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Base64 Encoder &amp; Decoder
         </h1>
@@ -269,8 +311,9 @@ export function Base64Client() {
         <p className="text-xs text-muted-foreground/70">
           All processing happens locally in your browser
         </p>
-      </div>
-      <Card className="p-4 sm:p-6 space-y-6">
+      </motion.div>
+      <motion.div variants={itemVariants}>
+        <Card className="p-4 sm:p-6 space-y-6">
         <Base64ModeTabs mode={mode} onChange={handleModeChange} />
         <Base64Input
           inputType={inputType}
@@ -309,7 +352,8 @@ export function Base64Client() {
           inputBytes={inputBytes}
           outputBytes={outputBytes}
         />
-      </Card>
-    </div>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
