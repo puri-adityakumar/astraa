@@ -1,7 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, type KeyboardEvent } from "react";
+import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { matchesToCsv, matchesToJson } from "@/lib/regex-tester/export";
 import type { MatchResult } from "@/lib/regex-tester/types";
 
 export interface MatchesPanelProps {
@@ -14,6 +23,18 @@ export interface MatchesPanelProps {
 function truncate(value: string, max: number): string {
   if (value.length <= max) return value;
   return value.slice(0, max - 1) + "…";
+}
+
+function downloadBlob(content: string, filename: string, mime: string): void {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 export function MatchesPanel({
@@ -74,6 +95,11 @@ export function MatchesPanel({
     );
   }
 
+  const handleExportJson = () =>
+    downloadBlob(matchesToJson(matches), "regex-matches.json", "application/json");
+  const handleExportCsv = () =>
+    downloadBlob(matchesToCsv(matches), "regex-matches.csv", "text/csv");
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
@@ -83,6 +109,28 @@ export function MatchesPanel({
             ({matches.length})
           </span>
         </p>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              aria-label="Export matches"
+              className="min-h-touch"
+            >
+              <Download className="h-4 w-4 mr-2" aria-hidden="true" />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={handleExportJson}>
+              JSON
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={handleExportCsv}>
+              CSV
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div
