@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,9 +10,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { STARTERS } from "@/lib/regex-tester/starters";
 import { CHEATSHEET } from "@/lib/regex-tester/cheatsheet";
+import { generateExample } from "@/lib/regex-tester/example-gen";
 import type { CheatsheetToken } from "@/lib/regex-tester/types";
 import { cn } from "@/lib/utils";
 import { ExplainPanel } from "./explain-panel";
@@ -42,12 +44,33 @@ const CATEGORY_ORDER: CheatsheetToken["category"][] = [
 ];
 
 export function ReferencePanel({ onInsertAtCaret }: ReferencePanelProps) {
+  const pattern = useRegexTester((s) => s.pattern);
   const setPattern = useRegexTester((s) => s.setPattern);
   const setFlags = useRegexTester((s) => s.setFlags);
+  const setTestString = useRegexTester((s) => s.setTestString);
   const selectedTab = useRegexTester((s) => s.selectedReferenceTab);
   const setSelectedTab = useRegexTester((s) => s.setSelectedReferenceTab);
+  const { toast } = useToast();
 
   const [search, setSearch] = useState("");
+
+  const handleGenerateExample = () => {
+    const sample = generateExample(pattern);
+    if (sample === null) {
+      toast({
+        title: "Cannot generate example",
+        description:
+          "This pattern uses features we can't reverse-generate (lookbehind, backreferences, or very large repeats).",
+        variant: "destructive",
+      });
+      return;
+    }
+    setTestString(sample);
+    toast({
+      title: "Example loaded",
+      description: "Test string updated with a generated example.",
+    });
+  };
 
   const grouped = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -107,6 +130,19 @@ export function ReferencePanel({ onInsertAtCaret }: ReferencePanelProps) {
           <Sparkles className="h-3 w-3" aria-hidden="true" />
           Click a starter to load its pattern and flags.
         </p>
+        <div className="pt-2 border-t border-border">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleGenerateExample}
+            disabled={pattern.length === 0}
+            className="min-h-touch"
+          >
+            <Wand2 className="h-4 w-4 mr-2" aria-hidden="true" />
+            Generate example from current pattern
+          </Button>
+        </div>
       </TabsContent>
 
       <TabsContent value="cheatsheet" className="mt-4 space-y-3">
