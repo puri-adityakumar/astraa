@@ -6,6 +6,8 @@ import { PatternRow } from "./pattern-row";
 import { TestStringArea, type TestStringAreaHandle } from "./test-string-area";
 import { MatchesPanel } from "./matches-panel";
 import { ReplacePanel } from "./replace-panel";
+import { ReferencePanel } from "./reference-panel";
+import { ReferenceSheet } from "./reference-sheet";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { compileRegex } from "@/lib/regex-tester/compile";
 import { runMatches } from "@/lib/regex-tester/match";
@@ -15,9 +17,19 @@ export function RegexTesterClient() {
   const pattern = useRegexTester((s) => s.pattern);
   const flags = useRegexTester((s) => s.flags);
   const testString = useRegexTester((s) => s.testString);
+  const setPattern = useRegexTester((s) => s.setPattern);
 
   const [hoveredMatchId, setHoveredMatchId] = useState<number | null>(null);
   const testStringRef = useRef<TestStringAreaHandle>(null);
+
+  const handleInsertAtCaret = useCallback(
+    (text: string) => {
+      // Caret-precise insertion lands in T15 with the highlight input.
+      // For now, append at the end of the pattern.
+      setPattern(pattern + text);
+    },
+    [pattern, setPattern],
+  );
 
   useEffect(() => {
     useToolSettings.getState().updateToolUsage("regex-tester");
@@ -73,7 +85,11 @@ export function RegexTesterClient() {
           onJumpToMatch={handleJumpToMatch}
         />
         <ReplacePanel />
+        <div className="hidden sm:block">
+          <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
+        </div>
       </Card>
+      <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} />
     </div>
   );
 }
