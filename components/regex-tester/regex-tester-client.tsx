@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { PatternRow } from "./pattern-row";
 import { TestStringArea, type TestStringAreaHandle } from "./test-string-area";
 import { MatchesPanel } from "./matches-panel";
+import { ReplacePanel } from "./replace-panel";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { compileRegex } from "@/lib/regex-tester/compile";
 import { runMatches } from "@/lib/regex-tester/match";
@@ -71,6 +72,7 @@ export function RegexTesterClient() {
           onHoverMatch={setHoveredMatchId}
           onJumpToMatch={handleJumpToMatch}
         />
+        <ReplacePanel />
       </Card>
     </div>
   );
