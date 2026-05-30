@@ -12,6 +12,7 @@ import {
   downloadAsFile,
   encodeBytes,
   encodeText,
+  sniffImageMime,
   validateBase64,
   type Base64InputType,
   type Base64Mode,
@@ -23,6 +24,8 @@ import { Base64Input } from "./base64-input";
 import { Base64OptionsRow } from "./base64-options";
 import { Base64Output } from "./base64-output";
 import { Base64StatusFooter } from "./base64-status-footer";
+import { Base64ImagePreview } from "./base64-image-preview";
+import { Base64HexPanel } from "./base64-hex-panel";
 
 const DEBOUNCE_MS = 150;
 
@@ -45,6 +48,7 @@ export function Base64Client() {
     wrap76: false,
   });
   const [output, setOutput] = useState("");
+  const [decodedBytes, setDecodedBytes] = useState<Uint8Array | null>(null);
   const [status, setStatus] = useState<Base64Status>({ kind: "idle" });
 
   const { toast } = useToast();
@@ -76,11 +80,13 @@ export function Base64Client() {
           if (inputType === "text") {
             if (textInput.length === 0) {
               setOutput("");
+              setDecodedBytes(null);
               setStatus({ kind: "idle" });
               return;
             }
             const out = encodeText(textInput, options);
             setOutput(out);
+            setDecodedBytes(null);
             setStatus({
               kind: "valid",
               inputBytes: byteLength(textInput),
@@ -89,11 +95,13 @@ export function Base64Client() {
           } else {
             if (!fileInput) {
               setOutput("");
+              setDecodedBytes(null);
               setStatus({ kind: "idle" });
               return;
             }
             const out = encodeBytes(fileInput.bytes, options);
             setOutput(out);
+            setDecodedBytes(null);
             setStatus({
               kind: "valid",
               inputBytes: fileInput.bytes.length,
@@ -111,15 +119,19 @@ export function Base64Client() {
               : "";
           if (source.trim().length === 0) {
             setOutput("");
+            setDecodedBytes(null);
             setStatus({ kind: "idle" });
             return;
           }
           const validation = validateBase64(source, { urlSafe: options.urlSafe });
           if (!validation.ok) {
             setOutput("");
+            setDecodedBytes(null);
             setStatus({ kind: "invalid", reason: validation.reason });
             return;
           }
+          const bytes = decodeToBytes(source, options);
+          setDecodedBytes(bytes);
           const out = decodeToText(source, options);
           setOutput(out);
           setStatus({
@@ -131,6 +143,7 @@ export function Base64Client() {
       } catch (error) {
         const details = getUserFriendlyError(error);
         setOutput("");
+        setDecodedBytes(null);
         setStatus({ kind: "error", message: details.message });
         logError(error, { context: "base64/convert" });
       }
@@ -196,6 +209,7 @@ export function Base64Client() {
     setTextInput(output);
     setFileInput(null);
     setOutput("");
+    setDecodedBytes(null);
     setStatus({ kind: "idle" });
   }, [output]);
 
@@ -203,6 +217,7 @@ export function Base64Client() {
     setTextInput("");
     setFileInput(null);
     setOutput("");
+    setDecodedBytes(null);
     setStatus({ kind: "idle" });
   }, []);
 
@@ -210,6 +225,7 @@ export function Base64Client() {
     (next: Base64Mode) => {
       setMode(next);
       setOutput("");
+      setDecodedBytes(null);
       setStatus({ kind: "idle" });
     },
     [],
@@ -221,6 +237,7 @@ export function Base64Client() {
       if (next === "text") setFileInput(null);
       else setTextInput("");
       setOutput("");
+      setDecodedBytes(null);
       setStatus({ kind: "idle" });
     },
     [],
@@ -234,6 +251,11 @@ export function Base64Client() {
         : fileInput?.bytes.length ?? 0;
   const outputBytes =
     status.kind === "valid" ? status.outputBytes : output.length;
+
+  const imageMime = useMemo(() => {
+    if (mode !== "decode" || !decodedBytes) return null;
+    return sniffImageMime(decodedBytes);
+  }, [mode, decodedBytes]);
 
   return (
     <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
@@ -277,6 +299,12 @@ export function Base64Client() {
           onSwap={handleSwap}
           onClear={handleClear}
         />
+        {mode === "decode" && decodedBytes && imageMime && (
+          <Base64ImagePreview bytes={decodedBytes} mime={imageMime} />
+        )}
+        {mode === "decode" && decodedBytes && (
+          <Base64HexPanel bytes={decodedBytes} />
+        )}
         <Base64StatusFooter
           inputBytes={inputBytes}
           outputBytes={outputBytes}
