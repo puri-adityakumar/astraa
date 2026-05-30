@@ -21,6 +21,7 @@ import { compileRegex } from "@/lib/regex-tester/compile";
 import { runMatches } from "@/lib/regex-tester/match";
 import { encodeState, decodeState } from "@/lib/regex-tester/url-state";
 import { debounce } from "@/lib/regex-tester/debounce";
+import { runMatchesSafe } from "@/lib/regex-tester/redos-client";
 import { useToolSettings } from "@/lib/stores/tool-settings";
 import { copyToClipboard } from "@/lib/clipboard";
 
@@ -43,6 +44,7 @@ export function RegexTesterClient() {
   const [debouncedPattern, setDebouncedPattern] = useState(pattern);
   const [debouncedFlags, setDebouncedFlags] = useState(flags);
   const [debouncedTest, setDebouncedTest] = useState(testString);
+  const [hardTimeout, setHardTimeout] = useState(false);
   const testStringRef = useRef<TestStringAreaHandle>(null);
 
   const handleInsertAtCaret = useCallback(
@@ -117,6 +119,25 @@ export function RegexTesterClient() {
   }, [compileResult, debouncedTest]);
 
   const matches = matchResult.results;
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!matchResult.timedOut) {
+      setHardTimeout(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+    runMatchesSafe(debouncedPattern, debouncedFlags, debouncedTest).then(
+      (safe) => {
+        if (cancelled) return;
+        setHardTimeout(safe.hardTimeout);
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [matchResult.timedOut, debouncedPattern, debouncedFlags, debouncedTest]);
 
   const handleJumpToMatch = useCallback(
     (matchId: number) => {
@@ -197,7 +218,7 @@ export function RegexTesterClient() {
           bytes={testBytes}
           cap={TEST_BYTE_CAP}
           timedOut={matchResult.timedOut}
-          hardTimeout={false}
+          hardTimeout={hardTimeout}
         />
       </Card>
       <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} />
