@@ -1,3 +1,4 @@
+import { tokenLabel } from "./token-labels";
 import type { ExplainNode, PatternToken } from "./types";
 
 /**
@@ -165,7 +166,7 @@ export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
         break;
       }
       case "escape": {
-        const meta = explainEscape(token.value);
+        const meta = tokenLabel(token);
         push({
           id: nextId(),
           label: meta.label,
@@ -175,7 +176,7 @@ export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
         break;
       }
       case "quantifier": {
-        const meta = explainQuantifier(token.value);
+        const meta = tokenLabel(token);
         push({
           id: nextId(),
           label: meta.label,
@@ -284,83 +285,3 @@ export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
   return root;
 }
 
-function explainEscape(value: string): { label: string; detail: string } {
-  // value is "\X"
-  const c = value[1];
-  switch (c) {
-    case "d":
-      return { label: "Digit class", detail: "Matches any single digit (0-9)." };
-    case "D":
-      return {
-        label: "Non-digit class",
-        detail: "Matches any character that is not a digit.",
-      };
-    case "w":
-      return {
-        label: "Word class",
-        detail: "Matches any word character (A-Z, a-z, 0-9, _).",
-      };
-    case "W":
-      return {
-        label: "Non-word class",
-        detail: "Matches any character that is not a word character.",
-      };
-    case "s":
-      return {
-        label: "Whitespace class",
-        detail: "Matches any whitespace character (space, tab, newline...).",
-      };
-    case "S":
-      return {
-        label: "Non-whitespace class",
-        detail: "Matches any character that is not whitespace.",
-      };
-    case "n":
-      return { label: "Newline", detail: "Matches a newline (LF) character." };
-    case "r":
-      return {
-        label: "Carriage return",
-        detail: "Matches a carriage return (CR) character.",
-      };
-    case "t":
-      return { label: "Tab", detail: "Matches a tab character." };
-    case ".":
-      return { label: "Literal dot", detail: "Matches a literal period." };
-    case "\\":
-      return { label: "Literal backslash", detail: "Matches a literal backslash." };
-    default:
-      return {
-        label: "Escaped character",
-        detail: `Matches the literal character "${c ?? ""}".`,
-      };
-  }
-}
-
-function explainQuantifier(value: string): { label: string; detail: string } {
-  const lazy = value.endsWith("?") && value.length > 1 && value !== "?";
-  const core = lazy ? value.slice(0, -1) : value;
-  const suffix = lazy ? " (lazy)" : "";
-  if (core === "*") {
-    return {
-      label: `Quantifier *${suffix}`,
-      detail: `Matches zero or more of the previous token${suffix}.`,
-    };
-  }
-  if (core === "+") {
-    return {
-      label: `Quantifier +${suffix}`,
-      detail: `Matches one or more of the previous token${suffix}.`,
-    };
-  }
-  if (core === "?") {
-    return {
-      label: `Quantifier ?${suffix}`,
-      detail: `Matches zero or one of the previous token${suffix}.`,
-    };
-  }
-  // Braced form e.g. {2,5}, {3}, {2,}
-  return {
-    label: `Quantifier ${value}`,
-    detail: `Matches the previous token a specific number of times${suffix}.`,
-  };
-}

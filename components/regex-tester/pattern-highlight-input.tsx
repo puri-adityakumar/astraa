@@ -11,6 +11,7 @@ import {
 } from "react";
 import { cn } from "@/lib/utils";
 import { tokenize } from "@/lib/regex-tester/tokenize";
+import { tokenLabel } from "@/lib/regex-tester/token-labels";
 import type { PatternToken } from "@/lib/regex-tester/types";
 
 export interface PatternHighlightInputProps {
@@ -139,11 +140,18 @@ export const PatternHighlightInput = forwardRef<
         {tokens.length === 0 ? (
           <span className="text-muted-foreground/50">{placeholder}</span>
         ) : (
-          tokens.map((token) => (
-            <span key={token.id} className={TOKEN_CLASS[token.type]}>
-              {token.value}
-            </span>
-          ))
+          tokens.map((token) => {
+            const { label, detail } = tokenLabel(token);
+            return (
+              <span
+                key={token.id}
+                title={`${label} — ${detail}`}
+                className={TOKEN_CLASS[token.type]}
+              >
+                {token.value}
+              </span>
+            );
+          })
         )}
       </div>
       <input
