@@ -16,8 +16,11 @@ export function Base64ImagePreview({ bytes, mime }: Base64ImagePreviewProps) {
   useEffect(() => {
     const blob = new Blob([bytes as BlobPart], { type: mime });
     const objectUrl = URL.createObjectURL(blob);
-    setUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
+    const id = window.setTimeout(() => setUrl(objectUrl), 0);
+    return () => {
+      window.clearTimeout(id);
+      URL.revokeObjectURL(objectUrl);
+    };
   }, [bytes, mime]);
 
   return (
@@ -33,6 +36,8 @@ export function Base64ImagePreview({ bytes, mime }: Base64ImagePreviewProps) {
         )}
       >
         {url && (
+          // next/image cannot load blob:// object URLs; <img> is intentional.
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={url}
             alt={`Decoded ${mime}`}
