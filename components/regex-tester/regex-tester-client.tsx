@@ -17,6 +17,7 @@ import { ReplacePanel } from "./replace-panel";
 import { ReferencePanel } from "./reference-panel";
 import { ReferenceSheet } from "./reference-sheet";
 import { StatusFooter } from "./status-footer";
+import { SnippetCardExport } from "./snippet-card-export";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { compileRegex } from "@/lib/regex-tester/compile";
 import { runMatches } from "@/lib/regex-tester/match";
@@ -218,6 +219,14 @@ export function RegexTesterClient() {
           onJumpToMatch={handleJumpToMatch}
         />
         <ReplacePanel />
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
+          <span className="text-xs text-muted-foreground mr-2">Share &amp; export:</span>
+          <SnippetCardExport
+            pattern={pattern}
+            flags={flags}
+            matches={matches}
+          />
+        </div>
         <div className="hidden sm:block">
           <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
         </div>
