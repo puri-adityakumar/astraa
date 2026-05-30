@@ -16,9 +16,10 @@ import { cn } from "@/lib/utils";
 
 export interface PatternRowProps {
   error: string | null;
+  onShare?: () => void;
 }
 
-export function PatternRow({ error }: PatternRowProps) {
+export function PatternRow({ error, onShare }: PatternRowProps) {
   const pattern = useRegexTester((s) => s.pattern);
   const flags = useRegexTester((s) => s.flags);
   const setPattern = useRegexTester((s) => s.setPattern);
@@ -81,14 +82,15 @@ export function PatternRow({ error }: PatternRowProps) {
                 type="button"
                 variant="outline"
                 size="icon"
-                disabled
-                aria-label="Share link (coming soon)"
+                onClick={onShare}
+                disabled={!onShare}
+                aria-label="Copy shareable link"
                 className="shrink-0 min-h-touch min-w-touch"
               >
                 <Share2 className="h-4 w-4" aria-hidden="true" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">Share link (coming soon)</TooltipContent>
+            <TooltipContent side="bottom">Copy shareable link</TooltipContent>
           </Tooltip>
         </div>
       </div>
