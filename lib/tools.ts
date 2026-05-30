@@ -111,8 +111,7 @@ export const toolCategories: ToolCategory[] = [
         name: 'Regex Tester',
         description: 'Test and validate regular expressions',
         path: '/tools/regex',
-        icon: Terminal,
-        comingSoon: true
+        icon: Terminal
       }
     ]
   }
