@@ -1,5 +1,4 @@
 import { tokenize } from "./tokenize";
-import type { PatternToken } from "./types";
 
 const MAX_LENGTH = 32;
 const MAX_REPEAT = 5;
