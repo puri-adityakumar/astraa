@@ -46,10 +46,12 @@ export function HeroSection() {
           variants={fadeInUp}
           className="font-bold tracking-tight text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
         >
-          <span className="text-foreground">Stop Searching, Start Solving</span>
+          <span className="text-foreground">
+            Free Browser Tools for Developers &amp; Creators
+          </span>
           <br />
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-400">
-            अस्त्र at your command
+            अस्त्र · Astraa at your command
           </span>
         </motion.h1>
 
@@ -58,14 +60,13 @@ export function HeroSection() {
           variants={fadeInUp}
           className="mt-6 text-muted-foreground text-lg sm:text-xl max-w-xl mx-auto"
         >
-          Your all-in-one utility suite. A{" "}
-          <span className="text-foreground font-medium">vast collection</span>{" "}
-          of powerful tools{" "}
-          <span className="text-foreground font-medium">compiled in one place</span>
-          ,{" "}
+          Password generator, hash generator, currency converter, unit converter,
+          scientific calculator, image resizer, and{" "}
+          <span className="text-foreground font-medium">more</span> —{" "}
           <span className="text-foreground font-medium">
-            running entirely in your browser.
+            running entirely in your browser
           </span>
+          . No signup, no upload, no tracking.
         </motion.p>
 
         {/* CTA Button */}
