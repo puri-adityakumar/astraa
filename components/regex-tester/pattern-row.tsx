@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback } from "react";
+import { forwardRef, useCallback } from "react";
 import { AlertCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
@@ -11,23 +10,27 @@ import {
 } from "@/components/ui/tooltip";
 import { CopyButton } from "./copy-button";
 import { FlagChips } from "./flag-chips";
+import {
+  PatternHighlightInput,
+  type PatternHighlightInputHandle,
+} from "./pattern-highlight-input";
 import { useRegexTester } from "@/lib/stores/regex-tester";
-import { cn } from "@/lib/utils";
 
 export interface PatternRowProps {
   error: string | null;
   onShare?: () => void;
 }
 
-export function PatternRow({ error, onShare }: PatternRowProps) {
+export const PatternRow = forwardRef<
+  PatternHighlightInputHandle,
+  PatternRowProps
+>(function PatternRow({ error, onShare }, ref) {
   const pattern = useRegexTester((s) => s.pattern);
   const flags = useRegexTester((s) => s.flags);
   const setPattern = useRegexTester((s) => s.setPattern);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPattern(e.target.value);
-    },
+    (next: string) => setPattern(next),
     [setPattern],
   );
 
@@ -43,22 +46,15 @@ export function PatternRow({ error, onShare }: PatternRowProps) {
         >
           /
         </span>
-        <Input
-          type="text"
+        <PatternHighlightInput
+          ref={ref}
           value={pattern}
           onChange={handleChange}
           placeholder="Enter a regular expression"
           aria-label="Regular expression pattern"
           aria-invalid={hasError}
           aria-describedby={hasError ? "pattern-error" : undefined}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          className={cn(
-            "font-mono text-sm flex-1 min-h-touch",
-            hasError && "border-destructive focus-visible:ring-destructive",
-          )}
+          invalid={hasError}
         />
         <span
           aria-hidden="true"
@@ -71,11 +67,7 @@ export function PatternRow({ error, onShare }: PatternRowProps) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <FlagChips />
         <div className="flex items-center gap-2">
-          <CopyButton
-            text={literal}
-            label="regex literal"
-            size="icon"
-          />
+          <CopyButton text={literal} label="regex literal" size="icon" />
           <Tooltip delayDuration={150}>
             <TooltipTrigger asChild>
               <Button
@@ -107,4 +99,4 @@ export function PatternRow({ error, onShare }: PatternRowProps) {
       )}
     </div>
   );
-}
+});

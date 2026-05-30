@@ -10,6 +10,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { PatternRow } from "./pattern-row";
+import type { PatternHighlightInputHandle } from "./pattern-highlight-input";
 import { TestStringArea, type TestStringAreaHandle } from "./test-string-area";
 import { MatchesPanel } from "./matches-panel";
 import { ReplacePanel } from "./replace-panel";
@@ -46,10 +47,14 @@ export function RegexTesterClient() {
   const [debouncedTest, setDebouncedTest] = useState(testString);
   const [hardTimeout, setHardTimeout] = useState(false);
   const testStringRef = useRef<TestStringAreaHandle>(null);
+  const patternInputRef = useRef<PatternHighlightInputHandle>(null);
 
   const handleInsertAtCaret = useCallback(
     (text: string) => {
-      // Caret-precise insertion lands in T15 with the highlight input.
+      if (patternInputRef.current) {
+        patternInputRef.current.insertAtCaret(text);
+        return;
+      }
       setPattern(pattern + text);
     },
     [pattern, setPattern],
@@ -195,7 +200,11 @@ export function RegexTesterClient() {
         </p>
       </div>
       <Card className="p-4 sm:p-6 space-y-6">
-        <PatternRow error={patternError} onShare={handleShare} />
+        <PatternRow
+          ref={patternInputRef}
+          error={patternError}
+          onShare={handleShare}
+        />
         <TestStringArea
           ref={testStringRef}
           matches={matches}
