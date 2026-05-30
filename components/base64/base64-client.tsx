@@ -16,6 +16,9 @@ export function Base64Client() {
   const [mode, setMode] = useState<Base64Mode>("encode");
   const [inputType, setInputType] = useState<Base64InputType>("text");
   const [textInput, setTextInput] = useState("");
+  const [fileInput, setFileInput] = useState<
+    { name: string; bytes: Uint8Array } | null
+  >(null);
   const [options, setOptions] = useState<Base64Options>({
     urlSafe: false,
     wrap76: false,
@@ -50,11 +53,8 @@ export function Base64Client() {
               ? "Paste text to encode…"
               : "Paste base64 to decode…"
           }
-          fileSlot={
-            <p className="text-sm text-muted-foreground italic">
-              File upload lands in B7.
-            </p>
-          }
+          file={fileInput}
+          onFileChange={setFileInput}
         />
         <Base64OptionsRow
           mode={mode}

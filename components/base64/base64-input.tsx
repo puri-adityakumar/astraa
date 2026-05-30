@@ -5,13 +5,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { Base64InputType } from "@/lib/base64";
+import { Base64FileDrop } from "./base64-file-drop";
 
 export interface Base64InputProps {
   inputType: Base64InputType;
   onInputTypeChange: (next: Base64InputType) => void;
   textValue: string;
   onTextChange: (next: string) => void;
-  fileSlot: React.ReactNode;
+  file: { name: string; bytes: Uint8Array } | null;
+  onFileChange: (file: { name: string; bytes: Uint8Array } | null) => void;
   placeholder?: string;
 }
 
@@ -20,7 +22,8 @@ export function Base64Input({
   onInputTypeChange,
   textValue,
   onTextChange,
-  fileSlot,
+  file,
+  onFileChange,
   placeholder,
 }: Base64InputProps) {
   return (
@@ -55,7 +58,7 @@ export function Base64Input({
           />
         </div>
       ) : (
-        fileSlot
+        <Base64FileDrop file={file} onFile={onFileChange} />
       )}
     </div>
   );
