@@ -19,6 +19,7 @@ import type { MatchResult } from "@/lib/regex-tester/types";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
 import { HighlightOverlay } from "./highlight-overlay";
+import { FileDropZone, MAX_DROP_BYTES } from "./file-drop-zone";
 
 export const MAX_TEST_BYTES = 100 * 1024;
 
@@ -216,6 +217,15 @@ export const TestStringArea = forwardRef<
             "font-mono text-sm leading-relaxed",
             "min-h-[10rem] resize-y",
           )}
+        />
+        <FileDropZone
+          onText={(text) => {
+            const clipped =
+              byteLength(text) > MAX_DROP_BYTES
+                ? clipToByteLimit(text, MAX_DROP_BYTES)
+                : text;
+            setTestString(clipped);
+          }}
         />
       </div>
 
