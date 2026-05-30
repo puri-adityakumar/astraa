@@ -1,8 +1,10 @@
 "use client";
 
 import {
+  forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useRef,
   type ChangeEvent,
   type ClipboardEvent,
@@ -24,6 +26,11 @@ export interface TestStringAreaProps {
   matches: MatchResult[];
   hoveredMatchId: number | null;
   onHoverMatch: (id: number | null) => void;
+}
+
+export interface TestStringAreaHandle {
+  focus: () => void;
+  focusAtIndex: (index: number, length: number) => void;
 }
 
 function byteLength(value: string): number {
@@ -49,17 +56,46 @@ function clipToByteLimit(value: string, limit: number): string {
   return value.slice(0, lo);
 }
 
-export function TestStringArea({
-  matches,
-  hoveredMatchId,
-  onHoverMatch,
-}: TestStringAreaProps) {
+export const TestStringArea = forwardRef<
+  TestStringAreaHandle,
+  TestStringAreaProps
+>(function TestStringArea(
+  { matches, hoveredMatchId, onHoverMatch },
+  ref,
+) {
   const testString = useRegexTester((s) => s.testString);
   const setTestString = useRegexTester((s) => s.setTestString);
   const { toast } = useToast();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const overlayRef = useRef<HTMLPreElement>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => textareaRef.current?.focus(),
+      focusAtIndex: (index, length) => {
+        const ta = textareaRef.current;
+        if (!ta) return;
+        ta.focus();
+        const end = Math.min(ta.value.length, index + Math.max(0, length));
+        try {
+          ta.setSelectionRange(index, end);
+        } catch {
+          // ignore selection failures (e.g. cross-origin frames)
+        }
+        // Approximate scroll-into-view based on line position.
+        const before = ta.value.slice(0, index);
+        const line = before.split("\n").length - 1;
+        const computed = window.getComputedStyle(ta);
+        const lineHeight = parseFloat(computed.lineHeight);
+        if (!Number.isNaN(lineHeight) && lineHeight > 0) {
+          ta.scrollTop = Math.max(0, line * lineHeight - ta.clientHeight / 3);
+        }
+      },
+    }),
+    [],
+  );
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -188,4 +224,4 @@ export function TestStringArea({
       </p>
     </div>
   );
-}
+});
