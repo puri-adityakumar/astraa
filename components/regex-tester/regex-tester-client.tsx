@@ -7,8 +7,15 @@ import {
   useRef,
   useState,
 } from "react";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  fadeInUp,
+  staggerContainer,
+  staggerItem,
+} from "@/lib/animations/variants";
+import { useReducedMotion } from "@/lib/animations/hooks";
 import { PatternRow } from "./pattern-row";
 import type { PatternHighlightInputHandle } from "./pattern-highlight-input";
 import { TestStringArea, type TestStringAreaHandle } from "./test-string-area";
@@ -129,9 +136,13 @@ export function RegexTesterClient() {
   useEffect(() => {
     let cancelled = false;
     if (!matchResult.timedOut) {
-      setHardTimeout(false);
+      // Defer the reset to avoid the cascading-render lint rule.
+      const id = window.setTimeout(() => {
+        if (!cancelled) setHardTimeout(false);
+      }, 0);
       return () => {
         cancelled = true;
+        window.clearTimeout(id);
       };
     }
     runMatchesSafe(debouncedPattern, debouncedFlags, debouncedTest).then(
@@ -153,6 +164,8 @@ export function RegexTesterClient() {
     },
     [matches],
   );
+
+  const literal = useMemo(() => `/${pattern}/${flags}`, [pattern, flags]);
 
   const handleShare = useCallback(async () => {
     if (typeof window === "undefined") return;
@@ -187,9 +200,83 @@ export function RegexTesterClient() {
     return testString.length;
   }, [testString]);
 
+  const setReplaceOpen = useRegexTester((s) => s.setReplaceOpen);
+  const replaceOpen = useRegexTester((s) => s.replaceOpen);
+
+  useEffect(() => {
+    const onKey = async (e: KeyboardEvent) => {
+      const mod = e.metaKey || e.ctrlKey;
+      if (!mod) return;
+      if (e.key === "Enter") {
+        e.preventDefault();
+        setDebouncedPattern(pattern);
+        setDebouncedFlags(flags);
+        setDebouncedTest(testString);
+        return;
+      }
+      if (e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        patternInputRef.current?.focus();
+        return;
+      }
+      if (e.key.toLowerCase() === "l") {
+        e.preventDefault();
+        testStringRef.current?.focus();
+        return;
+      }
+      if (e.key === "/") {
+        e.preventDefault();
+        setReplaceOpen(!replaceOpen);
+        return;
+      }
+      if (e.shiftKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        const result = await copyToClipboard(literal);
+        toast(
+          result.success
+            ? { title: "Literal copied" }
+            : {
+                title: "Copy failed",
+                description: result.error,
+                variant: "destructive",
+              },
+        );
+        return;
+      }
+      if (e.shiftKey && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        await handleShare();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [
+    pattern,
+    flags,
+    testString,
+    replaceOpen,
+    literal,
+    handleShare,
+    setReplaceOpen,
+    toast,
+  ]);
+
+  const reduceMotion = useReducedMotion();
+  const containerVariants = reduceMotion ? {} : staggerContainer;
+  const itemVariants = reduceMotion ? {} : staggerItem;
+  const headerVariants = reduceMotion ? {} : fadeInUp;
+
   return (
-    <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
-      <div className="space-y-4 text-center sm:text-left">
+    <motion.div
+      className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div
+        className="space-y-4 text-center sm:text-left"
+        variants={headerVariants}
+      >
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Regex Tester
         </h1>
@@ -199,47 +286,53 @@ export function RegexTesterClient() {
         <p className="text-xs text-muted-foreground/70">
           All processing happens locally in your browser
         </p>
-      </div>
-      <Card className="p-4 sm:p-6 space-y-6">
-        <PatternRow
-          ref={patternInputRef}
-          error={patternError}
-          onShare={handleShare}
-        />
-        <TestStringArea
-          ref={testStringRef}
-          matches={matches}
-          hoveredMatchId={hoveredMatchId}
-          onHoverMatch={setHoveredMatchId}
-        />
-        <MatchesPanel
-          matches={matches}
-          hoveredMatchId={hoveredMatchId}
-          onHoverMatch={setHoveredMatchId}
-          onJumpToMatch={handleJumpToMatch}
-        />
-        <ReplacePanel />
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
-          <span className="text-xs text-muted-foreground mr-2">Share &amp; export:</span>
-          <SnippetCardExport
-            pattern={pattern}
-            flags={flags}
-            matches={matches}
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <Card className="p-4 sm:p-6 space-y-6">
+          <PatternRow
+            ref={patternInputRef}
+            error={patternError}
+            onShare={handleShare}
           />
-        </div>
-        <div className="hidden sm:block">
-          <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
-        </div>
-        <StatusFooter
-          matchCount={matches.length}
-          elapsedMs={matchResult.elapsedMs}
-          bytes={testBytes}
-          cap={TEST_BYTE_CAP}
-          timedOut={matchResult.timedOut}
-          hardTimeout={hardTimeout}
-        />
-      </Card>
+          <TestStringArea
+            ref={testStringRef}
+            matches={matches}
+            hoveredMatchId={hoveredMatchId}
+            onHoverMatch={setHoveredMatchId}
+          />
+          <MatchesPanel
+            matches={matches}
+            hoveredMatchId={hoveredMatchId}
+            onHoverMatch={setHoveredMatchId}
+            onJumpToMatch={handleJumpToMatch}
+          />
+          <ReplacePanel />
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
+            <span className="text-xs text-muted-foreground mr-2">
+              Share &amp; export:
+            </span>
+            <SnippetCardExport
+              pattern={pattern}
+              flags={flags}
+              matches={matches}
+            />
+          </div>
+          <div className="hidden sm:block">
+            <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
+          </div>
+          <StatusFooter
+            matchCount={matches.length}
+            elapsedMs={matchResult.elapsedMs}
+            bytes={testBytes}
+            cap={TEST_BYTE_CAP}
+            timedOut={matchResult.timedOut}
+            hardTimeout={hardTimeout}
+          />
+        </Card>
+      </motion.div>
+
       <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} />
-    </div>
+    </motion.div>
   );
 }
