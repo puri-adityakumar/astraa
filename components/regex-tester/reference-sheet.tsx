@@ -10,6 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 import { ReferencePanel } from "./reference-panel";
 
 export interface ReferenceSheetProps {
@@ -26,8 +27,14 @@ export function ReferenceSheet({ onInsertAtCaret }: ReferenceSheetProps) {
           type="button"
           variant="outline"
           size="icon"
-          aria-label="Open reference"
-          className="fixed bottom-4 right-4 z-40 h-12 w-12 rounded-full shadow-lg sm:hidden"
+          aria-label="Open regex reference"
+          className={cn(
+            "fixed right-4 z-40 h-12 w-12 rounded-full shadow-lg",
+            "bg-background hover:bg-accent",
+            "sm:hidden",
+            // honor iOS safe-area inset so the FAB clears the Home indicator
+            "bottom-[max(1rem,env(safe-area-inset-bottom))]",
+          )}
         >
           <BookOpen className="h-5 w-5" aria-hidden="true" />
         </Button>
