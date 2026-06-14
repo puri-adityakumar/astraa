@@ -1,15 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { ChevronRight, Copy, Pencil, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { TreeRow as TreeRowType } from "@/lib/json/types";
+import type { JsonValue, TreeRow as TreeRowType } from "@/lib/json/types";
+import { TreeEditPopover } from "./tree-edit-popover";
+import { TreeAddMenu } from "./tree-add-menu";
 
 type Props = {
   row: TreeRowType;
   onToggle: (path: string) => void;
   onCopyPath: (path: string) => void;
-  onEdit: (path: string) => void;
-  onAdd: (path: string) => void;
+  onEditSave: (path: string, value: JsonValue) => void;
+  onAddChild: (path: string, key: string | null, value: string) => void;
   onRemove: (path: string) => void;
 };
 
@@ -22,15 +25,24 @@ const TYPE_COLOR: Record<string, string> = {
   array: "text-cyan-500",
 };
 
+const ROW_ACTION_CLASS = cn(
+  "h-6 w-6 inline-flex items-center justify-center rounded",
+  "text-muted-foreground hover:text-foreground hover:bg-muted",
+  "transition-colors duration-100 ease-out",
+);
+
 export function TreeRow({
   row,
   onToggle,
   onCopyPath,
-  onEdit,
-  onAdd,
+  onEditSave,
+  onAddChild,
   onRemove,
 }: Props) {
   const isContainer = row.type === "object" || row.type === "array";
+  const [editOpen, setEditOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+
   return (
     <div
       role="treeitem"
@@ -75,20 +87,37 @@ export function TreeRow({
       <div
         className={cn(
           "ml-auto flex items-center gap-0.5",
-          "opacity-0 group-hover:opacity-100",
+          "opacity-0 group-hover:opacity-100 focus-within:opacity-100",
           "transition-opacity duration-150 ease-out",
         )}
       >
         <RowAction label="Copy path" onClick={() => onCopyPath(row.path)}>
           <Copy className="h-3 w-3" />
         </RowAction>
-        <RowAction label="Edit value" onClick={() => onEdit(row.path)}>
-          <Pencil className="h-3 w-3" />
-        </RowAction>
+        <TreeEditPopover
+          initialValue={row.value}
+          initialType={row.type}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          onSave={(value) => onEditSave(row.path, value)}
+          trigger={
+            <button type="button" aria-label="Edit value" className={ROW_ACTION_CLASS}>
+              <Pencil className="h-3 w-3" />
+            </button>
+          }
+        />
         {isContainer && (
-          <RowAction label="Add child" onClick={() => onAdd(row.path)}>
-            <Plus className="h-3 w-3" />
-          </RowAction>
+          <TreeAddMenu
+            containerType={row.type as "object" | "array"}
+            open={addOpen}
+            onOpenChange={setAddOpen}
+            onAdd={(key, value) => onAddChild(row.path, key, value)}
+            trigger={
+              <button type="button" aria-label="Add child" className={ROW_ACTION_CLASS}>
+                <Plus className="h-3 w-3" />
+              </button>
+            }
+          />
         )}
         {row.depth > 0 && (
           <RowAction label="Remove" onClick={() => onRemove(row.path)}>
@@ -114,11 +143,7 @@ function RowAction({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={cn(
-        "h-6 w-6 inline-flex items-center justify-center rounded",
-        "text-muted-foreground hover:text-foreground hover:bg-muted",
-        "transition-colors duration-100 ease-out",
-      )}
+      className={ROW_ACTION_CLASS}
     >
       {children}
     </button>

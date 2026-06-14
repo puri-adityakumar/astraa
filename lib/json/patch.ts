@@ -52,6 +52,14 @@ export function applyPatch(
   }
   if (Array.isArray(target)) {
     target.push(clone(value as JsonValue));
+  } else if (target && typeof target === "object") {
+    // Adding to an existing object container without an explicit key: pick a
+    // unique placeholder key so the action is never a silent no-op.
+    const obj = target as Record<string, JsonValue>;
+    let key = "newKey";
+    let n = 2;
+    while (key in obj) key = `newKey${n++}`;
+    obj[key] = clone(value as JsonValue);
   }
   return next;
 }

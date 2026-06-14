@@ -38,6 +38,7 @@ export function flatten(value: JsonValue, expanded: Set<string>): TreeRow[] {
       key,
       depth,
       type,
+      value: v,
       preview: previewOf(v),
       hasChildren,
       isExpanded,

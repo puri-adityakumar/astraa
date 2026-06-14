@@ -37,6 +37,16 @@ describe("applyPatch", () => {
     expect(result).toEqual({ x: "hello" });
   });
 
+  it("add on an existing object container inserts a unique key", () => {
+    const result = applyPatch({ stats: { a: 1 } }, "stats", "add", "v");
+    expect(result).toEqual({ stats: { a: 1, newKey: "v" } });
+  });
+
+  it("add does not collide with an existing newKey", () => {
+    const result = applyPatch({ newKey: 1 }, "", "add", "v");
+    expect(result).toEqual({ newKey: 1, newKey2: "v" });
+  });
+
   it("does not mutate input", () => {
     const input = { a: 1 };
     applyPatch(input, "a", "set", 2);

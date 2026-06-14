@@ -28,6 +28,7 @@ export type TreeRow = {
   key: string | number;
   depth: number;
   type: JsonType;
+  value: JsonValue;
   preview: string;
   hasChildren: boolean;
   isExpanded: boolean;

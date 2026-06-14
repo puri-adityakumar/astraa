@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useToast } from "@/components/ui/use-toast";
 import { TreeRow as TreeRowComponent } from "./tree/tree-row";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { flatten } from "@/lib/json/flatten";
-import { parsePath } from "@/lib/json/paths";
+import { joinPath } from "@/lib/json/paths";
 
 export function TreeView() {
   const parsedValue = useJsonEditor((s) => s.parsedValue);
@@ -28,8 +28,6 @@ export function TreeView() {
     estimateSize: () => 28,
     overscan: 16,
   });
-
-  const [editPath, setEditPath] = useState<string | null>(null);
 
   if (parsedValue === null) {
     return (
@@ -67,54 +65,19 @@ export function TreeView() {
                   await navigator.clipboard.writeText(p);
                   toast({ title: "Path copied", description: p || "root" });
                 }}
-                onEdit={(p) => setEditPath(p)}
-                onAdd={(p) => {
-                  const segs = parsePath(p);
-                  applyPatchAt(p, "add", segs.length === 0 ? null : "");
+                onEditSave={(p, value) => applyPatchAt(p, "set", value)}
+                onAddChild={(p, key, value) => {
+                  if (key === null) {
+                    applyPatchAt(p, "add", value);
+                  } else {
+                    applyPatchAt(joinPath(p, key), "add", value);
+                  }
                 }}
                 onRemove={(p) => applyPatchAt(p, "remove")}
               />
             </div>
           );
         })}
-      </div>
-      {editPath !== null && (
-        <EditDialog path={editPath} onClose={() => setEditPath(null)} />
-      )}
-    </div>
-  );
-}
-
-function EditDialog({ path, onClose }: { path: string; onClose: () => void }) {
-  const applyPatchAt = useJsonEditor((s) => s.applyPatchAt);
-  return (
-    <div
-      className="fixed inset-0 z-40 bg-black/40 flex items-center justify-center"
-      onClick={onClose}
-    >
-      <div
-        className="bg-background rounded-md border p-4 max-w-sm w-full space-y-3"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <p className="text-xs text-muted-foreground font-mono">{path || "root"}</p>
-        <p className="text-sm">
-          Edit-popover UI is wired in TreeRow actions; this dialog is a placeholder
-          for accessibility focus capture.
-        </p>
-        <div className="flex justify-end gap-2">
-          <button className="text-xs text-muted-foreground" onClick={onClose}>
-            Close
-          </button>
-          <button
-            className="text-xs"
-            onClick={() => {
-              applyPatchAt(path, "set", null);
-              onClose();
-            }}
-          >
-            Set to null
-          </button>
-        </div>
       </div>
     </div>
   );
