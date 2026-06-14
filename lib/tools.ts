@@ -93,11 +93,10 @@ export const toolCategories: ToolCategory[] = [
         icon: Code,
       },
       {
-        name: 'JSON Validator',
-        description: 'Validate and format JSON data',
+        name: 'JSON Editor',
+        description: 'Edit, format, convert and generate types — up to 50 MB',
         path: '/tools/json',
         icon: FileJson,
-        comingSoon: true
       },
       {
         name: 'SQL Formatter',
