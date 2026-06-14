@@ -64,45 +64,49 @@ type MatchPart =
   | { kind: "group"; text: string; groupIndex: number };
 
 function partitionMatch(match: MatchResult): MatchPart[] {
-  const { full, groups } = match;
-  if (groups.length === 0) {
+  const { full, groups, groupIndices } = match;
+  if (groups.length === 0 || !groupIndices) {
     return [{ kind: "outside", text: full }];
   }
 
-  // Greedy left-to-right placement of capture groups into the full match string.
-  // Each defined group occurrence is consumed once from the remaining slice.
+  // Place capture groups by their real offsets (from the `d` flag) rather than
+  // substring search, so colours stay correct when captured text recurs.
+  type Span = { idx: number; start: number; end: number };
+  const spans: Span[] = [];
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i];
+    const off = groupIndices[i];
+    if (g === undefined || g.length === 0 || off === undefined || off === null) {
+      continue;
+    }
+    // Skip groups captured outside the match span (e.g. lookahead captures).
+    if (off < 0 || off + g.length > full.length) continue;
+    spans.push({ idx: i, start: off, end: off + g.length });
+  }
+
+  if (spans.length === 0) {
+    return [{ kind: "outside", text: full }];
+  }
+
+  // Earliest first; on a tie prefer the longer span (outer of a nested pair).
+  spans.sort((a, b) => a.start - b.start || b.end - a.end);
+
   const parts: MatchPart[] = [];
-  let remaining = full;
-
-  while (remaining.length > 0) {
-    let earliest: { idx: number; start: number; text: string } | null = null;
-    for (let i = 0; i < groups.length; i++) {
-      const g = groups[i];
-      if (g === undefined || g.length === 0) continue;
-      const start = remaining.indexOf(g);
-      if (start === -1) continue;
-      if (!earliest || start < earliest.start) {
-        earliest = { idx: i, start, text: g };
-      }
-    }
-
-    if (!earliest) {
-      parts.push({ kind: "outside", text: remaining });
-      break;
-    }
-
-    if (earliest.start > 0) {
-      parts.push({
-        kind: "outside",
-        text: remaining.slice(0, earliest.start),
-      });
+  let cursor = 0;
+  for (const span of spans) {
+    if (span.start < cursor) continue; // nested/overlapping — already covered
+    if (span.start > cursor) {
+      parts.push({ kind: "outside", text: full.slice(cursor, span.start) });
     }
     parts.push({
       kind: "group",
-      text: earliest.text,
-      groupIndex: earliest.idx,
+      text: full.slice(span.start, span.end),
+      groupIndex: span.idx,
     });
-    remaining = remaining.slice(earliest.start + earliest.text.length);
+    cursor = span.end;
+  }
+  if (cursor < full.length) {
+    parts.push({ kind: "outside", text: full.slice(cursor) });
   }
 
   return parts;

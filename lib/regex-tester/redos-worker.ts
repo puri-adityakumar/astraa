@@ -18,9 +18,15 @@ const MATCH_CAP = 10000;
 
 function toMatchResult(m: RegExpExecArray): MatchResult {
   const full = m[0];
+  const indices = (
+    m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }
+  ).indices;
   const groups: (string | undefined)[] = [];
+  const groupIndices: (number | null)[] = [];
   for (let i = 1; i < m.length; i++) {
     groups.push(m[i]);
+    const gi = indices?.[i];
+    groupIndices.push(gi ? gi[0] - m.index : null);
   }
   const namedGroups: Record<string, string | undefined> = {};
   if (m.groups) {
@@ -34,6 +40,7 @@ function toMatchResult(m: RegExpExecArray): MatchResult {
     full,
     groups,
     namedGroups,
+    groupIndices,
   };
 }
 
@@ -42,7 +49,8 @@ self.onmessage = (event: MessageEvent<Request>) => {
   const start = performance.now();
   let regex: RegExp;
   try {
-    regex = new RegExp(pattern, flags);
+    // `d` flag exposes per-group indices for accurate highlighting.
+    regex = new RegExp(pattern, flags.includes("d") ? flags : flags + "d");
   } catch (e) {
     const message: Response = {
       type: "error",

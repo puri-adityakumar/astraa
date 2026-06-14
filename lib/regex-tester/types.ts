@@ -6,6 +6,9 @@ export type MatchResult = {
   full: string;
   groups: (string | undefined)[];
   namedGroups: Record<string, string | undefined>;
+  // Start offset of each capture group within `full` (relative to match start),
+  // or null when the group did not participate. Used for accurate highlighting.
+  groupIndices?: (number | null)[];
 };
 
 export type CompileResult =

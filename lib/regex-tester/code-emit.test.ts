@@ -39,7 +39,9 @@ describe("emitCode", () => {
 
   it("emits PHP using preg_match_all when global", () => {
     const out = emitCode(pattern, flags, "php");
-    expect(out).toContain("'/\\d+/gi'");
+    // g/y/d are JS-only and invalid as PCRE modifiers; only i survives here.
+    expect(out).toContain("'/\\d+/i'");
+    expect(out).not.toContain("/gi'");
     expect(out).toContain("preg_match_all");
   });
 

@@ -105,7 +105,8 @@ function emitGo(pattern: string, flags: string): string {
 function emitPhp(pattern: string, flags: string): string {
   return [
     "// PHP",
-    `$pattern = '/${escapeForPhpSingleQuotes(pattern)}/${flags.replace(/y/g, "")}';`,
+    // PCRE only accepts i/m/s/u modifiers here; JS-only flags (g, y, d) are invalid.
+    `$pattern = '/${escapeForPhpSingleQuotes(pattern)}/${flags.replace(/[^imsu]/g, "")}';`,
     flags.includes("g")
       ? "preg_match_all($pattern, $input, $matches);"
       : "preg_match($pattern, $input, $matches);",

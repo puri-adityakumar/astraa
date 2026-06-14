@@ -16,8 +16,13 @@ export function runMatches(regex: RegExp, input: string): RunMatchesResult {
   let capped = false;
   let timedOut = false;
 
-  if (!regex.global && !regex.sticky) {
-    const m = regex.exec(input);
+  // Ensure the `d` flag so exec() exposes per-group indices for highlighting.
+  const re = regex.flags.includes("d")
+    ? regex
+    : new RegExp(regex.source, regex.flags + "d");
+
+  if (!re.global && !re.sticky) {
+    const m = re.exec(input);
     const elapsedMs = performance.now() - start;
     if (m) {
       results.push(toMatchResult(m));
@@ -25,13 +30,13 @@ export function runMatches(regex: RegExp, input: string): RunMatchesResult {
     return { results, elapsedMs, capped, timedOut: elapsedMs > TIME_BUDGET_MS };
   }
 
-  regex.lastIndex = 0;
+  re.lastIndex = 0;
   let m: RegExpExecArray | null;
-  while ((m = regex.exec(input)) !== null) {
+  while ((m = re.exec(input)) !== null) {
     results.push(toMatchResult(m));
 
     if (m[0].length === 0) {
-      regex.lastIndex = m.index + 1;
+      re.lastIndex = m.index + 1;
     }
 
     if (results.length >= MATCH_CAP) {
@@ -51,9 +56,15 @@ export function runMatches(regex: RegExp, input: string): RunMatchesResult {
 
 function toMatchResult(m: RegExpExecArray): MatchResult {
   const full = m[0];
+  const indices = (
+    m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }
+  ).indices;
   const groups: (string | undefined)[] = [];
+  const groupIndices: (number | null)[] = [];
   for (let i = 1; i < m.length; i++) {
     groups.push(m[i]);
+    const gi = indices?.[i];
+    groupIndices.push(gi ? gi[0] - m.index : null);
   }
   const namedGroups: Record<string, string | undefined> = {};
   if (m.groups) {
@@ -67,5 +78,6 @@ function toMatchResult(m: RegExpExecArray): MatchResult {
     full,
     groups,
     namedGroups,
+    groupIndices,
   };
 }

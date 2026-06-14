@@ -18,6 +18,15 @@ describe("runMatches", () => {
     expect(results[1]?.groups).toEqual(["56", "78"]);
   });
 
+  it("records group offsets within the match, even when text recurs", () => {
+    // Backreference makes the group's text appear twice; offsets must point at
+    // the captured occurrence (offset 0), not the later repeat.
+    const { results } = runMatches(/(ab)\1/g, "abab");
+    expect(results).toHaveLength(1);
+    expect(results[0]?.groups).toEqual(["ab"]);
+    expect(results[0]?.groupIndices).toEqual([0]);
+  });
+
   it("populates named groups for /(?<year>\\d{4})/", () => {
     const namedRegex = new RegExp("(?<year>\\d{4})");
     const { results } = runMatches(namedRegex, "2025-05-30");
