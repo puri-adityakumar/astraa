@@ -92,7 +92,9 @@ export function Base64Output({
         <Label htmlFor="base64-output" className="text-sm font-medium">
           Output
         </Label>
-        {mode === "decode" && <StatusPill status={status} />}
+        {(mode === "decode" || status.kind === "error") && (
+          <StatusPill status={status} />
+        )}
       </div>
 
       <Textarea

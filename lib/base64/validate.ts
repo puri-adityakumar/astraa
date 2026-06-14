@@ -13,7 +13,7 @@ export function validateBase64(
   input: string,
   opts: ValidateOptions,
 ): ValidationResult {
-  const stripped = input.replace(/[\t\n\r ]/g, "");
+  const stripped = input.replace(/[\t\n\r\f\v ]/g, "");
   if (stripped.length === 0) {
     return { ok: false, reason: "empty" };
   }
