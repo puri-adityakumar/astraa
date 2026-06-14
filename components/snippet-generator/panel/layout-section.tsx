@@ -1,6 +1,7 @@
 // components/snippet-generator/panel/layout-section.tsx
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ASPECT_PRESETS, PADDING_PRESETS } from "@/lib/snippet-generator/defaults";
 import { Label } from "@/components/ui/label";
@@ -16,8 +17,38 @@ const ASPECT_GLYPH: Record<string, { w: number; h: number }> = {
   story:    { w: 9,  h: 16 },
 };
 
+function clampDimension(raw: string): number {
+  return Math.max(100, Math.min(4000, Number(raw) || 100));
+}
+
 export function LayoutSection() {
   const s = useSnippetGenerator();
+
+  // Keep uncommitted text drafts so users can type intermediate values (e.g.
+  // "8" on the way to "800") without the field snapping to the 100 minimum on
+  // every keystroke. Clamp and commit to the store on blur/Enter instead.
+  const [wDraft, setWDraft] = useState(String(s.aspect.w));
+  const [hDraft, setHDraft] = useState(String(s.aspect.h));
+
+  // Resync drafts when the store aspect changes elsewhere (e.g. a preset click).
+  // setAspect produces a new object, so a reference check detects external edits.
+  const [prevAspect, setPrevAspect] = useState(s.aspect);
+  if (s.aspect !== prevAspect) {
+    setPrevAspect(s.aspect);
+    setWDraft(String(s.aspect.w));
+    setHDraft(String(s.aspect.h));
+  }
+
+  const commitW = () => {
+    const w = clampDimension(wDraft);
+    setWDraft(String(w));
+    if (w !== s.aspect.w) s.setAspect({ ...s.aspect, w });
+  };
+  const commitH = () => {
+    const h = clampDimension(hDraft);
+    setHDraft(String(h));
+    if (h !== s.aspect.h) s.setAspect({ ...s.aspect, h });
+  };
 
   return (
     <div className="space-y-4">
@@ -130,10 +161,11 @@ export function LayoutSection() {
               type="number"
               min={100}
               max={4000}
-              value={s.aspect.w}
-              onChange={(e) => {
-                const w = Math.max(100, Math.min(4000, Number(e.target.value) || 0));
-                if (w > 0) s.setAspect({ ...s.aspect, w });
+              value={wDraft}
+              onChange={(e) => setWDraft(e.target.value)}
+              onBlur={commitW}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.currentTarget.blur();
               }}
               className="tabular-nums"
             />
@@ -145,10 +177,11 @@ export function LayoutSection() {
               type="number"
               min={100}
               max={4000}
-              value={s.aspect.h}
-              onChange={(e) => {
-                const h = Math.max(100, Math.min(4000, Number(e.target.value) || 0));
-                if (h > 0) s.setAspect({ ...s.aspect, h });
+              value={hDraft}
+              onChange={(e) => setHDraft(e.target.value)}
+              onBlur={commitH}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.currentTarget.blur();
               }}
               className="tabular-nums"
             />
