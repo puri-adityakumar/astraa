@@ -19,7 +19,7 @@ export function UnitConverterClient() {
 
   useEffect(() => {
     if (!value || isNaN(Number(value))) {
-      setResult("")
+      setTimeout(() => setResult(""), 0)
       return
     }
 
@@ -30,11 +30,13 @@ export function UnitConverterClient() {
       category
     )
 
-    setResult(
-      converted.toLocaleString(undefined, {
-        maximumFractionDigits: 6,
-      })
-    )
+    setTimeout(() => {
+      setResult(
+        converted.toLocaleString(undefined, {
+          maximumFractionDigits: 6,
+        })
+      )
+    }, 0)
   }, [value, fromUnit, toUnit, category])
 
   const handleCategoryChange = (newCategory: string) => {

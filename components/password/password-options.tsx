@@ -76,7 +76,7 @@ export function PasswordOptions({
             className={cn(
               "flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-all duration-200 select-none",
               options[key]
-                ? "bg-background border-primary/50 text-foreground shadow-sm ring-1 ring-primary/20"
+                ? "bg-background border-foreground/30 text-foreground shadow-sm ring-1 ring-foreground/10"
                 : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted/80"
             )}
           >

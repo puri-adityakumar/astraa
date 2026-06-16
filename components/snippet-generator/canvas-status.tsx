@@ -65,7 +65,7 @@ export function CanvasStatus() {
       <div className="flex items-center gap-2">
         {fontsReady && (
           <Chip>
-            <Check className="h-3 w-3 text-success" aria-hidden />
+            <Check className="h-3 w-3 text-foreground" aria-hidden />
             fonts ready
           </Chip>
         )}

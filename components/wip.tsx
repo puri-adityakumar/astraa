@@ -12,8 +12,8 @@ export function WorkInProgress({ children }: WorkInProgressProps) {
   const [showWip, setShowWip] = useState(false)
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV === 'prod') {
-      setShowWip(true)
+    if (process.env.NEXT_PUBLIC_ENV === "prod") {
+      setTimeout(() => setShowWip(true), 0)
     }
   }, [])
 

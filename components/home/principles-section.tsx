@@ -1,9 +1,33 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { games } from "@/lib/games";
+import { Monitor, ShieldCheck, Github } from "lucide-react";
 import { TCard } from "@/components/ui/tcard";
 import { useReducedMotion } from "@/lib/animations/hooks";
+
+const PRINCIPLES = [
+  {
+    icon: Monitor,
+    title: "Runs in your browser",
+    desc: "Every computation happens on your device — nothing is sent anywhere.",
+    href: "/about",
+    tag: "LOCAL",
+  },
+  {
+    icon: ShieldCheck,
+    title: "No account, ever",
+    desc: "No sign-ups, no emails, no cookies tracking what you do here.",
+    href: "/about",
+    tag: "PRIVATE",
+  },
+  {
+    icon: Github,
+    title: "Open source",
+    desc: "Inspect, fork or self-host the whole thing — released under MIT.",
+    href: "/contribute",
+    tag: "MIT",
+  },
+] as const;
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 16 },
@@ -12,28 +36,21 @@ const fadeInUp = {
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
+  show: { transition: { staggerChildren: 0.07 } },
 };
 
-// Map game category tags from path
-function gameTag(game: { path: string; comingSoon?: boolean }): string {
-  if (game.comingSoon) return "SOON";
-  const slug = game.path.split("/").pop() ?? "";
-  if (["sudoku", "memory", "word-search"].includes(slug)) return "PUZZLE";
-  if (["snake", "dino", "pacman"].includes(slug)) return "ARCADE";
-  return "GAME";
-}
-
-export function GamesClient() {
+export function PrinciplesSection() {
   const shouldReduce = useReducedMotion();
-
   const containerProps = shouldReduce
     ? {}
     : { variants: stagger, initial: "hidden" as const, animate: "show" as const };
   const itemProps = shouldReduce ? {} : { variants: fadeInUp };
 
   return (
-    <section className="py-[clamp(44px,7vw,84px)] relative">
+    <section
+      className="py-[clamp(44px,7vw,84px)] relative"
+      aria-labelledby="principles-heading"
+    >
       <div className="w-full max-w-[1080px] mx-auto px-7">
         {/* Section head */}
         <div className="flex flex-col gap-[14px] mb-7">
@@ -49,33 +66,32 @@ export function GamesClient() {
               style={{ opacity: 0.55 }}
               aria-hidden="true"
             />
-            PLAY
+            PRINCIPLES
           </span>
-          <h1 className="text-[clamp(32px,5vw,44px)] font-extrabold tracking-[-0.035em] leading-[1.02]">
-            Games
-          </h1>
-          <p className="text-[clamp(15px,1.4vw,17px)] text-[hsl(var(--text-2))] tracking-[-0.01em] leading-[1.6] max-w-[520px]">
-            Quick monochrome distractions. Same engine, zero installs.
-          </p>
+          <h2
+            id="principles-heading"
+            className="text-[clamp(24px,3.4vw,32px)] font-bold tracking-[-0.03em] leading-[1.1]"
+          >
+            No catch
+          </h2>
         </div>
 
-        {/* grid-3 → 2 cols @900px → 1 col @560px */}
+        {/* 3-column grid → 1 col on mobile */}
         <motion.div
           className={[
-            "grid gap-4 mt-7",
+            "grid gap-4",
             "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
           ].join(" ")}
           {...containerProps}
         >
-          {games.map((game) => (
-            <motion.div key={game.path} {...itemProps}>
+          {PRINCIPLES.map((p) => (
+            <motion.div key={p.title} {...itemProps}>
               <TCard
-                icon={game.icon}
-                title={game.name}
-                desc={game.description}
-                {...(!game.comingSoon && { href: game.path })}
-                tag={gameTag(game)}
-                soon={game.comingSoon ?? false}
+                icon={p.icon}
+                title={p.title}
+                desc={p.desc}
+                href={p.href}
+                tag={p.tag}
               />
             </motion.div>
           ))}

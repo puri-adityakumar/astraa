@@ -5,6 +5,21 @@ import type { Card, GameState } from './types'
 
 const EMOJIS = ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🎪', '🎯']
 
+function shuffleCards(): Card[] {
+  const pairs = [...EMOJIS, ...EMOJIS]
+  // Fisher-Yates shuffle for unbiased randomization
+  for (let i = pairs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pairs[i], pairs[j]] = [pairs[j]!, pairs[i]!]
+  }
+  return pairs.map((value, index) => ({
+    id: index,
+    value,
+    isFlipped: false,
+    isMatched: false,
+  }))
+}
+
 export function useMemoryGame() {
   const [gameState, setGameState] = useState<GameState>(() => ({
     cards: shuffleCards(),
@@ -13,21 +28,6 @@ export function useMemoryGame() {
     moves: 0,
     matches: 0
   }))
-
-  function shuffleCards(): Card[] {
-    const pairs = [...EMOJIS, ...EMOJIS]
-    // Fisher-Yates shuffle for unbiased randomization
-    for (let i = pairs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pairs[i], pairs[j]] = [pairs[j]!, pairs[i]!]
-    }
-    return pairs.map((value, index) => ({
-      id: index,
-      value,
-      isFlipped: false,
-      isMatched: false,
-    }))
-  }
 
   const flipCard = (card: Card) => {
     if (

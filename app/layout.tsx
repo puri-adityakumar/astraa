@@ -1,26 +1,35 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import { IBM_Plex_Mono } from 'next/font/google';
+import "./globals.css";
+import type { Metadata } from "next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { IBM_Plex_Mono, Noto_Sans_Devanagari } from "next/font/google";
 
 const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-ibm-plex-mono',
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-ibm-plex-mono",
+  display: "swap",
 });
-import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/footer';
+
+const notaSansDevanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["400", "500", "600"],
+  variable: "--font-deva",
+  display: "swap",
+});
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ToolsProvider } from '@/lib/tools-context';
-import { ActivityProvider } from '@/lib/activity-tracker';
-import { PageTransition } from '@/components/ui/page-transition';
-import { LandingBackground } from '@/components/landing-background';
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { TooltipProvider } from "@/components/ui/tooltip"
+import { ToolsProvider } from "@/lib/tools-context";
+import { ActivityProvider } from "@/lib/activity-tracker";
+import { PageTransition } from "@/components/ui/page-transition";
+import { LandingBackground } from "@/components/landing-background";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Atmosphere } from "@/components/atmosphere";
+import { Grain } from "@/components/grain";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.astraa.tech"),
@@ -94,7 +103,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} font-sans`} suppressHydrationWarning>
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} ${notaSansDevanagari.variable} font-sans`}
+        suppressHydrationWarning
+      >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -145,35 +157,39 @@ export default function RootLayout({
         />
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            <ToolsProvider>
-              <ActivityProvider>
-                <LandingBackground />
-                <div className="min-h-screen flex flex-col">
-                  <Navigation />
-                  <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
-                    <PageTransition type="fade">
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-                        {children}
-                      </div>
-                    </PageTransition>
-                  </main>
-                  <Footer />
-                </div>
-                <Toaster />
-                {process.env.NODE_ENV === "production" && (
-                  <>
-                    <Analytics />
-                    <SpeedInsights />
-                  </>
-                )}
-              </ActivityProvider>
-            </ToolsProvider>
-          </TooltipProvider>
+          <Atmosphere />
+          <Grain />
+          <div className="page">
+            <TooltipProvider>
+              <ToolsProvider>
+                <ActivityProvider>
+                  <LandingBackground />
+                  <div className="min-h-screen flex flex-col">
+                    <Navigation />
+                    <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
+                      <PageTransition type="fade">
+                        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+                          {children}
+                        </div>
+                      </PageTransition>
+                    </main>
+                    <Footer />
+                  </div>
+                  <Toaster />
+                  {process.env.NODE_ENV === "production" && (
+                    <>
+                      <Analytics />
+                      <SpeedInsights />
+                    </>
+                  )}
+                </ActivityProvider>
+              </ToolsProvider>
+            </TooltipProvider>
+          </div>
         </ThemeProvider>
       </body>
     </html>

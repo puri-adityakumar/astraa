@@ -108,13 +108,13 @@ export function TextGeneratorClient() {
             className={cn(
               "h-10 w-10 shrink-0 rounded-full transition-all duration-300",
               !isPending &&
-                "bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 hover:scale-105 shadow-[0_0_15px_-3px_rgba(6,182,212,0.6)]",
+                "bg-primary text-primary-foreground hover:opacity-90 hover:scale-105 shadow-sm",
             )}
           >
             {isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <Sparkles className="h-5 w-5 text-white" />
+              <Sparkles className="h-5 w-5" />
             )}
             <span className="sr-only">Generate</span>
           </Button>

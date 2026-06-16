@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HeroSection } from "@/components/home";
+import { HeroSection, PopularSection, PrinciplesSection } from "@/components/home";
 
 export const metadata: Metadata = {
   title: "Free Online Utility Tools for Developers & Creators",
@@ -26,6 +26,8 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
       <HeroSection />
+      <PopularSection />
+      <PrinciplesSection />
     </div>
   );
 }

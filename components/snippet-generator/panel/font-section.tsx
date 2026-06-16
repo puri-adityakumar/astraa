@@ -27,7 +27,7 @@ export function FontSection() {
                   "flex flex-col items-start gap-0.5 px-2.5 py-2 text-left rounded-md border bg-background min-h-touch",
                   "transition-colors duration-100 ease-out",
                   active
-                    ? "border-primary bg-primary/10"
+                    ? "border-foreground/30 bg-foreground/10"
                     : "border-border hover:bg-muted",
                 )}
               >

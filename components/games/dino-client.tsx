@@ -121,7 +121,7 @@ export function DinoClient() {
               className="absolute bottom-0 left-0 right-0 h-[20px] bg-muted"
               style={{
                 backgroundImage:
-                  "linear-gradient(to right, #ccc 50%, transparent 50%)",
+                  "linear-gradient(to right, var(--muted-foreground) 50%, transparent 50%)",
                 backgroundSize: "20px 100%",
                 backgroundPosition: `${groundX}px 0`,
               }}

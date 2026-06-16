@@ -70,7 +70,7 @@ export function MiniTestsPanel() {
               className={cn(
                 "flex flex-wrap items-center gap-2 rounded-md border p-2",
                 passed
-                  ? "border-success/40 bg-success/5"
+                  ? "border-border bg-muted/30"
                   : "border-destructive/40 bg-destructive/5",
               )}
             >
@@ -110,7 +110,7 @@ export function MiniTestsPanel() {
               >
                 {passed ? (
                   <Check
-                    className="h-4 w-4 text-success"
+                    className="h-4 w-4 text-foreground"
                     aria-label={`Passing: ${reason}`}
                   />
                 ) : (

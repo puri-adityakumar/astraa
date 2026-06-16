@@ -32,7 +32,7 @@ function StatusPill({ status }: { status: Base64Status }) {
         aria-live="polite"
         className={cn(
           "inline-flex items-center gap-1 rounded-full",
-          "border border-success/40 bg-success/10 text-success",
+          "border border-border bg-muted text-muted-foreground",
           "px-2 py-0.5 text-xs",
         )}
       >

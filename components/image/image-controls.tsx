@@ -156,9 +156,9 @@ export function ImageControls({
           <span className={cn(
             "transition-colors",
             estimatedByteSize && originalByteSize && estimatedByteSize > originalByteSize
-              ? "text-yellow-600 dark:text-yellow-400"
+              ? "text-muted-foreground"
               : estimatedByteSize && originalByteSize && estimatedByteSize < originalByteSize
-                ? "text-emerald-600 dark:text-emerald-400"
+                ? "text-foreground"
                 : ""
           )}>
             {formatBytes(estimatedByteSize)}

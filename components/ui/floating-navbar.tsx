@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ArrowLeft, Search, ArrowRight } from "lucide-react"
 import {
   CommandDialog,
   CommandEmpty,
@@ -20,7 +19,7 @@ import { games } from "@/lib/games"
 import { Badge } from "@/components/ui/badge"
 import { DialogTitle } from "@/components/ui/dialog"
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
-import { ArrowRight } from "lucide-react"
+import { useReducedMotion } from "@/lib/animations/hooks"
 
 export function FloatingNav({ className }: { className?: string }) {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -29,8 +28,10 @@ export function FloatingNav({ className }: { className?: string }) {
   const lastScrollY = useRef(0)
   const router = useRouter()
   const { categories } = useTools()
+  const shouldReduce = useReducedMotion()
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
@@ -39,13 +40,10 @@ export function FloatingNav({ className }: { className?: string }) {
       const currentScrollY = window.scrollY
 
       if (currentScrollY < 50) {
-        // Always show at top of page
         setVisible(true)
       } else if (currentScrollY > lastScrollY.current) {
-        // Scrolling down - hide
         setVisible(false)
       } else {
-        // Scrolling up - show
         setVisible(true)
       }
 
@@ -56,8 +54,6 @@ export function FloatingNav({ className }: { className?: string }) {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Cmd+K is handled globally by CommandMenu — no duplicate listener needed here
-
   const runCommand = React.useCallback((command: () => unknown) => {
     setSearchOpen(false)
     command()
@@ -65,64 +61,112 @@ export function FloatingNav({ className }: { className?: string }) {
 
   if (!mounted) return null
 
+  const motionProps = shouldReduce
+    ? {}
+    : {
+        initial: { opacity: 0, y: -20 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -20 },
+        transition: { duration: 0.2 },
+      }
+
   return (
     <>
       <AnimatePresence>
         {visible && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
+            {...motionProps}
             className={cn(
               "flex fixed top-6 inset-x-0 mx-4 sm:mx-auto max-w-2xl",
-              "border border-neutral-200/20 dark:border-neutral-800/20 rounded-full",
-              "bg-background/50 backdrop-blur-md shadow-sm",
-              "z-[5000] px-6 py-2 items-center justify-between gap-4",
-              className
+              "rounded-[12px] z-[5000] px-4 py-2 items-center justify-between gap-4",
+              className,
             )}
+            style={{
+              border: "1px solid var(--hairline)",
+              background: "var(--nav-bg)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              boxShadow: "var(--shadow-card)",
+            }}
           >
-            {/* Left: Logo */}
-            <Link href="/" className="flex items-center gap-1 shrink-0">
-              <span className="font-logo text-lg text-foreground">astraa</span>
-              <span className="font-mono text-xs text-muted-foreground">अस्त्र</span>
+            {/* Logo — Geist sans, no font-logo */}
+            <Link
+              href="/"
+              className="flex items-center gap-[9px] shrink-0 select-none"
+              aria-label="astraa home"
+            >
+              <span
+                className="font-sans font-bold leading-none"
+                style={{
+                  fontSize: 18,
+                  letterSpacing: "-0.03em",
+                  color: "var(--text)",
+                }}
+              >
+                astraa
+              </span>
             </Link>
 
-            {/* Center: Search */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden sm:flex flex-1 max-w-xs justify-start text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-neutral-200/20 dark:border-neutral-800/20 rounded-full px-4"
+            {/* Search trigger */}
+            <button
+              type="button"
+              className="hidden sm:flex flex-1 max-w-xs items-center justify-start gap-2 h-[34px] rounded-[9px] px-3 text-[13px] transition-[border-color] duration-200"
+              style={{
+                background: "var(--surface-2)",
+                border: "1px solid var(--hairline)",
+                color: "var(--muted)",
+              }}
               onClick={() => setSearchOpen(true)}
+              aria-label="Open search (⌘K)"
             >
-              <Search className="h-4 w-4 mr-2" />
-              <span className="text-sm">Search...</span>
-              <kbd className="ml-auto hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted/50 px-1.5 font-mono text-[10px]">
-                <span>⌘</span><span>K</span>
+              <Search className="h-[14px] w-[14px] flex-none opacity-70" aria-hidden="true" />
+              <span>Search…</span>
+              <kbd
+                className="ml-auto font-mono text-[10px] rounded-[4px] px-[5px] py-[1px] leading-none"
+                style={{
+                  color: "var(--faint)",
+                  border: "1px solid var(--hairline)",
+                  background: "var(--surface, hsl(var(--card)))",
+                }}
+              >
+                ⌘K
               </kbd>
-            </Button>
+            </button>
 
-            {/* Right: Back */}
+            {/* Back button */}
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="group shrink-0 h-8 w-8 flex items-center justify-center rounded-full border border-neutral-200/20 dark:border-neutral-800/20 hover:bg-muted/50"
+              type="button"
+              {...(shouldReduce
+                ? {}
+                : { whileHover: { scale: 1.08 }, whileTap: { scale: 0.95 } })}
+              className="shrink-0 inline-flex items-center justify-center rounded-[9px] transition-[background,border-color,color] duration-200 floating-nav-back"
+              style={{
+                width: 38,
+                height: 38,
+                border: "1px solid var(--hairline)",
+                background: "transparent",
+                color: "var(--text-2)",
+              }}
               onClick={() => router.back()}
               aria-label="Go back"
             >
-              <motion.div
-                initial={{ x: 0 }}
-                whileHover={{ x: -2 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </motion.div>
+              <ArrowLeft className="h-[16px] w-[16px]" aria-hidden="true" />
             </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Search Dialog */}
+      {/* Scoped hover styles */}
+      <style>{`
+        :root { --surface: hsl(var(--card)); }
+        .floating-nav-back:hover {
+          background: var(--surface) !important;
+          border-color: var(--hairline-strong) !important;
+          color: var(--text) !important;
+        }
+      `}</style>
+
+      {/* Search dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
         <VisuallyHidden.Root>
           <DialogTitle>Search tools and games</DialogTitle>
@@ -142,12 +186,20 @@ export function FloatingNav({ className }: { className?: string }) {
                   {...(tool.comingSoon && { disabled: true })}
                 >
                   <div className="flex items-center gap-2">
-                    <tool.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                    <tool.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <span>{tool.name}</span>
-                    {tool.wip && <Badge variant="secondary" className="text-xs">WIP</Badge>}
-                    {tool.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
+                    {tool.wip && (
+                      <Badge variant="secondary" className="text-xs">
+                        WIP
+                      </Badge>
+                    )}
+                    {tool.comingSoon && (
+                      <Badge variant="outline" className="text-xs">
+                        Soon
+                      </Badge>
+                    )}
                   </div>
-                  <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                  <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -163,11 +215,15 @@ export function FloatingNav({ className }: { className?: string }) {
                 {...(game.comingSoon && { disabled: true })}
               >
                 <div className="flex items-center gap-2">
-                  <game.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                  <game.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                   <span>{game.name}</span>
-                  {game.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
+                  {game.comingSoon && (
+                    <Badge variant="outline" className="text-xs">
+                      Soon
+                    </Badge>
+                  )}
                 </div>
-                <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
               </CommandItem>
             ))}
           </CommandGroup>

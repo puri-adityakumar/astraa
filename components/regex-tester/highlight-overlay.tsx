@@ -13,11 +13,11 @@ export interface HighlightOverlayProps {
 }
 
 const GROUP_COLORS = [
-  "bg-emerald-500/15",
-  "bg-amber-500/15",
-  "bg-violet-500/15",
-  "bg-sky-500/15",
-  "bg-rose-500/15",
+  "bg-foreground/10",
+  "bg-foreground/15",
+  "bg-muted-foreground/20",
+  "bg-foreground/[0.08]",
+  "bg-muted-foreground/[0.12]",
 ] as const;
 
 type Segment =
@@ -146,9 +146,9 @@ export const HighlightOverlay = forwardRef<HTMLPreElement, HighlightOverlayProps
               onMouseEnter={() => onHoverMatch(matchId)}
               onMouseLeave={() => onHoverMatch(null)}
               className={cn(
-                "rounded-sm pointer-events-auto bg-primary/15 text-foreground",
+                "rounded-sm pointer-events-auto bg-foreground/15 text-foreground",
                 "transition-shadow",
-                isHovered && "ring-2 ring-primary",
+                isHovered && "ring-2 ring-foreground/40",
               )}
             >
               {parts.map((part, partIndex) => {

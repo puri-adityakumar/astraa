@@ -2,85 +2,155 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Funnel Display';
-  src: url('/fonts/FunnelDisplay-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
+/* ============ LIGHT TOKENS (:root) — spec section 3 ============ */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  --background: 0 0% 97%;
+  --foreground: 240 6% 4%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --surface: hsl(var(--card)); /* resolved alias for components using the system.css token name */
+  --card-foreground: 240 6% 4%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 142 76% 36%;
-  --primary-foreground: 355.7 100% 97.3%;
-  --secondary: 142 76% 36%;
-  --secondary-foreground: 355.7 100% 97.3%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 142 76% 36%;
-  --accent-foreground: 355.7 100% 97.3%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --success: 142 76% 36%;
-  --success-foreground: 355.7 100% 97.3%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 100%;
-  --info: 217 91% 60%;
-  --info-foreground: 0 0% 100%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 142 76% 36%;
+  --popover-foreground: 240 6% 4%;
+  --surface-2: 0 0% 98%;
+  --surface-3: 0 0% 98%;
+  --text-2: 240 5% 11%;
+  --faint: 0 0% 60%;
+  --primary: 240 6% 4%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 6% 4%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 42%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 240 6% 4%;
+  --destructive: 0 30% 48%;
+  --destructive-foreground: 0 0% 100%;
+  /* success/warning/info re-pointed to neutral grayscale (D2) */
+  --success: 0 0% 93%;
+  --success-foreground: 0 0% 54%;
+  --warning: 0 0% 93%;
+  --warning-foreground: 0 0% 54%;
+  --info: 0 0% 93%;
+  --info-foreground: 0 0% 54%;
+  --border: 0 0% 90%;
+  --border-strong: 0 0% 25%;
+  --input: 0 0% 90%;
+  --ring: 0 0% 25%;
   --radius: 0.75rem;
   --nav-height: 64px;
+
+  /* Light alpha + raw tokens */
+  --hairline:        rgba(10,10,11,0.10);
+  --hairline-strong: rgba(10,10,11,0.18);
+  --hairline-faint:  rgba(10,10,11,0.06);
+  --marker:          rgba(10,10,11,0.35);
+  --bracket:         rgba(10,10,11,0.40);
+  --track:           rgba(10,10,11,0.08);
+  --knob:            #FFFFFF;
+  --nav-bg:          rgba(255,255,255,0.78);
+  --btn-shadow:      0 1px 1px rgba(0,0,0,0.06);
+  --shadow-card:     0 1px 0 rgba(0,0,0,0.02), 0 8px 24px -16px rgba(0,0,0,0.18);
+  --glow:            radial-gradient(ellipse at center, rgba(10,10,11,.025) 0%, rgba(10,10,11,.012) 38%, transparent 66%);
+  --vignette:        radial-gradient(ellipse 120% 90% at 50% 0%, transparent 60%, rgba(0,0,0,.03) 100%);
+  --atmosphere:
+    radial-gradient(1200px 680px at 50% -16%, rgba(0,0,0,.04), transparent 60%),
+    radial-gradient(820px 560px at 0% 0%, rgba(0,0,0,.022), transparent 55%),
+    radial-gradient(1000px 800px at 50% 118%, rgba(0,0,0,.03), transparent 60%);
+  --grain-opacity:   0.04;
+  --grain-blend:     multiply;
 }
 
+/* ============ DARK TOKENS (.dark) — spec section 2 ============ */
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 252 100% 69%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 217 100% 61%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 291 100% 69%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
+  --background: 240 6% 4%;
+  --foreground: 0 0% 93%;
+  --card: 240 5% 8%;
+  --surface: hsl(var(--card)); /* resolved alias for components using the system.css token name */
+  --card-foreground: 0 0% 93%;
+  --popover: 240 5% 8%;
+  --popover-foreground: 0 0% 93%;
+  --surface-2: 240 4% 9%;
+  --surface-3: 240 5% 11%;
+  --text-2: 0 0% 71%;
+  --faint: 240 2% 37%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 6% 4%;
+  --secondary: 240 4% 9%;
+  --secondary-foreground: 0 0% 93%;
+  --muted: 240 4% 9%;
+  --muted-foreground: 0 0% 54%;
+  --accent: 240 5% 11%;
+  --accent-foreground: 0 0% 93%;
+  --destructive: 0 40% 54%;
   --destructive-foreground: 0 0% 98%;
-  --success: 142 76% 45%;
-  --success-foreground: 0 0% 98%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 98%;
-  --info: 217 91% 60%;
-  --info-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 252 100% 69%;
+  /* success/warning/info re-pointed to neutral grayscale (D2) */
+  --success: 0 0% 93%;
+  --success-foreground: 0 0% 54%;
+  --warning: 0 0% 93%;
+  --warning-foreground: 0 0% 54%;
+  --info: 0 0% 93%;
+  --info-foreground: 0 0% 54%;
+  --border: 240 4% 14%;
+  --input: 240 4% 14%;
+  --ring: 0 0% 83%;
   --nav-height: 64px;
+
+  /* Dark alpha + raw tokens */
+  --hairline:        rgba(255,255,255,0.09);
+  --hairline-strong: rgba(255,255,255,0.15);
+  --hairline-faint:  rgba(255,255,255,0.05);
+  --marker:          rgba(255,255,255,0.30);
+  --bracket:         rgba(255,255,255,0.22);
+  --track:           rgba(255,255,255,0.10);
+  --knob:            #F2F2F2;
+  --nav-bg:          rgba(20,20,22,0.72);
+  --btn-shadow:      0 1px 0 rgba(255,255,255,.5) inset, 0 8px 24px rgba(0,0,0,.4);
+  --shadow-card:     0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  --glow:            radial-gradient(ellipse at center, rgba(255,255,255,.10) 0%, rgba(255,255,255,.045) 32%, rgba(255,255,255,.012) 56%, transparent 72%);
+  --vignette:        radial-gradient(ellipse 120% 90% at 50% 0%, transparent 55%, rgba(0,0,0,.35) 100%);
+  --atmosphere:
+    radial-gradient(1200px 680px at 50% -16%, rgba(255,255,255,.05), transparent 60%),
+    radial-gradient(820px 560px at 100% 0%, rgba(255,255,255,.028), transparent 55%),
+    radial-gradient(1000px 800px at 50% 116%, rgba(0,0,0,.55), transparent 60%);
+  --grain-opacity:   0.06;
+  --grain-blend:     overlay;
+}
+
+/* ============ ATMOSPHERE & GRAIN LAYERS ============ */
+.atmosphere,
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.atmosphere {
+  background: var(--atmosphere);
+}
+
+.grain {
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-  
+
   html {
-    /* Enable smooth scrolling */
     scroll-behavior: smooth;
-    /* Prevent horizontal scroll on mobile */
     overflow-x: hidden;
   }
-  
+
   /* Respect user's motion preferences */
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -92,20 +162,17 @@
       scroll-behavior: auto !important;
     }
   }
-  
+
   body {
     @apply bg-background text-foreground;
-    /* Fluid typography base */
     font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
     line-height: 1.6;
-    /* Prevent horizontal scroll on mobile */
     overflow-x: hidden;
-    /* Better text rendering */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
-  
+
   /* Ensure touch-friendly interactive elements */
   button,
   a,
@@ -114,37 +181,37 @@
   textarea {
     @apply min-h-touch min-w-touch;
   }
-  
+
   /* Better focus visibility for keyboard navigation */
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
   }
-  
+
   /* Improve heading hierarchy with fluid typography */
   h1 {
     font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.75rem);
     line-height: 1.1;
     font-weight: 700;
   }
-  
+
   h2 {
     font-size: clamp(1.875rem, 1.5rem + 1.875vw, 3rem);
     line-height: 1.2;
     font-weight: 700;
   }
-  
+
   h3 {
     font-size: clamp(1.5rem, 1.3rem + 1vw, 2.25rem);
     line-height: 1.3;
     font-weight: 600;
   }
-  
+
   h4 {
     font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.875rem);
     line-height: 1.4;
     font-weight: 600;
   }
-  
+
   /* Responsive images */
   img {
     max-width: 100%;
@@ -152,61 +219,19 @@
   }
 }
 
-.light body {
-  background: 
-    linear-gradient(to right,
-      rgba(34, 197, 94, 0.1),
-      transparent 40%
-    ),
-    linear-gradient(to bottom,
-      rgba(34, 197, 94, 0.1),
-      transparent 30%
-    ),
-    linear-gradient(to bottom right,
-      rgba(34, 197, 94, 0.15),
-      transparent 50%
-    ),
-    linear-gradient(to top left,
-      rgba(147, 51, 234, 0.05),
-      transparent 50%
-    ),
-    radial-gradient(
-      rgba(34, 197, 94, 0.1) 1px,
-      transparent 1px
-    ) 0 0/20px 20px;
-}
-
-.dark body {
-  background: 
-    linear-gradient(to bottom right, 
-      hsl(var(--primary)/0.2) 0%, 
-      transparent 30%
-    ),
-    linear-gradient(to top left, 
-      hsl(var(--secondary)/0.2) 0%, 
-      transparent 30%
-    ),
-    linear-gradient(to bottom left, 
-      hsl(var(--accent)/0.2) 0%, 
-      transparent 30%
-    ),
-    hsl(var(--background));
-  background-attachment: fixed;
-}
-
 @layer components {
   .glass {
     @apply bg-background/40 backdrop-blur-xl border shadow-sm rounded-lg;
   }
-  
+
   .glass-hover {
     @apply hover:bg-foreground/5 hover:border-foreground/10 transition-all duration-300;
   }
-  
+
   .animate-in {
     animation: animate-in 0.5s ease-out;
   }
-  
+
   @keyframes animate-in {
     from {
       opacity: 0;
@@ -217,7 +242,7 @@
       transform: translateY(0);
     }
   }
-  
+
   /* Smooth fade-in animation */
   @keyframes fade-in {
     from {
@@ -229,11 +254,11 @@
       transform: translateY(0) scale(1);
     }
   }
-  
+
   .animate-fade-in {
     animation: fade-in 0.6s ease-out;
   }
-  
+
   /* Pulse animation for interactive elements */
   @keyframes pulse-subtle {
     0%, 100% {
@@ -245,99 +270,61 @@
       transform: scale(1.02);
     }
   }
-  
+
   .animate-pulse-subtle {
     animation: pulse-subtle 2s ease-in-out infinite;
   }
-  
+
   /* Center-focused layout utilities */
   .content-center {
     @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
-  
+
   .content-narrow {
     @apply mx-auto max-w-3xl px-4 sm:px-6;
   }
-  
+
   .content-wide {
     @apply mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8;
   }
-  
+
   /* Touch-friendly spacing */
   .touch-spacing {
     @apply p-4 sm:p-6 lg:p-8;
   }
-  
+
   /* Responsive grid utilities */
   .grid-responsive {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
   }
-  
+
   /* Mobile-optimized card */
   .card-mobile {
     @apply p-4 sm:p-6 rounded-lg;
   }
-  
+
   /* Fluid spacing */
   .section-spacing {
     @apply py-12 sm:py-16 lg:py-24;
   }
-  
+
   .section-spacing-sm {
     @apply py-8 sm:py-12 lg:py-16;
   }
-  
+
   /* Enhanced button hover effects */
   .btn-hover-lift {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
   }
-  
-  /* Gradient text utilities */
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
-  }
-  
+
   /* Card with enhanced shadow */
   .card-elevated {
     @apply shadow-lg hover:shadow-2xl transition-shadow duration-300;
   }
-  
+
   /* Smooth border radius transitions */
   .rounded-smooth {
     @apply rounded-xl transition-all duration-300 hover:rounded-2xl;
-  }
-}
-
-/* Fix text colors in light theme */
-.light {
-  /* Ensure text is visible on light backgrounds */
-  .text-white {
-    @apply text-gray-900;
-  }
-  
-  /* Improve contrast for muted text */
-  .text-muted-foreground {
-    @apply text-gray-600;
-  }
-  
-  /* Enhance card contrast */
-  .glass {
-    @apply bg-white/80 border-2;
-  }
-  
-  /* Improve hover states */
-  .glass-hover:hover {
-    @apply bg-gray-50/80;
-  }
-  
-  /* Better navigation contrast */
-  .nav-link {
-    @apply text-gray-700 hover:text-gray-900;
-  }
-  
-  /* Gradient text enhancement */
-  .bg-gradient-to-r {
-    @apply from-emerald-600 via-emerald-500 to-purple-600;
   }
 }
 

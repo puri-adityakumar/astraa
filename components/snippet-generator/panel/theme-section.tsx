@@ -56,7 +56,7 @@ export function ThemeSection() {
                   "flex items-center gap-2 px-2 py-2 text-xs rounded-md border bg-background min-h-touch text-left",
                   "transition-colors duration-100 ease-out",
                   active
-                    ? "border-primary bg-primary/10 text-foreground"
+                    ? "border-foreground/30 bg-foreground/10 text-foreground"
                     : "border-border text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >

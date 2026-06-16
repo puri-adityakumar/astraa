@@ -117,7 +117,7 @@ export function Base64FileDrop({ file, onFile }: Base64FileDropProps) {
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           active
-            ? "border-primary bg-primary/5 text-primary"
+            ? "border-foreground/30 bg-foreground/5 text-foreground"
             : "border-input bg-muted/20 text-muted-foreground hover:bg-muted/40",
         )}
       >

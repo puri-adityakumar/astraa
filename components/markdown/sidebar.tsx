@@ -54,7 +54,7 @@ function FileList({ onSelect, onDelete }: SidebarProps) {
               className={cn(
                 "w-full rounded-md px-4 py-2.5 pr-9 text-left text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 active
-                  ? "bg-primary/10 text-primary shadow-sm hover:bg-primary/15"
+                  ? "bg-foreground/10 text-foreground shadow-sm hover:bg-foreground/15"
                   : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
               )}
             >
@@ -62,7 +62,7 @@ function FileList({ onSelect, onDelete }: SidebarProps) {
               <span
                 className={cn(
                   "block text-xs font-normal",
-                  active ? "text-primary/70" : "text-muted-foreground/70",
+                  active ? "text-muted-foreground" : "text-muted-foreground/70",
                 )}
               >
                 {formatDistanceToNow(f.updatedAt, { addSuffix: true })}

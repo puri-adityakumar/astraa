@@ -1,79 +1,65 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import { Eye, Star, Users } from "lucide-react"
 
 interface Stats {
-    visitors: number
-    stars: number
-    contributors: number
+  visitors: number
+  stars: number
+  contributors: number
 }
 
 function formatNumber(num: number): string {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
-    }
-    if (num >= 1000) {
-        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
-    }
-    return num.toString()
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M"
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K"
+  }
+  return num.toString()
 }
 
-const fadeInUp = {
-    hidden: { opacity: 0, y: 10 },
-    show: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.4,
-            ease: [0.22, 1, 0.36, 1]
-        }
-    }
-}
+const SEP =
+  "inline-block w-px h-[11px] mx-[18px] opacity-60 bg-[color:var(--hairline-strong)]"
 
+// Live site stats, styled to match the v2 hero mono stats row. Renders nothing
+// until /api/stats resolves (silent fail keeps the hero clean if unavailable).
 export function StatsBar() {
-    const [stats, setStats] = useState<Stats | null>(null)
+  const [stats, setStats] = useState<Stats | null>(null)
 
-    useEffect(() => {
-        fetch('/api/stats')
-            .then(res => res.json())
-            .then(data => {
-                if (!data.error) {
-                    setStats(data)
-                }
-            })
-            .catch(() => {
-                // Silent fail
-            })
-    }, [])
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setStats(data)
+        }
+      })
+      .catch(() => {
+        // Silent fail — hero simply omits the stats row.
+      })
+  }, [])
 
-    if (!stats) {
-        return null
-    }
+  if (!stats) {
+    return null
+  }
 
-    const items = [
-        { label: 'visitors', value: stats.visitors, icon: Eye },
-        { label: 'stars', value: stats.stars, icon: Star },
-        { label: 'contributors', value: stats.contributors, icon: Users },
-    ]
+  const items = [
+    { label: "visitors", value: stats.visitors },
+    { label: "stars", value: stats.stars },
+    { label: "contributors", value: stats.contributors },
+  ]
 
-    return (
-        <motion.div
-            variants={fadeInUp}
-            className="flex items-center justify-center gap-6 text-base text-muted-foreground flex-wrap mt-2"
-        >
-            {items.map((item, index) => {
-                const Icon = item.icon
-                return (
-                    <span key={item.label} className="flex items-center gap-1.5">
-                        {index > 0 && <span className="mx-3 text-muted-foreground/30">•</span>}
-                        <Icon className="w-4 h-4 text-muted-foreground/70" />
-                        <span className="font-semibold text-foreground tabular-nums">{formatNumber(item.value)}</span>
-                        <span className="text-muted-foreground/80">{item.label}</span>
-                    </span>
-                )
-            })}
-        </motion.div>
-    )
+  return (
+    <div className="mt-10 inline-flex flex-wrap items-center justify-center font-mono text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
+      {items.map((item, index) => (
+        <span key={item.label} className="inline-flex items-center">
+          {index > 0 ? <span aria-hidden="true" className={SEP} /> : null}
+          <b className="mr-1.5 font-semibold text-foreground tabular-nums">
+            {formatNumber(item.value)}
+          </b>
+          {item.label}
+        </span>
+      ))}
+    </div>
+  )
 }

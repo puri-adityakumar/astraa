@@ -110,8 +110,8 @@ export function BgSection() {
             >
               <span
                 className={cn(
-                  "absolute inset-x-0 bottom-0 px-1.5 py-0.5 text-[10px] font-medium text-white",
-                  "bg-gradient-to-t from-black/60 to-transparent",
+                  "absolute inset-x-0 bottom-0 px-1.5 py-0.5 text-[10px] font-medium",
+                  "bg-gradient-to-t from-black/70 to-transparent text-white/90",
                   "opacity-0 transition-opacity duration-150 ease-out",
                   active ? "opacity-100" : "group-hover:opacity-100",
                 )}
@@ -166,7 +166,7 @@ export function BgSection() {
                   className={cn(
                     "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
                     hexValid
-                      ? "bg-success/15 text-success"
+                      ? "bg-muted text-muted-foreground"
                       : "bg-destructive/15 text-destructive",
                   )}
                 >
@@ -277,7 +277,7 @@ export function BgSection() {
                   opacity: bg.opacity,
                 }}
               />
-              <span className="absolute inset-x-0 bottom-0 bg-black/55 px-2 py-1 text-xs text-white">
+              <span className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-xs text-white/90">
                 Replace image
               </span>
             </button>
@@ -309,7 +309,7 @@ export function BgSection() {
               "flex w-full flex-col items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-border/60 bg-background px-3 py-5",
               "min-h-touch text-xs text-muted-foreground",
               "transition-colors duration-150 ease-out",
-              "hover:border-primary hover:bg-primary/5 hover:text-foreground",
+              "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             )}
           >

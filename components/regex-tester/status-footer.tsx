@@ -56,7 +56,7 @@ export function StatusFooter({
             Pattern hangs &mdash; simplify
           </span>
         ) : timedOut ? (
-          <span className="inline-flex items-center gap-1 rounded-full border border-warning/40 bg-warning/10 px-2 py-0.5 text-warning">
+          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-muted-foreground">
             <AlertTriangle className="h-3 w-3" aria-hidden="true" />
             Slow pattern
           </span>

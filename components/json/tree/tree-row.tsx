@@ -17,12 +17,12 @@ type Props = {
 };
 
 const TYPE_COLOR: Record<string, string> = {
-  string: "text-emerald-500",
-  number: "text-amber-500",
-  boolean: "text-violet-500",
-  null: "text-zinc-500",
-  object: "text-sky-500",
-  array: "text-cyan-500",
+  string: "text-foreground",
+  number: "text-foreground/80",
+  boolean: "text-foreground/70",
+  null: "text-muted-foreground",
+  object: "text-muted-foreground",
+  array: "text-muted-foreground",
 };
 
 const ROW_ACTION_CLASS = cn(

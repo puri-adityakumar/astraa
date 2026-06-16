@@ -77,7 +77,7 @@ export function Toolbar({
         </span>
         {dirty && (
           <span
-            className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500"
+            className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground"
             aria-label="Unsaved changes"
             title="Unsaved changes"
           />

@@ -33,7 +33,7 @@ export function StatusBar() {
         <span className="tabular-nums">{lines} lines</span>
         <span aria-hidden className="text-muted-foreground/40">·</span>
         {valid ? (
-          <span className="inline-flex items-center gap-1 text-success">
+          <span className="inline-flex items-center gap-1 text-foreground">
             <Check className="h-3.5 w-3.5" aria-hidden /> Valid
           </span>
         ) : diagnostics.length > 0 ? (
@@ -48,7 +48,7 @@ export function StatusBar() {
         )}
       </div>
       <span className="inline-flex items-center gap-1">
-        <ShieldCheck className="h-3.5 w-3.5 text-success" aria-hidden />
+        <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
         100% local
       </span>
     </div>

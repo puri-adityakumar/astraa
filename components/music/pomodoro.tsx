@@ -21,9 +21,11 @@ export function Pomodoro() {
         setTimeLeft((time) => time - 1)
       }, 1000)
     } else if (timeLeft === 0) {
-      setIsBreak(!isBreak)
-      setTimeLeft(isBreak ? WORK_TIME : BREAK_TIME)
-      setIsRunning(false)
+      setTimeout(() => {
+        setIsBreak(!isBreak)
+        setTimeLeft(isBreak ? WORK_TIME : BREAK_TIME)
+        setIsRunning(false)
+      }, 0)
     }
 
     return () => clearInterval(interval)

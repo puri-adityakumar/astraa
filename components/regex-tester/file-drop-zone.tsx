@@ -139,9 +139,9 @@ export function FileDropZone({ onText, className }: FileDropZoneProps) {
         <div
           className={cn(
             "absolute inset-0 z-10 flex items-center justify-center",
-            "rounded-md border-2 border-dashed border-primary",
-            "bg-primary/5 backdrop-blur-sm",
-            "text-sm font-medium text-primary",
+            "rounded-md border-2 border-dashed border-foreground/30",
+            "bg-background/80 backdrop-blur-sm",
+            "text-sm font-medium text-foreground",
             "pointer-events-none",
           )}
         >

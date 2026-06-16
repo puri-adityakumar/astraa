@@ -77,13 +77,13 @@ export function DropzoneOverlay() {
     <div
       aria-hidden
       className={cn(
-        "fixed inset-0 z-50 bg-primary/20 backdrop-blur-sm",
+        "fixed inset-0 z-50 bg-background/70 backdrop-blur-sm",
         "flex items-center justify-center pointer-events-none",
       )}
     >
       <div
         className={cn(
-          "rounded-xl border-2 border-dashed border-primary",
+          "rounded-xl border-2 border-dashed border-foreground/30",
           "bg-background/95 px-8 py-6 text-center",
         )}
       >

@@ -38,7 +38,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
-        logo: ['Funnel Display', 'sans-serif'],
+        deva: ['var(--font-deva)', 'sans-serif'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],
@@ -87,9 +87,12 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       borderRadius: {
-        lg: '0.75rem',
-        md: '0.5rem',
-        sm: '0.25rem',
+        lg: "0.75rem",
+        md: "0.5rem",
+        sm: "0.25rem",
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -134,9 +137,13 @@ const config: Config = {
           DEFAULT: 'hsl(var(--info))',
           foreground: 'hsl(var(--info-foreground))',
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        "surface-2": "hsl(var(--surface-2))",
+        "surface-3": "hsl(var(--surface-3))",
+        "text-2": "hsl(var(--text-2))",
+        faint: "hsl(var(--faint))",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
       },
     },
     keyframes: {

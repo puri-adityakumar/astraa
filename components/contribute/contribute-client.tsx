@@ -47,7 +47,7 @@ export function ContributeClient() {
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
           Contribute to{" "}
-          <span style={{ fontFamily: "'Funnel Display', sans-serif" }}>
+          <span className="font-sans font-bold">
             astraa
           </span>
         </h1>
@@ -291,7 +291,7 @@ export function ContributeClient() {
         <div className="max-w-md mx-auto p-4 rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm flex items-center gap-4 text-left hover:bg-card/80 transition-colors">
           <div className="flex-1 min-w-0">
             <p className="font-medium truncate">
-              Sponsor <span className="font-logo">astraa</span>
+              Sponsor <span className="font-sans font-bold">astraa</span>
             </p>
             <p className="text-xs text-muted-foreground truncate">
               Support open source work
