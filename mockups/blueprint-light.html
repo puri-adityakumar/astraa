@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>astraa · Direction B — Blueprint (light)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     ASTRAA — Direction B: Blueprint (light)
+     Monochrome engineered-technical light treatment.
+     ============================================================ */
+
+  :root {
+    /* Ink + paper */
+    --paper:        #FFFFFF;
+    --paper-2:      #FAFAFA;
+    --ink:          #0A0A0B;
+    --ink-soft:     #1A1A1C;
+    --muted:        #6B6B6B;
+    --muted-2:      #9A9A9A;
+    --hairline:     #E6E6E6;
+    --hairline-2:   #EFEFEF;
+    --grid-line:    #F0F0F0;
+    --grid-line-2:  #F4F4F4;
+    --workbench:    #EDEDED;
+    --bracket:      #C8C8C8;
+    --crosshair:    #B8B8B8;
+    /* single desaturated red, destructive only */
+    --danger:       #9E5757;
+
+    /* type scale (8px rhythm, 1.25 ratio anchored) */
+    --fs-eyebrow:   11px;
+    --fs-tag:       10px;
+    --fs-micro:     11px;
+    --fs-body-sm:   13px;
+    --fs-body:      15px;
+    --fs-lead:      17px;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+    --space-9: 96px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+  body {
+    font-family: "Geist", system-ui, sans-serif;
+    background: var(--workbench);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 56px 32px 120px;
+    /* faint workbench texture */
+    background-image:
+      linear-gradient(var(--workbench), var(--workbench));
+  }
+
+  .mono {
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-feature-settings: "tnum" 1, "zero" 1;
+  }
+
+  .deva { font-family: "Noto Sans Devanagari", "Geist", sans-serif; }
+
+  /* ---------- workbench header ---------- */
+  .wb-head {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #DCDCDC;
+  }
+  .wb-head .kicker {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wb-head .kicker .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ink); display: inline-block;
+  }
+  .wb-head h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .wb-head h1 .dir {
+    font-family: "Geist Mono", monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--muted);
+    padding-bottom: 1px;
+  }
+  .wb-head p {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 620px;
+    line-height: 1.6;
+  }
+
+  /* ---------- device stage ---------- */
+  .stage { max-width: 1200px; margin: 0 auto; }
+
+  .device-block { margin-bottom: 96px; }
+  .device-block:last-child { margin-bottom: 0; }
+
+  .device-cap {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .device-cap .rule {
+    flex: 1; height: 1px; background: #D6D6D6;
+  }
+  .device-cap .idx {
+    color: var(--ink);
+    border: 1px solid #D0D0D0;
+    background: #fff;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+  }
+
+  /* ===========================================================
+     BLUEPRINT MOTIF — grid, dot-matrix, corner markers
+     =========================================================== */
+
+  /* faint graph-paper grid */
+  .bp-grid {
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+  }
+  .bp-grid-fine {
+    background-image:
+      linear-gradient(to right, var(--grid-line-2) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line-2) 1px, transparent 1px),
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 32px 32px, 32px 32px, 128px 128px, 128px 128px;
+  }
+  .bp-dots {
+    background-color: var(--paper);
+    background-image: radial-gradient(circle, #EDEDED 1px, transparent 1.4px);
+    background-size: 24px 24px;
+  }
+
+  /* crosshair plus marker */
+  .xmark {
+    position: absolute;
+    width: 11px; height: 11px;
+    pointer-events: none;
+    color: var(--crosshair);
+    z-index: 3;
+  }
+  .xmark::before, .xmark::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+  }
+  .xmark::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-0.5px); }
+  .xmark::after  { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-0.5px); }
+  .xmark.tl { top: -5.5px; left: -5.5px; }
+  .xmark.tr { top: -5.5px; right: -5.5px; }
+  .xmark.bl { bottom: -5.5px; left: -5.5px; }
+  .xmark.br { bottom: -5.5px; right: -5.5px; }
+
+  /* L-shaped corner bracket */
+  .bracket {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-color: var(--bracket);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .bracket.tl { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .bracket.tr { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+  .bracket.bl { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+  .bracket.br { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+
+  /* ===========================================================
+     SHARED PRIMITIVES (logo, buttons, eyebrows, cards)
+     =========================================================== */
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    user-select: none;
+  }
+  .logo .mark { color: var(--ink); display: block; flex: none; }
+  .logo .word {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .logo .word .deva {
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+
+  .eyebrow {
+    font-family: "Geist Mono", monospace;
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .eyebrow .tick { width: 18px; height: 1px; background: var(--ink); opacity: 0.55; }
+
+  .tag {
+    font-family: "Geist Mono", monospace;
+    font-size: var(--fs-tag);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    padding: 2px 6px;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: "Geist", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    border: 1px solid var(--ink);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary {
+    background: var(--ink);
+    color: #fff;
+    padding: 11px 18px;
+  }
+  .btn-primary:hover { background: #000; }
+  .btn-outline {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--hairline);
+    padding: 11px 18px;
+  }
+  .btn-outline:hover { border-color: var(--ink); }
+
+  .icon-btn {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--hairline);
+    border-radius: 7px;
+    background: var(--paper);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .icon-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .icon-btn svg { width: 17px; height: 17px; }
+
+  .search-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    background: var(--paper);
+    color: var(--muted);
+    font-size: 13px;
+    padding: 0 10px 0 12px;
+    height: 38px;
+  }
+  .search-pill svg { width: 16px; height: 16px; color: var(--muted-2); flex: none; }
+  .search-pill .ph { flex: 1; }
+  .search-pill .kbd {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 2px 6px;
+    background: var(--paper-2);
+  }
+
+  /* tool card */
+  .tcard {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 18px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .tcard .ic {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    color: var(--ink);
+    margin-bottom: 14px;
+    background: var(--paper-2);
+  }
+  .tcard .ic svg { width: 20px; height: 20px; }
+  .tcard h4 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tcard p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .tcard .foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px dashed var(--hairline);
+  }
+  .tcard .arr { color: var(--muted-2); transition: color 0.15s ease, transform 0.15s ease; }
+  .tcard .arr svg { width: 16px; height: 16px; }
+  .tcard:hover { border-color: #D2D2D2; box-shadow: 0 1px 0 rgba(0,0,0,0.02), 0 8px 24px -16px rgba(0,0,0,0.18); }
+  .tcard:hover .arr { color: var(--ink); transform: translateX(2px); }
+  .tcard.is-hover {
+    border-color: var(--ink);
+    box-shadow: 0 8px 30px -18px rgba(0,0,0,0.3);
+  }
+  .tcard.is-hover .arr { color: var(--ink); transform: translateX(2px); }
+  .tcard.is-hover .ic { border-color: var(--ink); }
+
+  /* ===========================================================
+     DEVICE FRAMES
+     =========================================================== */
+
+  /* Desktop browser chrome */
+  .frame-desktop {
+    width: 1200px;
+    background: var(--paper);
+    border: 1px solid #D8D8D8;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04), 0 20px 50px -30px rgba(0,0,0,0.35);
+  }
+  .chrome {
+    height: 44px;
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 16px;
+  }
+  .chrome .dots { display: flex; gap: 8px; }
+  .chrome .dots i {
+    width: 11px; height: 11px; border-radius: 50%;
+    display: block; border: 1px solid rgba(0,0,0,0.08);
+  }
+  .chrome .dots i:nth-child(1) { background: #DCDCDC; }
+  .chrome .dots i:nth-child(2) { background: #E4E4E4; }
+  .chrome .dots i:nth-child(3) { background: #ECECEC; }
+  .chrome .urlbar {
+    flex: 1;
+    max-width: 460px;
+    margin: 0 auto;
+    height: 28px;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 7px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 12px;
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .chrome .urlbar svg { width: 13px; height: 13px; color: var(--muted-2); }
+  .chrome .urlbar .host { color: var(--ink-soft); }
+  .chrome .chrome-r { display: flex; gap: 6px; color: var(--muted-2); }
+  .chrome .chrome-r svg { width: 16px; height: 16px; }
+
+  /* Tablet bezel */
+  .frame-tablet {
+    width: 834px;
+    background: #fff;
+    border: 8px solid #181818;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -34px rgba(0,0,0,0.45);
+  }
+  .frame-tablet .screen { border-radius: 18px; overflow: hidden; }
+
+  /* Phone bezel */
+  .frame-phone {
+    width: 390px;
+    background: #0E0E0E;
+    border: 10px solid #0E0E0E;
+    border-radius: 52px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -30px rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .frame-phone .screen {
+    border-radius: 42px;
+    overflow: hidden;
+    background: var(--paper);
+    position: relative;
+  }
+  .phone-status {
+    height: 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px 0 28px;
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+    position: relative;
+  }
+  .phone-status .notch {
+    position: absolute;
+    top: 8px; left: 50%; transform: translateX(-50%);
+    width: 110px; height: 26px;
+    background: #0E0E0E;
+    border-radius: 0 0 16px 16px;
+  }
+  .phone-status .right { display: flex; align-items: center; gap: 6px; }
+  .phone-status svg { width: 16px; height: 13px; color: var(--ink); }
+
+  /* ===========================================================
+     SCREEN 1 — DESKTOP HOME
+     =========================================================== */
+  .d-nav {
+    height: 64px;
+    border-bottom: 1px solid var(--hairline);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 28px;
+    background: rgba(255,255,255,0.7);
+  }
+  .d-nav .logo .word { font-size: 19px; }
+  .d-nav .logo .word .deva { font-size: 14px; }
+  .d-nav .nav-search { width: 320px; }
+  .d-nav .nav-r { display: flex; align-items: center; gap: 8px; justify-self: end; }
+  .d-nav .nav-links { display: flex; gap: 22px; margin-right: 6px; }
+  .d-nav .nav-links a {
+    font-size: 13px; color: var(--muted); text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .d-nav .nav-links a:hover { color: var(--ink); }
+
+  .d-hero {
+    position: relative;
+    padding: 0 28px 56px;
+    overflow: hidden;
+  }
+  .d-hero-inner {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 56px 64px;
+  }
+  /* dashed measure guides on hero */
+  .measure-v {
+    position: absolute; top: 24px; bottom: 24px; width: 0;
+    border-left: 1px dashed #E2E2E2;
+  }
+  .measure-v.l { left: 56px; }
+  .measure-v.r { right: 56px; }
+  .measure-label {
+    position: absolute;
+    font-family: "Geist Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--muted-2);
+    text-transform: uppercase;
+  }
+
+  .d-hero h1 {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    color: var(--ink);
+    margin: 22px 0 0;
+    max-width: 760px;
+  }
+  .d-hero h1 .l2 { display: block; }
+  .d-hero h1 .deva { font-weight: 600; color: var(--muted-2); letter-spacing: 0; }
+  .d-hero .sub {
+    margin-top: 22px;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 480px;
+  }
+  .d-hero .cta {
+    margin-top: 32px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .d-hero .stats {
+    margin-top: 36px;
+    display: flex; align-items: center; gap: 0;
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .d-hero .stats span { display: inline-flex; align-items: center; }
+  .d-hero .stats b { color: var(--ink); font-weight: 600; margin-right: 6px; }
+  .d-hero .stats .sep { width: 1px; height: 11px; background: var(--hairline); margin: 0 18px; }
+
+  /* below the fold peek */
+  .d-peek {
+    position: relative;
+    padding: 0 28px;
+    margin-top: 8px;
+  }
+  .d-peek-inner { max-width: 1000px; margin: 0 auto; }
+  .d-peek-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .d-peek-head .eyebrow { margin-bottom: 0; }
+  .d-peek-head .viewall {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .d-peek-head .viewall svg { width: 13px; height: 13px; }
+  .d-peek-head .viewall:hover { color: var(--ink); }
+  .d-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  /* ===========================================================
+     SCREEN 2 — TABLET TOOLS INDEX
+     =========================================================== */
+  .t-nav {
+    height: 60px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    background: rgba(255,255,255,0.7);
+  }
+  .t-nav .logo .word { font-size: 18px; }
+  .t-nav .logo .word .deva { font-size: 13px; }
+  .t-nav .t-nav-r { display: flex; align-items: center; gap: 8px; }
+  .t-nav .nav-search { width: 220px; }
+
+  .t-body { position: relative; padding: 40px 24px 44px; }
+  .t-head-row {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin: 14px 0 28px;
+  }
+  .t-body h2 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--ink);
+    margin-top: 14px;
+  }
+  .t-body .count {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 6px;
+  }
+  .t-filter {
+    display: flex; gap: 8px; margin-bottom: 24px;
+  }
+  .chip {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    color: var(--muted);
+    background: var(--paper);
+    cursor: pointer;
+  }
+  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .t-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .t-grid-2 .tcard { padding: 20px; }
+
+  /* ===========================================================
+     SCREEN 3 — PHONE PASSWORD GENERATOR
+     =========================================================== */
+  .p-topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 18px 18px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .p-topbar .back {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--hairline);
+    border-radius: 9px;
+    color: var(--ink);
+  }
+  .p-topbar .back svg { width: 18px; height: 18px; }
+  .p-topbar .title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .p-body { padding: 20px 18px 22px; position: relative; }
+
+  .p-output {
+    position: relative;
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    background: var(--paper-2);
+    padding: 18px 16px 14px;
+    margin-bottom: 16px;
+  }
+  .p-output .o-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .p-output .o-val {
+    font-family: "Geist Mono", monospace;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    word-break: break-all;
+    line-height: 1.35;
+    margin-bottom: 14px;
+  }
+  .p-output .o-val .num { color: var(--ink); }
+  .p-output .o-val .sym { color: var(--muted); }
+  .p-output .o-actions {
+    display: flex; gap: 8px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--hairline);
+  }
+  .p-output .o-actions .icon-btn { flex: 1; gap: 7px; width: auto; font-size: 12px; }
+  .p-output .o-actions .icon-btn span {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* strength */
+  .p-strength { margin-bottom: 22px; }
+  .p-strength .s-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 9px;
+  }
+  .p-strength .s-lab {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .p-strength .s-val {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    font-weight: 600; color: var(--ink);
+  }
+  .p-strength .s-bar { display: flex; gap: 5px; }
+  .p-strength .s-bar i {
+    flex: 1; height: 6px; border-radius: 2px;
+    background: var(--hairline);
+  }
+  .p-strength .s-bar i.on { background: var(--ink); }
+
+  /* controls */
+  .p-section-lab {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .p-section-lab .tick { width: 16px; height: 1px; background: var(--ink); opacity: 0.5; }
+
+  .p-len {
+    margin-bottom: 22px;
+  }
+  .p-len .l-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .p-len .l-name { font-size: 14px; font-weight: 500; }
+  .p-len .l-num {
+    font-family: "Geist Mono", monospace;
+    font-size: 15px; font-weight: 600; color: var(--ink);
+    border: 1px solid var(--hairline); border-radius: 6px;
+    padding: 2px 10px;
+  }
+  .p-slider {
+    position: relative;
+    height: 6px;
+    background: var(--hairline);
+    border-radius: 3px;
+  }
+  .p-slider .fill {
+    position: absolute; left: 0; top: 0; height: 100%;
+    width: 62%;
+    background: var(--ink);
+    border-radius: 3px;
+  }
+  .p-slider .knob {
+    position: absolute; top: 50%; left: 62%;
+    width: 18px; height: 18px;
+    background: #fff;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .p-slider .ticks {
+    position: absolute; top: 14px; left: 0; right: 0;
+    display: flex; justify-content: space-between;
+    font-family: "Geist Mono", monospace;
+    font-size: 9px; color: var(--muted-2);
+  }
+
+  .p-toggles { display: flex; flex-direction: column; }
+  .p-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hairline-2);
+  }
+  .p-toggle:last-child { border-bottom: none; }
+  .p-toggle .tg-l { display: flex; align-items: center; gap: 12px; }
+  .p-toggle .tg-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .p-toggle .tg-ex {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px; color: var(--muted-2);
+  }
+  .switch {
+    width: 42px; height: 24px;
+    border-radius: 13px;
+    border: 1px solid var(--hairline);
+    background: var(--paper-2);
+    position: relative;
+    flex: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .switch .nub {
+    position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--hairline);
+    transition: left 0.18s ease;
+  }
+  .switch.on { background: var(--ink); border-color: var(--ink); }
+  .switch.on .nub { left: 20px; border-color: var(--ink); }
+
+  .p-cta {
+    margin-top: 26px;
+  }
+  .p-cta .btn-primary {
+    width: 100%;
+    height: 50px;
+    font-size: 15px;
+    border-radius: 11px;
+  }
+
+  /* tiny footer note inside screens */
+  .local-note {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted-2);
+    text-align: center;
+    margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .local-note svg { width: 12px; height: 12px; }
+
+  /* footer of workbench */
+  .wb-foot {
+    max-width: 1200px; margin: 80px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid #DCDCDC;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: "Geist Mono", monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted-2);
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ WORKBENCH HEADER ============ -->
+  <header class="wb-head">
+    <div class="kicker"><span class="dot"></span> Design Direction · Mockup Set</div>
+    <h1>
+      astraa<span class="deva" style="font-family:'Noto Sans Devanagari',sans-serif; font-weight:500; color:var(--muted); font-size:18px;"> अस्त्र</span>
+      <span class="dir">· Direction B — Blueprint (light)</span>
+    </h1>
+    <p>
+      An engineered, technical light treatment. Graph-paper grids, hairline borders, and crosshair corner
+      markers establish a precise, measured feel — monochrome throughout, with mono uppercase labels as the
+      signature voice. Three screens shown at fixed device widths.
+    </p>
+  </header>
+
+  <main class="stage">
+
+    <!-- =====================================================
+         SCREEN 1 — DESKTOP · HOME / HERO
+         ===================================================== -->
+    <section class="device-block">
+      <div class="device-cap">
+        <span class="idx">01</span> Desktop · 1280 — Home / Hero
+        <span class="rule"></span>
+        <span style="color:var(--muted)">astraa.tech</span>
+      </div>
+
+      <div class="frame-desktop">
+        <!-- browser chrome -->
+        <div class="chrome">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="urlbar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span><span class="host">astraa.tech</span></span>
+          </div>
+          <div class="chrome-r">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+        </div>
+
+        <!-- top nav -->
+        <nav class="d-nav">
+          <div class="logo">
+            <!-- arrowhead mark -->
+            <svg class="mark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 20 L20 4 M20 4 L20 12 M20 4 L12 4"/><path d="M4 20 L11 13"/></svg>
+            <span class="word">astraa<span class="deva">अस्त्र</span></span>
+          </div>
+          <div class="nav-search">
+            <div class="search-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <span class="ph">Search tools…</span>
+              <span class="kbd">⌘K</span>
+            </div>
+          </div>
+          <div class="nav-r">
+            <div class="nav-links">
+              <a href="#">Tools</a>
+              <a href="#">Games</a>
+              <a href="#">About</a>
+            </div>
+            <button class="icon-btn" aria-label="Toggle theme">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+            </button>
+            <button class="icon-btn" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+            </button>
+          </div>
+        </nav>
+
+        <!-- hero with blueprint grid + corner markers -->
+        <div class="d-hero bp-grid-fine">
+          <div class="d-hero-inner">
+            <!-- corner crosshairs framing hero block -->
+            <span class="xmark tl"></span>
+            <span class="xmark tr"></span>
+            <span class="xmark bl"></span>
+            <span class="xmark br"></span>
+            <!-- measure guides -->
+            <span class="measure-v l"></span>
+            <span class="measure-v r"></span>
+            <span class="measure-label" style="top:6px; left:56px;">X · 00</span>
+            <span class="measure-label mono" style="top:6px; right:56px;">1000PX</span>
+
+            <span class="eyebrow"><span class="tick"></span> Client-Side Toolkit</span>
+
+            <h1>
+              Stop searching.<br/>
+              <span class="l2">Start solving — <span class="deva">अस्त्र</span> at your command.</span>
+            </h1>
+
+            <p class="sub">
+              A dozen fast utilities for developers and makers. Everything runs locally in your browser —
+              no uploads, no accounts, no waiting.
+            </p>
+
+            <div class="cta">
+              <a href="#" class="btn btn-primary">
+                Explore tools
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+              <a href="#" class="btn btn-outline">Browse all</a>
+            </div>
+
+            <div class="stats">
+              <span><b>12</b> Tools</span>
+              <span class="sep"></span>
+              <span><b>100%</b> Local</span>
+              <span class="sep"></span>
+              <span><b>0</b> Trackers</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- below the fold peek -->
+        <div class="d-peek bp-dots" style="padding-top:8px; padding-bottom:40px;">
+          <div class="d-peek-inner">
+            <div class="d-peek-head">
+              <span class="eyebrow"><span class="tick"></span> Featured Utilities</span>
+              <a href="#" class="viewall">
+                View all 12
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+
+            <div class="d-grid-4">
+              <!-- card: password -->
+              <div class="tcard">
+                <span class="xmark tl"></span><span class="xmark br"></span>
+                <div class="ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m10 13 8-8M15 5l3 3M18 8l2-2-3-3-2 2"/></svg>
+                </div>
+                <h4>Password Generator</h4>
+                <p>Create strong, secure passwords with custom rules.</p>
+                <div class="foot">
+                  <span class="tag">Local</span>
+                  <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </div>
+              </div>
+
+              <!-- card: hash -->
+              <div class="tcard">
+                <span class="xmark tl"></span><span class="xmark br"></span>
+                <div class="ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>
+                </div>
+                <h4>Hash Generator</h4>
+                <p>MD5, SHA-256 and more — instant checksums.</p>
+                <div class="foot">
+                  <span class="tag">Local</span>
+                  <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </div>
+              </div>
+
+              <!-- card: json -->
+              <div class="tcard">
+                <span class="xmark tl"></span><span class="xmark br"></span>
+                <div class="ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H6a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2"/></svg>
+                </div>
+                <h4>JSON Editor</h4>
+                <p>Format, validate and convert JSON with a worker.</p>
+                <div class="foot">
+                  <span class="tag">Local</span>
+                  <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </div>
+              </div>
+
+              <!-- card: regex -->
+              <div class="tcard">
+                <span class="xmark tl"></span><span class="xmark br"></span>
+                <div class="ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v8M8.5 6l7 4M8.5 10l7-4"/><rect x="4" y="15" width="4" height="4" rx="1"/></svg>
+                </div>
+                <h4>Regex Tester</h4>
+                <p>Live pattern matching with instant highlights.</p>
+                <div class="foot">
+                  <span class="tag">Local</span>
+                  <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         SCREEN 2 — TABLET · TOOLS INDEX
+         ===================================================== -->
+    <section class="device-block">
+      <div class="device-cap">
+        <span class="idx">02</span> Tablet · 834 — Tools Index
+        <span class="rule"></span>
+        <span style="color:var(--muted)">/tools</span>
+      </div>
+
+      <div style="display:flex; justify-content:center;">
+        <div class="frame-tablet">
+          <div class="screen">
+
+            <!-- nav -->
+            <nav class="t-nav">
+              <div class="logo">
+                <svg class="mark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 20 L20 4 M20 4 L20 12 M20 4 L12 4"/><path d="M4 20 L11 13"/></svg>
+                <span class="word">astraa<span class="deva">अस्त्र</span></span>
+              </div>
+              <div class="t-nav-r">
+                <div class="nav-search">
+                  <div class="search-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                    <span class="ph">Search…</span>
+                    <span class="kbd">⌘K</span>
+                  </div>
+                </div>
+                <button class="icon-btn" aria-label="Toggle theme">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+                </button>
+              </div>
+            </nav>
+
+            <!-- body -->
+            <div class="t-body bp-grid">
+              <span class="xmark tl" style="top:24px; left:24px;"></span>
+              <span class="xmark tr" style="top:24px; right:24px;"></span>
+
+              <div class="t-head-row">
+                <div>
+                  <span class="eyebrow"><span class="tick"></span> Utilities</span>
+                  <h2>Tools</h2>
+                </div>
+                <span class="count">12 / 12 Indexed</span>
+              </div>
+
+              <div class="t-filter">
+                <span class="chip active">All</span>
+                <span class="chip">Utilities</span>
+                <span class="chip">Developer</span>
+                <span class="chip">Media</span>
+              </div>
+
+              <div class="t-grid-2">
+                <!-- password (hover state shown) -->
+                <div class="tcard is-hover">
+                  <span class="bracket tl"></span><span class="bracket tr"></span>
+                  <span class="bracket bl"></span><span class="bracket br"></span>
+                  <div class="ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m10 13 8-8M15 5l3 3M18 8l2-2-3-3-2 2"/></svg>
+                  </div>
+                  <h4>Password Generator</h4>
+                  <p>Create strong, secure passwords with full control over length and character sets.</p>
+                  <div class="foot">
+                    <span class="tag">Local</span>
+                    <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                  </div>
+                </div>
+
+                <!-- hash -->
+                <div class="tcard">
+                  <span class="xmark tl"></span><span class="xmark br"></span>
+                  <div class="ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>
+                  </div>
+                  <h4>Hash Generator</h4>
+                  <p>Generate MD5, SHA-1 and SHA-256 checksums from text or files instantly.</p>
+                  <div class="foot">
+                    <span class="tag">Local</span>
+                    <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                  </div>
+                </div>
+
+                <!-- json -->
+                <div class="tcard">
+                  <span class="xmark tl"></span><span class="xmark br"></span>
+                  <div class="ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H6a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2"/></svg>
+                  </div>
+                  <h4>JSON Editor</h4>
+                  <p>Format, validate and convert JSON — parsed off-thread in a web worker.</p>
+                  <div class="foot">
+                    <span class="tag">Local</span>
+                    <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                  </div>
+                </div>
+
+                <!-- regex -->
+                <div class="tcard">
+                  <span class="xmark tl"></span><span class="xmark br"></span>
+                  <div class="ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v8M8.5 6l7 4M8.5 10l7-4"/><rect x="4" y="15" width="4" height="4" rx="1"/></svg>
+                  </div>
+                  <h4>Regex Tester</h4>
+                  <p>Live pattern matching with capture groups and inline highlighting.</p>
+                  <div class="foot">
+                    <span class="tag">Local</span>
+                    <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                  </div>
+                </div>
+
+                <!-- base64 -->
+                <div class="tcard">
+                  <span class="xmark tl"></span><span class="xmark br"></span>
+                  <div class="ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8 3 12l4 4M17 8l4 4-4 4M14 4l-4 16"/></svg>
+                  </div>
+                  <h4>Base64</h4>
+                  <p>Encode and decode text and files to and from Base64.</p>
+                  <div class="foot">
+                    <span class="tag">Local</span>
+                    <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                  </div>
+                </div>
+
+                <!-- snippet -->
+                <div class="tcard">
+                  <span class="xmark tl"></span><span class="xmark br"></span>
+                  <div class="ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18M8 13l-2 2 2 2M13 13l2 2-2 2"/></svg>
+                  </div>
+                  <h4>Snippet Generator</h4>
+                  <p>Turn code into beautiful, shareable screenshots.</p>
+                  <div class="foot">
+                    <span class="tag">Local</span>
+                    <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         SCREEN 3 — PHONE · PASSWORD GENERATOR
+         ===================================================== -->
+    <section class="device-block">
+      <div class="device-cap">
+        <span class="idx">03</span> Phone · 390 — Password Generator
+        <span class="rule"></span>
+        <span style="color:var(--muted)">/tools/password</span>
+      </div>
+
+      <div style="display:flex; justify-content:center;">
+        <div class="frame-phone">
+          <div class="screen bp-grid">
+
+            <!-- status bar -->
+            <div class="phone-status">
+              <div class="notch"></div>
+              <span class="mono">9:41</span>
+              <div class="right">
+                <svg viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13h2M6 11h2M10 8h2M14 5h2"/></svg>
+                <svg viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8a10 10 0 0 1 20 0"/><path d="M6 11a6 6 0 0 1 12 0"/><circle cx="12" cy="13.5" r="1"/></svg>
+                <svg viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="2" y="4" width="18" height="9" rx="2"/><path d="M22 7v3"/><rect x="4" y="6" width="11" height="5" rx="1" fill="currentColor" stroke="none"/></svg>
+              </div>
+            </div>
+
+            <!-- top bar -->
+            <div class="p-topbar">
+              <span class="back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </span>
+              <span class="title">Password Generator</span>
+              <span class="tag">Local</span>
+            </div>
+
+            <!-- body -->
+            <div class="p-body">
+
+              <!-- output -->
+              <div class="p-output">
+                <span class="xmark tl"></span><span class="xmark tr"></span>
+                <span class="xmark bl"></span><span class="xmark br"></span>
+                <div class="o-label">
+                  <span>Generated</span>
+                  <span>20 CH · 128 BIT</span>
+                </div>
+                <div class="o-val">Kq<span class="sym">#</span>7vR<span class="sym">$</span>mZ<span class="num">2</span>pL<span class="sym">@</span>9nH<span class="sym">&amp;</span>x<span class="num">4</span>Wd</div>
+                <div class="o-actions">
+                  <button class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                    <span>Copy</span>
+                  </button>
+                  <button class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
+                    <span>New</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- strength -->
+              <div class="p-strength">
+                <div class="s-top">
+                  <span class="s-lab">Strength</span>
+                  <span class="s-val">Strong</span>
+                </div>
+                <div class="s-bar">
+                  <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i>
+                </div>
+              </div>
+
+              <!-- controls -->
+              <span class="p-section-lab"><span class="tick"></span> Configuration</span>
+
+              <!-- length -->
+              <div class="p-len">
+                <div class="l-top">
+                  <span class="l-name">Length</span>
+                  <span class="l-num">20</span>
+                </div>
+                <div class="p-slider">
+                  <div class="fill"></div>
+                  <div class="knob"></div>
+                  <div class="ticks"><span>8</span><span>32</span></div>
+                </div>
+              </div>
+
+              <!-- toggles -->
+              <div class="p-toggles">
+                <div class="p-toggle">
+                  <div class="tg-l">
+                    <span class="tg-name">Uppercase</span>
+                    <span class="tg-ex">A–Z</span>
+                  </div>
+                  <span class="switch on"><span class="nub"></span></span>
+                </div>
+                <div class="p-toggle">
+                  <div class="tg-l">
+                    <span class="tg-name">Lowercase</span>
+                    <span class="tg-ex">a–z</span>
+                  </div>
+                  <span class="switch on"><span class="nub"></span></span>
+                </div>
+                <div class="p-toggle">
+                  <div class="tg-l">
+                    <span class="tg-name">Numbers</span>
+                    <span class="tg-ex">0–9</span>
+                  </div>
+                  <span class="switch on"><span class="nub"></span></span>
+                </div>
+                <div class="p-toggle">
+                  <div class="tg-l">
+                    <span class="tg-name">Symbols</span>
+                    <span class="tg-ex">!@#$</span>
+                  </div>
+                  <span class="switch"><span class="nub"></span></span>
+                </div>
+              </div>
+
+              <!-- cta -->
+              <div class="p-cta">
+                <button class="btn btn-primary">
+                  Generate
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
+                </button>
+              </div>
+
+              <div class="local-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Generated in your browser
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="wb-foot">
+    <span>astraa अस्त्र — Direction B</span>
+    <span>Blueprint · Light · Monochrome</span>
+  </footer>
+
+</body>
+</html>

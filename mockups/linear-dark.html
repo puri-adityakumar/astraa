@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>astraa · Direction A — Linear (dark)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     astraa — Direction A: Linear (dark)
+     Monochrome, cinematic, premium-minimal.
+     Single embedded stylesheet. No external JS.
+     ============================================================ */
+
+  :root {
+    /* Surfaces */
+    --bg:            #0A0A0B;   /* off-black base */
+    --surface-1:     #141416;   /* cards */
+    --surface-2:     #161618;   /* inputs / workbench */
+    --surface-3:     #1B1B1E;   /* hover elevation */
+
+    /* Text */
+    --text:          #EDEDED;
+    --text-2:        #B4B4B4;
+    --muted:         #8A8A8A;
+    --faint:         #5C5C60;
+
+    /* Lines */
+    --border:        rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --border-faint:  rgba(255, 255, 255, 0.05);
+
+    /* The one permitted non-gray: a desaturated red for destructive only */
+    --danger:        #B85C5C;
+
+    /* Type */
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --deva: "Noto Sans Devanagari", "Geist", sans-serif;
+
+    /* Radius */
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+
+    /* Shadow (soft, monochrome) */
+    --shadow-card: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --shadow-pop:  0 1px 2px rgba(0,0,0,.5), 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--surface-2);
+    color: var(--text);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    /* Workbench: faint grid texture so it reads as a design surface */
+    background-image:
+      linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px);
+    background-size: 32px 32px;
+    padding: 56px 40px 120px;
+  }
+
+  /* ---------- Workbench header ---------- */
+  .wb-head {
+    max-width: 1200px;
+    margin: 0 auto 56px;
+    padding-left: 2px;
+  }
+  .wb-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .wb-title .dot { color: var(--faint); }
+  .wb-title .dir { color: var(--muted); }
+  .wb-caption {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 560px;
+    letter-spacing: -0.005em;
+  }
+
+  /* ---------- Device scaffold ---------- */
+  .device-block { max-width: 1200px; margin: 0 auto; }
+  .device-block + .device-block { margin-top: 72px; }
+
+  .device-cap {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    color: var(--faint);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .device-cap::before {
+    content: "";
+    width: 18px; height: 1px;
+    background: var(--border-strong);
+  }
+
+  /* Generic device frame helpers */
+  .frame {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow-pop);
+    position: relative;
+  }
+
+  /* ===== Desktop frame (browser chrome) ===== */
+  .desktop { width: 1200px; border-radius: var(--r-md); }
+  .chrome {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 44px;
+    padding: 0 16px;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border);
+  }
+  .traffic { display: flex; gap: 8px; }
+  .traffic i {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: rgba(255,255,255,.10);
+    display: block;
+  }
+  .url-pill {
+    flex: 1;
+    max-width: 340px;
+    height: 28px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-faint);
+    border-radius: 7px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+  .url-pill svg { width: 13px; height: 13px; opacity: .6; }
+  .chrome-spacer { width: 52px; }
+
+  /* ===== Tablet frame ===== */
+  .tablet {
+    width: 834px;
+    border-radius: 18px;
+    border: 1px solid var(--border-strong);
+    padding: 10px;
+    background: #0E0E10;
+  }
+  .tablet .screen {
+    border-radius: 10px;
+    background: var(--bg);
+    overflow: hidden;
+    border: 1px solid var(--border-faint);
+  }
+
+  /* ===== Phone frame ===== */
+  .phone {
+    width: 390px;
+    border-radius: 44px;
+    border: 1px solid var(--border-strong);
+    padding: 8px;
+    background: #0E0E10;
+    box-shadow: var(--shadow-pop);
+  }
+  .phone .screen {
+    border-radius: 38px;
+    background: var(--bg);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border-faint);
+  }
+  .phone .notch {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 124px; height: 26px;
+    background: #0E0E10;
+    border-radius: 0 0 16px 16px;
+    z-index: 20;
+  }
+
+  /* =====================================================
+     SHARED UI PRIMITIVES
+     ===================================================== */
+
+  /* Eyebrow / mono micro-label */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 7px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  /* Logo lockup */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    user-select: none;
+  }
+  .logo .mark { width: 19px; height: 19px; color: var(--text); flex-shrink: 0; }
+  .logo .word {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .logo .deva {
+    font-family: var(--deva);
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 1px;
+  }
+
+  /* Search pill */
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 38px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 0 12px;
+    color: var(--muted);
+    font-size: 14px;
+    transition: border-color .2s;
+  }
+  .search svg { width: 16px; height: 16px; opacity: .7; flex-shrink: 0; }
+  .search .ph { flex: 1; }
+  .kbd {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--faint);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 6px;
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+
+  /* Icon button */
+  .ibtn {
+    width: 38px; height: 38px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background .2s, border-color .2s, color .2s;
+  }
+  .ibtn svg { width: 17px; height: 17px; }
+  .ibtn:hover { background: var(--surface-1); color: var(--text); border-color: var(--border-strong); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    border-radius: 9px;
+    padding: 0 18px;
+    height: 44px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform .12s ease, background .2s, border-color .2s, opacity .2s;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary {
+    background: #F2F2F2;
+    color: #0A0A0B;
+    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 8px 24px rgba(0,0,0,.4);
+  }
+  .btn-primary:hover { background: #ffffff; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .btn-ghost:hover { background: var(--surface-1); }
+
+  /* Tool card */
+  .tcard {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: border-color .2s, background .2s, transform .2s;
+    position: relative;
+  }
+  .tcard .ic {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .tcard .ic svg { width: 19px; height: 19px; }
+  .tcard h4 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+  .tcard p {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: -0.005em;
+    line-height: 1.45;
+  }
+  .tcard .foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 18px;
+  }
+  .tcard .arrow { color: var(--faint); width: 16px; height: 16px; transition: transform .2s, color .2s; }
+  /* hover demo state */
+  .tcard.is-hover,
+  .tcard:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-3);
+    transform: translateY(-2px);
+  }
+  .tcard.is-hover .arrow,
+  .tcard:hover .arrow { color: var(--text); transform: translate(2px,-2px); }
+
+  /* =====================================================
+     SCREEN 1 — DESKTOP: Home / hero
+     ===================================================== */
+  .d-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: 64px;
+    padding: 0 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .d-nav .right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+  .d-nav .search { width: 320px; }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 92px 28px 76px;
+    text-align: center;
+    overflow: hidden;
+  }
+  /* atmospheric near-white radial glow — light, not color */
+  .hero .glow {
+    position: absolute;
+    top: -180px; left: 50%; transform: translateX(-50%);
+    width: 920px; height: 620px;
+    background: radial-gradient(ellipse at center,
+      rgba(255,255,255,0.10) 0%,
+      rgba(255,255,255,0.045) 32%,
+      rgba(255,255,255,0.012) 56%,
+      transparent 72%);
+    filter: blur(8px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero .vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 120% 90% at 50% 0%, transparent 55%, rgba(0,0,0,.35) 100%);
+    pointer-events: none; z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  .hero .eyebrow { display: inline-block; margin-bottom: 26px; }
+  .hero h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 64px;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    margin: 0 auto;
+    max-width: 880px;
+  }
+  .hero h1 .l2 { color: var(--text); }
+  .hero h1 .deva {
+    font-family: var(--deva);
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: -0.01em;
+  }
+  .hero .sub {
+    margin: 26px auto 0;
+    max-width: 540px;
+    font-size: 17px;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+    line-height: 1.55;
+  }
+  .hero .cta {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-top: 38px;
+  }
+  .hero .stats {
+    margin-top: 40px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--faint);
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero .stats .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--faint); display: inline-block; }
+  .hero .stats b { color: var(--muted); font-weight: 500; }
+
+  /* below-fold peek grid */
+  .peek {
+    padding: 8px 28px 44px;
+    position: relative;
+  }
+  .peek .peek-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 0 2px 18px;
+    border-top: 1px solid var(--border-faint);
+    padding-top: 28px;
+  }
+  .peek .peek-head .eyebrow { color: var(--faint); }
+  .peek .peek-head .more {
+    font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px;
+  }
+  .peek .peek-head .more svg { width: 14px; height: 14px; }
+  .peek .grid4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  /* fade the peek into the frame bottom for "below the fold" feel */
+  .peek::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: 0; height: 64px;
+    background: linear-gradient(transparent, var(--bg));
+    pointer-events: none;
+  }
+
+  /* =====================================================
+     SCREEN 2 — TABLET: Tools index
+     ===================================================== */
+  .t-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px; padding: 0 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .t-nav .search { width: 240px; }
+  .t-nav .right { display: flex; align-items: center; gap: 10px; }
+  .t-body { padding: 40px 24px 44px; }
+  .t-head { margin-bottom: 32px; }
+  .t-head .eyebrow { display: block; margin-bottom: 14px; }
+  .t-head h2 {
+    font-size: 44px; font-weight: 800; letter-spacing: -0.035em; color: var(--text);
+    line-height: 1;
+  }
+  .t-head p { margin-top: 12px; color: var(--muted); font-size: 15px; max-width: 460px; }
+  .t-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* =====================================================
+     SCREEN 3 — PHONE: Password Generator
+     ===================================================== */
+  .p-bar {
+    display: flex; align-items: center; gap: 12px;
+    height: 88px;
+    padding: 38px 18px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .p-bar .back {
+    width: 36px; height: 36px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); border-radius: var(--r-sm);
+    color: var(--text-2);
+  }
+  .p-bar .back svg { width: 18px; height: 18px; }
+  .p-bar .title { flex: 1; font-size: 16px; font-weight: 600; letter-spacing: -0.015em; }
+  .p-body { padding: 22px 18px 26px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* output field */
+  .pw-out {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 18px 16px 16px;
+  }
+  .pw-out .val {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    word-break: break-all;
+    line-height: 1.4;
+    min-height: 28px;
+  }
+  .pw-out .val .sym { color: var(--muted); }
+  .pw-out .val .num { color: var(--text); }
+  .pw-out .row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid var(--border-faint);
+  }
+  .pw-out .actions { display: flex; gap: 8px; }
+  .mini {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); border-radius: var(--r-sm);
+    background: var(--surface-1); color: var(--text-2);
+  }
+  .mini svg { width: 16px; height: 16px; }
+  .pw-out .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--faint); }
+
+  /* strength */
+  .strength { display: flex; flex-direction: column; gap: 10px; }
+  .strength .seg { display: flex; gap: 5px; }
+  .strength .seg i {
+    flex: 1; height: 5px; border-radius: 3px;
+    background: rgba(255,255,255,.08);
+    display: block;
+  }
+  .strength .seg i.on { background: var(--text); }
+  .strength .meta {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  }
+  .strength .meta .s { color: var(--text); }
+  .strength .meta .e { color: var(--faint); }
+
+  /* controls block */
+  .ctrls { display: flex; flex-direction: column; }
+  .ctrls .block {
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--surface-1);
+    overflow: hidden;
+  }
+  .ctrl-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 16px;
+  }
+  .ctrl-row + .ctrl-row { border-top: 1px solid var(--border-faint); }
+  .ctrl-row .name { font-size: 14px; color: var(--text); letter-spacing: -0.01em; }
+  .ctrl-row .name .v { font-family: var(--mono); color: var(--muted); margin-left: 8px; font-size: 13px; }
+
+  /* slider */
+  .slider {
+    width: 150px; height: 5px; border-radius: 3px;
+    background: rgba(255,255,255,.10);
+    position: relative;
+  }
+  .slider .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 66%; background: var(--text); border-radius: 3px; }
+  .slider .knob {
+    position: absolute; top: 50%; left: 66%; transform: translate(-50%,-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #F2F2F2;
+    box-shadow: 0 1px 4px rgba(0,0,0,.5), 0 0 0 4px rgba(10,10,11,.0);
+  }
+
+  /* switch */
+  .sw { width: 40px; height: 23px; border-radius: 12px; background: rgba(255,255,255,.10); position: relative; transition: background .2s; flex-shrink: 0; }
+  .sw i { position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: var(--text-2); transition: left .2s, background .2s; }
+  .sw.on { background: #EDEDED; }
+  .sw.on i { left: 20px; background: #0A0A0B; }
+
+  /* responsive guard: keep workbench centered, allow horizontal scroll for desktop frame on small windows */
+  @media (max-width: 1300px) {
+    body { padding: 48px 24px 100px; }
+    .wb-head, .device-block { max-width: 1200px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ WORKBENCH HEADER ============ -->
+  <header class="wb-head">
+    <div class="wb-title">
+      <span>astraa</span>
+      <span class="dot">·</span>
+      <span class="dir">Direction A — Linear (dark)</span>
+    </div>
+    <p class="wb-caption">
+      Cinematic, monochrome, premium-minimal. Off-black workbench, hairline borders,
+      mono uppercase labels. Three screens at native widths.
+    </p>
+  </header>
+
+  <!-- ============================================================
+       SCREEN 1 — DESKTOP · 1280
+       ============================================================ -->
+  <section class="device-block">
+    <div class="device-cap">Desktop · 1280</div>
+
+    <div class="frame desktop">
+      <!-- browser chrome -->
+      <div class="chrome">
+        <div class="traffic"><i></i><i></i><i></i></div>
+        <div class="url-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          astraa.tech
+        </div>
+        <div class="chrome-spacer"></div>
+      </div>
+
+      <!-- top nav -->
+      <nav class="d-nav">
+        <div class="logo">
+          <!-- arrowhead mark -->
+          <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 L19 5"/><path d="M19 5 L19 12"/><path d="M19 5 L12 5"/></svg>
+          <span class="word">astraa<span class="deva">अस्त्र</span></span>
+        </div>
+
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="ph">Search tools…</span>
+          <span class="kbd">⌘K</span>
+        </div>
+
+        <div class="right">
+          <button class="ibtn" aria-label="Toggle theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+          </button>
+          <button class="ibtn" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+          </button>
+        </div>
+      </nav>
+
+      <!-- hero -->
+      <div class="hero">
+        <div class="glow"></div>
+        <div class="vignette"></div>
+
+        <span class="eyebrow">Client-side toolkit</span>
+        <h1>
+          Stop searching. Start solving.<br />
+          <span class="l2"><span class="deva">अस्त्र</span> at your command.</span>
+        </h1>
+        <p class="sub">A focused set of fast utilities — everything runs locally in your browser. No accounts, no uploads, no waiting.</p>
+
+        <div class="cta">
+          <button class="btn btn-primary">
+            Explore tools
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </button>
+          <button class="btn btn-ghost">Browse all</button>
+        </div>
+
+        <div class="stats">
+          <span><b>12</b> Tools</span>
+          <span class="sep"></span>
+          <span><b>100%</b> Local</span>
+          <span class="sep"></span>
+          <span><b>0</b> Trackers</span>
+        </div>
+      </div>
+
+      <!-- below-the-fold peek -->
+      <div class="peek">
+        <div class="peek-head">
+          <span class="eyebrow">Popular</span>
+          <span class="more">View all 12
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </span>
+        </div>
+        <div class="grid4">
+          <!-- Password -->
+          <div class="tcard">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m10.5 12.5 6-6"/><path d="m16 5 3 3"/><path d="m13.5 7.5 2 2"/></svg></div>
+            <h4>Password Generator</h4>
+            <p>Create strong, secure passwords.</p>
+            <div class="foot">
+              <span class="tag">Local</span>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            </div>
+          </div>
+          <!-- Hash -->
+          <div class="tcard">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3 8 21"/><path d="M16 3l-2 18"/></svg></div>
+            <h4>Hash Generator</h4>
+            <p>MD5, SHA-256 and more.</p>
+            <div class="foot">
+              <span class="tag">Local</span>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            </div>
+          </div>
+          <!-- JSON -->
+          <div class="tcard">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/></svg></div>
+            <h4>JSON Editor</h4>
+            <p>Format, validate &amp; convert JSON.</p>
+            <div class="foot">
+              <span class="tag">Local</span>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            </div>
+          </div>
+          <!-- Regex (hover demo) -->
+          <div class="tcard is-hover">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v9"/><path d="m8.5 6 7 5"/><path d="m15.5 6-7 5"/><circle cx="6" cy="18" r="1.6"/><path d="M16 16h4v4h-4z"/></svg></div>
+            <h4>Regex Tester</h4>
+            <p>Live pattern matching.</p>
+            <div class="foot">
+              <span class="tag">Local</span>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 2 — TABLET · 834
+       ============================================================ -->
+  <section class="device-block">
+    <div class="device-cap">Tablet · 834</div>
+
+    <div class="frame tablet">
+      <div class="screen">
+        <!-- nav -->
+        <nav class="t-nav">
+          <div class="logo">
+            <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 L19 5"/><path d="M19 5 L19 12"/><path d="M19 5 L12 5"/></svg>
+            <span class="word">astraa<span class="deva">अस्त्र</span></span>
+          </div>
+          <div class="right">
+            <div class="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <span class="ph">Search…</span>
+              <span class="kbd">⌘K</span>
+            </div>
+            <button class="ibtn" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+            </button>
+          </div>
+        </nav>
+
+        <!-- body -->
+        <div class="t-body">
+          <div class="t-head">
+            <span class="eyebrow">Utilities</span>
+            <h2>Tools</h2>
+            <p>A complete client-side toolkit. Pick one — it opens instantly and runs entirely on your device.</p>
+          </div>
+
+          <div class="t-grid">
+            <!-- Password (hover demo) -->
+            <div class="tcard is-hover">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m10.5 12.5 6-6"/><path d="m16 5 3 3"/><path d="m13.5 7.5 2 2"/></svg></div>
+              <h4>Password Generator</h4>
+              <p>Create strong, secure passwords.</p>
+              <div class="foot"><span class="tag">Local</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+              </div>
+            </div>
+            <!-- Hash -->
+            <div class="tcard">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3 8 21"/><path d="M16 3l-2 18"/></svg></div>
+              <h4>Hash Generator</h4>
+              <p>MD5, SHA-256 and more.</p>
+              <div class="foot"><span class="tag">Local</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+              </div>
+            </div>
+            <!-- JSON -->
+            <div class="tcard">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/></svg></div>
+              <h4>JSON Editor</h4>
+              <p>Format, validate &amp; convert JSON.</p>
+              <div class="foot"><span class="tag">Local</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+              </div>
+            </div>
+            <!-- Base64 -->
+            <div class="tcard">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5"/><path d="m15 7 5 5-5 5"/></svg></div>
+              <h4>Base64</h4>
+              <p>Encode &amp; decode text and files.</p>
+              <div class="foot"><span class="tag">Local</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+              </div>
+            </div>
+            <!-- Snippet -->
+            <div class="tcard">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="m7 14 2 2-2 2"/><path d="M13 18h4"/></svg></div>
+              <h4>Snippet Generator</h4>
+              <p>Beautiful code screenshots.</p>
+              <div class="foot"><span class="tag">Local</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+              </div>
+            </div>
+            <!-- Currency -->
+            <div class="tcard">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M16 8c0-1.7-1.8-3-4-3S8 6.3 8 8s1.8 3 4 3 4 1.3 4 3-1.8 3-4 3-4-1.3-4-3"/></svg></div>
+              <h4>Currency Converter</h4>
+              <p>Real-time exchange rates.</p>
+              <div class="foot"><span class="tag">Live</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 3 — PHONE · 390
+       ============================================================ -->
+  <section class="device-block">
+    <div class="device-cap">Phone · 390</div>
+
+    <div class="frame phone">
+      <div class="screen">
+        <div class="notch"></div>
+
+        <!-- top bar -->
+        <div class="p-bar">
+          <div class="back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </div>
+          <span class="title">Password Generator</span>
+          <span class="tag">Local</span>
+        </div>
+
+        <!-- body -->
+        <div class="p-body">
+
+          <!-- output -->
+          <div class="pw-out">
+            <div class="val">k7<span class="sym">$</span>Rm<span class="num">9</span>vQ<span class="sym">#</span>2pX<span class="num">4</span>tLw<span class="sym">!</span>e<span class="num">8</span>Hn</div>
+            <div class="row">
+              <span class="lbl">20 CHARS</span>
+              <div class="actions">
+                <button class="mini" aria-label="Copy">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
+                </button>
+                <button class="mini" aria-label="Regenerate">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- strength -->
+          <div class="strength">
+            <div class="seg"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+            <div class="meta">
+              <span class="s">STRONG</span>
+              <span class="e">128-BIT ENTROPY</span>
+            </div>
+          </div>
+
+          <!-- controls -->
+          <div class="ctrls">
+            <div class="block">
+              <!-- length -->
+              <div class="ctrl-row">
+                <span class="name">Length <span class="v">20</span></span>
+                <div class="slider"><div class="fill"></div><div class="knob"></div></div>
+              </div>
+              <!-- uppercase -->
+              <div class="ctrl-row">
+                <span class="name">Uppercase</span>
+                <div class="sw on"><i></i></div>
+              </div>
+              <!-- lowercase -->
+              <div class="ctrl-row">
+                <span class="name">Lowercase</span>
+                <div class="sw on"><i></i></div>
+              </div>
+              <!-- numbers -->
+              <div class="ctrl-row">
+                <span class="name">Numbers</span>
+                <div class="sw on"><i></i></div>
+              </div>
+              <!-- symbols -->
+              <div class="ctrl-row">
+                <span class="name">Symbols</span>
+                <div class="sw"><i></i></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- generate -->
+          <button class="btn btn-primary" style="width:100%; height:48px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+            Generate
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

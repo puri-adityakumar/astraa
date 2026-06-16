@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Games — astraa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./system.css" />
+  <style>
+    /* page-scoped (monochrome, tokens only) */
+    .games-grid { margin-top: 28px; }
+  </style>
+</head>
+<body>
+  <div class="atmosphere"></div>
+  <div class="grain"></div>
+
+  <div class="page">
+    <!-- ===== NAV (identical on every page) ===== -->
+    <nav class="nav">
+      <a class="logo" href="./index.html" aria-label="astraa home">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20 L14 4 L16 14 L4 20 Z" />
+        </svg>
+        <span class="word">astraa<span class="deva">अस्त्र</span></span>
+      </a>
+      <div class="nav__spacer"></div>
+      <div class="nav-links">
+        <a href="./tools.html">Tools</a>
+        <a href="./games.html" aria-current="page">Games</a>
+        <a href="./about.html">About</a>
+      </div>
+      <button class="search" data-open-palette aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="ph">Search tools…</span>
+        <span class="kbd">⌘K</span>
+      </button>
+      <div class="seg" role="group" aria-label="Theme">
+        <button data-theme-btn="dark" aria-label="Dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>Dark
+        </button>
+        <button data-theme-btn="light" aria-label="Light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>Light
+        </button>
+      </div>
+      <a class="ibtn" href="#" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+      </a>
+    </nav>
+
+    <!-- ===== PAGE CONTENT — replace this <main> per page ===== -->
+    <main>
+      <section class="section">
+        <div class="container">
+          <!-- 1) section head -->
+          <div class="section-head">
+            <span class="eyebrow"><span class="tick"></span>PLAY</span>
+            <h1>Games</h1>
+            <p class="lede" style="max-width:520px">Quick monochrome distractions. Same engine, zero installs.</p>
+          </div>
+
+          <!-- 2) eight game cards -->
+          <div class="grid grid-3 games-grid">
+
+            <!-- 2048 — combining tiles / grid -->
+            <a class="tcard" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></svg>
+              </span>
+              <h4>2048</h4>
+              <p>Slide &amp; combine tiles</p>
+              <span class="foot">
+                <span class="tag">PUZZLE</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+            <!-- Minesweeper — flag on pole -->
+            <a class="tcard" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"/><path d="M6 4h11l-3 4 3 4H6"/></svg>
+              </span>
+              <h4>Minesweeper</h4>
+              <p>Classic logic grid</p>
+              <span class="foot">
+                <span class="tag">LOGIC</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+            <!-- Snake — winding path with head -->
+            <a class="tcard" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h6a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h8"/><circle cx="18" cy="18" r="1.4"/></svg>
+              </span>
+              <h4>Snake</h4>
+              <p>Eat, grow, don't bite</p>
+              <span class="foot">
+                <span class="tag">ARCADE</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+            <!-- Memory Match — two cards -->
+            <a class="tcard" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="8" height="12" rx="1.5"/><rect x="13" y="6" width="8" height="12" rx="1.5"/><path d="M17 10v4M15 12h4"/></svg>
+              </span>
+              <h4>Memory Match</h4>
+              <p>Flip &amp; pair cards</p>
+              <span class="foot">
+                <span class="tag">MEMORY</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+            <!-- Sudoku — 9-grid with thick thirds -->
+            <a class="tcard" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1.5"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+              </span>
+              <h4>Sudoku</h4>
+              <p>Fill the 9×9</p>
+              <span class="foot">
+                <span class="tag">LOGIC</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+            <!-- Tic-Tac-Toe — # with X and O -->
+            <a class="tcard" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/><path d="M4.8 4.8l2.4 2.4M7.2 4.8L4.8 7.2"/><circle cx="18" cy="6" r="1.6"/></svg>
+              </span>
+              <h4>Tic-Tac-Toe</h4>
+              <p>Three in a row</p>
+              <span class="foot">
+                <span class="tag">CLASSIC</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+            <!-- Wordle-style — letter tiles row -->
+            <a class="tcard" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="5" height="10" rx="1"/><rect x="9.5" y="7" width="5" height="10" rx="1"/><rect x="16" y="7" width="5" height="10" rx="1"/><path d="M11 14v-4l1 1.5 1-1.5v4"/></svg>
+              </span>
+              <h4>Wordle-style</h4>
+              <p>Guess the word</p>
+              <span class="foot">
+                <span class="tag">WORD</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+            <!-- Breakout (SOON) — paddle, ball & bricks -->
+            <a class="tcard soon" href="#">
+              <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v3H4zM14 4h6v3h-6zM9 8h6v3H9z"/><circle cx="12" cy="15" r="1.3"/><path d="M7 20h10"/></svg>
+              </span>
+              <h4>Breakout</h4>
+              <p>Bricks &amp; paddle</p>
+              <span class="foot">
+                <span class="tag">SOON</span>
+                <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </span>
+            </a>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== FOOTER (identical on every page) ===== -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span class="logo" style="pointer-events:none"><span class="word" style="font-size:15px">astraa<span class="deva">अस्त्र</span></span></span>
+        <small>MONOCHROME · 100% LOCAL · NO TRACKERS</small>
+        <small>© 2026</small>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ===== COMMAND PALETTE (identical on every page) ===== -->
+  <div class="palette-backdrop" data-open="false">
+    <div class="palette" role="dialog" aria-label="Command palette">
+      <div class="palette__input">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="Search tools, games, pages…" />
+        <span class="kbd">ESC</span>
+      </div>
+      <div class="palette__list">
+        <a class="palette__item" data-active="true" href="./tool-password.html"><span>Password Generator</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tool-json.html"><span>JSON Editor</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Regex Tester</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Base64 Encoder</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./games.html"><span>Games</span><span class="tag">page</span></a>
+        <a class="palette__item" href="./about.html"><span>About astraa</span><span class="tag">page</span></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="./system.js"></script>
+</body>
+</html>

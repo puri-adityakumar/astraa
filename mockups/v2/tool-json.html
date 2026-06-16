@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JSON Editor — astraa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./system.css" />
+  <style>
+    /* ===== page-scoped: JSON editor grid, gutter, tree (monochrome only) ===== */
+    .jpanel {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .jgrid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+    .jpane { min-width: 0; }
+    .jpane + .jpane { border-left: 1px solid var(--border); }
+
+    /* header strip on each pane */
+    .jhead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      height: 36px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+    .jhead .lbl {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-2);
+    }
+    .jhead .meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    /* editor body: gutter + code */
+    .jeditor {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.7;
+    }
+    .jgutter {
+      padding: 14px 12px 16px;
+      text-align: right;
+      color: var(--faint);
+      border-right: 1px solid var(--border-faint);
+      background: var(--surface);
+      user-select: none;
+      white-space: pre;
+    }
+    .jcode {
+      padding: 14px 16px 16px;
+      margin: 0;
+      overflow-x: auto;
+      color: var(--text-2);
+      white-space: pre;
+      tab-size: 2;
+    }
+    /* monochrome "syntax" via weight/opacity only — never color */
+    .jcode .k   { color: var(--text); font-weight: 500; }     /* keys, brighter */
+    .jcode .s   { color: var(--muted); }                       /* strings, dimmer */
+    .jcode .n   { color: var(--text-2); font-weight: 500; }    /* numbers */
+    .jcode .b   { color: var(--text-2); font-weight: 500; }    /* booleans */
+    .jcode .nl  { color: var(--faint); font-style: italic; }   /* null */
+    .jcode .p   { color: var(--faint); }                       /* punctuation, faint */
+
+    /* tree pane */
+    .jtree {
+      padding: 8px 6px 12px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.4;
+      overflow-x: auto;
+    }
+    .trow {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px;
+      border-radius: var(--r-sm);
+      white-space: nowrap;
+      color: var(--text-2);
+    }
+    .trow[data-selected="true"] { background: var(--surface-2); }
+    .trow .chev {
+      width: 12px;
+      height: 12px;
+      flex: none;
+      color: var(--muted);
+      transition: transform .15s ease;
+    }
+    .trow[data-open="true"] .chev { transform: rotate(90deg); }
+    .trow .tk { color: var(--text); }                /* tree key, brighter */
+    .trow .colon { color: var(--faint); }
+    .trow .tv { color: var(--muted); }               /* tree value, dimmer */
+    .trow .tv.num, .trow .tv.bool { color: var(--text-2); }
+    .trow .tv.null { color: var(--faint); font-style: italic; }
+    .trow .hint {
+      margin-left: 4px;
+      color: var(--faint);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+    .trow .dot {                                       /* leaf marker */
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--faint); flex: none; margin-left: 1px; margin-right: 1px;
+    }
+    .indent { display: inline-block; width: 16px; flex: none; }
+
+    /* status bar */
+    .jstatus {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 9px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--surface-2);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .jstatus .ok { color: var(--text); }
+    .jstatus .pipe { color: var(--faint); }
+
+    @media (max-width: 760px) {
+      .jgrid { grid-template-columns: 1fr; }
+      .jpane + .jpane { border-left: 0; border-top: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+  <div class="atmosphere"></div>
+  <div class="grain"></div>
+
+  <div class="page">
+    <!-- ===== NAV (identical on every page) ===== -->
+    <nav class="nav">
+      <a class="logo" href="./index.html" aria-label="astraa home">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20 L14 4 L16 14 L4 20 Z" />
+        </svg>
+        <span class="word">astraa<span class="deva">अस्त्र</span></span>
+      </a>
+      <div class="nav__spacer"></div>
+      <div class="nav-links">
+        <a href="./tools.html" aria-current="page">Tools</a>
+        <a href="./games.html">Games</a>
+        <a href="./about.html">About</a>
+      </div>
+      <button class="search" data-open-palette aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="ph">Search tools…</span>
+        <span class="kbd">⌘K</span>
+      </button>
+      <div class="seg" role="group" aria-label="Theme">
+        <button data-theme-btn="dark" aria-label="Dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>Dark
+        </button>
+        <button data-theme-btn="light" aria-label="Light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>Light
+        </button>
+      </div>
+      <a class="ibtn" href="#" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+      </a>
+    </nav>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main>
+      <section class="section">
+        <div class="container">
+
+          <!-- top row: back + tag -->
+          <div class="rowflex" style="margin-bottom: 18px;">
+            <a class="viewall" href="./tools.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              Tools
+            </a>
+            <span class="tag">LOCAL</span>
+          </div>
+
+          <!-- title -->
+          <h1>JSON Editor</h1>
+          <p class="lede measure" style="margin-top: 12px;">Format, validate, explore and convert JSON — entirely in your browser.</p>
+
+          <!-- view tabs -->
+          <div class="seg" role="group" aria-label="View" style="margin-top: 26px;">
+            <button data-active="true">Text</button>
+            <button>Tree</button>
+            <button>Convert</button>
+            <button>Generate</button>
+          </div>
+
+          <!-- toolbar -->
+          <div class="rowflex wrap" style="margin-top: 16px; gap: 8px;">
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg>
+              Format
+            </button>
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16"/></svg>
+              Minify
+            </button>
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 4l-3 3M7 4l3 3M14 7h6M14 12h4M14 17h2"/></svg>
+              Sort keys
+            </button>
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1 0 5.6L12 14.6 9.4 12a4 4 0 0 1 5.3-5.7M9.3 17.7a4 4 0 0 1 0-5.6"/><path d="M3 3l18 18"/></svg>
+              Repair
+            </button>
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
+              Copy
+            </button>
+            <button class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>
+              Download
+            </button>
+          </div>
+
+          <!-- work area -->
+          <div class="jpanel" style="margin-top: 18px;">
+            <span class="xmark tl"></span>
+            <span class="xmark tr"></span>
+            <span class="xmark bl"></span>
+            <span class="xmark br"></span>
+
+            <div class="jgrid">
+              <!-- LEFT: editor -->
+              <div class="jpane">
+                <div class="jhead">
+                  <span class="lbl">INPUT.json</span>
+                  <span class="meta">16 lines · 412 B</span>
+                </div>
+                <div class="jeditor">
+                  <div class="jgutter"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</div><pre class="jcode"><span class="p">{</span>
+  <span class="k">"name"</span><span class="p">:</span> <span class="s">"astraa"</span><span class="p">,</span>
+  <span class="k">"version"</span><span class="p">:</span> <span class="n">2</span><span class="p">,</span>
+  <span class="k">"local"</span><span class="p">:</span> <span class="b">true</span><span class="p">,</span>
+  <span class="k">"meta"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="k">"trackers"</span><span class="p">:</span> <span class="nl">null</span><span class="p">,</span>
+    <span class="k">"theme"</span><span class="p">:</span> <span class="s">"monochrome"</span><span class="p">,</span>
+    <span class="k">"size"</span><span class="p">:</span> <span class="n">412</span>
+  <span class="p">},</span>
+  <span class="k">"tools"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="k">"id"</span><span class="p">:</span> <span class="s">"json"</span><span class="p">,</span>  <span class="k">"wip"</span><span class="p">:</span> <span class="b">false</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="k">"id"</span><span class="p">:</span> <span class="s">"regex"</span><span class="p">,</span> <span class="k">"wip"</span><span class="p">:</span> <span class="b">false</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="k">"id"</span><span class="p">:</span> <span class="s">"hash"</span><span class="p">,</span>  <span class="k">"wip"</span><span class="p">:</span> <span class="b">true</span>  <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span></pre>
+                </div>
+              </div>
+
+              <!-- RIGHT: tree -->
+              <div class="jpane">
+                <div class="jhead">
+                  <span class="lbl">TREE</span>
+                  <span class="meta">root · {4}</span>
+                </div>
+                <div class="jtree">
+                  <div class="trow" data-open="true">
+                    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                    <span class="tk">root</span><span class="hint">{4}</span>
+                  </div>
+
+                  <div class="trow">
+                    <span class="indent"></span>
+                    <span class="dot"></span>
+                    <span class="tk">name</span><span class="colon">:</span> <span class="tv">"astraa"</span>
+                  </div>
+                  <div class="trow">
+                    <span class="indent"></span>
+                    <span class="dot"></span>
+                    <span class="tk">version</span><span class="colon">:</span> <span class="tv num">2</span>
+                  </div>
+                  <div class="trow">
+                    <span class="indent"></span>
+                    <span class="dot"></span>
+                    <span class="tk">local</span><span class="colon">:</span> <span class="tv bool">true</span>
+                  </div>
+
+                  <div class="trow" data-selected="true" data-open="true">
+                    <span class="indent"></span>
+                    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                    <span class="tk">meta</span><span class="hint">{3}</span>
+                  </div>
+                  <div class="trow">
+                    <span class="indent"></span><span class="indent"></span>
+                    <span class="dot"></span>
+                    <span class="tk">trackers</span><span class="colon">:</span> <span class="tv null">null</span>
+                  </div>
+                  <div class="trow">
+                    <span class="indent"></span><span class="indent"></span>
+                    <span class="dot"></span>
+                    <span class="tk">theme</span><span class="colon">:</span> <span class="tv">"monochrome"</span>
+                  </div>
+                  <div class="trow">
+                    <span class="indent"></span><span class="indent"></span>
+                    <span class="dot"></span>
+                    <span class="tk">size</span><span class="colon">:</span> <span class="tv num">412</span>
+                  </div>
+
+                  <div class="trow">
+                    <span class="indent"></span>
+                    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                    <span class="tk">tools</span><span class="hint">[3]</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- status bar -->
+            <div class="jstatus">
+              <span class="ok">VALID</span>
+              <span class="pipe">·</span>
+              <span>16 LINES</span>
+              <span class="pipe">·</span>
+              <span>412 B</span>
+              <span class="pipe">·</span>
+              <span>UTF-8</span>
+              <span class="pipe">·</span>
+              <span>LOCAL</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== FOOTER (identical on every page) ===== -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span class="logo" style="pointer-events:none"><span class="word" style="font-size:15px">astraa<span class="deva">अस्त्र</span></span></span>
+        <small>MONOCHROME · 100% LOCAL · NO TRACKERS</small>
+        <small>© 2026</small>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ===== COMMAND PALETTE (identical on every page) ===== -->
+  <div class="palette-backdrop" data-open="false">
+    <div class="palette" role="dialog" aria-label="Command palette">
+      <div class="palette__input">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="Search tools, games, pages…" />
+        <span class="kbd">ESC</span>
+      </div>
+      <div class="palette__list">
+        <a class="palette__item" data-active="true" href="./tool-password.html"><span>Password Generator</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tool-json.html"><span>JSON Editor</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Regex Tester</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Base64 Encoder</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./games.html"><span>Games</span><span class="tag">page</span></a>
+        <a class="palette__item" href="./about.html"><span>About astraa</span><span class="tag">page</span></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="./system.js"></script>
+</body>
+</html>

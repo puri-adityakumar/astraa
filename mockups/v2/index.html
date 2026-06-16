@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>astraa — browser utility toolkit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./system.css" />
+</head>
+<body>
+  <div class="atmosphere"></div>
+  <div class="grain"></div>
+
+  <div class="page">
+    <!-- ===== NAV (identical on every page) ===== -->
+    <nav class="nav">
+      <a class="logo" href="./index.html" aria-label="astraa home">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20 L14 4 L16 14 L4 20 Z" />
+        </svg>
+        <span class="word">astraa<span class="deva">अस्त्र</span></span>
+      </a>
+      <div class="nav__spacer"></div>
+      <div class="nav-links">
+        <a href="./tools.html">Tools</a>
+        <a href="./games.html">Games</a>
+        <a href="./about.html">About</a>
+      </div>
+      <button class="search" data-open-palette aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="ph">Search tools…</span>
+        <span class="kbd">⌘K</span>
+      </button>
+      <div class="seg" role="group" aria-label="Theme">
+        <button data-theme-btn="dark" aria-label="Dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>Dark
+        </button>
+        <button data-theme-btn="light" aria-label="Light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>Light
+        </button>
+      </div>
+      <a class="ibtn" href="#" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+      </a>
+    </nav>
+
+    <!-- ===== PAGE CONTENT — replace this <main> per page ===== -->
+    <main>
+      <!-- ===== HERO ===== -->
+      <section class="hero">
+        <span class="glow"></span><span class="vignette"></span>
+        <div class="container"><div class="hero-inner">
+          <span class="eyebrow"><span class="tick"></span>CLIENT-SIDE TOOLKIT</span>
+          <h1 class="display" style="margin-top:24px">Stop searching.<br>Start solving.<br><span class="deva">अस्त्र</span> at your command.</h1>
+          <p class="sub">A fast collection of utilities that run entirely in your browser — no servers, no accounts, no tracking.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="./tools.html">Explore tools →</a>
+            <a class="btn btn-ghost" href="./games.html">Browse games</a>
+            <button class="btn btn-ghost" data-open-palette>Search ⌘K</button>
+          </div>
+          <div class="stats"><span><b>12</b>TOOLS</span><span class="sep"></span><span>100% LOCAL</span><span class="sep"></span><span>0 TRACKERS</span><span class="sep"></span><span>OPEN SOURCE</span></div>
+        </div></div>
+      </section>
+
+      <!-- ===== POPULAR ===== -->
+      <section class="section"><div class="container">
+        <div class="head-row">
+          <div class="section-head" style="margin:0;gap:12px"><span class="eyebrow"><span class="tick"></span>POPULAR</span><h2>Start here</h2></div>
+          <a class="viewall" href="./tools.html">View all tools →</a>
+        </div>
+        <div class="grid grid-3">
+
+          <a class="tcard" href="./tool-password.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="15.5" r="1"/></svg></span>
+            <h4>Password Generator</h4>
+            <p>Create strong, secure passwords</p>
+            <span class="foot">
+              <span class="tag">LOCAL</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+          <a class="tcard" href="./tool-json.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4C6 4 6 7 6 8s0 4-3 4c3 0 3 3 3 4s0 4 2 4"/><path d="M16 4c2 0 2 3 2 4s0 4 3 4c-3 0-3 3-3 4s0 4-2 4"/></svg></span>
+            <h4>JSON Editor</h4>
+            <p>Format, validate & convert</p>
+            <span class="foot">
+              <span class="tag">LOCAL</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+          <a class="tcard" href="./tools.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h4M16 7h4M9 4l6 16M7 17l-3 3M17 7l3-3"/><circle cx="12" cy="12" r="2"/></svg></span>
+            <h4>Regex Tester</h4>
+            <p>Live pattern matching</p>
+            <span class="foot">
+              <span class="tag">LOCAL</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+          <a class="tcard" href="./tools.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l4-3h8l4 3M4 7v10l4 3M20 7v10l-4 3M4 7l8 4 8-4M12 11v9"/></svg></span>
+            <h4>Base64</h4>
+            <p>Encode & decode anything</p>
+            <span class="foot">
+              <span class="tag">LOCAL</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+          <a class="tcard" href="./tools.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4M15 3h4a2 2 0 0 1 2 2v4M9 21H5a2 2 0 0 1-2-2v-4M15 21h4a2 2 0 0 0 2-2v-4M8 9h2M14 9h2M8 13h8M8 16h5"/></svg></span>
+            <h4>Hash Generator</h4>
+            <p>MD5, SHA-256 & more</p>
+            <span class="foot">
+              <span class="tag">LOCAL</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+          <a class="tcard" href="./tools.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 13l2 2-2 2M12 17h4"/></svg></span>
+            <h4>Snippet Generator</h4>
+            <p>Beautiful code images</p>
+            <span class="foot">
+              <span class="tag">LOCAL</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+        </div>
+      </div></section>
+
+      <!-- ===== PRINCIPLES ===== -->
+      <section class="section"><div class="container">
+        <div class="section-head">
+          <span class="eyebrow"><span class="tick"></span>PRINCIPLES</span>
+          <h2>No catch</h2>
+        </div>
+        <div class="grid grid-3">
+
+          <a class="tcard" href="./about.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8M12 17v4"/></svg></span>
+            <h4>Runs in your browser</h4>
+            <p>Every computation happens on your device — nothing is sent anywhere.</p>
+            <span class="foot">
+              <span class="tag">LOCAL</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+          <a class="tcard" href="./about.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3z"/><path d="M9.5 12l1.8 1.8 3.2-3.6"/></svg></span>
+            <h4>No account, ever</h4>
+            <p>No sign-ups, no emails, no cookies tracking what you do here.</p>
+            <span class="foot">
+              <span class="tag">PRIVATE</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+          <a class="tcard" href="./about.html">
+            <span class="xmark tl"></span><span class="xmark tr"></span><span class="xmark bl"></span><span class="xmark br"></span>
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></span>
+            <h4>Open source</h4>
+            <p>Inspect, fork or self-host the whole thing — released under MIT.</p>
+            <span class="foot">
+              <span class="tag">MIT</span>
+              <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </span>
+          </a>
+
+        </div>
+      </div></section>
+    </main>
+
+    <!-- ===== FOOTER (identical on every page) ===== -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span class="logo" style="pointer-events:none"><span class="word" style="font-size:15px">astraa<span class="deva">अस्त्र</span></span></span>
+        <small>MONOCHROME · 100% LOCAL · NO TRACKERS</small>
+        <small>© 2026</small>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ===== COMMAND PALETTE (identical on every page) ===== -->
+  <div class="palette-backdrop" data-open="false">
+    <div class="palette" role="dialog" aria-label="Command palette">
+      <div class="palette__input">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="Search tools, games, pages…" />
+        <span class="kbd">ESC</span>
+      </div>
+      <div class="palette__list">
+        <a class="palette__item" data-active="true" href="./tool-password.html"><span>Password Generator</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tool-json.html"><span>JSON Editor</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Regex Tester</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Base64 Encoder</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./games.html"><span>Games</span><span class="tag">page</span></a>
+        <a class="palette__item" href="./about.html"><span>About astraa</span><span class="tag">page</span></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="./system.js"></script>
+</body>
+</html>

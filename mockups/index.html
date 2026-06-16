@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>astraa v2 — design directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0b; --surface: #141416; --border: rgba(255,255,255,.09);
+    --text: #ededed; --muted: #8a8a8a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Geist", system-ui, sans-serif; background: var(--bg); color: var(--text);
+    min-height: 100vh; padding: 64px 24px; display: flex; flex-direction: column;
+    align-items: center; -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: "Geist Mono", monospace; }
+  .eyebrow {
+    font-family: "Geist Mono", monospace; font-size: 11px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .wrap { width: 100%; max-width: 880px; }
+  h1 { font-size: 40px; font-weight: 700; letter-spacing: -.03em; margin: 14px 0 10px; }
+  h1 .dev { font-family: "Noto Sans Devanagari", sans-serif; color: var(--muted); font-weight: 600; }
+  .lede { color: var(--muted); font-size: 16px; max-width: 560px; line-height: 1.6; }
+  .locked {
+    margin: 36px 0; border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px;
+    background: var(--surface);
+  }
+  .locked h2 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    font-family: "Geist Mono", monospace; color: var(--muted); margin-bottom: 14px; font-weight: 500; }
+  .locked ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; }
+  .locked li { font-size: 14px; color: var(--text); display: flex; gap: 10px; line-height: 1.5; }
+  .locked li b { color: var(--muted); font-weight: 500; min-width: 78px; font-family: "Geist Mono", monospace;
+    font-size: 11px; letter-spacing: .04em; text-transform: uppercase; padding-top: 3px; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  a.card {
+    display: block; border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+    background: var(--surface); text-decoration: none; color: var(--text);
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  a.card:hover { border-color: rgba(255,255,255,.24); transform: translateY(-2px); }
+  a.card .tag { font-family: "Geist Mono", monospace; font-size: 10px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted); }
+  a.card h3 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; margin: 10px 0 6px; }
+  a.card p { font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+  a.card .go { margin-top: 16px; font-family: "Geist Mono", monospace; font-size: 12px; color: var(--text); }
+  @media (max-width: 640px) { .locked ul, .cards { grid-template-columns: 1fr; } h1 { font-size: 32px; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="eyebrow">astraa v2 · design exploration</span>
+    <h1>Two directions <span class="dev">अस्त्र</span></h1>
+    <p class="lede">Same locked foundation, two treatments. Open each — every mockup shows desktop, tablet, and phone. Pick one to take into the spec.</p>
+
+    <div class="locked">
+      <h2>Locked decisions</h2>
+      <ul>
+        <li><b>Look</b><span>Monochrome, premium, minimal</span></li>
+        <li><b>Theme</b><span>Dark-first (light kept, later)</span></li>
+        <li><b>Type</b><span>Geist Sans + Geist Mono</span></li>
+        <li><b>Retire</b><span>Funnel Display, gradients, color</span></li>
+        <li><b>Logo</b><span>astraa wordmark + अस्त्र + arrowhead mark</span></li>
+        <li><b>Hindi</b><span>अस्त्र stays (shown: Noto Devanagari)</span></li>
+      </ul>
+    </div>
+
+    <a class="card" href="./hybrid.html" style="margin-bottom:16px;border-color:rgba(255,255,255,.22)">
+      <span class="tag">★ Hybrid · recommended</span>
+      <h3>Hybrid — dark + light toggle</h3>
+      <p>One system: Linear cinematic dark + Blueprint grid/corner-marker cards as connective tissue, themed both ways. Tap the Dark/Light toggle.</p>
+      <div class="go">open →</div>
+    </a>
+
+    <div class="cards">
+      <a class="card" href="./linear-dark.html">
+        <span class="tag">Direction A</span>
+        <h3>Linear — dark</h3>
+        <p>Cinematic off-black, bold type, faint atmospheric glow, hairline borders. Calm and premium.</p>
+        <div class="go">open →</div>
+      </a>
+      <a class="card" href="./blueprint-light.html">
+        <span class="tag">Direction B</span>
+        <h3>Blueprint — light</h3>
+        <p>Engineering paper: faint grid, corner + crosshair markers, mono labels. Technical and precise.</p>
+        <div class="go">open →</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>astraa — PAGE TITLE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./system.css" />
+</head>
+<body>
+  <div class="atmosphere"></div>
+  <div class="grain"></div>
+
+  <div class="page">
+    <!-- ===== NAV (identical on every page) ===== -->
+    <nav class="nav">
+      <a class="logo" href="./index.html" aria-label="astraa home">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20 L14 4 L16 14 L4 20 Z" />
+        </svg>
+        <span class="word">astraa<span class="deva">अस्त्र</span></span>
+      </a>
+      <div class="nav__spacer"></div>
+      <div class="nav-links">
+        <a href="./tools.html">Tools</a>
+        <a href="./games.html">Games</a>
+        <a href="./about.html">About</a>
+      </div>
+      <button class="search" data-open-palette aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="ph">Search tools…</span>
+        <span class="kbd">⌘K</span>
+      </button>
+      <div class="seg" role="group" aria-label="Theme">
+        <button data-theme-btn="dark" aria-label="Dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>Dark
+        </button>
+        <button data-theme-btn="light" aria-label="Light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg>Light
+        </button>
+      </div>
+      <a class="ibtn" href="#" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+      </a>
+    </nav>
+
+    <!-- ===== PAGE CONTENT — replace this <main> per page ===== -->
+    <main>
+      <!-- PAGE CONTENT HERE -->
+    </main>
+
+    <!-- ===== FOOTER (identical on every page) ===== -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span class="logo" style="pointer-events:none"><span class="word" style="font-size:15px">astraa<span class="deva">अस्त्र</span></span></span>
+        <small>MONOCHROME · 100% LOCAL · NO TRACKERS</small>
+        <small>© 2026</small>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ===== COMMAND PALETTE (identical on every page) ===== -->
+  <div class="palette-backdrop" data-open="false">
+    <div class="palette" role="dialog" aria-label="Command palette">
+      <div class="palette__input">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="Search tools, games, pages…" />
+        <span class="kbd">ESC</span>
+      </div>
+      <div class="palette__list">
+        <a class="palette__item" data-active="true" href="./tool-password.html"><span>Password Generator</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tool-json.html"><span>JSON Editor</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Regex Tester</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./tools.html"><span>Base64 Encoder</span><span class="tag">tool</span></a>
+        <a class="palette__item" href="./games.html"><span>Games</span><span class="tag">page</span></a>
+        <a class="palette__item" href="./about.html"><span>About astraa</span><span class="tag">page</span></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="./system.js"></script>
+</body>
+</html>
