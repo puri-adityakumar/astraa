@@ -2,6 +2,8 @@
  * Error handling utilities for user-friendly error messages
  */
 
+import * as Sentry from "@sentry/nextjs"
+
 export interface ErrorDetails {
   title: string
   message: string
@@ -103,6 +105,8 @@ export function logError(error: unknown, context?: Record<string, unknown>) {
     timestamp: new Date().toISOString(),
     userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "unknown",
   })
+
+  Sentry.captureException(error, context ? { extra: context } : undefined)
 }
 
 /**

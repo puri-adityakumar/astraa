@@ -135,3 +135,59 @@ describe("markdown-editor store (v3)", () => {
     expect(useMarkdownEditor.getState().sidebarOpen).toBe(true);
   });
 });
+
+describe("markdown-editor migrate()", () => {
+  const migrate = useMarkdownEditor.persist.getOptions().migrate!;
+
+  it("preserves files and sidebarOpen from a v2 blob, resets the rest", () => {
+    const oldBlob = {
+      files: [
+        {
+          id: "abc",
+          name: "old.md",
+          content: "# kept",
+          uploadedAt: 100,
+          updatedAt: 200,
+        },
+      ],
+      sidebarOpen: true,
+      // v2-era fields that no longer exist on the current shape
+      currentId: "abc",
+      mode: "edit",
+      draft: "stale draft",
+    };
+
+    const migrated = migrate(oldBlob, 2) as ReturnType<typeof useMarkdownEditor.getState>;
+
+    // surviving data is not wiped
+    expect(migrated.files).toEqual(oldBlob.files);
+    expect(migrated.sidebarOpen).toBe(true);
+    // everything else falls back to the v3 initial state
+    expect(migrated.schemaVersion).toBe(3);
+    expect(migrated.currentId).toBeNull();
+    expect(migrated.mode).toBe("view");
+    expect(migrated.draft).toBeNull();
+  });
+
+  it("defaults missing files/sidebarOpen when an old blob omits them", () => {
+    const migrated = migrate({}, 1) as ReturnType<typeof useMarkdownEditor.getState>;
+    expect(migrated.files).toEqual([]);
+    expect(migrated.sidebarOpen).toBe(false);
+    expect(migrated.schemaVersion).toBe(3);
+  });
+
+  it("passes a current-version blob through untouched", () => {
+    const current = {
+      schemaVersion: 3 as const,
+      files: [
+        { id: "x", name: "a.md", content: "c", uploadedAt: 1, updatedAt: 1 },
+      ],
+      currentId: "x",
+      mode: "view" as const,
+      sidebarOpen: false,
+      draft: null,
+    };
+    const migrated = migrate(current, 3);
+    expect(migrated).toBe(current);
+  });
+});

@@ -29,6 +29,8 @@ export function CryptoConverter({
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+
     const calculate = async () => {
       if (!amount || isNaN(Number(amount))) {
         onResult("")
@@ -38,7 +40,11 @@ export function CryptoConverter({
       setIsLoading(true)
       try {
         const price = await getCryptoPrice(cryptoCurrency, fiatCurrency)
-        
+
+        if (cancelled) {
+          return
+        }
+
         if (price === null) {
           onResult("Error fetching price");
           toast({
@@ -53,10 +59,15 @@ export function CryptoConverter({
         // Store numeric result string
         onResult(converted)
       } catch (error) {
+        if (cancelled) {
+          return
+        }
         console.error(error)
         onResult("Error")
       } finally {
-        setIsLoading(false)
+        if (!cancelled) {
+          setIsLoading(false)
+        }
       }
     }
 
@@ -64,7 +75,10 @@ export function CryptoConverter({
       calculate()
     }, 500) // Debounce
 
-    return () => clearTimeout(timer)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
   }, [amount, cryptoCurrency, fiatCurrency, onResult])
 
   return (

@@ -10,6 +10,7 @@ import { jsonToYaml, yamlToJson } from "@/lib/json/convert/yaml";
 import { jsonToCsv, isCsvCompatible } from "@/lib/json/convert/csv";
 import { jsonToMarkdown } from "@/lib/json/convert/markdown";
 import { logError } from "@/lib/error-handler";
+import { copyToClipboard } from "@/lib/clipboard";
 import type { ConvertFormat } from "@/lib/json/types";
 
 const FORMATS: { id: ConvertFormat; label: string; ext: string }[] = [
@@ -70,11 +71,19 @@ export function ConvertView() {
   const ext = FORMATS.find((f) => f.id === convertFormat)?.ext ?? "txt";
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    toast({
-      title: "Copied",
-      description: `${convertFormat.toUpperCase()} copied.`,
-    });
+    const result = await copyToClipboard(output);
+    toast(
+      result.success
+        ? {
+            title: "Copied",
+            description: `${convertFormat.toUpperCase()} copied.`,
+          }
+        : {
+            title: "Copy failed",
+            description: result.error,
+            variant: "destructive",
+          },
+    );
   };
   const onDownload = () => {
     const blob = new Blob([output], { type: "text/plain" });

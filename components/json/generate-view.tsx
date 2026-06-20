@@ -10,6 +10,7 @@ import { generateTypeScript } from "@/lib/json/generate/typescript";
 import { generateZod } from "@/lib/json/generate/zod";
 import { generateJsonSchema } from "@/lib/json/generate/json-schema";
 import { logError } from "@/lib/error-handler";
+import { copyToClipboard } from "@/lib/clipboard";
 import type { GenerateFormat } from "@/lib/json/types";
 
 const FORMATS: { id: GenerateFormat; label: string; ext: string }[] = [
@@ -64,8 +65,16 @@ export function GenerateView() {
   const ext = FORMATS.find((f) => f.id === generateFormat)?.ext ?? "txt";
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    toast({ title: "Copied" });
+    const result = await copyToClipboard(output);
+    toast(
+      result.success
+        ? { title: "Copied" }
+        : {
+            title: "Copy failed",
+            description: result.error,
+            variant: "destructive",
+          },
+    );
   };
   const onDownload = () => {
     const blob = new Blob([output], { type: "text/plain" });

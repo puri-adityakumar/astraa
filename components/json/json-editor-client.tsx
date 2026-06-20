@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { Card } from "@/components/ui/card";
 import { ViewTabs } from "./view-tabs";
 import { Toolbar } from "./toolbar";
 import { StatusBar } from "./status-bar";
-import { TextView } from "./text-view";
 import { TreeView } from "./tree-view";
 import { ConvertView } from "./convert-view";
 import { GenerateView } from "./generate-view";
@@ -14,6 +14,13 @@ import { useJsonEditor } from "@/lib/stores/json-editor";
 import { useToolSettings } from "@/lib/stores/tool-settings";
 import { createParseClient, type ParseClient } from "@/lib/json/parse-client";
 import { logError } from "@/lib/error-handler";
+
+const TextView = dynamic(() => import("./text-view").then((m) => m.TextView), {
+  ssr: false,
+  loading: () => (
+    <div className="p-4 text-sm text-muted-foreground">Loading editor…</div>
+  ),
+});
 
 export function JsonEditorClient() {
   const text = useJsonEditor((s) => s.text);

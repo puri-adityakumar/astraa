@@ -34,6 +34,8 @@ export function FiatConverter({
   }
 
   useEffect(() => {
+    let cancelled = false
+
     const calculate = async () => {
       if (!amount || isNaN(Number(amount))) {
         onResult("")
@@ -43,7 +45,11 @@ export function FiatConverter({
       setIsLoading(true)
       try {
         const rate = await getExchangeRate(fromCurrency, toCurrency)
-        
+
+        if (cancelled) {
+          return;
+        }
+
         if (rate === null) {
           onResult("Error");
           toast({
@@ -70,6 +76,9 @@ export function FiatConverter({
 
         onResult(converted) // Just the number string
       } catch (error) {
+        if (cancelled) {
+          return
+        }
         console.error(error)
         toast({
           title: "Error",
@@ -77,7 +86,9 @@ export function FiatConverter({
           variant: "destructive",
         })
       } finally {
-        setIsLoading(false)
+        if (!cancelled) {
+          setIsLoading(false)
+        }
       }
     }
 
@@ -85,7 +96,10 @@ export function FiatConverter({
       calculate()
     }, 500) // Debounce
 
-    return () => clearTimeout(timer)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
   }, [amount, fromCurrency, toCurrency, onResult, toast])
 
   return (

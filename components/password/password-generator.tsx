@@ -47,7 +47,7 @@ export function PasswordGeneratorClient() {
 
   const [pinLength, setPinLength] = useState(4)
 
-  const generate = useCallback(() => {
+  const generate = useCallback(async () => {
     let result
     if (mode === "random") {
       result = generatePassword(length, {
@@ -57,7 +57,7 @@ export function PasswordGeneratorClient() {
         symbols,
       })
     } else if (mode === "memorable") {
-      result = generateMemorablePassword(wordCount, capitalize)
+      result = await generateMemorablePassword(wordCount, capitalize)
     } else {
       result = generatePin(pinLength)
     }

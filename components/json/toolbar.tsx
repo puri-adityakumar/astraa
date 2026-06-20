@@ -20,6 +20,7 @@ import {
   MAX_DOCUMENT_BYTES,
 } from "@/lib/json/validators";
 import { logError } from "@/lib/error-handler";
+import { copyToClipboard } from "@/lib/clipboard";
 
 export function Toolbar() {
   const text = useJsonEditor((s) => s.text);
@@ -46,8 +47,16 @@ export function Toolbar() {
   };
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    toast({ title: "Copied" });
+    const result = await copyToClipboard(text);
+    toast(
+      result.success
+        ? { title: "Copied" }
+        : {
+            title: "Copy failed",
+            description: result.error,
+            variant: "destructive",
+          },
+    );
   };
 
   const onDownload = () => {

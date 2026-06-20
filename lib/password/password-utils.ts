@@ -1,5 +1,3 @@
-import niceware from 'niceware';
-
 interface PasswordOptions {
     uppercase: boolean
     lowercase: boolean
@@ -88,10 +86,14 @@ export function generatePassword(length: number, options: PasswordOptions): Pass
     };
 }
 
-export function generateMemorablePassword(count: number, capitalize: boolean): PasswordResult {
+export async function generateMemorablePassword(
+    count: number,
+    capitalize: boolean,
+): Promise<PasswordResult> {
     const safeCount = Math.max(2, Math.min(count, 10));
 
     try {
+        const niceware = (await import("niceware")).default;
         const bytes = crypto.getRandomValues(new Uint8Array(safeCount * 2));
         const words = niceware.bytesToPassphrase(bytes);
 

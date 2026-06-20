@@ -166,7 +166,7 @@ export const useActivityTracking = create<ActivityTrackingState>()(
           stats: {
             ...state.stats,
             recentActivities: state.stats.recentActivities.filter(
-              activity => activity.timestamp > cutoffDate
+              activity => new Date(activity.timestamp).getTime() > cutoffDate.getTime()
             )
           }
         }))

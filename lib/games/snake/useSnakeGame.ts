@@ -60,8 +60,13 @@ export function useSnakeGame() {
       return
     }
 
-    // Check collision with self
-    if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+    // Check if snake will eat food (it grows this tick, so the tail stays put)
+    const willEat = head.x === gameState.food.x && head.y === gameState.food.y
+
+    // Check collision with self, excluding the tail cell that is about to be
+    // vacated this tick (unless the snake grows, in which case the tail stays)
+    const body = willEat ? newSnake : newSnake.slice(0, -1)
+    if (body.some(segment => segment.x === head.x && segment.y === head.y)) {
       setGameState(prev => ({ ...prev, isGameOver: true }))
       return
     }
@@ -69,7 +74,7 @@ export function useSnakeGame() {
     newSnake.unshift(head)
 
     // Check if snake ate food
-    if (head.x === gameState.food.x && head.y === gameState.food.y) {
+    if (willEat) {
       setGameState(prev => ({
         ...prev,
         score: prev.score + 1,
