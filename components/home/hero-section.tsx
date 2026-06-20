@@ -43,7 +43,7 @@ function openPalette() {
 
 // system.css .btn — shared base; primary/ghost modifiers applied per-button.
 const BTN_BASE =
-  "inline-flex items-center justify-center gap-2 h-11 px-[18px] rounded-[9px] " +
+  "inline-flex items-center justify-center gap-2 h-11 px-[22px] rounded-full " +
   "font-sans text-[14px] font-medium tracking-[-0.01em] border border-transparent " +
   "transition-[transform,background-color,border-color,box-shadow] duration-200";
 const BTN_GHOST =
@@ -72,7 +72,7 @@ export function HeroSection() {
 
       <div className="container max-w-[1080px] mx-auto px-7">
         <motion.div
-          className="relative z-[1] text-center max-w-[880px] mx-auto py-[clamp(56px,9vw,96px)]"
+          className="relative z-[1] text-center max-w-[920px] mx-auto py-[clamp(60px,9.5vw,104px)]"
           {...containerProps}
         >
           <motion.span
@@ -87,7 +87,7 @@ export function HeroSection() {
           </motion.span>
 
           <motion.h1
-            className="mt-6 font-sans font-extrabold text-[length:clamp(38px,6.4vw,64px)] leading-[1.02] tracking-[-0.035em] text-foreground"
+            className="mt-6 font-sans font-bold text-[length:clamp(40px,6.7vw,72px)] leading-[1.04] tracking-[-0.03em] text-foreground"
             {...itemProps}
           >
             Stop searching.

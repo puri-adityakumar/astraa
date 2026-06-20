@@ -175,7 +175,6 @@ export function Footer() {
 
       {/* Scoped hover styles */}
       <style>{`
-        :root { --surface: hsl(var(--card)); }
         .footer-ibtn:hover {
           background: var(--surface) !important;
           border-color: var(--hairline-strong) !important;

@@ -161,8 +161,6 @@ export function Navigation() {
   return (
     <>
       <style>{`
-        /* --surface alias (hsl(var(--card))) for components that use system.css tokens */
-        :root { --surface: hsl(var(--card)); }
         /* Nav-specific micro-styles */
         .nav-search-btn:hover { border-color: var(--hairline-strong); }
         .nav-ibtn:hover {

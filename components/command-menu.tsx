@@ -10,8 +10,6 @@ import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 
 // ─── Palette styles scoped to this component ─────────────────────────────────
 const PALETTE_CSS = `
-/* --surface alias if not defined by globals */
-:root { --surface: hsl(var(--card)); }
 .cmd-backdrop {
   position: fixed; inset: 0; z-index: 80;
   background: rgba(0,0,0,.5);

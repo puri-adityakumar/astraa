@@ -24,7 +24,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ToolsProvider } from "@/lib/tools-context";
 import { ActivityProvider } from "@/lib/activity-tracker";
 import { PageTransition } from "@/components/ui/page-transition";
-import { LandingBackground } from "@/components/landing-background";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -167,7 +166,6 @@ export default function RootLayout({
             <TooltipProvider>
               <ToolsProvider>
                 <ActivityProvider>
-                  <LandingBackground />
                   <div className="min-h-screen flex flex-col">
                     <Navigation />
                     <main id="main-content" className="flex-1 w-full" tabIndex={-1}>

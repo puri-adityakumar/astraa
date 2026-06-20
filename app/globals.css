@@ -62,24 +62,25 @@
 
 /* ============ DARK TOKENS (.dark) — spec section 2 ============ */
 .dark {
-  --background: 240 6% 4%;
+  /* Pure neutral grayscale (polar.sh flat-black) — no hue tint */
+  --background: 0 0% 3.5%;
   --foreground: 0 0% 93%;
-  --card: 240 5% 8%;
+  --card: 0 0% 6%;
   --surface: hsl(var(--card)); /* resolved alias for components using the system.css token name */
   --card-foreground: 0 0% 93%;
-  --popover: 240 5% 8%;
+  --popover: 0 0% 6%;
   --popover-foreground: 0 0% 93%;
-  --surface-2: 240 4% 9%;
-  --surface-3: 240 5% 11%;
+  --surface-2: 0 0% 8%;
+  --surface-3: 0 0% 11%;
   --text-2: 0 0% 71%;
-  --faint: 240 2% 37%;
+  --faint: 0 0% 40%;
   --primary: 0 0% 98%;
-  --primary-foreground: 240 6% 4%;
-  --secondary: 240 4% 9%;
+  --primary-foreground: 0 0% 4%;
+  --secondary: 0 0% 8%;
   --secondary-foreground: 0 0% 93%;
-  --muted: 240 4% 9%;
-  --muted-foreground: 0 0% 54%;
-  --accent: 240 5% 11%;
+  --muted: 0 0% 8%;
+  --muted-foreground: 0 0% 56%;
+  --accent: 0 0% 11%;
   --accent-foreground: 0 0% 93%;
   --destructive: 0 40% 54%;
   --destructive-foreground: 0 0% 98%;
@@ -90,8 +91,9 @@
   --warning-foreground: 0 0% 54%;
   --info: 0 0% 93%;
   --info-foreground: 0 0% 54%;
-  --border: 240 4% 14%;
-  --input: 240 4% 14%;
+  --border: 0 0% 13%;
+  --border-strong: 0 0% 28%;
+  --input: 0 0% 13%;
   --ring: 0 0% 83%;
   --nav-height: 64px;
 
@@ -274,71 +276,9 @@
   .animate-pulse-subtle {
     animation: pulse-subtle 2s ease-in-out infinite;
   }
-
-  /* Center-focused layout utilities */
-  .content-center {
-    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
-  }
-
-  .content-narrow {
-    @apply mx-auto max-w-3xl px-4 sm:px-6;
-  }
-
-  .content-wide {
-    @apply mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8;
-  }
-
-  /* Touch-friendly spacing */
-  .touch-spacing {
-    @apply p-4 sm:p-6 lg:p-8;
-  }
-
-  /* Responsive grid utilities */
-  .grid-responsive {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
-  }
-
-  /* Mobile-optimized card */
-  .card-mobile {
-    @apply p-4 sm:p-6 rounded-lg;
-  }
-
-  /* Fluid spacing */
-  .section-spacing {
-    @apply py-12 sm:py-16 lg:py-24;
-  }
-
-  .section-spacing-sm {
-    @apply py-8 sm:py-12 lg:py-16;
-  }
-
-  /* Enhanced button hover effects */
-  .btn-hover-lift {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
-  }
-
-  /* Card with enhanced shadow */
-  .card-elevated {
-    @apply shadow-lg hover:shadow-2xl transition-shadow duration-300;
-  }
-
-  /* Smooth border radius transitions */
-  .rounded-smooth {
-    @apply rounded-xl transition-all duration-300 hover:rounded-2xl;
-  }
 }
 
 /* Accessibility Features */
-
-/* Reduced Motion */
-.reduce-motion *,
-.reduce-motion *::before,
-.reduce-motion *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-  scroll-behavior: auto !important;
-}
 
 /* Font Size Variants */
 .font-small {
