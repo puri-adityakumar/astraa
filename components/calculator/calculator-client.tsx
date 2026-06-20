@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CalculatorDisplay } from "@/components/calculator/calculator-display";
@@ -122,6 +122,65 @@ export function CalculatorClient() {
     [display, angleMode],
   );
 
+  // Stable handler maps so CalculatorButton's memo isn't defeated by fresh
+  // inline arrow refs on every render.
+  const setAngleModeHandlers = useMemo(
+    () => ({
+      RAD: () => setAngleMode("RAD"),
+      DEG: () => setAngleMode("DEG"),
+    }),
+    [],
+  );
+
+  const numberHandlers = useMemo(
+    () =>
+      ({
+        "0": () => appendNumber("0"),
+        "1": () => appendNumber("1"),
+        "2": () => appendNumber("2"),
+        "3": () => appendNumber("3"),
+        "4": () => appendNumber("4"),
+        "5": () => appendNumber("5"),
+        "6": () => appendNumber("6"),
+        "7": () => appendNumber("7"),
+        "8": () => appendNumber("8"),
+        "9": () => appendNumber("9"),
+        ".": () => appendNumber("."),
+        pi: () => appendNumber("3.14159"),
+        e: () => appendNumber("2.71828"),
+      }) as const,
+    [appendNumber],
+  );
+
+  const operatorHandlers = useMemo(
+    () =>
+      ({
+        "(": () => appendOperator("("),
+        ")": () => appendOperator(")"),
+        "%": () => appendOperator("%"),
+        "/": () => appendOperator("/"),
+        "*": () => appendOperator("*"),
+        "-": () => appendOperator("-"),
+        "+": () => appendOperator("+"),
+        "^": () => appendOperator("^"),
+      }) as const,
+    [appendOperator],
+  );
+
+  const functionHandlers = useMemo(
+    () =>
+      ({
+        fact: () => applyFunction("fact"),
+        sin: () => applyFunction("sin"),
+        cos: () => applyFunction("cos"),
+        tan: () => applyFunction("tan"),
+        ln: () => applyFunction("ln"),
+        log: () => applyFunction("log"),
+        sqrt: () => applyFunction("sqrt"),
+      }) as const,
+    [applyFunction],
+  );
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -175,7 +234,7 @@ export function CalculatorClient() {
         <div className="bg-muted/30 p-2 flex items-center gap-2 border-b border-border/50 min-h-[50px]">
           <div className="flex bg-muted/50 rounded-md p-1">
             <button
-              onClick={() => setAngleMode("RAD")}
+              onClick={setAngleModeHandlers.RAD}
               className={cn(
                 "px-3 py-1 text-xs font-medium rounded-sm transition-all",
                 angleMode === "RAD"
@@ -186,7 +245,7 @@ export function CalculatorClient() {
               RAD
             </button>
             <button
-              onClick={() => setAngleMode("DEG")}
+              onClick={setAngleModeHandlers.DEG}
               className={cn(
                 "px-3 py-1 text-xs font-medium rounded-sm transition-all",
                 angleMode === "DEG"
@@ -209,7 +268,7 @@ export function CalculatorClient() {
           <div className="p-2 grid grid-cols-3 gap-1 content-start border-r border-border/50">
             <CalculatorButton
               value="rad"
-              onClick={() => setAngleMode("RAD")}
+              onClick={setAngleModeHandlers.RAD}
               variant="secondary"
               className={cn(
                 "text-sm",
@@ -218,7 +277,7 @@ export function CalculatorClient() {
             />
             <CalculatorButton
               value="deg"
-              onClick={() => setAngleMode("DEG")}
+              onClick={setAngleModeHandlers.DEG}
               variant="secondary"
               className={cn(
                 "text-sm",
@@ -227,72 +286,72 @@ export function CalculatorClient() {
             />
             <CalculatorButton
               value="x!"
-              onClick={() => applyFunction("fact")}
+              onClick={functionHandlers.fact}
               variant="secondary"
               className="text-sm"
             />
 
             <CalculatorButton
               value="("
-              onClick={() => appendOperator("(")}
+              onClick={operatorHandlers["("]}
               variant="secondary"
             />
             <CalculatorButton
               value=")"
-              onClick={() => appendOperator(")")}
+              onClick={operatorHandlers[")"]}
               variant="secondary"
             />
             <CalculatorButton
               value="%"
-              onClick={() => appendOperator("%")}
+              onClick={operatorHandlers["%"]}
               variant="secondary"
             />
 
             <CalculatorButton
               value="sin"
-              onClick={() => applyFunction("sin")}
+              onClick={functionHandlers.sin}
               variant="secondary"
             />
             <CalculatorButton
               value="cos"
-              onClick={() => applyFunction("cos")}
+              onClick={functionHandlers.cos}
               variant="secondary"
             />
             <CalculatorButton
               value="tan"
-              onClick={() => applyFunction("tan")}
+              onClick={functionHandlers.tan}
               variant="secondary"
             />
 
             <CalculatorButton
               value="ln"
-              onClick={() => applyFunction("ln")}
+              onClick={functionHandlers.ln}
               variant="secondary"
             />
             <CalculatorButton
               value="log"
-              onClick={() => applyFunction("log")}
+              onClick={functionHandlers.log}
               variant="secondary"
             />
             <CalculatorButton
               value="√"
-              onClick={() => applyFunction("sqrt")}
+              onClick={functionHandlers.sqrt}
               variant="secondary"
             />
 
             <CalculatorButton
               value="π"
-              onClick={() => appendNumber("3.14159")}
+              onClick={numberHandlers.pi}
               variant="secondary"
             />
             <CalculatorButton
               value="e"
-              onClick={() => appendNumber("2.71828")}
+              onClick={numberHandlers.e}
               variant="secondary"
             />
             <CalculatorButton
               value="^"
-              onClick={() => appendOperator("^")}
+              onClick={operatorHandlers["^"]}
               variant="secondary"
             />
           </div>
@@ -307,13 +366,13 @@ export function CalculatorClient() {
             />
             <CalculatorButton
               value="÷"
-              onClick={() => appendOperator("/")}
+              onClick={operatorHandlers["/"]}
               variant="secondary"
               className="text-primary font-bold bg-muted/50"
             />
             <CalculatorButton
               value="×"
-              onClick={() => appendOperator("*")}
+              onClick={operatorHandlers["*"]}
               variant="secondary"
               className="text-primary font-bold bg-muted/50"
             />
@@ -326,61 +385,61 @@ export function CalculatorClient() {
 
             <CalculatorButton
               value="7"
-              onClick={() => appendNumber("7")}
+              onClick={numberHandlers["7"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="8"
-              onClick={() => appendNumber("8")}
+              onClick={numberHandlers["8"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="9"
-              onClick={() => appendNumber("9")}
+              onClick={numberHandlers["9"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="-"
-              onClick={() => appendOperator("-")}
+              onClick={operatorHandlers["-"]}
               variant="secondary"
               className="text-primary font-bold bg-muted/50"
             />
 
             <CalculatorButton
               value="4"
-              onClick={() => appendNumber("4")}
+              onClick={numberHandlers["4"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="5"
-              onClick={() => appendNumber("5")}
+              onClick={numberHandlers["5"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="6"
-              onClick={() => appendNumber("6")}
+              onClick={numberHandlers["6"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="+"
-              onClick={() => appendOperator("+")}
+              onClick={operatorHandlers["+"]}
               variant="secondary"
               className="text-primary font-bold bg-muted/50"
             />
 
             <CalculatorButton
               value="1"
-              onClick={() => appendNumber("1")}
+              onClick={numberHandlers["1"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="2"
-              onClick={() => appendNumber("2")}
+              onClick={numberHandlers["2"]}
               className="bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="3"
-              onClick={() => appendNumber("3")}
+              onClick={numberHandlers["3"]}
               className="bg-background hover:bg-muted/50"
             />
 
@@ -393,12 +452,12 @@ export function CalculatorClient() {
 
             <CalculatorButton
               value="0"
-              onClick={() => appendNumber("0")}
+              onClick={numberHandlers["0"]}
               className="col-span-2 bg-background hover:bg-muted/50"
             />
             <CalculatorButton
               value="."
-              onClick={() => appendNumber(".")}
+              onClick={numberHandlers["."]}
               className="bg-background hover:bg-muted/50"
             />
           </div>

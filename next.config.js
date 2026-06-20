@@ -26,6 +26,23 @@ const nextConfig = {
             key: "X-DNS-Prefetch-Control",
             value: "on",
           },
+          {
+            // Report-Only for now so it cannot break the site (markdown
+            // preview injects user HTML via dangerouslySetInnerHTML). Tighten
+            // script-src with a nonce/hash before switching to enforcing CSP.
+            key: "Content-Security-Policy-Report-Only",
+            value: [
+              "default-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "frame-ancestors 'self'",
+              "img-src 'self' data: https:",
+              "style-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-inline'",
+              "font-src 'self' data:",
+              "connect-src 'self' https:",
+            ].join("; "),
+          },
         ],
       },
       {

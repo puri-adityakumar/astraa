@@ -31,6 +31,7 @@ export const scientificFunctions = {
 
 const WHITESPACE_RE = /\s+/g;
 const OPERATOR_SET = new Set(["+", "-", "*", "/", "^"]);
+const RIGHT_ASSOCIATIVE = new Set(["^"]);
 
 export function evaluateExpression(expression: string): number {
   // Remove whitespace and validate
@@ -54,7 +55,7 @@ function tokenize(expression: string): string[] {
   for (let i = 0; i < expression.length; i++) {
     const char = expression[i]
 
-    if (char && isOperator(char)) {
+    if (char && (isOperator(char) || isParenthesis(char) || char === "%")) {
       if (current) tokens.push(current)
       tokens.push(char)
       current = ''
@@ -72,20 +73,46 @@ function isOperator(char: string): boolean {
   return OPERATOR_SET.has(char);
 }
 
+function isParenthesis(char: string): boolean {
+  return char === "(" || char === ")";
+}
+
 function toPostfix(tokens: string[]): string[] {
   const output: string[] = []
   const operators: string[] = []
 
   for (const token of tokens) {
-    if (isOperator(token)) {
+    if (token === "%") {
+      // Postfix percent: applies directly to the preceding value (x% = x / 100).
+      output.push(token)
+    } else if (isOperator(token)) {
+      const current = operations[token]
+      if (!current) continue
+      const rightAssociative = RIGHT_ASSOCIATIVE.has(token)
       while (operators.length > 0) {
         const lastOp = operators[operators.length - 1]
-        if (!lastOp || !operations[lastOp] || !operations[token]) break
-        if (operations[lastOp].precedence < operations[token].precedence) break
+        if (!lastOp || !operations[lastOp]) break
+        const last = operations[lastOp]
+        // Right-associative operators (^) only pop on strictly-higher precedence;
+        // left-associative operators pop on equal-or-higher precedence.
+        if (rightAssociative) {
+          if (last.precedence <= current.precedence) break
+        } else if (last.precedence < current.precedence) {
+          break
+        }
         const popped = operators.pop()
         if (popped) output.push(popped)
       }
       operators.push(token)
+    } else if (token === "(") {
+      operators.push(token)
+    } else if (token === ")") {
+      while (operators.length > 0 && operators[operators.length - 1] !== "(") {
+        const popped = operators.pop()
+        if (popped) output.push(popped)
+      }
+      // Discard the matching "(" if present.
+      if (operators[operators.length - 1] === "(") operators.pop()
     } else {
       output.push(token)
     }
@@ -93,7 +120,7 @@ function toPostfix(tokens: string[]): string[] {
 
   while (operators.length > 0) {
     const popped = operators.pop()
-    if (popped) output.push(popped)
+    if (popped && popped !== "(") output.push(popped)
   }
 
   return output
@@ -103,10 +130,17 @@ function evaluatePostfix(tokens: string[]): number {
   const stack: number[] = []
 
   for (const token of tokens) {
-    if (isOperator(token) && operations[token]) {
+    if (token === "%") {
+      const a = stack.pop()
+      if (a !== undefined) {
+        stack.push(a / 100)
+      } else {
+        return NaN
+      }
+    } else if (isOperator(token) && operations[token]) {
       const b = stack.pop()
       const a = stack.pop()
-      
+
       if (a !== undefined && b !== undefined) {
         stack.push(operations[token].execute(a, b))
       } else {

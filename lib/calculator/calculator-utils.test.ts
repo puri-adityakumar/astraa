@@ -35,6 +35,24 @@ describe("evaluateExpression", () => {
   it("handles division by zero", () => {
     expect(evaluateExpression("5/0")).toBe(Infinity);
   });
+  it("respects parentheses precedence", () => {
+    expect(evaluateExpression("(2+3)*4")).toBe(20);
+  });
+  it("handles nested parentheses", () => {
+    expect(evaluateExpression("((1+2)*(3+4))")).toBe(21);
+  });
+  it("handles parentheses overriding exponent precedence", () => {
+    expect(evaluateExpression("2*(3+1)^2")).toBe(32);
+  });
+  it("evaluates postfix percent as value/100", () => {
+    expect(evaluateExpression("50%")).toBe(0.5);
+  });
+  it("combines percent with multiplication", () => {
+    expect(evaluateExpression("200*50%")).toBe(100);
+  });
+  it("treats exponentiation as right-associative", () => {
+    expect(evaluateExpression("2^3^2")).toBe(512);
+  });
 });
 
 describe("scientificFunctions", () => {
