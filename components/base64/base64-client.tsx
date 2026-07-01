@@ -302,7 +302,7 @@ export function Base64Client() {
         className="space-y-4 text-center sm:text-left"
         variants={headerVariants}
       >
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
           Base64 Encoder &amp; Decoder
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">

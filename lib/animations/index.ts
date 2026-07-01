@@ -10,6 +10,7 @@ export { ANIMATION_CONFIG, shouldReduceMotion } from "./config";
 export {
   fadeIn,
   fadeInUp,
+  fadeInUpGentle,
   fadeInDown,
   fadeInLeft,
   fadeInRight,
@@ -20,6 +21,7 @@ export {
   staggerContainer,
   staggerContainerFast,
   staggerContainerSlow,
+  staggerGentle,
   staggerItem,
   rotateIn,
   flipIn,

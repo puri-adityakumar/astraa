@@ -87,7 +87,7 @@ export function HeroSection() {
           </motion.span>
 
           <motion.h1
-            className="mt-6 font-sans font-bold text-[length:clamp(40px,6.7vw,72px)] leading-[1.04] tracking-[-0.03em] text-foreground"
+            className="mt-6 font-sans font-medium text-[length:clamp(40px,6.8vw,84px)] leading-[1.04] tracking-[-0.03em] text-foreground"
             {...itemProps}
           >
             Stop searching.

@@ -10,7 +10,7 @@ export function LofiStudioClient() {
     <WorkInProgress>
       <div className="max-w-6xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-bold">Lofi Focus Studio</h1>
+          <h1 className="text-3xl font-semibold">Lofi Focus Studio</h1>
           <p className="text-muted-foreground">
             Stay productive with lofi beats, pomodoro timer, and task
             management

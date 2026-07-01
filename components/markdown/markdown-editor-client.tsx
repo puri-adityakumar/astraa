@@ -227,7 +227,7 @@ export function MarkdownEditorClient() {
   return (
     <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
       <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
           Markdown
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
@@ -287,7 +287,7 @@ export function MarkdownEditorClient() {
             className={cn(
               "flex min-w-0 flex-col overflow-hidden bg-card",
               fullscreen
-                ? "fixed inset-0 z-50 h-screen w-screen rounded-none border-0 shadow-none"
+                ? "fixed inset-0 z-50 h-dvh w-screen rounded-none border-0 shadow-none"
                 : "h-full rounded-xl border shadow-sm",
             )}
           >

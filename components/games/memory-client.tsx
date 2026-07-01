@@ -20,7 +20,7 @@ export function MemoryClient() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold">Memory Game</h1>
+          <h1 className="text-4xl font-semibold">Memory Game</h1>
           <p className="text-muted-foreground">
             Match pairs of cards to win. Try to complete the game in as few
             moves as possible!
@@ -62,7 +62,7 @@ export function MemoryClient() {
 
           {isGameOver && (
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Congratulations!</h2>
+              <h2 className="text-2xl font-semibold mb-4">Congratulations!</h2>
               <p className="text-muted-foreground mb-4">
                 You completed the game in {moves} moves
               </p>

@@ -54,7 +54,7 @@ export function UnitConverterClient() {
     <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
       {/* Header */}
       <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
           Unit Converter
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">

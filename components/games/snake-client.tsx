@@ -20,7 +20,7 @@ export function SnakeClient() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold">Snake Game</h1>
+          <h1 className="text-4xl font-semibold">Snake Game</h1>
           <p className="text-muted-foreground">
             Use arrow keys to control the snake. Eat food to grow longer!
           </p>
@@ -64,7 +64,7 @@ export function SnakeClient() {
             {isGameOver && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
+                  <h2 className="text-2xl font-semibold mb-4">Game Over!</h2>
                   <p className="text-muted-foreground mb-4">
                     Final Score: {score}
                   </p>

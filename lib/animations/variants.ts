@@ -36,6 +36,36 @@ export const fadeInUp: Variants = {
 };
 
 /**
+ * Gentle fade-up — restrained premium-minimal motion (polar-style).
+ * Smaller offset and faster duration than fadeInUp; the default for home
+ * sections and card grids. Replaces per-component local copies.
+ */
+export const fadeInUpGentle: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: ANIMATION_CONFIG.ease.smooth,
+    },
+  },
+};
+
+/**
+ * Gentle stagger container — pairs with fadeInUpGentle. No delayChildren so
+ * the first item animates immediately (home sections want a snappy lead-in).
+ */
+export const staggerGentle: Variants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.06,
+    },
+  },
+};
+
+/**
  * Fade in with downward motion
  */
 export const fadeInDown: Variants = {

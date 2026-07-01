@@ -166,7 +166,7 @@ export default function RootLayout({
             <TooltipProvider>
               <ToolsProvider>
                 <ActivityProvider>
-                  <div className="min-h-screen flex flex-col">
+                  <div className="min-h-dvh flex flex-col">
                     <Navigation />
                     <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
                       <PageTransition type="fade">

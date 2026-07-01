@@ -19,10 +19,10 @@ function formatNumber(num: number): string {
 }
 
 const SEP =
-  "inline-block w-px h-[11px] mx-[18px] opacity-60 bg-[color:var(--hairline-strong)]"
+  "inline-block w-px h-5 mx-3 opacity-60 bg-[color:var(--hairline-strong)] align-middle"
 
-// Live site stats, styled to match the v2 hero mono stats row. Renders nothing
-// until /api/stats resolves (silent fail keeps the hero clean if unavailable).
+// Live site stats. Polar data-table "big number / muted label" row (compact in hero).
+// Renders nothing until /api/stats resolves (silent fail keeps the hero clean if unavailable).
 export function StatsBar() {
   const [stats, setStats] = useState<Stats | null>(null)
 
@@ -50,14 +50,18 @@ export function StatsBar() {
   ]
 
   return (
-    <div className="mt-10 inline-flex flex-wrap items-center justify-center font-mono text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
+    <div className="mt-10 inline-flex flex-wrap items-center justify-center font-mono">
       {items.map((item, index) => (
         <span key={item.label} className="inline-flex items-center">
           {index > 0 ? <span aria-hidden="true" className={SEP} /> : null}
-          <b className="mr-1.5 font-semibold text-foreground tabular-nums">
-            {formatNumber(item.value)}
-          </b>
-          {item.label}
+          <span className="inline-flex flex-col items-center">
+            <span className="font-semibold text-[15px] leading-none tabular-nums text-foreground">
+              {formatNumber(item.value)}
+            </span>
+            <span className="mt-px text-[9px] font-medium tracking-[0.18em] uppercase text-muted-foreground">
+              {item.label}
+            </span>
+          </span>
         </span>
       ))}
     </div>

@@ -162,20 +162,21 @@ export function Navigation() {
     <>
       <style>{`
         /* Nav-specific micro-styles */
-        .nav-search-btn:hover { border-color: var(--hairline-strong); }
-        .nav-ibtn:hover {
-          background: var(--surface) !important;
-          border-color: var(--hairline-strong) !important;
-          color: hsl(var(--foreground)) !important;
-        }
         .nav-link-item { color: hsl(var(--muted-foreground)); transition: color .15s ease; }
-        .nav-link-item:hover,
-        .nav-link-item[aria-current="page"] { color: hsl(var(--foreground)); }
         .nav-gh-btn { color: hsl(var(--text-2)); transition: background .2s, border-color .2s, color .2s; }
-        .nav-gh-btn:hover {
-          background: var(--surface) !important;
-          border-color: var(--hairline-strong) !important;
-          color: hsl(var(--foreground)) !important;
+        @media (hover: hover) and (pointer: fine) {
+          .nav-search-btn:hover { border-color: var(--hairline-strong); }
+          .nav-ibtn:hover {
+            background: var(--surface) !important;
+            border-color: var(--hairline-strong) !important;
+            color: hsl(var(--foreground)) !important;
+          }
+          .nav-link-item:hover { color: hsl(var(--foreground)); }
+          .nav-gh-btn:hover {
+            background: var(--surface) !important;
+            border-color: var(--hairline-strong) !important;
+            color: hsl(var(--foreground)) !important;
+          }
         }
       `}</style>
 

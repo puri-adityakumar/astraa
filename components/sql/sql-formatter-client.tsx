@@ -70,7 +70,7 @@ export function SqlFormatterClient() {
     <WorkInProgress>
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-bold">SQL Formatter</h1>
+          <h1 className="text-3xl font-semibold">SQL Formatter</h1>
           <p className="text-muted-foreground">
             Format and validate SQL queries
           </p>

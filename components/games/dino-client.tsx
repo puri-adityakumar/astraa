@@ -23,7 +23,7 @@ export function DinoClient() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold">Chrome Dino</h1>
+          <h1 className="text-4xl font-semibold">Chrome Dino</h1>
           <p className="text-muted-foreground">
             The famous Chrome dinosaur game. Choose between the original or
             our custom version!
@@ -76,7 +76,7 @@ export function DinoClient() {
             {isGameOver && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
+                  <h2 className="text-2xl font-semibold mb-4">Game Over!</h2>
                   <p className="text-muted-foreground mb-4">
                     Score: {score}
                     {score === highScore && score > 0 && (

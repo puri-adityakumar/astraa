@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Monitor, ShieldCheck, Github } from "lucide-react";
 import { TCard } from "@/components/ui/tcard";
 import { useReducedMotion } from "@/lib/animations/hooks";
+import { fadeInUpGentle, staggerGentle } from "@/lib/animations/variants";
 
 const PRINCIPLES = [
   {
@@ -29,22 +30,12 @@ const PRINCIPLES = [
   },
 ] as const;
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } },
-};
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.07 } },
-};
-
 export function PrinciplesSection() {
   const shouldReduce = useReducedMotion();
   const containerProps = shouldReduce
     ? {}
-    : { variants: stagger, initial: "hidden" as const, animate: "show" as const };
-  const itemProps = shouldReduce ? {} : { variants: fadeInUp };
+    : { variants: staggerGentle, initial: "hidden" as const, animate: "show" as const };
+  const itemProps = shouldReduce ? {} : { variants: fadeInUpGentle };
 
   return (
     <section
@@ -70,7 +61,7 @@ export function PrinciplesSection() {
           </span>
           <h2
             id="principles-heading"
-            className="text-[clamp(24px,3.4vw,32px)] font-bold tracking-[-0.03em] leading-[1.1]"
+            className="text-[clamp(24px,3.4vw,32px)] font-medium tracking-[-0.03em] leading-[1.1]"
           >
             No catch
           </h2>

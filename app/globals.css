@@ -5,24 +5,24 @@
 /* ============ LIGHT TOKENS (:root) — spec section 3 ============ */
 :root {
   --background: 0 0% 97%;
-  --foreground: 240 6% 4%;
+  --foreground: 0 0% 4%;
   --card: 0 0% 100%;
   --surface: hsl(var(--card)); /* resolved alias for components using the system.css token name */
-  --card-foreground: 240 6% 4%;
+  --card-foreground: 0 0% 4%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 6% 4%;
+  --popover-foreground: 0 0% 4%;
   --surface-2: 0 0% 98%;
   --surface-3: 0 0% 98%;
-  --text-2: 240 5% 11%;
+  --text-2: 0 0% 11%;
   --faint: 0 0% 60%;
-  --primary: 240 6% 4%;
+  --primary: 0 0% 4%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 6% 4%;
+  --secondary: 0 0% 4%;
   --secondary-foreground: 0 0% 100%;
   --muted: 0 0% 96%;
   --muted-foreground: 0 0% 42%;
   --accent: 0 0% 96%;
-  --accent-foreground: 240 6% 4%;
+  --accent-foreground: 0 0% 4%;
   --destructive: 0 30% 48%;
   --destructive-foreground: 0 0% 100%;
   /* success/warning/info re-pointed to neutral grayscale (D2) */
@@ -38,6 +38,11 @@
   --ring: 0 0% 25%;
   --radius: 0.75rem;
   --nav-height: 64px;
+
+  /* Motion easing — strong, physical curves (Emil Kowalski standard).
+     UI never uses ease-in; these are the only curves allowed for UI motion. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* default UI: snappy decel */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); /* emphasis: longer hold */
 
   /* Light alpha + raw tokens */
   --hairline:        rgba(10,10,11,0.10);
@@ -173,6 +178,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    text-wrap: pretty;
+  }
+
+  /* Balance line breaks in headings so widows/orphans don't mar display type. */
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
   }
 
   /* Ensure touch-friendly interactive elements */
@@ -189,17 +200,81 @@
     @apply outline-2 outline-offset-2 outline-ring;
   }
 
-  /* Improve heading hierarchy with fluid typography */
+  /* Tactile press feedback (Emil Kowalski motion standard): clickable
+     elements recoil slightly on :active, then spring back. Gated behind
+     hover capability so touch devices never get stuck at reduced scale.
+     Excludes form controls, which shouldn't deform. */
+  @media (hover: hover) and (pointer: fine) {
+    button,
+    a,
+    [role="button"],
+    summary,
+    .tcard {
+      transition: transform 0.12s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+    }
+
+    button:active,
+    a:active,
+    [role="button"]:active,
+    summary:active {
+      transform: scale(0.97);
+    }
+
+    /* Gate decorative card lift (A8) */
+    .tcard:hover {
+      border-color: var(--hairline-strong);
+      background-color: hsl(var(--surface-3));
+      box-shadow: var(--shadow-card);
+    }
+    .tcard:hover:not(.soon) {
+      transform: translateY(-2px);
+    }
+
+    /* Scope decorative hovers for icon buttons too (A8 addition inside media) */
+    .nav-ibtn:hover,
+    .nav-gh-btn:hover,
+    .footer-ibtn:hover {
+      background: var(--surface);
+      border-color: var(--hairline-strong);
+      color: hsl(var(--foreground));
+    }
+    .nav-search-btn:hover { border-color: var(--hairline-strong); }
+    .footer-link:hover,
+    .nav-link-item:hover { color: hsl(var(--foreground)); }
+  }
+
+  /* Reset decorative hover transforms on touch / coarse-pointer devices (A8) */
+  /* Targets tcard motion-safe:hover lifts + group hovers + glass-hover */
+  @media (hover: none), (pointer: coarse) {
+    .tcard:hover,
+    .tcard:hover * {
+      transform: none !important;
+    }
+    .tcard:hover {
+      border-color: var(--hairline) !important;
+      background-color: hsl(var(--card)) !important;
+      box-shadow: none !important;
+    }
+    .glass-hover:hover {
+      background-color: transparent !important;
+      border-color: hsl(var(--border)) !important;
+    }
+  }
+
+  /* Improve heading hierarchy with fluid typography.
+     Display weight kept light (polar.sh premium-minimal): depth comes
+     from size + color contrast, not heavy weight. Card titles (h3/h4)
+     stay semibold for scannability at small sizes. */
   h1 {
     font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.75rem);
     line-height: 1.1;
-    font-weight: 700;
+    font-weight: 500;
   }
 
   h2 {
     font-size: clamp(1.875rem, 1.5rem + 1.875vw, 3rem);
     line-height: 1.2;
-    font-weight: 700;
+    font-weight: 500;
   }
 
   h3 {

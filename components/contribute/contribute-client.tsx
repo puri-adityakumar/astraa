@@ -45,7 +45,7 @@ export function ContributeClient() {
     <div className="container max-w-5xl pt-24 pb-12 space-y-16">
       {/* Header Section */}
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           Contribute to{" "}
           <span className="font-sans font-bold">
             astraa
@@ -124,7 +124,7 @@ export function ContributeClient() {
 
       {/* Top Contributors Section */}
       <div className="space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center">
           Top Contributors
         </h2>
 
@@ -187,7 +187,7 @@ export function ContributeClient() {
 
       {/* Getting Started Section */}
       <div className="space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center">
           Getting Started
         </h2>
 

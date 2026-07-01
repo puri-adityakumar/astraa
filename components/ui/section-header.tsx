@@ -54,7 +54,7 @@ export function SectionHeader({
         <SectionDivider />
         {label}
       </span>
-      <h2 className="text-[clamp(24px,3.4vw,32px)] font-bold tracking-[-0.03em] leading-[1.1]">
+      <h2 className="text-[clamp(24px,3.4vw,32px)] font-medium tracking-[-0.03em] leading-[1.1]">
         {title}
       </h2>
     </div>

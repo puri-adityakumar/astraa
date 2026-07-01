@@ -16,7 +16,7 @@ export const CalculatorDisplay = memo(function CalculatorDisplay({
       <div className="text-sm text-muted-foreground h-6 text-right">
         {expression || "\u00A0"}
       </div>
-      <div className="text-3xl text-right truncate">
+      <div className="text-3xl text-right truncate tabular-nums">
         {value || "0"}
       </div>
     </div>

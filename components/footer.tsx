@@ -175,12 +175,14 @@ export function Footer() {
 
       {/* Scoped hover styles */}
       <style>{`
-        .footer-ibtn:hover {
-          background: var(--surface) !important;
-          border-color: var(--hairline-strong) !important;
-          color: hsl(var(--foreground)) !important;
+        @media (hover: hover) and (pointer: fine) {
+          .footer-ibtn:hover {
+            background: var(--surface) !important;
+            border-color: var(--hairline-strong) !important;
+            color: hsl(var(--foreground)) !important;
+          }
+          .footer-link:hover { color: hsl(var(--foreground)) !important; }
         }
-        .footer-link:hover { color: hsl(var(--foreground)) !important; }
       `}</style>
     </footer>
   )

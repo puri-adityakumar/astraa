@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 
 import { useReducedMotion } from "@/lib/animations/hooks";
+import { fadeInUpGentle, staggerGentle } from "@/lib/animations/variants";
 import { CornerMarkers } from "@/components/ui/corner-marker";
 import { SectionHeader } from "@/components/ui/section-header";
 import {
@@ -49,28 +50,12 @@ const STEPS: readonly Step[] = [
   },
 ] as const;
 
-// Mirrors the hero/popular section variants — short fade-up with a gentle
-// upward offset, staggered per item.
-const fadeInUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const },
-  },
-};
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
-
 export function HowItWorksSection() {
   const shouldReduce = useReducedMotion();
   const containerProps = shouldReduce
     ? {}
-    : { variants: stagger, initial: "hidden" as const, animate: "show" as const };
-  const itemProps = shouldReduce ? {} : { variants: fadeInUp };
+    : { variants: staggerGentle, initial: "hidden" as const, animate: "show" as const };
+  const itemProps = shouldReduce ? {} : { variants: fadeInUpGentle };
 
   return (
     <section
