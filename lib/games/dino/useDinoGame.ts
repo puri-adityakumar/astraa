@@ -7,6 +7,10 @@ const GAME_CONFIG: GameConfig = {
   groundHeight: 20,
   dinoHeight: 60,
   dinoWidth: 40,
+  canvasHeight: 400,
+  obstacleWidth: 20,
+  obstacleHeight: 50,
+  groundTileWidth: 300,
   jumpForce: 20,
   gravity: 1,
   gameSpeed: 8,
@@ -118,8 +122,8 @@ export function useDinoGame() {
         ) {
           newObstacles.push({
             x: viewportWidth,
-            width: 20,
-            height: 50,
+            width: GAME_CONFIG.obstacleWidth,
+            height: GAME_CONFIG.obstacleHeight,
             type: Math.random() > 0.7 ? "bird" : "cactus",
           });
         }
@@ -139,7 +143,7 @@ export function useDinoGame() {
         }
 
         // Update ground position
-        const newGroundX = (prev.groundX - GAME_CONFIG.gameSpeed) % 300;
+        const newGroundX = (prev.groundX - GAME_CONFIG.gameSpeed) % GAME_CONFIG.groundTileWidth;
 
         return {
           ...prev,

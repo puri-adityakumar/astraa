@@ -1,5 +1,5 @@
 import { tokenLabel } from "./token-labels";
-import type { ExplainNode, PatternToken } from "./types";
+import type { ExplainNode, PatternToken, PatternTokenType } from "./types";
 
 /**
  * Build a human-readable explain tree from a flat stream of {@link PatternToken}s.
@@ -13,13 +13,31 @@ import type { ExplainNode, PatternToken } from "./types";
  * the base label with the capture-group index — information that isn't
  * available to `tokenLabel`.
  */
+
+/**
+ * Metadata for the "open" token types — those that start a parent frame on the
+ * stack. Presence in this map marks a type as an open. The optional fields
+ * override the {@link tokenLabel} label/detail, and `capture` marks the type as
+ * a numbered capturing group (whose label is augmented with `#<index>`).
+ */
+const OPEN_META: Partial<
+  Record<PatternTokenType, { label?: string; detail?: string; capture?: boolean }>
+> = {
+  groupOpen: { capture: true },
+  nonCaptureGroupOpen: {},
+  namedGroupOpen: {},
+  lookaheadPositive: {},
+  lookaheadNegative: {},
+  lookbehindPositive: {},
+  lookbehindNegative: {},
+  charClassOpen: {},
+};
+
 export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
   let counter = 0;
   const nextId = (): string => `e${counter++}`;
 
-  // Track named-group registrations so backreferences can mention them by name
-  // if we ever extend the format (currently we just count groups for numeric
-  // backreferences).
+  // Counted so capturing-group labels can be augmented with a 1-based index.
   let captureGroupIndex = 0;
 
   type Frame = {
@@ -52,83 +70,67 @@ export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
     };
   };
 
-  /** Open a frame for a group-like token, sourcing label/detail from tokenLabel. */
+  /**
+   * Open a frame for a group-like token. Label/detail come from
+   * {@link tokenLabel} (overridable via {@link OPEN_META}); capturing groups
+   * additionally bump the index and augment their label with `#<index>`.
+   */
   const openFrame = (token: PatternToken): void => {
-    const meta = tokenLabel(token);
-    stack.push({
-      open: token,
-      children: [],
-      label: meta.label,
-      detail: meta.detail,
+    const base = tokenLabel(token);
+    const meta = OPEN_META[token.type];
+    let label = meta?.label ?? base.label;
+    let detail = meta?.detail ?? base.detail;
+    if (meta?.capture) {
+      captureGroupIndex += 1;
+      label = `${label} #${captureGroupIndex}`;
+    }
+    stack.push({ open: token, children: [], label, detail });
+  };
+
+  /**
+   * Close the top frame, promoting it to a parent node spanning from the open
+   * token to this close token. A stray close (empty stack) renders as a leaf
+   * using the supplied fallback label/detail.
+   */
+  const closeFrame = (token: PatternToken, strayLabel: string, strayDetail: string): void => {
+    const frame = stack.pop();
+    if (!frame) {
+      push({
+        id: nextId(),
+        label: strayLabel,
+        detail: strayDetail,
+        sourceRange: [token.startIndex, token.endIndex],
+      });
+      return;
+    }
+    push({
+      id: nextId(),
+      label: frame.label,
+      detail: frame.detail,
+      sourceRange: [frame.open.startIndex, token.endIndex],
+      children: frame.children,
     });
   };
 
   for (const token of tokens) {
     switch (token.type) {
-      case "groupOpen": {
-        captureGroupIndex += 1;
-        const meta = tokenLabel(token);
-        stack.push({
-          open: token,
-          children: [],
-          // Augment with the capture-group index, which tokenLabel can't know.
-          label: `${meta.label} #${captureGroupIndex}`,
-          detail: meta.detail,
-        });
-        break;
-      }
+      case "groupOpen":
       case "nonCaptureGroupOpen":
       case "namedGroupOpen":
       case "lookaheadPositive":
       case "lookaheadNegative":
       case "lookbehindPositive":
-      case "lookbehindNegative": {
-        openFrame(token);
-        break;
-      }
-      case "groupClose": {
-        const frame = stack.pop();
-        if (!frame) {
-          // Stray close — render as a leaf.
-          push({
-            id: nextId(),
-            label: "Stray )",
-            detail: "Unmatched closing parenthesis.",
-            sourceRange: [token.startIndex, token.endIndex],
-          });
-          break;
-        }
-        push({
-          id: nextId(),
-          label: frame.label,
-          detail: frame.detail,
-          sourceRange: [frame.open.startIndex, token.endIndex],
-          children: frame.children,
-        });
-        break;
-      }
+      case "lookbehindNegative":
       case "charClassOpen": {
         openFrame(token);
         break;
       }
+      case "groupClose": {
+        closeFrame(token, "Stray )", "Unmatched closing parenthesis.");
+        break;
+      }
       case "charClassClose": {
-        const frame = stack.pop();
-        if (!frame) {
-          push({
-            id: nextId(),
-            label: "Stray ]",
-            detail: "Unmatched closing bracket.",
-            sourceRange: [token.startIndex, token.endIndex],
-          });
-          break;
-        }
-        push({
-          id: nextId(),
-          label: frame.label,
-          detail: frame.detail,
-          sourceRange: [frame.open.startIndex, token.endIndex],
-          children: frame.children,
-        });
+        closeFrame(token, "Stray ]", "Unmatched closing bracket.");
         break;
       }
       case "range":

@@ -20,6 +20,10 @@ export interface GameConfig {
   groundHeight: number;
   dinoHeight: number;
   dinoWidth: number;
+  canvasHeight: number;
+  obstacleWidth: number;
+  obstacleHeight: number;
+  groundTileWidth: number;
   jumpForce: number;
   gravity: number;
   gameSpeed: number;

@@ -18,12 +18,14 @@ import { SnippetCardExport } from "./snippet-card-export";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { compileRegex } from "@/lib/regex-tester/compile";
 import { runMatches } from "@/lib/regex-tester/match";
-import { encodeState, decodeState } from "@/lib/regex-tester/url-state";
+import { encodeState } from "@/lib/regex-tester/url-state";
 import { debounce } from "@/lib/regex-tester/debounce";
 import { runMatchesSafe } from "@/lib/regex-tester/redos-client";
 import { useToolSettings } from "@/lib/stores/tool-settings";
 import { copyToClipboard } from "@/lib/clipboard";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { useRegexUrlState } from "@/hooks/use-regex-url-state";
+import { useRegexShortcuts } from "@/hooks/use-regex-shortcuts";
 
 const TEST_BYTE_CAP = 100 * 1024;
 const DEBOUNCE_MS = 150;
@@ -60,38 +62,12 @@ export function RegexTesterClient() {
     [pattern, setPattern],
   );
 
-  // Hydrate from URL hash on mount; URL wins for first paint.
-  const hydratedRef = useRef(false);
-  useEffect(() => {
-    if (hydratedRef.current) return;
-    hydratedRef.current = true;
-    if (typeof window === "undefined") return;
-    const parsed = decodeState(window.location.hash);
-    if (!parsed) return;
-    if (parsed.pattern) setPattern(parsed.pattern);
-    if (parsed.flags) setFlags(parsed.flags);
-    if (parsed.test) setTestString(parsed.test);
-    if (parsed.replacement) setReplacement(parsed.replacement);
-  }, [setPattern, setFlags, setTestString, setReplacement]);
-
-  // Replicate persisted state back into the URL hash (debounced).
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const sync = debounce(() => {
-      const { hash } = encodeState({
-        pattern,
-        flags,
-        test: testString,
-        replacement,
-      });
-      const next = `#${hash}`;
-      if (window.location.hash !== next) {
-        window.history.replaceState(null, "", next);
-      }
-    }, DEBOUNCE_MS);
-    sync();
-    return sync.cancel;
-  }, [pattern, flags, testString, replacement]);
+  // Hydrate from the URL hash on mount (URL wins), then sync state back to the
+  // hash (debounced). Extracted into its own hook.
+  useRegexUrlState(
+    { pattern, flags, testString, replacement },
+    { setPattern, setFlags, setTestString, setReplacement },
+  );
 
   // Mirror the live inputs into debounced versions used for derivations.
   useEffect(() => {
@@ -192,45 +168,36 @@ export function RegexTesterClient() {
   const setReplaceOpen = useRegexTester((s) => s.setReplaceOpen);
   const replaceOpen = useRegexTester((s) => s.replaceOpen);
 
-  useEffect(() => {
-    const onKey = async (e: KeyboardEvent) => {
-      const mod = e.metaKey || e.ctrlKey;
-      if (!mod) return;
-      if (e.key === "Enter") {
-        e.preventDefault();
-        setDebouncedPattern(pattern);
-        setDebouncedFlags(flags);
-        setDebouncedTest(testString);
-        return;
-      }
-      if (e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        patternInputRef.current?.focus();
-        return;
-      }
-      if (e.key.toLowerCase() === "l") {
-        e.preventDefault();
-        testStringRef.current?.focus();
-        return;
-      }
-      if (e.key === "/") {
-        e.preventDefault();
-        setReplaceOpen(!replaceOpen);
-        return;
-      }
-      if (e.shiftKey && e.key.toLowerCase() === "c") {
-        e.preventDefault();
-        await copy(literal, "Literal copied");
-        return;
-      }
-      if (e.shiftKey && e.key.toLowerCase() === "s") {
-        e.preventDefault();
-        await handleShare();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [pattern, flags, testString, replaceOpen, literal, handleShare, setReplaceOpen, copy]);
+  const handleForceRun = useCallback(() => {
+    setDebouncedPattern(pattern);
+    setDebouncedFlags(flags);
+    setDebouncedTest(testString);
+  }, [pattern, flags, testString]);
+
+  const handleFocusPattern = useCallback(() => {
+    patternInputRef.current?.focus();
+  }, []);
+
+  const handleFocusTest = useCallback(() => {
+    testStringRef.current?.focus();
+  }, []);
+
+  const handleToggleReplace = useCallback(() => {
+    setReplaceOpen(!replaceOpen);
+  }, [replaceOpen, setReplaceOpen]);
+
+  const handleCopyLiteral = useCallback(async () => {
+    await copy(literal, "Literal copied");
+  }, [copy, literal]);
+
+  useRegexShortcuts({
+    onForceRun: handleForceRun,
+    onFocusPattern: handleFocusPattern,
+    onFocusTest: handleFocusTest,
+    onToggleReplace: handleToggleReplace,
+    onCopyLiteral: handleCopyLiteral,
+    onShare: handleShare,
+  });
 
   const reduceMotion = useReducedMotion();
   const containerVariants = reduceMotion ? {} : staggerContainer;
