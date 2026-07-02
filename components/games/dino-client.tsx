@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { useDinoGame } from "@/lib/games/dino/useDinoGame";
 import { Gamepad2, Globe } from "lucide-react";
 import { WorkInProgress } from "@/components/wip";
+import { useReducedMotion } from "@/lib/animations/hooks";
 
 export function DinoClient() {
   const [mode, setMode] = useState<"custom" | "original">("original");
   const { gameState, startGame, jump, config } = useDinoGame();
+  const shouldReduce = useReducedMotion();
   const { score, highScore, isGameOver, dinoY, obstacles, groundX } = gameState;
 
   return (
@@ -18,9 +20,9 @@ export function DinoClient() {
       <div className="max-w-4xl mx-auto space-y-8">
         <motion.div
           className="text-center space-y-4"
-          initial={{ opacity: 0, y: 20 }}
+          initial={shouldReduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: shouldReduce ? 0 : 0.5 }}
         >
           <h1 className="text-4xl font-bold">Chrome Dino</h1>
           <p className="text-muted-foreground">

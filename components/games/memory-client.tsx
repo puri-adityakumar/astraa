@@ -6,9 +6,11 @@ import { Card } from "@/components/ui/card";
 import { useMemoryGame } from "@/lib/games/memory/useMemoryGame";
 import { RefreshCw } from "lucide-react";
 import { WorkInProgress } from "@/components/wip";
+import { useReducedMotion } from "@/lib/animations/hooks";
 
 export function MemoryClient() {
   const { gameState, flipCard, resetGame } = useMemoryGame();
+  const shouldReduce = useReducedMotion();
   const { cards, moves, matches, isGameOver } = gameState;
 
   return (
@@ -16,9 +18,9 @@ export function MemoryClient() {
       <div className="max-w-2xl mx-auto space-y-8">
         <motion.div
           className="text-center space-y-4"
-          initial={{ opacity: 0, y: 20 }}
+          initial={shouldReduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: shouldReduce ? 0 : 0.5 }}
         >
           <h1 className="text-4xl font-bold">Memory Game</h1>
           <p className="text-muted-foreground">

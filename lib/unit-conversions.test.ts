@@ -54,6 +54,24 @@ describe("convertUnit", () => {
   });
 });
 
+describe("Area conversions", () => {
+  const area = unitCategories.find((c) => c.name === "Area")!;
+  const acre = area.units.find((u) => u.symbol === "ac")!;
+  const squareMeter = area.units.find((u) => u.symbol === "m²")!;
+
+  it("includes the Acre unit with correct symbol and ratio", () => {
+    expect(acre).toEqual({ name: "Acre", symbol: "ac", ratio: 4046.86 });
+  });
+
+  it("converts 1 Acre to Square Meters", () => {
+    expect(convertUnit(1, acre, squareMeter, "Area")).toBeCloseTo(4046.86);
+  });
+
+  it("converts Acre to Acre", () => {
+    expect(convertUnit(1, acre, acre, "Area")).toBeCloseTo(1);
+  });
+});
+
 describe("unitCategories", () => {
   it("has at least 5 categories", () => {
     expect(unitCategories.length).toBeGreaterThanOrEqual(5);

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RegexTesterClient } from "@/components/regex-tester/regex-tester-client";
 
 export const metadata: Metadata = {
-  title: "Regex Tester | astraa",
+  title: "Regex Tester",
   description:
     "Test and validate JavaScript regular expressions live in your browser. Capture-group highlights, replace mode, starter library, click-to-insert cheatsheet, and shareable URLs.",
   keywords: [
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "regex builder",
   ],
   openGraph: {
-    title: "Regex Tester | astraa",
+    title: "Regex Tester",
     description:
       "Live JavaScript regex playground with capture-group highlights, replace mode, and shareable URLs.",
     url: "/tools/regex",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Regex Tester | astraa",
+    title: "Regex Tester",
     description:
       "Live JavaScript regex playground with capture-group highlights, replace mode, and shareable URLs.",
   },

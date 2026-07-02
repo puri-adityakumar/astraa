@@ -26,7 +26,7 @@ export const unitCategories: UnitCategory[] = [
       { name: "Square Meter", symbol: "m²", ratio: 1 },
       { name: "Square Kilometer", symbol: "km²", ratio: 1e6 },
       { name: "Square Mile", symbol: "mi²", ratio: 2.59e6 },
-      { name: "Icon", symbol: "ac", ratio: 4046.86 },
+      { name: "Acre", symbol: "ac", ratio: 4046.86 },
       { name: "Hectare", symbol: "ha", ratio: 10000 },
       { name: "Square Foot", symbol: "ft²", ratio: 0.092903 },
       { name: "Square Inch", symbol: "in²", ratio: 0.00064516 },

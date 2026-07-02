@@ -3,31 +3,32 @@
 import { useState, useEffect } from "react";
 import type { Card, GameState } from "./types";
 
-const EMOJIS = ["🎮", "🎲", "🎯", "🎪", "🎨", "🎭", "🎪", "🎯"];
+export const EMOJIS = ["🎮", "🎲", "🎯", "🎪", "🎨", "🎭", "🃏", "🎰"];
+
+/** Builds a deck of 16 cards (8 true pairs) and applies a Fisher-Yates shuffle. */
+export function buildShuffledDeck(): Card[] {
+  const pairs = [...EMOJIS, ...EMOJIS];
+  // Fisher-Yates shuffle for unbiased randomization
+  for (let i = pairs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pairs[i], pairs[j]] = [pairs[j]!, pairs[i]!];
+  }
+  return pairs.map((value, index) => ({
+    id: index,
+    value,
+    isFlipped: false,
+    isMatched: false,
+  }));
+}
 
 export function useMemoryGame() {
   const [gameState, setGameState] = useState<GameState>(() => ({
-    cards: shuffleCards(),
+    cards: buildShuffledDeck(),
     flippedCards: [],
     isGameOver: false,
     moves: 0,
     matches: 0,
   }));
-
-  function shuffleCards(): Card[] {
-    const pairs = [...EMOJIS, ...EMOJIS];
-    // Fisher-Yates shuffle for unbiased randomization
-    for (let i = pairs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pairs[i], pairs[j]] = [pairs[j]!, pairs[i]!];
-    }
-    return pairs.map((value, index) => ({
-      id: index,
-      value,
-      isFlipped: false,
-      isMatched: false,
-    }));
-  }
 
   const flipCard = (card: Card) => {
     if (card.isMatched || card.isFlipped || gameState.flippedCards.length === 2) {
@@ -87,7 +88,7 @@ export function useMemoryGame() {
 
   const resetGame = () => {
     setGameState({
-      cards: shuffleCards(),
+      cards: buildShuffledDeck(),
       flippedCards: [],
       isGameOver: false,
       moves: 0,
