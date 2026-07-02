@@ -45,8 +45,17 @@ export function JsonEditorClient() {
     window.clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(async () => {
       if (clientRef.current) {
-        const result = await clientRef.current.parse(text);
-        setParseResult(result.value, result.diagnostics);
+        try {
+          const result = await clientRef.current.parse(text);
+          setParseResult(result.value, result.diagnostics);
+        } catch (e) {
+          // The only rejection path is destroy() (on unmount), which rejects
+          // with an AbortError; the worker itself always resolves. Swallow the
+          // abort so unmount doesn't surface an unhandled rejection, and don't
+          // touch store state since the result is no longer needed.
+          if (e instanceof Error && e.name === "AbortError") return;
+          logError(e, { context: "json-editor/parse" });
+        }
       } else {
         try {
           const value = text.trim() === "" ? null : JSON.parse(text);

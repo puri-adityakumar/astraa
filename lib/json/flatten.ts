@@ -1,6 +1,14 @@
 import type { JsonType, JsonValue, TreeRow } from "./types";
 import { joinPath } from "./paths";
 
+/**
+ * Maximum nesting depth the walker will recurse into. Real JSON rarely exceeds a
+ * few dozen levels; this cap (well below the JS stack limit) prevents deeply
+ * nested payloads from overflowing the stack when their paths are expanded.
+ * A node at this depth still renders as a leaf — only further recursion stops.
+ */
+export const MAX_DEPTH = 100;
+
 function typeOf(v: JsonValue): JsonType {
   if (v === null) return "null";
   if (Array.isArray(v)) return "array";
@@ -45,7 +53,7 @@ export function flatten(value: JsonValue, expanded: Set<string>): TreeRow[] {
       ...(childCount !== undefined ? { childCount } : {}),
     });
 
-    if (hasChildren && isExpanded) {
+    if (hasChildren && isExpanded && depth < MAX_DEPTH) {
       if (type === "array") {
         (v as JsonValue[]).forEach((child, i) => {
           visit(child, joinPath(path, i), i, depth + 1);

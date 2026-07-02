@@ -9,37 +9,85 @@ interface StorageAdapter {
   removeItem: (key: string) => Promise<void>;
 }
 
-class IndexedDBAdapter implements StorageAdapter {
+export class IndexedDBAdapter implements StorageAdapter {
   private dbName = "astraa-tools-db";
   private version = 1;
   private storeName = "store";
 
-  private async getDB(): Promise<IDBDatabase> {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, this.version);
+  /**
+   * Cached open connection promise. We open the database once and reuse the
+   * connection across operations instead of re-opening on every get/set/remove,
+   * which previously paid a full open round-trip (re-running onupgradeneeded)
+   * on each call.
+   *
+   * Null when no connection has been opened yet, or after the connection was
+   * closed (e.g. another tab triggered a version change or storage was cleared).
+   * On close we reset the cache so the next operation re-opens cleanly.
+   */
+  private dbPromise: Promise<IDBDatabase> | null = null;
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
+  private getDB(): Promise<IDBDatabase> {
+    if (!this.dbPromise) {
+      this.dbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(this.dbName, this.version);
 
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          db.createObjectStore(this.storeName);
-        }
-      };
-    });
+        request.onerror = () => {
+          // Open failed: don't cache a rejected promise.
+          this.dbPromise = null;
+          reject(request.error);
+        };
+
+        request.onsuccess = () => {
+          const db = request.result;
+          // If another tab requests a version change, the connection must close.
+          // Invalidate the cache so the next operation re-opens fresh.
+          db.onversionchange = () => {
+            db.close();
+            this.dbPromise = null;
+          };
+          resolve(db);
+        };
+
+        request.onupgradeneeded = (event) => {
+          const db = (event.target as IDBOpenDBRequest).result;
+          if (!db.objectStoreNames.contains(this.storeName)) {
+            db.createObjectStore(this.storeName);
+          }
+        };
+      });
+    }
+    return this.dbPromise;
+  }
+
+  /**
+   * Runs an operation against the (cached) database. If the connection was
+   * closed externally between ops, the cached db will throw on transaction
+   * creation; we reset the cache and retry once with a fresh connection.
+   */
+  private async withDB<T>(fn: (db: IDBDatabase) => Promise<T>): Promise<T> {
+    try {
+      const db = await this.getDB();
+      return await fn(db);
+    } catch (error) {
+      // A closed/invalid connection is recoverable by re-opening.
+      this.dbPromise = null;
+      // Retry once with a fresh connection.
+      const db = await this.getDB();
+      return fn(db);
+    }
   }
 
   async getItem(key: string): Promise<string | null> {
     try {
-      const db = await this.getDB();
-      const transaction = db.transaction([this.storeName], "readonly");
-      const store = transaction.objectStore(this.storeName);
+      return await this.withDB((db) => {
+        const transaction = db.transaction([this.storeName], "readonly");
+        const store = transaction.objectStore(this.storeName);
 
-      return new Promise((resolve, reject) => {
-        const request = store.get(key);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result || null);
+        return new Promise<string | null>((resolve, reject) => {
+          const request = store.get(key);
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve(request.result || null);
+        });
       });
     } catch (error) {
       console.warn("IndexedDB getItem failed, falling back to localStorage:", error);
@@ -49,14 +97,15 @@ class IndexedDBAdapter implements StorageAdapter {
 
   async setItem(key: string, value: string): Promise<void> {
     try {
-      const db = await this.getDB();
-      const transaction = db.transaction([this.storeName], "readwrite");
-      const store = transaction.objectStore(this.storeName);
+      await this.withDB((db) => {
+        const transaction = db.transaction([this.storeName], "readwrite");
+        const store = transaction.objectStore(this.storeName);
 
-      return new Promise((resolve, reject) => {
-        const request = store.put(value, key);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve();
+        return new Promise<void>((resolve, reject) => {
+          const request = store.put(value, key);
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve();
+        });
       });
     } catch (error) {
       console.warn("IndexedDB setItem failed, falling back to localStorage:", error);
@@ -66,14 +115,15 @@ class IndexedDBAdapter implements StorageAdapter {
 
   async removeItem(key: string): Promise<void> {
     try {
-      const db = await this.getDB();
-      const transaction = db.transaction([this.storeName], "readwrite");
-      const store = transaction.objectStore(this.storeName);
+      await this.withDB((db) => {
+        const transaction = db.transaction([this.storeName], "readwrite");
+        const store = transaction.objectStore(this.storeName);
 
-      return new Promise((resolve, reject) => {
-        const request = store.delete(key);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve();
+        return new Promise<void>((resolve, reject) => {
+          const request = store.delete(key);
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve();
+        });
       });
     } catch (error) {
       console.warn("IndexedDB removeItem failed, falling back to localStorage:", error);
@@ -82,17 +132,60 @@ class IndexedDBAdapter implements StorageAdapter {
   }
 }
 
-class LocalStorageAdapter implements StorageAdapter {
+export class LocalStorageAdapter implements StorageAdapter {
+  /**
+   * In-memory fallback used when localStorage is unavailable (SSR / prerender,
+   * private browsing, or environments where it is blocked). SSR state is not
+   * meant to persist, so this is intentionally non-persistent.
+   */
+  private mem = new Map<string, string>();
+
+  private get ls(): Storage | null {
+    if (typeof window === "undefined") return null;
+    // window.localStorage may be undefined/throw in restricted contexts.
+    try {
+      return window.localStorage ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   async getItem(key: string): Promise<string | null> {
-    return localStorage.getItem(key);
+    const ls = this.ls;
+    if (ls) {
+      try {
+        return ls.getItem(key);
+      } catch {
+        // Fall through to memory fallback if localStorage access throws.
+      }
+    }
+    return this.mem.get(key) ?? null;
   }
 
   async setItem(key: string, value: string): Promise<void> {
-    localStorage.setItem(key, value);
+    const ls = this.ls;
+    if (ls) {
+      try {
+        ls.setItem(key, value);
+        return;
+      } catch {
+        // Fall through to memory fallback if localStorage access throws.
+      }
+    }
+    this.mem.set(key, value);
   }
 
   async removeItem(key: string): Promise<void> {
-    localStorage.removeItem(key);
+    const ls = this.ls;
+    if (ls) {
+      try {
+        ls.removeItem(key);
+        return;
+      } catch {
+        // Fall through to memory fallback if localStorage access throws.
+      }
+    }
+    this.mem.delete(key);
   }
 }
 
