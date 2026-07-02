@@ -52,9 +52,7 @@ export function Base64Input({
             spellCheck={false}
             autoCorrect="off"
             autoCapitalize="off"
-            className={cn(
-              "font-mono text-sm leading-relaxed min-h-[8rem] resize-y",
-            )}
+            className={cn("font-mono text-sm leading-relaxed min-h-[8rem] resize-y")}
           />
         </div>
       ) : (

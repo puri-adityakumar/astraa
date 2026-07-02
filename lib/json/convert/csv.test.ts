@@ -21,7 +21,10 @@ describe("isCsvCompatible", () => {
 
 describe("jsonToCsv", () => {
   it("converts array of objects to CSV", async () => {
-    const out = await jsonToCsv([{ a: 1, b: "x" }, { a: 2, b: "y" }]);
+    const out = await jsonToCsv([
+      { a: 1, b: "x" },
+      { a: 2, b: "y" },
+    ]);
     expect(out).toContain("a,b");
     expect(out).toContain("1,x");
     expect(out).toContain("2,y");
@@ -33,7 +36,10 @@ describe("csvToJson", () => {
     const result = await csvToJson("a,b\n1,x\n2,y");
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.value).toEqual([{ a: "1", b: "x" }, { a: "2", b: "y" }]);
+      expect(result.value).toEqual([
+        { a: "1", b: "x" },
+        { a: "2", b: "y" },
+      ]);
     }
   });
 });

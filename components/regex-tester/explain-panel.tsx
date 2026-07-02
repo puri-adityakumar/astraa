@@ -7,13 +7,7 @@ import { buildExplainTree } from "@/lib/regex-tester/explain";
 import type { ExplainNode } from "@/lib/regex-tester/types";
 import { cn } from "@/lib/utils";
 
-function ExplainTreeNode({
-  node,
-  depth,
-}: {
-  node: ExplainNode;
-  depth: number;
-}) {
+function ExplainTreeNode({ node, depth }: { node: ExplainNode; depth: number }) {
   return (
     <li>
       <div
@@ -23,12 +17,8 @@ function ExplainTreeNode({
         )}
         style={{ paddingLeft: 8 + depth * 16 }}
       >
-        <span className="text-sm font-medium text-foreground">
-          {node.label}
-        </span>
-        {node.detail && (
-          <span className="text-xs text-muted-foreground">{node.detail}</span>
-        )}
+        <span className="text-sm font-medium text-foreground">{node.label}</span>
+        {node.detail && <span className="text-xs text-muted-foreground">{node.detail}</span>}
       </div>
       {node.children && node.children.length > 0 && (
         <ul className="space-y-0.5">

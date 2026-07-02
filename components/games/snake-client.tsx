@@ -45,9 +45,7 @@ export function SnakeClient() {
             {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
               const x = index % GRID_SIZE;
               const y = Math.floor(index / GRID_SIZE);
-              const isSnake = snake.some(
-                (segment) => segment.x === x && segment.y === y,
-              );
+              const isSnake = snake.some((segment) => segment.x === x && segment.y === y);
               const isFood = food.x === x && food.y === y;
 
               return (
@@ -65,9 +63,7 @@ export function SnakeClient() {
               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
                 <div className="text-center">
                   <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
-                  <p className="text-muted-foreground mb-4">
-                    Final Score: {score}
-                  </p>
+                  <p className="text-muted-foreground mb-4">Final Score: {score}</p>
                   <Button onClick={resetGame}>Play Again</Button>
                 </div>
               </div>

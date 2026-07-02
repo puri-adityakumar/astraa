@@ -37,6 +37,4 @@ export type TreeRow = {
 
 export type PatchOp = "set" | "remove" | "add";
 
-export type ValidationResult =
-  | { ok: true }
-  | { ok: false; reason: "type" | "size" };
+export type ValidationResult = { ok: true } | { ok: false; reason: "type" | "size" };

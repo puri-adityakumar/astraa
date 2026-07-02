@@ -12,8 +12,7 @@ export function LofiStudioClient() {
         <div>
           <h1 className="text-3xl font-bold">Lofi Focus Studio</h1>
           <p className="text-muted-foreground">
-            Stay productive with lofi beats, pomodoro timer, and task
-            management
+            Stay productive with lofi beats, pomodoro timer, and task management
           </p>
         </div>
 

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Select,
@@ -6,12 +6,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { cryptocurrencies } from "@/lib/crypto-data"
+} from "@/components/ui/select";
+import { cryptocurrencies } from "@/lib/crypto-data";
 
 interface CryptoSelectProps {
-  value: string
-  onValueChange: (value: string) => void
+  value: string;
+  onValueChange: (value: string) => void;
 }
 
 export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
@@ -32,8 +32,8 @@ export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
                 className="rounded-full object-cover"
                 loading="lazy"
                 onError={(e) => {
-                  e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/1213/1213032.png" // Fallback generic coin
-                  e.currentTarget.onerror = null
+                  e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/1213/1213032.png"; // Fallback generic coin
+                  e.currentTarget.onerror = null;
                 }}
               />
               <span className="font-medium">{crypto.symbol}</span>
@@ -45,5 +45,5 @@ export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
         ))}
       </SelectContent>
     </Select>
-  )
+  );
 }

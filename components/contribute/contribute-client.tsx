@@ -28,17 +28,16 @@ export function ContributeClient() {
 
   useEffect(() => {
     fetch("https://api.github.com/repos/puri-adityakumar/astraa/contributors")
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (Array.isArray(data)) {
           const filtered = data.filter(
-            (contributor: Contributor) =>
-              !EXCLUDED_USERS.includes(contributor.login),
+            (contributor: Contributor) => !EXCLUDED_USERS.includes(contributor.login),
           );
           setContributors(filtered);
         }
       })
-      .catch(err => console.error("Failed to fetch contributors:", err));
+      .catch((err) => console.error("Failed to fetch contributors:", err));
   }, []);
 
   return (
@@ -46,17 +45,15 @@ export function ContributeClient() {
       {/* Header Section */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Contribute to{" "}
-          <span style={{ fontFamily: "'Funnel Display', sans-serif" }}>
-            astraa
-          </span>
+          Contribute to <span style={{ fontFamily: "'Funnel Display', sans-serif" }}>astraa</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Built by developers, for developers. Help us shape the future of
-          this open-source collection of tools.
+          Built by developers, for developers. Help us shape the future of this open-source
+          collection of tools.
         </p>
         <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-          Open-source, privacy-first utility toolkit. All tools run locally in your browser with no data collection.
+          Open-source, privacy-first utility toolkit. All tools run locally in your browser with no
+          data collection.
         </p>
         <div className="flex items-center justify-center gap-4 pt-4">
           <Button asChild size="lg" className="rounded-full px-8">
@@ -69,12 +66,7 @@ export function ContributeClient() {
               Star on GitHub
             </Link>
           </Button>
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="rounded-full px-8"
-          >
+          <Button asChild variant="outline" size="lg" className="rounded-full px-8">
             <Link
               href="https://github.com/puri-adityakumar/astraa/issues"
               target="_blank"
@@ -93,16 +85,13 @@ export function ContributeClient() {
 
         <div className="pt-8 max-w-xl mx-auto space-y-6">
           <blockquote className="font-mono text-sm sm:text-base text-muted-foreground leading-relaxed italic">
-            &quot;This was my first idea when I started coding. I wanted to
-            build this, but back then I didn&apos;t have the skills. Now I
-            do, so I made it happen.&quot;
+            &quot;This was my first idea when I started coding. I wanted to build this, but back
+            then I didn&apos;t have the skills. Now I do, so I made it happen.&quot;
           </blockquote>
           <div className="flex items-center justify-center gap-3">
             <div className="text-right leading-tight">
               <span className="text-sm font-semibold block">~ Aditya</span>
-              <span className="text-xs text-muted-foreground block">
-                Founder
-              </span>
+              <span className="text-xs text-muted-foreground block">Founder</span>
             </div>
             <Link
               href="https://github.com/puri-adityakumar"
@@ -124,9 +113,7 @@ export function ContributeClient() {
 
       {/* Top Contributors Section */}
       <div className="space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center">
-          Top Contributors
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center">Top Contributors</h2>
 
         {contributors.length > 0 ? (
           <div className="flex flex-col items-center gap-6">
@@ -142,13 +129,8 @@ export function ContributeClient() {
                     className="transition-transform hover:scale-110 hover:z-10 relative"
                   >
                     <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-4 border-background shadow-lg">
-                      <AvatarImage
-                        src={contributor.avatar_url}
-                        alt={contributor.login}
-                      />
-                      <AvatarFallback>
-                        {contributor.login.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
+                      <AvatarImage src={contributor.avatar_url} alt={contributor.login} />
+                      <AvatarFallback>{contributor.login.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </Link>
                 ))}
@@ -187,9 +169,7 @@ export function ContributeClient() {
 
       {/* Getting Started Section */}
       <div className="space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center">
-          Getting Started
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center">Getting Started</h2>
 
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="flex items-start gap-4">
@@ -209,9 +189,7 @@ export function ContributeClient() {
               2
             </div>
             <div>
-              <p className="font-medium">
-                Read CONTRIBUTING.md & Code of Conduct
-              </p>
+              <p className="font-medium">Read CONTRIBUTING.md & Code of Conduct</p>
               <p className="text-sm text-muted-foreground">
                 Understand our{" "}
                 <Link
@@ -221,8 +199,8 @@ export function ContributeClient() {
                   className="text-foreground hover:underline"
                 >
                   contribution guidelines
-                </Link>
-                {" "}and{" "}
+                </Link>{" "}
+                and{" "}
                 <Link
                   href="https://github.com/puri-adityakumar/astraa/blob/main/CODE_OF_CONDUCT.md"
                   target="_blank"
@@ -230,8 +208,8 @@ export function ContributeClient() {
                   className="text-foreground hover:underline"
                 >
                   code of conduct
-                </Link>
-                {" "}before contributing.
+                </Link>{" "}
+                before contributing.
               </p>
             </div>
           </div>
@@ -241,9 +219,7 @@ export function ContributeClient() {
               3
             </div>
             <div>
-              <p className="font-medium">
-                Check the Issues tab or raise a new issue
-              </p>
+              <p className="font-medium">Check the Issues tab or raise a new issue</p>
               <p className="text-sm text-muted-foreground">
                 Find tasks to work on or report bugs and feature requests.
               </p>
@@ -265,8 +241,8 @@ export function ContributeClient() {
                   className="text-foreground hover:underline"
                 >
                   X (formerly Twitter)
-                </Link>
-                {" "}or{" "}
+                </Link>{" "}
+                or{" "}
                 <Link
                   href="https://t.me/astraadottech"
                   target="_blank"
@@ -293,9 +269,7 @@ export function ContributeClient() {
             <p className="font-medium truncate">
               Sponsor <span className="font-logo">astraa</span>
             </p>
-            <p className="text-xs text-muted-foreground truncate">
-              Support open source work
-            </p>
+            <p className="text-xs text-muted-foreground truncate">Support open source work</p>
           </div>
           <div className="shrink-0">
             <iframe

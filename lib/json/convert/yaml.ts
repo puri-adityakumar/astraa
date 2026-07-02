@@ -1,8 +1,6 @@
 import type { JsonValue } from "../types";
 
-export type YamlResult =
-  | { ok: true; value: JsonValue }
-  | { ok: false; error: string };
+export type YamlResult = { ok: true; value: JsonValue } | { ok: false; error: string };
 
 export async function jsonToYaml(value: JsonValue): Promise<string> {
   const yaml = await import("js-yaml");

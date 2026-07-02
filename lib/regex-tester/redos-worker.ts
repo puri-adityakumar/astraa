@@ -18,9 +18,7 @@ const MATCH_CAP = 10000;
 
 function toMatchResult(m: RegExpExecArray): MatchResult {
   const full = m[0];
-  const indices = (
-    m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }
-  ).indices;
+  const indices = (m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }).indices;
   const groups: (string | undefined)[] = [];
   const groupIndices: (number | null)[] = [];
   for (let i = 1; i < m.length; i++) {

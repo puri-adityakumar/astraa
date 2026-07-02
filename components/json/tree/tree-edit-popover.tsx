@@ -65,7 +65,9 @@ export function TreeEditPopover({
             className="w-full mt-1 border rounded-md px-2 py-1.5 bg-background min-h-touch"
           >
             {TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
+              <option key={t} value={t}>
+                {t}
+              </option>
             ))}
           </select>
         </div>

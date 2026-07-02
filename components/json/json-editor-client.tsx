@@ -29,10 +29,9 @@ export function JsonEditorClient() {
 
   useEffect(() => {
     try {
-      const worker = new Worker(
-        new URL("@/lib/json/parse-worker.ts", import.meta.url),
-        { type: "module" },
-      );
+      const worker = new Worker(new URL("@/lib/json/parse-worker.ts", import.meta.url), {
+        type: "module",
+      });
       clientRef.current = createParseClient(worker);
     } catch (e) {
       logError(e, { context: "json-editor/worker-init" });
@@ -72,9 +71,8 @@ export function JsonEditorClient() {
           JSON Editor
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">
-          Edit, format, convert and generate types from JSON. Tree view,
-          YAML/CSV/Markdown converters, TypeScript and Zod generators. Up to
-          50&nbsp;MB, parsed off the main thread.
+          Edit, format, convert and generate types from JSON. Tree view, YAML/CSV/Markdown
+          converters, TypeScript and Zod generators. Up to 50&nbsp;MB, parsed off the main thread.
         </p>
         <p className="text-xs text-muted-foreground/70">
           All processing happens locally in your browser

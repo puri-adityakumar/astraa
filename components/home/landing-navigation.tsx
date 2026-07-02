@@ -1,53 +1,53 @@
-"use client"
+"use client";
 
-import { CommandMenu } from '@/components/command-menu'
-import { Logo } from '@/components/logo'
-import { ThemeToggle } from '@/components/theme-toggle'
-import Link from 'next/link'
-import { Github, Menu, X, Home, Compass } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { CommandMenu } from "@/components/command-menu";
+import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
+import Link from "next/link";
+import { Github, Menu, X, Home, Compass } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 // Mobile navigation - simplified list
 const mobileNavigationLinks = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/explore', label: 'Explore', icon: Compass },
-  { href: '/contribute', label: 'Contribute', icon: Github },
-]
+  { href: "/", label: "Home", icon: Home },
+  { href: "/explore", label: "Explore", icon: Compass },
+  { href: "/contribute", label: "Contribute", icon: Github },
+];
 
 export function LandingNavigation() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
+      setIsScrolled(window.scrollY > 10);
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close menu when clicking outside or pressing Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsMenuOpen(false)
-    }
+      if (e.key === "Escape") setIsMenuOpen(false);
+    };
 
     if (isMenuOpen) {
-      document.addEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'hidden'
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = "";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = ''
-    }
-  }, [isMenuOpen])
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   return (
     <nav
@@ -55,7 +55,7 @@ export function LandingNavigation() {
         "sticky top-0 z-50 transition-all duration-300",
         isScrolled
           ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
-          : "bg-transparent border-b border-transparent"
+          : "bg-transparent border-b border-transparent",
       )}
       role="navigation"
       aria-label="Main navigation"
@@ -139,7 +139,7 @@ export function LandingNavigation() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 bg-background/80 backdrop-blur-sm lg:hidden"
-              style={{ top: 'var(--nav-height, 64px)' }}
+              style={{ top: "var(--nav-height, 64px)" }}
               onClick={() => setIsMenuOpen(false)}
               aria-hidden="true"
             />
@@ -152,7 +152,7 @@ export function LandingNavigation() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               className="fixed left-0 right-0 lg:hidden bg-background border-b border-border shadow-lg"
-              style={{ top: 'var(--nav-height, 64px)' }}
+              style={{ top: "var(--nav-height, 64px)" }}
               role="menu"
               aria-orientation="vertical"
             >
@@ -177,7 +177,7 @@ export function LandingNavigation() {
                           "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium",
                           "hover:bg-primary/10 hover:text-primary transition-all duration-200",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                          "min-h-touch group"
+                          "min-h-touch group",
                         )}
                         onClick={() => setIsMenuOpen(false)}
                         role="menuitem"
@@ -197,5 +197,5 @@ export function LandingNavigation() {
         )}
       </AnimatePresence>
     </nav>
-  )
+  );
 }

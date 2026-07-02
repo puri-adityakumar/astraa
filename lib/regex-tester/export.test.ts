@@ -51,9 +51,7 @@ describe("matchesToCsv", () => {
       },
     ];
     const csv = matchesToCsv(tricky);
-    expect(csv).toBe(
-      'index,length,full\n0,11,"hello,""hi""\nbye"',
-    );
+    expect(csv).toBe('index,length,full\n0,11,"hello,""hi""\nbye"');
   });
 
   it("returns header only when matches empty", () => {

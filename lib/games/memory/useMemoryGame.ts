@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import type { Card, GameState } from './types'
+import { useState, useEffect } from "react";
+import type { Card, GameState } from "./types";
 
-const EMOJIS = ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🎪', '🎯']
+const EMOJIS = ["🎮", "🎲", "🎯", "🎪", "🎨", "🎭", "🎪", "🎯"];
 
 export function useMemoryGame() {
   const [gameState, setGameState] = useState<GameState>(() => ({
@@ -11,89 +11,79 @@ export function useMemoryGame() {
     flippedCards: [],
     isGameOver: false,
     moves: 0,
-    matches: 0
-  }))
+    matches: 0,
+  }));
 
   function shuffleCards(): Card[] {
-    const pairs = [...EMOJIS, ...EMOJIS]
+    const pairs = [...EMOJIS, ...EMOJIS];
     // Fisher-Yates shuffle for unbiased randomization
     for (let i = pairs.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [pairs[i], pairs[j]] = [pairs[j]!, pairs[i]!]
+      [pairs[i], pairs[j]] = [pairs[j]!, pairs[i]!];
     }
     return pairs.map((value, index) => ({
       id: index,
       value,
       isFlipped: false,
       isMatched: false,
-    }))
+    }));
   }
 
   const flipCard = (card: Card) => {
-    if (
-      card.isMatched ||
-      card.isFlipped ||
-      gameState.flippedCards.length === 2
-    ) {
-      return
+    if (card.isMatched || card.isFlipped || gameState.flippedCards.length === 2) {
+      return;
     }
 
-    const newCards = gameState.cards.map(c =>
-      c.id === card.id ? { ...c, isFlipped: true } : c
-    )
+    const newCards = gameState.cards.map((c) => (c.id === card.id ? { ...c, isFlipped: true } : c));
 
-    const newFlippedCards = [...gameState.flippedCards, card]
+    const newFlippedCards = [...gameState.flippedCards, card];
 
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       cards: newCards,
       flippedCards: newFlippedCards,
-      moves: prev.moves + (newFlippedCards.length === 2 ? 1 : 0)
-    }))
-  }
+      moves: prev.moves + (newFlippedCards.length === 2 ? 1 : 0),
+    }));
+  };
 
   useEffect(() => {
     if (gameState.flippedCards.length === 2) {
-      const [first, second] = gameState.flippedCards
+      const [first, second] = gameState.flippedCards;
 
-      if (!first || !second) return
+      if (!first || !second) return;
 
       if (first.value === second.value) {
-        const newCards = gameState.cards.map(card =>
-          card.id === first.id || card.id === second.id
-            ? { ...card, isMatched: true }
-            : card
-        )
+        const newCards = gameState.cards.map((card) =>
+          card.id === first.id || card.id === second.id ? { ...card, isMatched: true } : card,
+        );
 
-        const newMatches = gameState.matches + 1
-        const isGameOver = newMatches === EMOJIS.length
+        const newMatches = gameState.matches + 1;
+        const isGameOver = newMatches === EMOJIS.length;
 
         setTimeout(() => {
-          setGameState(prev => ({
+          setGameState((prev) => ({
             ...prev,
             cards: newCards,
             flippedCards: [],
             matches: newMatches,
-            isGameOver
-          }))
-        }, 500)
+            isGameOver,
+          }));
+        }, 500);
       } else {
         setTimeout(() => {
-          const newCards = gameState.cards.map(card =>
-            card.id === first.id || card.id === second.id
-              ? { ...card, isFlipped: false }
-              : card
-          )
+          const newCards = gameState.cards.map((card) =>
+            card.id === first.id || card.id === second.id ? { ...card, isFlipped: false } : card,
+          );
 
-          setGameState(prev => ({
+          setGameState((prev) => ({
             ...prev,
             cards: newCards,
-            flippedCards: []
-          }))
-        }, 1000)
+            flippedCards: [],
+          }));
+        }, 1000);
       }
     }
-  }, [gameState.flippedCards])
+  }, [gameState.flippedCards]);
 
   const resetGame = () => {
     setGameState({
@@ -101,13 +91,13 @@ export function useMemoryGame() {
       flippedCards: [],
       isGameOver: false,
       moves: 0,
-      matches: 0
-    })
-  }
+      matches: 0,
+    });
+  };
 
   return {
     gameState,
     flipCard,
-    resetGame
-  }
+    resetGame,
+  };
 }

@@ -100,8 +100,7 @@ export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
           open: token,
           children: [],
           label: "Negative lookbehind",
-          detail:
-            "Asserts that the inner pattern does NOT match immediately before this position.",
+          detail: "Asserts that the inner pattern does NOT match immediately before this position.",
         });
         break;
       }
@@ -264,9 +263,7 @@ export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
     const frame = stack.pop();
     if (!frame) break;
     const lastChild = frame.children[frame.children.length - 1];
-    const end = lastChild
-      ? lastChild.sourceRange[1]
-      : frame.open.endIndex;
+    const end = lastChild ? lastChild.sourceRange[1] : frame.open.endIndex;
     const node: ExplainNode = {
       id: nextId(),
       label: frame.label,
@@ -284,4 +281,3 @@ export function buildExplainTree(tokens: PatternToken[]): ExplainNode[] {
 
   return root;
 }
-

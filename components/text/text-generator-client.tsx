@@ -58,8 +58,8 @@ export function TextGeneratorClient() {
           AI Text Generator
         </h1>
         <p className="text-muted-foreground text-lg">
-          The modern alternative to Lorem Ipsum. Generate meaningful,
-          context-aware placeholder text tailored to your specific topic.
+          The modern alternative to Lorem Ipsum. Generate meaningful, context-aware placeholder text
+          tailored to your specific topic.
         </p>
         <p className="text-xs text-muted-foreground/70">
           Text generated via OpenRouter API. No personal data stored.
@@ -87,9 +87,7 @@ export function TextGeneratorClient() {
         {/* Controls Container */}
         <div className="flex items-center justify-between w-full sm:w-auto gap-4 px-2">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              Words:
-            </span>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Words:</span>
             <Input
               id="words"
               type="number"
@@ -146,8 +144,8 @@ export function TextGeneratorClient() {
             <Sparkles className="h-16 w-16 mb-4 opacity-20" />
             <p className="text-xl font-medium">Ready to generate</p>
             <p className="text-sm mt-2 max-w-sm">
-              Enter a topic above and hit the magic button to create unique,
-              context-aware placeholder text.
+              Enter a topic above and hit the magic button to create unique, context-aware
+              placeholder text.
             </p>
           </div>
         )}

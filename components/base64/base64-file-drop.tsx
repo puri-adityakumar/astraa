@@ -1,19 +1,10 @@
 "use client";
 
-import {
-  useCallback,
-  useRef,
-  useState,
-  type DragEvent,
-} from "react";
+import { useCallback, useRef, useState, type DragEvent } from "react";
 import { FileText, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  FileTooLargeError,
-  MAX_FILE_BYTES,
-  readFileAsBytes,
-} from "@/lib/base64";
+import { FileTooLargeError, MAX_FILE_BYTES, readFileAsBytes } from "@/lib/base64";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import { cn } from "@/lib/utils";
 

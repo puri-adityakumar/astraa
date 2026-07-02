@@ -1,11 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import type { RegexFlag } from "@/lib/regex-tester/types";
 import { cn } from "@/lib/utils";
@@ -29,17 +25,10 @@ export function FlagChips() {
   const flags = useRegexTester((s) => s.flags);
   const toggleFlag = useRegexTester((s) => s.toggleFlag);
 
-  const handleToggle = useCallback(
-    (flag: RegexFlag) => () => toggleFlag(flag),
-    [toggleFlag],
-  );
+  const handleToggle = useCallback((flag: RegexFlag) => () => toggleFlag(flag), [toggleFlag]);
 
   return (
-    <div
-      role="group"
-      aria-label="Regex flags"
-      className="flex flex-wrap items-center gap-2"
-    >
+    <div role="group" aria-label="Regex flags" className="flex flex-wrap items-center gap-2">
       {FLAGS.map(({ flag, label, description }) => {
         const active = flags.includes(flag);
         return (

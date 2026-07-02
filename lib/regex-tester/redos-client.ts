@@ -11,11 +11,7 @@ export type SafeMatchResult = {
 
 export const DEFAULT_HARD_TIMEOUT_MS = 1500;
 
-function fallbackSync(
-  pattern: string,
-  flags: string,
-  input: string,
-): SafeMatchResult {
+function fallbackSync(pattern: string, flags: string, input: string): SafeMatchResult {
   try {
     const regex = new RegExp(pattern, flags);
     const r = runMatches(regex, input);

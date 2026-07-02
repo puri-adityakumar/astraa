@@ -61,9 +61,7 @@ export function MatchesPanel({
       e.preventDefault();
       const focused = document.activeElement as HTMLElement | null;
       const focusedId =
-        focused?.dataset.matchId !== undefined
-          ? Number(focused.dataset.matchId)
-          : null;
+        focused?.dataset.matchId !== undefined ? Number(focused.dataset.matchId) : null;
       if (e.key === "Enter" && focusedId !== null) {
         onJumpToMatch(focusedId);
         return;
@@ -104,10 +102,7 @@ export function MatchesPanel({
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium text-foreground">
-          Matches{" "}
-          <span className="text-muted-foreground tabular-nums">
-            ({matches.length})
-          </span>
+          Matches <span className="text-muted-foreground tabular-nums">({matches.length})</span>
         </p>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -123,12 +118,8 @@ export function MatchesPanel({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onSelect={handleExportJson}>
-              JSON
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={handleExportCsv}>
-              CSV
-            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={handleExportJson}>JSON</DropdownMenuItem>
+            <DropdownMenuItem onSelect={handleExportCsv}>CSV</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -169,18 +160,13 @@ export function MatchesPanel({
               )}
             >
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <span className="text-muted-foreground tabular-nums">
-                  #{matchId + 1}
-                </span>
-                <span className="text-muted-foreground tabular-nums">
-                  idx {match.index}
-                </span>
+                <span className="text-muted-foreground tabular-nums">#{matchId + 1}</span>
+                <span className="text-muted-foreground tabular-nums">idx {match.index}</span>
                 <span className="text-foreground truncate max-w-[50%] sm:max-w-none">
                   &quot;{truncate(match.full, 40)}&quot;
                 </span>
               </div>
-              {(match.groups.length > 0 ||
-                Object.keys(match.namedGroups).length > 0) && (
+              {(match.groups.length > 0 || Object.keys(match.namedGroups).length > 0) && (
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
                   {match.groups.map((group, groupIdx) => (
                     <span
@@ -192,9 +178,7 @@ export function MatchesPanel({
                     >
                       g{groupIdx + 1}:{" "}
                       <span className="text-foreground">
-                        {group === undefined
-                          ? "—"
-                          : `"${truncate(group, 16)}"`}
+                        {group === undefined ? "—" : `"${truncate(group, 16)}"`}
                       </span>
                     </span>
                   ))}
@@ -208,9 +192,7 @@ export function MatchesPanel({
                     >
                       {name}:{" "}
                       <span className="text-foreground">
-                        {value === undefined
-                          ? "—"
-                          : `"${truncate(value, 16)}"`}
+                        {value === undefined ? "—" : `"${truncate(value, 16)}"`}
                       </span>
                     </span>
                   ))}

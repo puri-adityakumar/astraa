@@ -10,12 +10,12 @@ import type { ContentItem } from "@/components/content-grid";
 export function ExploreClient() {
   const { tools } = useTools();
 
-  const toolItems: ContentItem[] = tools.map(tool => ({
+  const toolItems: ContentItem[] = tools.map((tool) => ({
     ...tool,
     category: "tool",
   }));
 
-  const gameItems: ContentItem[] = games.map(game => ({
+  const gameItems: ContentItem[] = games.map((game) => ({
     ...game,
     category: "game",
   }));
@@ -43,9 +43,7 @@ export function ExploreClient() {
         <div className="flex items-center gap-2 px-4">
           <Wrench className="h-5 w-5 sm:h-6 sm:w-6" />
           <h2 className="text-fluid-2xl font-semibold">Tools</h2>
-          <span className="text-muted-foreground text-sm">
-            ({tools.length})
-          </span>
+          <span className="text-muted-foreground text-sm">({tools.length})</span>
         </div>
         <ContentGrid items={toolItems} />
       </motion.div>
@@ -59,9 +57,7 @@ export function ExploreClient() {
         <div className="flex items-center gap-2 px-4">
           <Gamepad2 className="h-5 w-5 sm:h-6 sm:w-6" />
           <h2 className="text-fluid-2xl font-semibold">Games</h2>
-          <span className="text-muted-foreground text-sm">
-            ({games.length})
-          </span>
+          <span className="text-muted-foreground text-sm">({games.length})</span>
         </div>
         <ContentGrid items={gameItems} />
       </motion.div>

@@ -15,6 +15,7 @@ A modern, browser-based utility tools and games suite built with Next.js 16, Typ
 Astraa provides an integrated platform of developer and creator utilities that run entirely in the browser. No backend processing required for most features.
 
 **Key Features:**
+
 - Password, hash, and text generators
 - Currency and cryptocurrency converters
 - Image resizer and unit converter
@@ -68,13 +69,13 @@ cp .env.sample .env.local
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
-| `OPENROUTER_API_KEY` | Optional | API key for AI-powered text generation |
-| `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL (visitor counting) |
-| `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |
+| Variable             | Required | Description                                      |
+| -------------------- | -------- | ------------------------------------------------ |
+| `NEXT_PUBLIC_ENV`    | Optional | Environment flag (dev/prod)                      |
+| `OPENROUTER_API_KEY` | Optional | API key for AI-powered text generation           |
+| `KV_REST_API_URL`    | Optional | Vercel KV / Upstash Redis URL (visitor counting) |
+| `KV_REST_API_TOKEN`  | Optional | Vercel KV / Upstash Redis token                  |
+| `SENTRY_AUTH_TOKEN`  | Optional | Sentry source map uploads                        |
 
 ## Running the Application
 
@@ -101,25 +102,25 @@ npm run lint
 
 ## Documentation Index
 
-| Document | Description |
-|----------|-------------|
+| Document                             | Description                                  |
+| ------------------------------------ | -------------------------------------------- |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture, diagrams, and data flow |
-| [API.md](./API.md) | API integrations and external services |
-| [COMPONENTS.md](./COMPONENTS.md) | Component hierarchy, hooks, and usage |
-| [DEVELOPMENT.md](./DEVELOPMENT.md) | Development guidelines and workflows |
+| [API.md](./API.md)                   | API integrations and external services       |
+| [COMPONENTS.md](./COMPONENTS.md)     | Component hierarchy, hooks, and usage        |
+| [DEVELOPMENT.md](./DEVELOPMENT.md)   | Development guidelines and workflows         |
 
 ## Tech Stack
 
-| Category | Technologies |
-|----------|--------------|
-| Framework | Next.js 16, React 19 |
-| Language | TypeScript 5.9 |
-| Styling | Tailwind CSS 3.4, Framer Motion |
-| UI Components | Radix UI, Shadcn/UI |
-| State | Zustand 5, React Context |
-| Forms | React Hook Form, Zod 4 |
-| Database | Upstash Redis |
-| Monitoring | Sentry, Vercel Analytics |
+| Category      | Technologies                    |
+| ------------- | ------------------------------- |
+| Framework     | Next.js 16, React 19            |
+| Language      | TypeScript 5.9                  |
+| Styling       | Tailwind CSS 3.4, Framer Motion |
+| UI Components | Radix UI, Shadcn/UI             |
+| State         | Zustand 5, React Context        |
+| Forms         | React Hook Form, Zod 4          |
+| Database      | Upstash Redis                   |
+| Monitoring    | Sentry, Vercel Analytics        |
 
 ## License
 

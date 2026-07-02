@@ -125,10 +125,7 @@ export function ConvertView() {
           value={output}
           spellCheck={false}
           placeholder="Output will appear here…"
-          className={cn(
-            "w-full h-[50vh] p-3 rounded-md border bg-muted/30",
-            "font-mono text-xs",
-          )}
+          className={cn("w-full h-[50vh] p-3 rounded-md border bg-muted/30", "font-mono text-xs")}
         />
       )}
 
@@ -136,29 +133,19 @@ export function ConvertView() {
         <Button variant="outline" size="sm" onClick={onCopy} disabled={!output}>
           <Copy className="h-4 w-4 mr-2" aria-hidden /> Copy
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onDownload}
-          disabled={!output}
-        >
+        <Button variant="outline" size="sm" onClick={onDownload} disabled={!output}>
           <Download className="h-4 w-4 mr-2" aria-hidden /> Download
         </Button>
       </div>
 
       {convertFormat === "yaml" && (
         <div className="space-y-2 pt-2 border-t">
-          <p className="text-sm text-muted-foreground">
-            Or paste YAML to convert into JSON:
-          </p>
+          <p className="text-sm text-muted-foreground">Or paste YAML to convert into JSON:</p>
           <textarea
             value={yamlInput}
             onChange={(e) => setYamlInput(e.target.value)}
             placeholder="key: value"
-            className={cn(
-              "w-full h-32 p-3 rounded-md border bg-background",
-              "font-mono text-xs",
-            )}
+            className={cn("w-full h-32 p-3 rounded-md border bg-background", "font-mono text-xs")}
           />
           <Button
             size="sm"

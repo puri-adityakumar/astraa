@@ -13,11 +13,7 @@ const stripExt = (name: string): string => {
 };
 
 const escapeHtml = (s: string): string =>
-  s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 export function exportAsMarkdown(name: string, content: string): void {
   downloadBlob(new Blob([content], { type: "text/markdown" }), `${stripExt(name)}.md`);

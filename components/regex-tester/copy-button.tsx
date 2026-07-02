@@ -15,13 +15,7 @@ export interface CopyButtonProps {
   disabled?: boolean;
 }
 
-export function CopyButton({
-  text,
-  label,
-  size = "icon",
-  className,
-  disabled,
-}: CopyButtonProps) {
+export function CopyButton({ text, label, size = "icon", className, disabled }: CopyButtonProps) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
@@ -53,11 +47,7 @@ export function CopyButton({
       onClick={handleCopy}
       disabled={disabled || text.length === 0}
       aria-label={`Copy ${label}`}
-      className={cn(
-        "shrink-0 min-h-touch",
-        isIcon && "min-w-touch",
-        className,
-      )}
+      className={cn("shrink-0 min-h-touch", isIcon && "min-w-touch", className)}
     >
       {copied ? (
         <Check className="h-4 w-4" aria-hidden="true" />

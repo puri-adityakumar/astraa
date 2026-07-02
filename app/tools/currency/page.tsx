@@ -17,16 +17,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Currency Converter",
-    description:
-      "Convert currencies and crypto with real-time exchange rates. Free and accurate.",
+    description: "Convert currencies and crypto with real-time exchange rates. Free and accurate.",
     url: "/tools/currency",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Currency Converter",
-    description:
-      "Convert currencies and crypto with real-time exchange rates. Free and accurate.",
+    description: "Convert currencies and crypto with real-time exchange rates. Free and accurate.",
   },
   alternates: {
     canonical: "/tools/currency",
@@ -42,9 +40,7 @@ export default function CurrencyConverterPage() {
   return (
     <>
       <CurrencyConverterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
     </>
   );
 }

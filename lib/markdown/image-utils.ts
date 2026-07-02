@@ -35,7 +35,8 @@ export async function processImageDrop(file: File): Promise<ImageDropResult> {
       return {
         kind: "ok",
         markdown,
-        warning: "That image is large — consider resizing in /tools/image to keep your files snappy.",
+        warning:
+          "That image is large — consider resizing in /tools/image to keep your files snappy.",
       };
     }
     return { kind: "ok", markdown };

@@ -1,5 +1,5 @@
 {
-  "name": "nextjs",
+  "name": "astraa",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 50",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -90,6 +92,8 @@
     "@types/papaparse": "^5.5.2",
     "@types/three": "^0.182.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.4",
     "vitest": "^4.1.4"
   }
 }

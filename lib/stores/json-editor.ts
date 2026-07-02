@@ -66,9 +66,7 @@ const initialState: JsonEditorState = {
 
 export function stripVolatile(state: JsonEditorState): JsonEditorState {
   const text =
-    state.text.length > MAX_PERSIST_BYTES
-      ? state.text.slice(0, MAX_PERSIST_BYTES)
-      : state.text;
+    state.text.length > MAX_PERSIST_BYTES ? state.text.slice(0, MAX_PERSIST_BYTES) : state.text;
   return { ...state, text, parsedValue: null, diagnostics: [], parsedAt: 0 };
 }
 

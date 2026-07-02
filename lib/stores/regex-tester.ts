@@ -3,12 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { createZustandStorage } from "./storage";
 import type { CodeLang, MiniTest, RegexFlag } from "@/lib/regex-tester/types";
 
-export type ReferenceTab =
-  | "starters"
-  | "cheatsheet"
-  | "explain"
-  | "tests"
-  | "code";
+export type ReferenceTab = "starters" | "cheatsheet" | "explain" | "tests" | "code";
 
 export type RegexTesterState = {
   schemaVersion: 1;

@@ -33,11 +33,7 @@ export const MAX_REPAIR_BYTES = 5 * 1024 * 1024;
 
 export const INDENT_OPTIONS: IndentOption[] = [2, 4, "tab"];
 
-export const ALLOWED_MIME = [
-  "application/json",
-  "text/plain",
-  "",
-] as const;
+export const ALLOWED_MIME = ["application/json", "text/plain", ""] as const;
 
 export const DEFAULT_STATE = {
   schemaVersion: 1 as const,

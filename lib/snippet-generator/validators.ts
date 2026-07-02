@@ -2,9 +2,7 @@ export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 export const MAX_CODE_BYTES = 100 * 1024;
 export const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"] as const;
 
-export type ValidationResult =
-  | { ok: true }
-  | { ok: false; reason: "type" | "size" };
+export type ValidationResult = { ok: true } | { ok: false; reason: "type" | "size" };
 
 export function validateImageFile(file: File): ValidationResult {
   if (!ALLOWED_IMAGE_TYPES.includes(file.type as (typeof ALLOWED_IMAGE_TYPES)[number])) {

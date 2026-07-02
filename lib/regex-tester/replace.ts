@@ -1,12 +1,6 @@
-export type ReplaceResult =
-  | { ok: true; result: string }
-  | { ok: false; error: string };
+export type ReplaceResult = { ok: true; result: string } | { ok: false; error: string };
 
-export function applyReplace(
-  regex: RegExp,
-  input: string,
-  replacement: string,
-): ReplaceResult {
+export function applyReplace(regex: RegExp, input: string, replacement: string): ReplaceResult {
   try {
     const result = input.replace(regex, replacement);
     return { ok: true, result };

@@ -7,15 +7,15 @@ tracking) is provided via React Context — see `lib/tools-context.tsx` (`ToolsP
 
 ## What lives here
 
-| File | Purpose | Consumers |
-| --- | --- | --- |
-| `storage.ts` | `createZustandStorage()` + IndexedDB/localStorage adapters + a per-key concurrency lock. Also exports `clearAllStoredData`, `exportAllStoredData`, `importStoredData`. | Every persisted store below |
-| `tool-settings.ts` | `useToolSettings` — per-tool settings, usage tracking, last-used timestamps, import/export. Persisted. | snippet, markdown, base64, regex, json clients |
-| `json-editor.ts` | `useJsonEditor` — JSON editor document/selection state. Persisted. | `components/json/json-editor-client.tsx` |
-| `markdown-editor.ts` | `useMarkdownEditor` — markdown editor document + file list. Persisted. | `components/markdown/markdown-editor-client.tsx` |
-| `snippet-generator.ts` | `useSnippetGenerator` — snippet generator state. Persisted. | `components/snippet-generator/snippet-generator-client.tsx` |
-| `regex-tester.ts` | `useRegexTester` — regex tester reference-panel tab state. Persisted. | `components/regex-tester/*` |
-| `types.ts` | Shared store types (`ToolSettings`, `Activity`, etc.). | stores above |
+| File                   | Purpose                                                                                                                                                                | Consumers                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `storage.ts`           | `createZustandStorage()` + IndexedDB/localStorage adapters + a per-key concurrency lock. Also exports `clearAllStoredData`, `exportAllStoredData`, `importStoredData`. | Every persisted store below                                 |
+| `tool-settings.ts`     | `useToolSettings` — per-tool settings, usage tracking, last-used timestamps, import/export. Persisted.                                                                 | snippet, markdown, base64, regex, json clients              |
+| `json-editor.ts`       | `useJsonEditor` — JSON editor document/selection state. Persisted.                                                                                                     | `components/json/json-editor-client.tsx`                    |
+| `markdown-editor.ts`   | `useMarkdownEditor` — markdown editor document + file list. Persisted.                                                                                                 | `components/markdown/markdown-editor-client.tsx`            |
+| `snippet-generator.ts` | `useSnippetGenerator` — snippet generator state. Persisted.                                                                                                            | `components/snippet-generator/snippet-generator-client.tsx` |
+| `regex-tester.ts`      | `useRegexTester` — regex tester reference-panel tab state. Persisted.                                                                                                  | `components/regex-tester/*`                                 |
+| `types.ts`             | Shared store types (`ToolSettings`, `Activity`, etc.).                                                                                                                 | stores above                                                |
 
 > Note: there is **no** `StoreProvider` and **no** `migration.ts`/`index.ts` barrel — an
 > earlier Zustand-migration subtree was never mounted and has been removed. The app mounts
@@ -49,9 +49,9 @@ to the same key are serialized (a failed operation never deadlocks the queue —
 ```typescript
 import { clearAllStoredData, exportAllStoredData, importStoredData } from "@/lib/stores/storage";
 
-const backup = await exportAllStoredData();        // full export (JSON string)
-await importStoredData(backup);                    // restore
-await clearAllStoredData();                        // wipe persisted state
+const backup = await exportAllStoredData(); // full export (JSON string)
+await importStoredData(backup); // restore
+await clearAllStoredData(); // wipe persisted state
 ```
 
 ## Testing

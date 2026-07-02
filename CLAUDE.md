@@ -26,6 +26,7 @@ Unit tests cover pure utility functions in `lib/` (calculator, hash, password, u
 ### Core Pattern
 
 Server component pages render client components:
+
 - `app/tools/[tool]/page.tsx` → exports metadata, renders client component
 - `components/[tool]/[tool]-client.tsx` → `"use client"` directive, contains UI logic
 - `lib/[tool]/` → pure logic, utilities, types (no React)
@@ -57,18 +58,18 @@ Zustand stores in `lib/stores/`, persisted:
 ### Error Handling
 
 ```typescript
-import { getUserFriendlyError, logError } from "@/lib/error-handler"
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
 
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
-  const details = getUserFriendlyError(error)
+  const details = getUserFriendlyError(error);
   toast({
     title: details.title,
     description: details.message,
-    variant: "destructive"
-  })
-  logError(error, { context: "additional context" })
+    variant: "destructive",
+  });
+  logError(error, { context: "additional context" });
 }
 ```
 
@@ -104,19 +105,19 @@ try {
 
 ```typescript
 // 1. External libraries
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 // 2. Internal utilities
-import { useToast } from "@/components/ui/use-toast"
-import { cn } from "@/lib/utils"
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 // 3. Components
-import { Button } from "@/components/ui/button"
-import { HashInput } from "./hash-input"
+import { Button } from "@/components/ui/button";
+import { HashInput } from "./hash-input";
 
 // 4. Types
-import type { Tool } from "@/lib/tools"
+import type { Tool } from "@/lib/tools";
 ```
 
 ### Component Structure
@@ -226,25 +227,25 @@ See `lib/animations/README.md` for full config, presets, and usage guidance.
 ### Sentry Integration
 
 ```typescript
-import * as Sentry from "@sentry/nextjs"
+import * as Sentry from "@sentry/nextjs";
 
 // Capture exceptions
-Sentry.captureException(error)
+Sentry.captureException(error);
 
 // Performance tracing — use for meaningful actions (button clicks, API calls)
 const result = await Sentry.startSpan(
   { op: "function.name", name: "Descriptive Name" },
   async (span) => {
-    span.setAttribute("key", value)
-    return data
-  }
-)
+    span.setAttribute("key", value);
+    return data;
+  },
+);
 
 // Structured logging
-const { logger } = Sentry
-logger.info("Action completed", { key: "value" })
-logger.error("Failed operation", { orderId: "123" })
-logger.debug(logger.fmt`Cache miss for user: ${userId}`)  // use logger.fmt for template variables
+const { logger } = Sentry;
+logger.info("Action completed", { key: "value" });
+logger.error("Failed operation", { orderId: "123" });
+logger.debug(logger.fmt`Cache miss for user: ${userId}`); // use logger.fmt for template variables
 ```
 
 ### Accessibility
@@ -266,6 +267,7 @@ logger.debug(logger.fmt`Cache miss for user: ${userId}`)  // use logger.fmt for 
 Before turning a design/spec into an implementation plan, walk through these checks. Treat any "no" as either a gap to fix in the spec or a deliberate, documented decision in an "Out of scope" section.
 
 ### Project alignment
+
 - Server page → client component pattern (`app/tools/[name]/page.tsx` → `components/[name]/[name]-client.tsx` → `lib/[name]/*`)
 - Global state lives in `lib/stores/[name].ts` using Zustand + `createZustandStorage()`
 - Tool registered in `lib/tools.ts` (or game in `lib/games.ts`) with `name`, `description`, `path`, `icon`, optional `wip`
@@ -275,6 +277,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Tailwind class order respected, classes composed via `cn()`
 
 ### Design uniformity
+
 - Layout matches other tools — centered card (`max-w-2xl mx-auto`) is the default; any divergence is justified in the spec
 - Reuses `components/ui/*` primitives (Button, Card, AlertDialog, Tooltip, Toast) before introducing new ones
 - Includes heading + tagline + "All processing happens locally in your browser" line where applicable
@@ -282,6 +285,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Dark/light follows `next-themes` and HSL semantic tokens (`background`, `foreground`, `primary`, `muted`, `border`)
 
 ### UX coverage
+
 - Empty state (first visit, no data) is specified
 - Loading / hydration state is specified
 - Error states (recoverable + unrecoverable) are specified
@@ -292,6 +296,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Destructive actions (delete, overwrite) gated by confirmation
 
 ### Accessibility
+
 - Touch targets ≥ 44px (`min-h-touch`/`min-w-touch`)
 - `aria-label` on icon-only buttons
 - Semantic HTML for interactive elements
@@ -300,38 +305,45 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Dynamic content updates handled for screen readers (live regions, focus moves)
 
 ### Security / data
+
 - User-supplied content rendered safely (no untrusted HTML, sanitization where needed)
 - Upload/storage size limits set
 - Data persisted only locally unless explicitly designed for sync
 - Sensitive data sanitized before logging (`getUserFriendlyError()` already does this)
 
 ### Performance / bundle
+
 - Heavy dependencies (>100KB) dynamic-imported on demand and justified
 - Initial route bundle impact assessed
 - Hot-path renders debounced (typing, resize, scroll) where appropriate
 - Memoization where re-renders are expensive
 
 ### Complexity
+
 - Would a smaller v1 still hit the goal? Components/features that could move to "out of scope"?
 - Each component does one thing
 - Abstractions earn their cost (inlining isn't simpler)
 
 ### Testing
+
 - Pure logic in `lib/` has unit tests
 - Boundary conditions tested (empty, max, malformed input)
 - Manual verification checklist exists for UI behavior not covered by unit tests
 
 ### Storage / migration
+
 - Schema version recorded and migration path planned (per-store `version` + `migrate` in `lib/stores/<name>.ts`, backed by `createZustandStorage()`)
 - Caps on stored data to prevent quota issues
 - Fallback behavior when storage unavailable
 
 ### Observability
+
 - Tool usage tracked via `updateToolUsage(toolId)`
 - Sentry instrumentation on meaningful flows (`Sentry.startSpan`, `Sentry.captureException`)
 - Errors logged with enough context to debug
 
 ### Out-of-scope clarity
+
 - What's NOT being built is explicit, so deferred work is distinguishable from forgotten work
 
 ## Contribution Workflow

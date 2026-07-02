@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { useToast } from "@/components/ui/use-toast"
-import { HashInput } from "./hash-input"
-import { HashOutput } from "./hash-output"
-import { generateHash } from "@/lib/hash"
-import { hashAlgorithms } from "@/lib/hash"
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { HashInput } from "./hash-input";
+import { HashOutput } from "./hash-output";
+import { generateHash } from "@/lib/hash";
+import { hashAlgorithms } from "@/lib/hash";
 
 export function HashGeneratorClient() {
-  const { toast } = useToast()
-  const [input, setInput] = useState("")
-  const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0]?.id ?? "sha256")
-  const [hash, setHash] = useState("")
+  const { toast } = useToast();
+  const [input, setInput] = useState("");
+  const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0]?.id ?? "sha256");
+  const [hash, setHash] = useState("");
 
   const handleGenerateHash = () => {
     if (!input) {
       toast({
         title: "Error",
         description: "Please enter some text to hash",
-        variant: "destructive"
-      })
-      return
+        variant: "destructive",
+      });
+      return;
     }
 
-    const newHash = generateHash(input, selectedHash)
-    setHash(newHash)
-  }
+    const newHash = generateHash(input, selectedHash);
+    setHash(newHash);
+  };
 
   return (
     <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
@@ -50,13 +50,8 @@ export function HashGeneratorClient() {
           onHashChange={setSelectedHash}
           onGenerate={handleGenerateHash}
         />
-        {hash && (
-          <HashOutput
-            type={selectedHash}
-            hash={hash}
-          />
-        )}
+        {hash && <HashOutput type={selectedHash} hash={hash} />}
       </Card>
     </div>
-  )
+  );
 }

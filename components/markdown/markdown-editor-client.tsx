@@ -21,20 +21,14 @@ import type { EditorHandle } from "./editor";
 
 const Editor = dynamic(() => import("./editor").then((m) => m.Editor), {
   ssr: false,
-  loading: () => (
-    <div className="p-4 text-sm text-muted-foreground">Loading editor…</div>
-  ),
+  loading: () => <div className="p-4 text-sm text-muted-foreground">Loading editor…</div>,
 });
 
 type PendingAction =
-  | { kind: "switch"; id: string }
-  | { kind: "view-toggle" }
-  | { kind: "delete"; id: string };
+  { kind: "switch"; id: string } | { kind: "view-toggle" } | { kind: "delete"; id: string };
 
 export function MarkdownEditorClient() {
-  const file = useMarkdownEditor((s) =>
-    s.files.find((f) => f.id === s.currentId),
-  );
+  const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentId));
   const files = useMarkdownEditor((s) => s.files);
   const mode = useMarkdownEditor((s) => s.mode);
   const draft = useMarkdownEditor((s) => s.draft);
@@ -227,9 +221,7 @@ export function MarkdownEditorClient() {
   return (
     <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
       <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Markdown
-        </h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Markdown</h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
           Drop a markdown file to view it. Toggle to edit, then export as .md, .html, or PDF.
         </p>

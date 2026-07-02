@@ -5,10 +5,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CalculatorDisplay } from "@/components/calculator/calculator-display";
 import { CalculatorButton } from "@/components/calculator/calculator-button";
-import {
-  evaluateExpression,
-  scientificFunctions,
-} from "@/lib/calculator/calculator-utils";
+import { evaluateExpression, scientificFunctions } from "@/lib/calculator/calculator-utils";
 
 export function CalculatorClient() {
   const [display, setDisplay] = useState("0");
@@ -160,8 +157,7 @@ export function CalculatorClient() {
           Scientific Calculator
         </h1>
         <p className="text-muted-foreground text-lg max-w-2xl">
-          Perform complex math calculations with our Google-style scientific
-          calculator.
+          Perform complex math calculations with our Google-style scientific calculator.
         </p>
         <p className="text-xs text-muted-foreground/70">
           All processing happens locally in your browser
@@ -232,21 +228,9 @@ export function CalculatorClient() {
               className="text-sm"
             />
 
-            <CalculatorButton
-              value="("
-              onClick={() => appendOperator("(")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value=")"
-              onClick={() => appendOperator(")")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="%"
-              onClick={() => appendOperator("%")}
-              variant="secondary"
-            />
+            <CalculatorButton value="(" onClick={() => appendOperator("(")} variant="secondary" />
+            <CalculatorButton value=")" onClick={() => appendOperator(")")} variant="secondary" />
+            <CalculatorButton value="%" onClick={() => appendOperator("%")} variant="secondary" />
 
             <CalculatorButton
               value="sin"
@@ -264,21 +248,13 @@ export function CalculatorClient() {
               variant="secondary"
             />
 
-            <CalculatorButton
-              value="ln"
-              onClick={() => applyFunction("ln")}
-              variant="secondary"
-            />
+            <CalculatorButton value="ln" onClick={() => applyFunction("ln")} variant="secondary" />
             <CalculatorButton
               value="log"
               onClick={() => applyFunction("log")}
               variant="secondary"
             />
-            <CalculatorButton
-              value="√"
-              onClick={() => applyFunction("sqrt")}
-              variant="secondary"
-            />
+            <CalculatorButton value="√" onClick={() => applyFunction("sqrt")} variant="secondary" />
 
             <CalculatorButton
               value="π"
@@ -290,11 +266,7 @@ export function CalculatorClient() {
               onClick={() => appendNumber("2.71828")}
               variant="secondary"
             />
-            <CalculatorButton
-              value="^"
-              onClick={() => appendOperator("^")}
-              variant="secondary"
-            />
+            <CalculatorButton value="^" onClick={() => appendOperator("^")} variant="secondary" />
           </div>
 
           {/* Numeric Keypad (Right) */}

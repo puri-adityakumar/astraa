@@ -38,11 +38,7 @@ export function Base64ImagePreview({ bytes, mime }: Base64ImagePreviewProps) {
         {url && (
           // next/image cannot load blob:// object URLs; <img> is intentional.
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={url}
-            alt={`Decoded ${mime}`}
-            className="max-h-64 max-w-full object-contain"
-          />
+          <img src={url} alt={`Decoded ${mime}`} className="max-h-64 max-w-full object-contain" />
         )}
       </div>
     </div>

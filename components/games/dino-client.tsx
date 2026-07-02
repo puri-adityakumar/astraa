@@ -11,8 +11,7 @@ import { WorkInProgress } from "@/components/wip";
 export function DinoClient() {
   const [mode, setMode] = useState<"custom" | "original">("original");
   const { gameState, startGame, jump, config } = useDinoGame();
-  const { score, highScore, isGameOver, dinoY, obstacles, groundX } =
-    gameState;
+  const { score, highScore, isGameOver, dinoY, obstacles, groundX } = gameState;
 
   return (
     <WorkInProgress>
@@ -25,8 +24,7 @@ export function DinoClient() {
         >
           <h1 className="text-4xl font-bold">Chrome Dino</h1>
           <p className="text-muted-foreground">
-            The famous Chrome dinosaur game. Choose between the original or
-            our custom version!
+            The famous Chrome dinosaur game. Choose between the original or our custom version!
           </p>
 
           <div className="flex items-center justify-center gap-4">
@@ -66,9 +64,7 @@ export function DinoClient() {
             <div className="absolute top-4 right-4 font-mono text-lg">
               Score: {score}
               {highScore > 0 && (
-                <div className="text-sm text-muted-foreground">
-                  High Score: {highScore}
-                </div>
+                <div className="text-sm text-muted-foreground">High Score: {highScore}</div>
               )}
             </div>
 
@@ -80,14 +76,10 @@ export function DinoClient() {
                   <p className="text-muted-foreground mb-4">
                     Score: {score}
                     {score === highScore && score > 0 && (
-                      <span className="block text-primary">
-                        New High Score!
-                      </span>
+                      <span className="block text-primary">New High Score!</span>
                     )}
                   </p>
-                  <p className="text-sm">
-                    Press Space or click to play again
-                  </p>
+                  <p className="text-sm">Press Space or click to play again</p>
                 </div>
               </div>
             )}
@@ -120,8 +112,7 @@ export function DinoClient() {
             <div
               className="absolute bottom-0 left-0 right-0 h-[20px] bg-muted"
               style={{
-                backgroundImage:
-                  "linear-gradient(to right, #ccc 50%, transparent 50%)",
+                backgroundImage: "linear-gradient(to right, #ccc 50%, transparent 50%)",
                 backgroundSize: "20px 100%",
                 backgroundPosition: `${groundX}px 0`,
               }}
@@ -131,14 +122,9 @@ export function DinoClient() {
 
         <div className="text-center text-sm text-muted-foreground">
           {mode === "custom" ? (
-            <p>
-              Tip: Use the spacebar to jump, or click/tap the game area
-            </p>
+            <p>Tip: Use the spacebar to jump, or click/tap the game area</p>
           ) : (
-            <p>
-              Tip: Press Space to start and jump. The game works just like
-              in Chrome!
-            </p>
+            <p>Tip: Press Space to start and jump. The game works just like in Chrome!</p>
           )}
         </div>
       </div>

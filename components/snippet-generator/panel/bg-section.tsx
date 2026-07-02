@@ -20,14 +20,19 @@ import { logError } from "@/lib/error-handler";
 import { useSnippetGenerator } from "@/lib/stores/snippet-generator";
 import type { BackgroundState } from "@/lib/snippet-generator/types";
 
-const HexColorPicker = dynamic(
-  () => import("react-colorful").then((m) => m.HexColorPicker),
-  { ssr: false },
-);
+const HexColorPicker = dynamic(() => import("react-colorful").then((m) => m.HexColorPicker), {
+  ssr: false,
+});
 
 const SOLID_QUICK = [
-  "#ffffff", "#000000", "#18181b", "#fafaf9",
-  "#1e293b", "#0f172a", "#7c3aed", "#0ea5e9",
+  "#ffffff",
+  "#000000",
+  "#18181b",
+  "#fafaf9",
+  "#1e293b",
+  "#0f172a",
+  "#7c3aed",
+  "#0ea5e9",
 ];
 
 const HEX_RE = /^#?[0-9a-f]{3,8}$/i;
@@ -134,7 +139,9 @@ export function BgSection() {
               }}
             />
             <div>
-              <Label className="sr-only" htmlFor="bg-solid-hex">Hex</Label>
+              <Label className="sr-only" htmlFor="bg-solid-hex">
+                Hex
+              </Label>
               <div
                 className={cn(
                   "flex items-center gap-2 rounded-md border bg-background px-2 py-1.5",
@@ -165,9 +172,7 @@ export function BgSection() {
                 <span
                   className={cn(
                     "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
-                    hexValid
-                      ? "bg-success/15 text-success"
-                      : "bg-destructive/15 text-destructive",
+                    hexValid ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive",
                   )}
                 >
                   {hexValid ? (
@@ -315,8 +320,8 @@ export function BgSection() {
           >
             <Upload className="h-4 w-4" aria-hidden />
             <span>
-              <strong className="font-medium text-foreground">Upload image</strong>{" "}
-              · PNG / JPG / WebP, max 5 MB
+              <strong className="font-medium text-foreground">Upload image</strong> · PNG / JPG /
+              WebP, max 5 MB
             </span>
           </button>
         )}

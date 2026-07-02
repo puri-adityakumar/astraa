@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
-import { AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
   CommandEmpty,
@@ -11,57 +11,57 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import { Search, ArrowRight } from "lucide-react"
-import { useTools } from "@/lib/tools-context"
-import { games } from "@/lib/games"
-import { Badge } from "@/components/ui/badge"
-import { DialogTitle } from "@/components/ui/dialog"
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
+} from "@/components/ui/command";
+import { Search, ArrowRight } from "lucide-react";
+import { useTools } from "@/lib/tools-context";
+import { games } from "@/lib/games";
+import { Badge } from "@/components/ui/badge";
+import { DialogTitle } from "@/components/ui/dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 export function CommandMenu() {
-  const router = useRouter()
-  const [open, setOpen] = React.useState(false)
-  const [mounted, setMounted] = React.useState(false)
-  const [search, setSearch] = React.useState("")
-  const { categories } = useTools()
+  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const { categories } = useTools();
 
   React.useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       // Cmd/Ctrl + K to open command menu
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((prev) => !prev)
+        e.preventDefault();
+        setOpen((prev) => !prev);
       }
       // Escape to close
       if (e.key === "Escape") {
-        setOpen(false)
+        setOpen(false);
       }
       // Cmd/Ctrl + / for quick search focus
       if (e.key === "/" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen(true)
+        e.preventDefault();
+        setOpen(true);
       }
-    }
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   // Reset search when dialog closes
   React.useEffect(() => {
     if (!open) {
-      setSearch("")
+      setSearch("");
     }
-  }, [open])
+  }, [open]);
 
   const runCommand = React.useCallback((command: () => unknown) => {
-    setOpen(false)
-    command()
-  }, [])
+    setOpen(false);
+    command();
+  }, []);
 
   return (
     <>
@@ -74,7 +74,8 @@ export function CommandMenu() {
         <Search className="mr-2 h-3.5 w-3.5 shrink-0" />
         <span className="text-xs">Search...</span>
         <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-muted/50 px-1.5 font-mono text-[10px] opacity-100 sm:flex">
-          <span>⌘</span><span>K</span>
+          <span>⌘</span>
+          <span>K</span>
         </kbd>
       </Button>
       <AnimatePresence>
@@ -183,5 +184,5 @@ export function CommandMenu() {
         )}
       </AnimatePresence>
     </>
-  )
+  );
 }

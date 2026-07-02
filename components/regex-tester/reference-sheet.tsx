@@ -3,13 +3,7 @@
 import { useState } from "react";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ReferencePanel } from "./reference-panel";
 
@@ -39,10 +33,7 @@ export function ReferenceSheet({ onInsertAtCaret }: ReferenceSheetProps) {
           <BookOpen className="h-5 w-5" aria-hidden="true" />
         </Button>
       </SheetTrigger>
-      <SheetContent
-        side="bottom"
-        className="max-h-[85vh] overflow-y-auto"
-      >
+      <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
         <SheetHeader className="text-left">
           <SheetTitle>Reference</SheetTitle>
         </SheetHeader>

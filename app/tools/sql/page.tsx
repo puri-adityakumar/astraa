@@ -21,16 +21,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "SQL Formatter",
-    description:
-      "Format and beautify SQL queries instantly. Free browser-based developer tool.",
+    description: "Format and beautify SQL queries instantly. Free browser-based developer tool.",
     url: "/tools/sql",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "SQL Formatter",
-    description:
-      "Format and beautify SQL queries instantly. Free browser-based developer tool.",
+    description: "Format and beautify SQL queries instantly. Free browser-based developer tool.",
   },
   alternates: {
     canonical: "/tools/sql",
@@ -46,9 +44,7 @@ export default function SqlFormatterPage() {
   return (
     <>
       <SqlFormatterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
     </>
   );
 }

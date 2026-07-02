@@ -43,9 +43,7 @@ export function MiniTestsPanel() {
   };
 
   const handleUpdate = (id: string, patch: Partial<MiniTest>) => {
-    setMiniTests(
-      miniTests.map((t) => (t.id === id ? { ...t, ...patch } : t)),
-    );
+    setMiniTests(miniTests.map((t) => (t.id === id ? { ...t, ...patch } : t)));
   };
 
   const handleRemove = (id: string) => {
@@ -55,8 +53,8 @@ export function MiniTestsPanel() {
   return (
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">
-        Pin sample inputs to verify the pattern keeps matching what it should
-        — or stays away from what it shouldn&rsquo;t.
+        Pin sample inputs to verify the pattern keeps matching what it should — or stays away from
+        what it shouldn&rsquo;t.
       </p>
 
       <ul className="space-y-2">
@@ -87,37 +85,24 @@ export function MiniTestsPanel() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="should-match">Should match</SelectItem>
-                  <SelectItem value="should-not-match">
-                    Should not match
-                  </SelectItem>
+                  <SelectItem value="should-not-match">Should not match</SelectItem>
                 </SelectContent>
               </Select>
 
               <Input
                 value={test.input}
-                onChange={(e) =>
-                  handleUpdate(test.id, { input: e.target.value })
-                }
+                onChange={(e) => handleUpdate(test.id, { input: e.target.value })}
                 placeholder="input to test"
                 className="flex-1 font-mono text-xs min-w-[10rem]"
                 spellCheck={false}
                 aria-label="Test input"
               />
 
-              <span
-                className="flex items-center gap-1 text-xs"
-                title={reason}
-              >
+              <span className="flex items-center gap-1 text-xs" title={reason}>
                 {passed ? (
-                  <Check
-                    className="h-4 w-4 text-success"
-                    aria-label={`Passing: ${reason}`}
-                  />
+                  <Check className="h-4 w-4 text-success" aria-label={`Passing: ${reason}`} />
                 ) : (
-                  <X
-                    className="h-4 w-4 text-destructive"
-                    aria-label={`Failing: ${reason}`}
-                  />
+                  <X className="h-4 w-4 text-destructive" aria-label={`Failing: ${reason}`} />
                 )}
               </span>
 
@@ -136,13 +121,7 @@ export function MiniTestsPanel() {
         })}
       </ul>
 
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={handleAdd}
-        className="min-h-touch"
-      >
+      <Button type="button" variant="outline" size="sm" onClick={handleAdd} className="min-h-touch">
         <Plus className="h-4 w-4 mr-2" aria-hidden="true" />
         Add test
       </Button>

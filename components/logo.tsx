@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
+import { motion } from "framer-motion";
+import Link from "next/link";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export function Logo({ className }: { className?: string }) {
   return (
@@ -17,5 +17,5 @@ export function Logo({ className }: { className?: string }) {
         <span className="font-mono text-sm text-muted-foreground ml-1">अस्त्र</span>
       </motion.div>
     </Link>
-  )
+  );
 }

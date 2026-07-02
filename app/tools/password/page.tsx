@@ -17,16 +17,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Password Generator",
-    description:
-      "Generate strong, secure passwords with customizable options. Free and private.",
+    description: "Generate strong, secure passwords with customizable options. Free and private.",
     url: "/tools/password",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Password Generator",
-    description:
-      "Generate strong, secure passwords with customizable options. Free and private.",
+    description: "Generate strong, secure passwords with customizable options. Free and private.",
   },
   alternates: {
     canonical: "/tools/password",
@@ -42,9 +40,7 @@ export default function PasswordGeneratorPage() {
   return (
     <>
       <PasswordGeneratorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
     </>
   );
 }

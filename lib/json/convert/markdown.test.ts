@@ -3,7 +3,10 @@ import { jsonToMarkdown } from "./markdown";
 
 describe("jsonToMarkdown", () => {
   it("converts array of flat objects to markdown table", () => {
-    const md = jsonToMarkdown([{ name: "a", n: 1 }, { name: "b", n: 2 }]);
+    const md = jsonToMarkdown([
+      { name: "a", n: 1 },
+      { name: "b", n: 2 },
+    ]);
     expect(md).toContain("| name | n |");
     expect(md).toContain("| --- | --- |");
     expect(md).toContain("| a | 1 |");

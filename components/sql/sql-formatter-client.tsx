@@ -71,9 +71,7 @@ export function SqlFormatterClient() {
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
           <h1 className="text-3xl font-bold">SQL Formatter</h1>
-          <p className="text-muted-foreground">
-            Format and validate SQL queries
-          </p>
+          <p className="text-muted-foreground">Format and validate SQL queries</p>
         </div>
 
         <Card className="p-6">
@@ -86,11 +84,7 @@ export function SqlFormatterClient() {
                 placeholder="Paste your SQL query here..."
                 className="font-mono min-h-[300px]"
               />
-              <Button
-                className="w-full"
-                onClick={formatSql}
-                disabled={!sql}
-              >
+              <Button className="w-full" onClick={formatSql} disabled={!sql}>
                 Format SQL
               </Button>
             </div>

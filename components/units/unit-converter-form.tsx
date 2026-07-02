@@ -1,27 +1,26 @@
-"use client"
+"use client";
 
-
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { ArrowRight } from "lucide-react"
-import type { Unit } from "@/lib/unit-conversions"
+} from "@/components/ui/select";
+import { ArrowRight } from "lucide-react";
+import type { Unit } from "@/lib/unit-conversions";
 
 interface UnitConverterFormProps {
-  units: Unit[]
-  value: string
-  fromUnit: Unit
-  toUnit: Unit
-  onValueChange: (value: string) => void
-  onFromUnitChange: (unit: Unit) => void
-  onToUnitChange: (unit: Unit) => void
-  resultValue?: string
+  units: Unit[];
+  value: string;
+  fromUnit: Unit;
+  toUnit: Unit;
+  onValueChange: (value: string) => void;
+  onFromUnitChange: (unit: Unit) => void;
+  onToUnitChange: (unit: Unit) => void;
+  resultValue?: string;
 }
 
 export function UnitConverterForm({
@@ -32,7 +31,7 @@ export function UnitConverterForm({
   onValueChange,
   onFromUnitChange,
   onToUnitChange,
-  resultValue
+  resultValue,
 }: UnitConverterFormProps) {
   return (
     <div className="space-y-6">
@@ -54,8 +53,8 @@ export function UnitConverterForm({
               <Select
                 value={fromUnit.symbol}
                 onValueChange={(value) => {
-                  const unit = units.find(u => u.symbol === value)
-                  if (unit) onFromUnitChange(unit)
+                  const unit = units.find((u) => u.symbol === value);
+                  if (unit) onFromUnitChange(unit);
                 }}
               >
                 <SelectTrigger className="h-11">
@@ -96,8 +95,8 @@ export function UnitConverterForm({
               <Select
                 value={toUnit.symbol}
                 onValueChange={(value) => {
-                  const unit = units.find(u => u.symbol === value)
-                  if (unit) onToUnitChange(unit)
+                  const unit = units.find((u) => u.symbol === value);
+                  if (unit) onToUnitChange(unit);
                 }}
               >
                 <SelectTrigger className="h-11">
@@ -116,5 +115,5 @@ export function UnitConverterForm({
         </div>
       </div>
     </div>
-  )
+  );
 }

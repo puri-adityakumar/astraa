@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
-import { FiatConverter } from "./fiat-converter"
-import { CryptoConverter } from "./crypto-converter"
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { FiatConverter } from "./fiat-converter";
+import { CryptoConverter } from "./crypto-converter";
 
 export function CurrencyConverterClient() {
-  const [activeTab, setActiveTab] = useState("fiat")
-  const [amount, setAmount] = useState<string>("1")
-  const [result, setResult] = useState<string>("")
+  const [activeTab, setActiveTab] = useState("fiat");
+  const [amount, setAmount] = useState<string>("1");
+  const [result, setResult] = useState<string>("");
 
   // Reset result when switching tabs
   const handleTabChange = (value: string) => {
-    setActiveTab(value)
-    setResult("")
-  }
+    setActiveTab(value);
+    setResult("");
+  };
 
   return (
     <div className="container max-w-5xl pt-24 pb-12 space-y-8">
@@ -42,7 +42,7 @@ export function CurrencyConverterClient() {
                 "w-full flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-all duration-200 text-left",
                 activeTab === "fiat"
                   ? "bg-primary/10 text-primary shadow-sm hover:bg-primary/15"
-                  : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                  : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
               )}
             >
               Fiat Currency
@@ -53,7 +53,7 @@ export function CurrencyConverterClient() {
                 "w-full flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-all duration-200 text-left",
                 activeTab === "crypto"
                   ? "bg-primary/10 text-primary shadow-sm hover:bg-primary/15"
-                  : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                  : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
               )}
             >
               Cryptocurrency
@@ -91,5 +91,5 @@ export function CurrencyConverterClient() {
         </div>
       </div>
     </div>
-  )
+  );
 }

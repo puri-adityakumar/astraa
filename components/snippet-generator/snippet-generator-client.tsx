@@ -24,8 +24,8 @@ export function SnippetGeneratorClient() {
         <div className="min-w-0">
           <h1 className="text-fluid-xl font-semibold">Code Snippet Generator</h1>
           <p className="text-sm text-muted-foreground">
-            Make shareable code or screenshot images. All processing happens
-            locally in your browser.
+            Make shareable code or screenshot images. All processing happens locally in your
+            browser.
           </p>
         </div>
         <div className="flex items-center gap-3">

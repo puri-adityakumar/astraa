@@ -18,11 +18,7 @@ export const CalculatorButton = memo(function CalculatorButton({
   className,
 }: CalculatorButtonProps) {
   return (
-    <Button
-      variant={variant}
-      onClick={onClick}
-      className={cn("h-14 text-lg font-mono", className)}
-    >
+    <Button variant={variant} onClick={onClick} className={cn("h-14 text-lg font-mono", className)}>
       {value}
     </Button>
   );

@@ -1,6 +1,5 @@
 export type ValidationResult =
-  | { ok: true }
-  | { ok: false; reason: "empty" | "non-base64 chars" | "bad padding" };
+  { ok: true } | { ok: false; reason: "empty" | "non-base64 chars" | "bad padding" };
 
 export interface ValidateOptions {
   urlSafe: boolean;
@@ -9,10 +8,7 @@ export interface ValidateOptions {
 const STD_ALPHA = /^[A-Za-z0-9+/]+=*$/;
 const URL_SAFE_ALPHA = /^[A-Za-z0-9\-_]+=*$/;
 
-export function validateBase64(
-  input: string,
-  opts: ValidateOptions,
-): ValidationResult {
+export function validateBase64(input: string, opts: ValidateOptions): ValidationResult {
   const stripped = input.replace(/[\t\n\r\f\v ]/g, "");
   if (stripped.length === 0) {
     return { ok: false, reason: "empty" };
@@ -25,9 +21,7 @@ export function validateBase64(
 
   // Compute effective length excluding trailing padding.
   const trimmed = stripped.replace(/=+$/g, "");
-  const padded = opts.urlSafe
-    ? trimmed + "=".repeat((4 - (trimmed.length % 4)) % 4)
-    : stripped;
+  const padded = opts.urlSafe ? trimmed + "=".repeat((4 - (trimmed.length % 4)) % 4) : stripped;
 
   if (padded.length % 4 !== 0) {
     return { ok: false, reason: "bad padding" };

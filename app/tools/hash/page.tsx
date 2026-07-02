@@ -17,16 +17,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Hash Generator",
-    description:
-      "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
+    description: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
     url: "/tools/hash",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Hash Generator",
-    description:
-      "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
+    description: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
   },
   alternates: {
     canonical: "/tools/hash",
@@ -42,9 +40,7 @@ export default function HashGeneratorPage() {
   return (
     <>
       <HashGeneratorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
     </>
   );
 }

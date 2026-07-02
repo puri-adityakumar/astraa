@@ -44,15 +44,15 @@ Real-time fiat currency conversion rates.
 ### Usage
 
 ```typescript
-import { getExchangeRate } from "@/lib/api"
+import { getExchangeRate } from "@/lib/api";
 
 // Get exchange rate from USD to EUR
-const rate = await getExchangeRate("USD", "EUR")
+const rate = await getExchangeRate("USD", "EUR");
 // Returns: 0.92 (example)
 
 // Convert amount
-const amount = 100
-const converted = amount * rate
+const amount = 100;
+const converted = amount * rate;
 // Returns: 92.00
 ```
 
@@ -62,15 +62,15 @@ const converted = amount * rate
 // lib/api.ts
 export async function getExchangeRate(from: string, to: string): Promise<number> {
   const response = await fetch(
-    `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from.toLowerCase()}.json`
-  )
+    `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from.toLowerCase()}.json`,
+  );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch rates")
+    throw new Error("Failed to fetch rates");
   }
 
-  const data = await response.json()
-  return data[from.toLowerCase()][to.toLowerCase()]
+  const data = await response.json();
+  return data[from.toLowerCase()][to.toLowerCase()];
 }
 ```
 
@@ -82,7 +82,7 @@ export async function getExchangeRate(from: string, to: string): Promise<number>
   "usd": {
     "eur": 0.92,
     "gbp": 0.79,
-    "jpy": 148.50
+    "jpy": 148.5
   }
 }
 ```
@@ -99,9 +99,9 @@ try {
   // Primary API call
 } catch (error) {
   // Falls back to exchangerate-api.com
-  const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`)
-  const data = await response.json()
-  return data.rates[to]
+  const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
+  const data = await response.json();
+  return data.rates[to];
 }
 ```
 
@@ -123,22 +123,22 @@ Real-time cryptocurrency prices via CoinGecko.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `ids` | string | Cryptocurrency ID (e.g., "bitcoin") |
-| `vs_currencies` | string | Target currency (e.g., "usd") |
+| Parameter       | Type   | Description                         |
+| --------------- | ------ | ----------------------------------- |
+| `ids`           | string | Cryptocurrency ID (e.g., "bitcoin") |
+| `vs_currencies` | string | Target currency (e.g., "usd")       |
 
 ### Usage
 
 ```typescript
-import { getCryptoPrice } from "@/lib/api"
+import { getCryptoPrice } from "@/lib/api";
 
 // Get Bitcoin price in USD
-const price = await getCryptoPrice("bitcoin", "USD")
+const price = await getCryptoPrice("bitcoin", "USD");
 // Returns: 45000.00 (example)
 
 // Get Ethereum price in EUR
-const ethPrice = await getCryptoPrice("ethereum", "EUR")
+const ethPrice = await getCryptoPrice("ethereum", "EUR");
 // Returns: 2100.00 (example)
 ```
 
@@ -146,17 +146,14 @@ const ethPrice = await getCryptoPrice("ethereum", "EUR")
 
 ```typescript
 // lib/api.ts
-const COINGECKO_API = "https://api.coingecko.com/api/v3"
+const COINGECKO_API = "https://api.coingecko.com/api/v3";
 
-export async function getCryptoPrice(
-  cryptoId: string,
-  currency: string
-): Promise<number> {
+export async function getCryptoPrice(cryptoId: string, currency: string): Promise<number> {
   const response = await fetch(
-    `${COINGECKO_API}/simple/price?ids=${cryptoId}&vs_currencies=${currency.toLowerCase()}&x_cg_demo_api_key=${API_KEY}`
-  )
-  const data = await response.json()
-  return data[cryptoId][currency.toLowerCase()]
+    `${COINGECKO_API}/simple/price?ids=${cryptoId}&vs_currencies=${currency.toLowerCase()}&x_cg_demo_api_key=${API_KEY}`,
+  );
+  const data = await response.json();
+  return data[cryptoId][currency.toLowerCase()];
 }
 ```
 
@@ -165,20 +162,20 @@ export async function getCryptoPrice(
 ```json
 {
   "bitcoin": {
-    "usd": 45000.00
+    "usd": 45000.0
   }
 }
 ```
 
 ### Supported Cryptocurrencies
 
-| ID | Name |
-|----|------|
-| `bitcoin` | Bitcoin (BTC) |
-| `ethereum` | Ethereum (ETH) |
-| `tether` | Tether (USDT) |
-| `binancecoin` | BNB |
-| `solana` | Solana (SOL) |
+| ID            | Name           |
+| ------------- | -------------- |
+| `bitcoin`     | Bitcoin (BTC)  |
+| `ethereum`    | Ethereum (ETH) |
+| `tether`      | Tether (USDT)  |
+| `binancecoin` | BNB            |
+| `solana`      | Solana (SOL)   |
 
 Full list in `lib/crypto-data.ts`.
 
@@ -195,15 +192,15 @@ Server action for generating contextual placeholder text via OpenRouter.
 ### Usage
 
 ```typescript
-import { generateText } from "@/lib/openrouter"
+import { generateText } from "@/lib/openrouter";
 
 // Generate text about a topic
-const result = await generateText("artificial intelligence", 200)
+const result = await generateText("artificial intelligence", 200);
 
 if (result.success) {
-  console.log(result.text)
+  console.log(result.text);
 } else {
-  console.error(result.error)
+  console.error(result.error);
 }
 ```
 
@@ -211,21 +208,21 @@ if (result.success) {
 
 ```typescript
 // lib/openrouter.ts
-"use server"
+"use server";
 
-import { OpenRouter } from "@openrouter/sdk"
+import { OpenRouter } from "@openrouter/sdk";
 
 export async function generateText(
   topic: string,
-  wordCount: number
+  wordCount: number,
 ): Promise<TextGenerationResult> {
-  const apiKey = process.env.OPENROUTER_API_KEY
+  const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
-    return { success: false, error: "OPENROUTER_API_KEY is not configured." }
+    return { success: false, error: "OPENROUTER_API_KEY is not configured." };
   }
 
-  const openRouter = new OpenRouter({ apiKey })
+  const openRouter = new OpenRouter({ apiKey });
 
   try {
     const completion = await openRouter.chat.send({
@@ -233,24 +230,25 @@ export async function generateText(
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant that generates meaningful placeholder text based on a topic."
+          content:
+            "You are a helpful assistant that generates meaningful placeholder text based on a topic.",
         },
         {
           role: "user",
-          content: `Generate approximately ${wordCount} words of text about "${topic}".`
-        }
-      ]
-    })
+          content: `Generate approximately ${wordCount} words of text about "${topic}".`,
+        },
+      ],
+    });
 
-    const text = completion.choices?.[0]?.message?.content
+    const text = completion.choices?.[0]?.message?.content;
 
     if (!text) {
-      throw new Error("No content received from API")
+      throw new Error("No content received from API");
     }
 
-    return { success: true, text }
+    return { success: true, text };
   } catch (error) {
-    return { success: false, error: "Failed to generate text." }
+    return { success: false, error: "Failed to generate text." };
   }
 }
 ```
@@ -258,17 +256,15 @@ export async function generateText(
 ### Response Types
 
 ```typescript
-type TextGenerationResult =
-  | { success: true; text: string }
-  | { success: false; error: string }
+type TextGenerationResult = { success: true; text: string } | { success: false; error: string };
 ```
 
 ### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `topic` | string | Subject for text generation |
-| `wordCount` | number | Approximate word count |
+| Parameter   | Type   | Description                 |
+| ----------- | ------ | --------------------------- |
+| `topic`     | string | Subject for text generation |
+| `wordCount` | number | Approximate word count      |
 
 ## Redis (Upstash)
 
@@ -294,12 +290,12 @@ Redis is used directly in `middleware.ts` (Edge runtime) — it cannot import fr
 
 ```typescript
 // middleware.ts
-import { Redis } from "@upstash/redis"
+import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL!,
   token: process.env.KV_REST_API_TOKEN!,
-})
+});
 ```
 
 ### Use Cases
@@ -312,24 +308,24 @@ const redis = new Redis({
 ### API Error Pattern
 
 ```typescript
-import { getUserFriendlyError, logError } from "@/lib/error-handler"
-import { useToast } from "@/components/ui/use-toast"
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
+import { useToast } from "@/components/ui/use-toast";
 
 export function CurrencyConverter() {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   async function handleConvert() {
     try {
-      const rate = await getExchangeRate(from, to)
-      setResult(amount * rate)
+      const rate = await getExchangeRate(from, to);
+      setResult(amount * rate);
     } catch (error) {
-      const details = getUserFriendlyError(error)
+      const details = getUserFriendlyError(error);
       toast({
         title: details.title,
         description: details.message,
-        variant: "destructive"
-      })
-      logError(error, { context: "currency-conversion", from, to })
+        variant: "destructive",
+      });
+      logError(error, { context: "currency-conversion", from, to });
     }
   }
 }
@@ -339,9 +335,9 @@ export function CurrencyConverter() {
 
 ```typescript
 interface ErrorDetails {
-  title: string      // User-friendly title
-  message: string    // User-friendly description
-  code?: string      // Error code for debugging
+  title: string; // User-friendly title
+  message: string; // User-friendly description
+  code?: string; // Error code for debugging
 }
 ```
 
@@ -352,15 +348,15 @@ interface ErrorDetails {
 export async function getExchangeRate(from: string, to: string) {
   try {
     // Primary API
-    return await fetchPrimaryAPI(from, to)
+    return await fetchPrimaryAPI(from, to);
   } catch (error) {
-    console.error("Primary API failed:", error)
+    console.error("Primary API failed:", error);
     try {
       // Fallback API
-      return await fetchFallbackAPI(from, to)
+      return await fetchFallbackAPI(from, to);
     } catch (fallbackError) {
-      console.error("Fallback API failed:", fallbackError)
-      throw new Error("Failed to fetch exchange rate")
+      console.error("Fallback API failed:", fallbackError);
+      throw new Error("Failed to fetch exchange rate");
     }
   }
 }
@@ -368,11 +364,11 @@ export async function getExchangeRate(from: string, to: string) {
 
 ### Rate Limiting
 
-| API | Rate Limit | Strategy |
-|-----|-----------|----------|
-| Currency API (CDN) | Unlimited | - |
-| CoinGecko | 10-30 req/min | Demo key |
-| OpenRouter | Varies by plan | Server-side only |
+| API                | Rate Limit     | Strategy         |
+| ------------------ | -------------- | ---------------- |
+| Currency API (CDN) | Unlimited      | -                |
+| CoinGecko          | 10-30 req/min  | Demo key         |
+| OpenRouter         | Varies by plan | Server-side only |
 
 ### Environment Variables
 
@@ -385,10 +381,10 @@ KV_REST_API_TOKEN=your_redis_token
 # SENTRY_AUTH_TOKEN=your_sentry_token  # optional
 ```
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
-| `OPENROUTER_API_KEY` | Optional | AI text generation |
-| `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL |
-| `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |
+| Variable             | Required | Description                     |
+| -------------------- | -------- | ------------------------------- |
+| `NEXT_PUBLIC_ENV`    | Optional | Environment flag (dev/prod)     |
+| `OPENROUTER_API_KEY` | Optional | AI text generation              |
+| `KV_REST_API_URL`    | Optional | Vercel KV / Upstash Redis URL   |
+| `KV_REST_API_TOKEN`  | Optional | Vercel KV / Upstash Redis token |
+| `SENTRY_AUTH_TOKEN`  | Optional | Sentry source map uploads       |

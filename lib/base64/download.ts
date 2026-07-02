@@ -1,12 +1,7 @@
-export function downloadAsFile(
-  content: string | Uint8Array,
-  filename: string,
-  mime: string,
-): void {
-  const blob = new Blob(
-    [typeof content === "string" ? content : content as BlobPart],
-    { type: mime },
-  );
+export function downloadAsFile(content: string | Uint8Array, filename: string, mime: string): void {
+  const blob = new Blob([typeof content === "string" ? content : (content as BlobPart)], {
+    type: mime,
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

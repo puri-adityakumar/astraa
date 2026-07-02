@@ -7,10 +7,7 @@ export function buildExportFilename(filename: string, timestamp: number): string
   return `${safe}-${timestamp}.png`;
 }
 
-export async function exportSnippet(
-  node: HTMLElement,
-  scale: ExportScale,
-): Promise<Blob> {
+export async function exportSnippet(node: HTMLElement, scale: ExportScale): Promise<Blob> {
   await document.fonts.ready;
   const mod = await import("dom-to-image-more");
   const toBlob = mod.default.toBlob ?? mod.toBlob;

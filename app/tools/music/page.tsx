@@ -21,16 +21,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Lofi Focus Studio",
-    description:
-      "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
+    description: "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
     url: "/tools/music",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Lofi Focus Studio",
-    description:
-      "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
+    description: "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
   },
   alternates: {
     canonical: "/tools/music",
@@ -46,9 +44,7 @@ export default function LofiPage() {
   return (
     <>
       <LofiStudioClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
     </>
   );
 }

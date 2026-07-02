@@ -19,16 +19,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Unit Converter",
-    description:
-      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
+    description: "Convert length, weight, temperature, and more. Free online unit conversion tool.",
     url: "/tools/units",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Unit Converter",
-    description:
-      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
+    description: "Convert length, weight, temperature, and more. Free online unit conversion tool.",
   },
   alternates: {
     canonical: "/tools/units",
@@ -44,9 +42,7 @@ export default function UnitConverterPage() {
   return (
     <>
       <UnitConverterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
     </>
   );
 }

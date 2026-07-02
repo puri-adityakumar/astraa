@@ -1,20 +1,10 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  fadeInUp,
-  staggerContainer,
-  staggerItem,
-} from "@/lib/animations/variants";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/animations/variants";
 import { useReducedMotion } from "@/lib/animations/hooks";
 import { PatternRow } from "./pattern-row";
 import type { PatternHighlightInputHandle } from "./pattern-highlight-input";
@@ -121,8 +111,7 @@ export function RegexTesterClient() {
     [debouncedPattern, debouncedFlags],
   );
 
-  const patternError =
-    !compileResult.ok && pattern.length > 0 ? compileResult.error : null;
+  const patternError = !compileResult.ok && pattern.length > 0 ? compileResult.error : null;
 
   const matchResult = useMemo(() => {
     if (!compileResult.ok) {
@@ -145,12 +134,10 @@ export function RegexTesterClient() {
         window.clearTimeout(id);
       };
     }
-    runMatchesSafe(debouncedPattern, debouncedFlags, debouncedTest).then(
-      (safe) => {
-        if (cancelled) return;
-        setHardTimeout(safe.hardTimeout);
-      },
-    );
+    runMatchesSafe(debouncedPattern, debouncedFlags, debouncedTest).then((safe) => {
+      if (cancelled) return;
+      setHardTimeout(safe.hardTimeout);
+    });
     return () => {
       cancelled = true;
     };
@@ -250,16 +237,7 @@ export function RegexTesterClient() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [
-    pattern,
-    flags,
-    testString,
-    replaceOpen,
-    literal,
-    handleShare,
-    setReplaceOpen,
-    toast,
-  ]);
+  }, [pattern, flags, testString, replaceOpen, literal, handleShare, setReplaceOpen, toast]);
 
   const reduceMotion = useReducedMotion();
   const containerVariants = reduceMotion ? {} : staggerContainer;
@@ -273,15 +251,13 @@ export function RegexTesterClient() {
       initial="hidden"
       animate="show"
     >
-      <motion.div
-        className="space-y-4 text-center sm:text-left"
-        variants={headerVariants}
-      >
+      <motion.div className="space-y-4 text-center sm:text-left" variants={headerVariants}>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Regex Tester
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">
-          Test JavaScript regular expressions live, with capture-group highlights, replace mode, and shareable URLs.
+          Test JavaScript regular expressions live, with capture-group highlights, replace mode, and
+          shareable URLs.
         </p>
         <p className="text-xs text-muted-foreground/70">
           All processing happens locally in your browser
@@ -294,13 +270,7 @@ export function RegexTesterClient() {
             ref={patternInputRef}
             error={patternError}
             onShare={handleShare}
-            exportSlot={
-              <SnippetCardExport
-                pattern={pattern}
-                flags={flags}
-                matches={matches}
-              />
-            }
+            exportSlot={<SnippetCardExport pattern={pattern} flags={flags} matches={matches} />}
           />
           <TestStringArea
             ref={testStringRef}

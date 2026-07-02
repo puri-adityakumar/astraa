@@ -41,9 +41,7 @@ export default function SnippetGeneratorPage() {
   return (
     <>
       <SnippetGeneratorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
     </>
   );
 }

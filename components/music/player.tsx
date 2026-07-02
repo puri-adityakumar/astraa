@@ -1,47 +1,47 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Slider } from "@/components/ui/slider"
-import { Play, Pause, Volume2, VolumeX } from "lucide-react"
-import Image from "next/image"
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import Image from "next/image";
 
 export function MusicPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolume] = useState([0.5])
-  const [isMuted, setIsMuted] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState([0.5]);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const togglePlay = () => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.pause()
+        audioRef.current.pause();
       } else {
-        audioRef.current.play()
+        audioRef.current.play();
       }
-      setIsPlaying(!isPlaying)
+      setIsPlaying(!isPlaying);
     }
-  }
+  };
 
   const handleVolumeChange = (value: number[]) => {
-    setVolume(value)
+    setVolume(value);
     if (audioRef.current && value[0] !== undefined) {
-      audioRef.current.volume = value[0]
+      audioRef.current.volume = value[0];
     }
-  }
+  };
 
   const toggleMute = () => {
     if (audioRef.current) {
-      audioRef.current.muted = !isMuted
-      setIsMuted(!isMuted)
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
     }
-  }
+  };
 
   return (
     <Card className="relative overflow-hidden">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10" />
-      
+
       <div className="relative z-20 p-6">
         <div className="flex justify-center mb-6">
           <div className="relative w-64 h-64 rounded-lg overflow-hidden">
@@ -72,11 +72,7 @@ export function MusicPlayer() {
               className="rounded-full"
               aria-label={isMuted ? "Unmute" : "Mute"}
             >
-              {isMuted ? (
-                <VolumeX className="h-4 w-4" />
-              ) : (
-                <Volume2 className="h-4 w-4" />
-              )}
+              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </Button>
 
             <Button
@@ -85,11 +81,7 @@ export function MusicPlayer() {
               className="h-12 w-12 rounded-full"
               aria-label={isPlaying ? "Pause" : "Play"}
             >
-              {isPlaying ? (
-                <Pause className="h-6 w-6" />
-              ) : (
-                <Play className="h-6 w-6 ml-1" />
-              )}
+              {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
             </Button>
 
             <div className="w-24">
@@ -105,11 +97,7 @@ export function MusicPlayer() {
         </div>
       </div>
 
-      <audio
-        ref={audioRef}
-        src="https://stream.nightride.fm/chillsynth.m4a"
-        loop
-      />
+      <audio ref={audioRef} src="https://stream.nightride.fm/chillsynth.m4a" loop />
     </Card>
-  )
+  );
 }

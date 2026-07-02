@@ -7,8 +7,7 @@ export const metadata: Metadata = {
     "Astraa is a free utility toolkit with 15+ tools: scientific calculator, currency converter, password generator, hash generator, unit converter, markdown viewer, image resizer, and browser games. All processing happens locally in your browser.",
   openGraph: {
     title: "Astraa - Free Online Utility Tools",
-    description:
-      "15+ free browser-based utility tools for developers and creators.",
+    description: "15+ free browser-based utility tools for developers and creators.",
     url: "/",
     images: ["/assets/astraa_banner.jpg"],
   },

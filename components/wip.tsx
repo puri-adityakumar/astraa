@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Construction } from "lucide-react"
-import { ReactNode, useState, useEffect } from "react"
+import { motion } from "framer-motion";
+import { Construction } from "lucide-react";
+import { ReactNode, useState, useEffect } from "react";
 
 interface WorkInProgressProps {
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 export function WorkInProgress({ children }: WorkInProgressProps) {
-  const [showWip, setShowWip] = useState(false)
+  const [showWip, setShowWip] = useState(false);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV === 'prod') {
-      setShowWip(true)
+    if (process.env.NEXT_PUBLIC_ENV === "prod") {
+      setShowWip(true);
     }
-  }, [])
+  }, []);
 
   if (showWip) {
     return (
@@ -40,21 +40,27 @@ export function WorkInProgress({ children }: WorkInProgressProps) {
             <motion.span
               animate={{ opacity: [0, 1, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-            >.</motion.span>
+            >
+              .
+            </motion.span>
             <motion.span
               animate={{ opacity: [0, 1, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-            >.</motion.span>
+            >
+              .
+            </motion.span>
             <motion.span
               animate={{ opacity: [0, 1, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
-            >.</motion.span>
+            >
+              .
+            </motion.span>
           </p>
         </motion.div>
       </div>
-    )
+    );
   }
 
   // Default: render children (works for both SSR initial render and dev mode)
-  return <>{children}</>
+  return <>{children}</>;
 }

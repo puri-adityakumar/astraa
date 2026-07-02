@@ -39,6 +39,7 @@ graph TB
 **Architecture Type:** Client-side rendered SPA with Next.js App Router
 
 **Key Characteristics:**
+
 - Minimal backend — server actions for AI text generation, API routes for specific integrations
 - Browser-based processing for tools
 - External APIs for live data
@@ -101,13 +102,13 @@ export default function PasswordPage() {
 
 ```typescript
 // components/password/password-generator.tsx (Client Component)
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function PasswordGenerator() {
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("");
   // ...component logic
 }
 ```
@@ -167,10 +168,10 @@ graph LR
 
 ### Navigation Components
 
-| Route Type | Navigation Component |
-|------------|---------------------|
-| Landing page | `LandingNavigation` (full header) |
-| Tool/Game pages | `FloatingNavbar` (minimal) |
+| Route Type      | Navigation Component              |
+| --------------- | --------------------------------- |
+| Landing page    | `LandingNavigation` (full header) |
+| Tool/Game pages | `FloatingNavbar` (minimal)        |
 
 ## State Management
 
@@ -207,21 +208,21 @@ graph TB
 ```typescript
 // lib/stores/user-preferences.ts
 interface UserPreferences {
-  theme: 'light' | 'dark' | 'system'
-  language: string
+  theme: "light" | "dark" | "system";
+  language: string;
   accessibility: {
-    reducedMotion: boolean
-    highContrast: boolean
-    fontSize: 'small' | 'medium' | 'large'
-    screenReader: boolean
-  }
+    reducedMotion: boolean;
+    highContrast: boolean;
+    fontSize: "small" | "medium" | "large";
+    screenReader: boolean;
+  };
   privacy: {
-    analytics: boolean
-    errorReporting: boolean
-    cloudSync: boolean
-    dataSharing: boolean
-  }
-  keyboardShortcuts: Record<string, string>
+    analytics: boolean;
+    errorReporting: boolean;
+    cloudSync: boolean;
+    dataSharing: boolean;
+  };
+  keyboardShortcuts: Record<string, string>;
 }
 ```
 
@@ -229,10 +230,10 @@ interface UserPreferences {
 // lib/stores/tool-settings.ts
 interface ToolSettings {
   [toolId: string]: {
-    lastUsed: number
-    favorites: boolean
-    customSettings: Record<string, unknown>
-  }
+    lastUsed: number;
+    favorites: boolean;
+    customSettings: Record<string, unknown>;
+  };
 }
 ```
 
@@ -241,17 +242,17 @@ interface ToolSettings {
 ```typescript
 // lib/tools-context.tsx
 interface ToolsContextType {
-  tools: Tool[]
-  categories: string[]
-  getToolsByCategory: (category: string) => Tool[]
-  updateTool: (id: string, updates: Partial<Tool>) => void
+  tools: Tool[];
+  categories: string[];
+  getToolsByCategory: (category: string) => Tool[];
+  updateTool: (id: string, updates: Partial<Tool>) => void;
 }
 
 // lib/activity-tracker.tsx
 interface ActivityContextType {
-  recentActivity: ActivityItem[]
-  popularTools: PopularTool[]
-  addActivity: (item: ActivityItem) => void
+  recentActivity: ActivityItem[];
+  popularTools: PopularTool[];
+  addActivity: (item: ActivityItem) => void;
 }
 ```
 
@@ -278,28 +279,28 @@ sequenceDiagram
 
 ```typescript
 // components/currency/fiat-converter.tsx
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { getExchangeRates } from "@/lib/api"
+import { useState, useEffect } from "react";
+import { getExchangeRates } from "@/lib/api";
 
 export function FiatConverter() {
-  const [rates, setRates] = useState<ExchangeRates | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [rates, setRates] = useState<ExchangeRates | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchRates() {
       try {
-        const data = await getExchangeRates()
-        setRates(data)
+        const data = await getExchangeRates();
+        setRates(data);
       } catch (error) {
         // Handle error
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchRates()
-  }, [])
+    fetchRates();
+  }, []);
 
   // Render logic
 }
@@ -330,28 +331,28 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
   return {
     title: "Something went wrong",
     message: sanitizedMessage,
-    code: errorCode
-  }
+    code: errorCode,
+  };
 }
 
 export function logError(error: unknown, context?: Record<string, unknown>) {
   // Log to console (Sentry captures errors at boundary level via global-error.tsx)
-  console.error(error, context)
+  console.error(error, context);
 }
 ```
 
 ```typescript
 // Usage in components
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
-  const details = getUserFriendlyError(error)
+  const details = getUserFriendlyError(error);
   toast({
     title: details.title,
     description: details.message,
-    variant: "destructive"
-  })
-  logError(error, { context: "currency-conversion" })
+    variant: "destructive",
+  });
+  logError(error, { context: "currency-conversion" });
 }
 ```
 
@@ -372,6 +373,7 @@ graph LR
 **Note:** `logError()` in `lib/error-handler.ts` logs to console only. Sentry captures errors at boundary level via `global-error.tsx` and the instrumentation files above.
 
 **Configuration:**
+
 - Trace sample rate: 100% (development)
 - Session replay: 10% normal, 100% on error
 - Source maps uploaded for debugging
