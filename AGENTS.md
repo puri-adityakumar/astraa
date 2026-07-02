@@ -20,7 +20,7 @@ npm run test:watch # Run tests in watch mode
 - `components/[tool]/[tool]-client.tsx` → `"use client"` directive, UI logic
 - `lib/[tool]/` → pure logic, utilities, types (no React)
 
-**State**: Zustand stores in `lib/stores/` (UserPreferences, ToolSettings, ActivityTracking) persisted via IndexedDB with localStorage fallback. Context: ToolsContext (`lib/tools-context.tsx`), ActivityProvider (`lib/activity-tracker.tsx`).
+**State**: Zustand stores in `lib/stores/` (`ToolSettings` + tool-local editor stores: json-editor, markdown-editor, snippet-generator, regex-tester) persisted via `createZustandStorage()` (IndexedDB with localStorage fallback). App-level Context mounted in `app/layout.tsx`: ToolsContext (`lib/tools-context.tsx`), ActivityProvider (`lib/activity-tracker.tsx`).
 
 **External APIs**:
 - OpenRouter (`lib/openrouter.ts`): Server action, AI text generation
@@ -210,7 +210,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Manual verification checklist exists for UI behaviors not covered by units
 
 ### Storage / migration
-- Schema version recorded and migration path planned (`lib/stores/migration.ts`)
+- Schema version recorded and migration path planned (per-store `version` + `migrate` in `lib/stores/<name>.ts`, backed by `createZustandStorage()`)
 - Caps on stored data prevent quota issues
 - Fallback behavior when storage unavailable
 

@@ -38,15 +38,14 @@ Tools are registered in `lib/tools.ts` as `ToolCategory` objects with items cont
 
 ### State Management
 
-Three Zustand stores in `lib/stores/`, all persisted:
+Zustand stores in `lib/stores/`, persisted:
 
-- **UserPreferences** — theme, language, accessibility (reducedMotion, highContrast, fontSize), privacy settings, keyboard shortcuts
-- **ToolSettings** — per-tool configuration, usage counts, last-used timestamps
-- **ActivityTracking** — session tracking, daily usage stats, performance metrics, error rates
+- **ToolSettings** (`tool-settings.ts`, `useToolSettings`) — per-tool configuration, usage counts, last-used timestamps
+- **Tool-local editor stores** — `json-editor.ts`, `markdown-editor.ts`, `snippet-generator.ts`, `regex-tester.ts` (document/selection state per editor)
 
-**Storage system** (`lib/stores/storage.ts`): IndexedDB primary with localStorage fallback. Uses Promise-based concurrency locking to prevent race conditions. Migration system in `lib/stores/migration.ts` handles schema version upgrades. `StoreProvider` (`lib/stores/provider.tsx`) initializes stores and applies accessibility preferences to the document. See `lib/stores/README.md` for deeper docs.
+**Storage system** (`lib/stores/storage.ts`): IndexedDB primary with localStorage fallback. Uses Promise-based concurrency locking (`createZustandStorage()`) to prevent race conditions. Also exports `clearAllStoredData` / `exportAllStoredData` / `importStoredData`. See `lib/stores/README.md` for deeper docs.
 
-**Context**: ToolsContext for tool catalog, ActivityProvider (`lib/activity-tracker.tsx`) for demo stats.
+**Context** (mounted in `app/layout.tsx`): ToolsContext (`lib/tools-context.tsx`) for the tool catalog, ActivityProvider (`lib/activity-tracker.tsx`) for activity/stats. Theme via `next-themes` `ThemeProvider`. There is no Zustand `StoreProvider` — an earlier migration subtree was removed; do not reintroduce one without wiring it into the layout.
 
 ### External APIs
 
@@ -323,7 +322,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Manual verification checklist exists for UI behavior not covered by unit tests
 
 ### Storage / migration
-- Schema version recorded and migration path planned (`lib/stores/migration.ts`)
+- Schema version recorded and migration path planned (per-store `version` + `migrate` in `lib/stores/<name>.ts`, backed by `createZustandStorage()`)
 - Caps on stored data to prevent quota issues
 - Fallback behavior when storage unavailable
 

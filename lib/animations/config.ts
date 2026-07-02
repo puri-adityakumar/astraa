@@ -34,11 +34,3 @@ export const ANIMATION_CONFIG = {
     margin: "-100px",
   },
 } as const;
-
-/**
- * Check if animations should be disabled based on user preferences
- */
-export function shouldReduceMotion(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}

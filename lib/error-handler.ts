@@ -106,23 +106,6 @@ export function logError(error: unknown, context?: Record<string, unknown>) {
 }
 
 /**
- * Handle async errors with user-friendly messages
- */
-export async function handleAsyncError<T>(
-  promise: Promise<T>,
-  errorCallback?: (error: ErrorDetails) => void
-): Promise<T | null> {
-  try {
-    return await promise
-  } catch (error) {
-    const errorDetails = getUserFriendlyError(error)
-    logError(error)
-    errorCallback?.(errorDetails)
-    return null
-  }
-}
-
-/**
  * Create a safe error message for display (removes sensitive info)
  */
 export function sanitizeErrorMessage(message: string): string {
