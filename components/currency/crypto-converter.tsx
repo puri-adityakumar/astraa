@@ -10,6 +10,7 @@ import type { CurrencyCode } from "@/lib/currency-data";
 import type { CryptoId } from "@/lib/crypto-data";
 import { getCryptoPrice } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
 interface CryptoConverterProps {
   amount: string;
   onAmountChange: (value: string) => void;
@@ -41,9 +42,10 @@ export function CryptoConverter({
 
         if (price === null) {
           onResult("Error fetching price");
+          const details = getUserFriendlyError(new Error("Failed to fetch exchange rates"));
           toast({
-            title: "Error",
-            description: "Failed to fetch exchange rates. Please try again.",
+            title: details.title,
+            description: details.message,
             variant: "destructive",
           });
           return;
@@ -53,7 +55,13 @@ export function CryptoConverter({
         // Store numeric result string
         onResult(converted);
       } catch (error) {
-        console.error(error);
+        logError(error, { context: "crypto/fetch-price" });
+        const details = getUserFriendlyError(error);
+        toast({
+          title: details.title,
+          description: details.message,
+          variant: "destructive",
+        });
         onResult("Error");
       } finally {
         setIsLoading(false);
@@ -65,7 +73,7 @@ export function CryptoConverter({
     }, 500); // Debounce
 
     return () => clearTimeout(timer);
-  }, [amount, cryptoCurrency, fiatCurrency, onResult]);
+  }, [amount, cryptoCurrency, fiatCurrency, onResult, toast]);
 
   return (
     <div className="space-y-6">

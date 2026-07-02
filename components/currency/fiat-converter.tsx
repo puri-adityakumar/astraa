@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { CurrencySelect } from "./currency-select";
 import type { CurrencyCode } from "@/lib/currency-data";
 import { getExchangeRate } from "@/lib/api";
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
 
 interface FiatConverterProps {
   amount: string;
@@ -41,9 +42,10 @@ export function FiatConverter({ amount, onAmountChange, onResult, result }: Fiat
 
         if (rate === null) {
           onResult("Error");
+          const details = getUserFriendlyError(new Error("Failed to fetch exchange rates"));
           toast({
-            title: "Error",
-            description: "Failed to fetch exchange rates. Please try again.",
+            title: details.title,
+            description: details.message,
             variant: "destructive",
           });
           return;
@@ -65,10 +67,11 @@ export function FiatConverter({ amount, onAmountChange, onResult, result }: Fiat
 
         onResult(converted); // Just the number string
       } catch (error) {
-        console.error(error);
+        logError(error, { context: "fiat/fetch-rate" });
+        const details = getUserFriendlyError(error);
         toast({
-          title: "Error",
-          description: "Failed to fetch exchange rates. Please try again.",
+          title: details.title,
+          description: details.message,
           variant: "destructive",
         });
       } finally {

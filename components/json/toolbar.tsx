@@ -9,6 +9,7 @@ import { repair } from "@/lib/json/repair";
 import { validateFile, readFileAsText, MAX_DOCUMENT_BYTES } from "@/lib/json/validators";
 import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 
 export function Toolbar() {
   const text = useJsonEditor((s) => s.text);
@@ -18,6 +19,7 @@ export function Toolbar() {
   const sortKeysAction = useJsonEditor((s) => s.sortKeysAction);
   const setText = useJsonEditor((s) => s.setText);
   const { toast } = useToast();
+  const copy = useCopyToClipboard();
   const fileInput = useRef<HTMLInputElement>(null);
 
   const onRepair = async () => {
@@ -35,8 +37,7 @@ export function Toolbar() {
   };
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    toast({ title: "Copied" });
+    await copy(text);
   };
 
   const onDownload = () => {

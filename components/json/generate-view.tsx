@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { Copy, Download, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { generateTypeScript } from "@/lib/json/generate/typescript";
 import { generateZod } from "@/lib/json/generate/zod";
 import { generateJsonSchema } from "@/lib/json/generate/json-schema";
 import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import type { GenerateFormat } from "@/lib/json/types";
 
 const FORMATS: { id: GenerateFormat; label: string; ext: string }[] = [
@@ -24,7 +24,7 @@ export function GenerateView() {
   const parsedValue = useJsonEditor((s) => s.parsedValue);
   const generateFormat = useJsonEditor((s) => s.generateFormat);
   const setGenerateFormat = useJsonEditor((s) => s.setGenerateFormat);
-  const { toast } = useToast();
+  const copy = useCopyToClipboard();
   const [output, setOutput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -65,8 +65,7 @@ export function GenerateView() {
   const ext = FORMATS.find((f) => f.id === generateFormat)?.ext ?? "txt";
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    toast({ title: "Copied" });
+    await copy(output);
   };
   const onDownload = () => {
     downloadContent(output, `Root.${ext}`, "text/plain");

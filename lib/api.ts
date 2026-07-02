@@ -1,3 +1,5 @@
+import { logError } from "./error-handler";
+
 const COINGECKO_API_KEY = "CG-nrVyRWCGSZozXJpLvsBAmQo5";
 const COINGECKO_API = "https://api.coingecko.com/api/v3";
 
@@ -20,14 +22,14 @@ export async function getCryptoPrice(cryptoId: string, currency: string): Promis
     const price = data[cryptoId]?.[currency.toLowerCase()];
 
     if (price === undefined) {
-      // It might not be an error if the coin just doesn't exist, but for our app it's a failure to get price
+      // A missing price is a soft warning, not a hard failure.
       console.warn(`Price not found for ${cryptoId} in ${currency}`);
       return null;
     }
 
     return price;
   } catch (error) {
-    console.error(`Failed to fetch crypto price for ${cryptoId}:`, error);
+    logError(error, { context: "api/getCryptoPrice", cryptoId, currency });
     return null;
   }
 }
@@ -54,7 +56,7 @@ export async function getExchangeRate(from: string, to: string): Promise<number 
 
     return rate;
   } catch (error) {
-    console.warn("Primary Currency API / Rate extraction failed, trying fallback:", error);
+    logError(error, { context: "api/getExchangeRate", phase: "primary", from, to });
 
     // Fallback to the old API if the primary one fails
     try {
@@ -71,7 +73,7 @@ export async function getExchangeRate(from: string, to: string): Promise<number 
 
       return backupRate;
     } catch (backupError) {
-      console.error("All Currency API attempts failed:", backupError);
+      logError(backupError, { context: "api/getExchangeRate", phase: "fallback", from, to });
       return null;
     }
   }

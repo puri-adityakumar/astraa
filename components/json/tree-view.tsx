@@ -2,18 +2,18 @@
 
 import { useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useToast } from "@/components/ui/use-toast";
 import { TreeRow as TreeRowComponent } from "./tree/tree-row";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { flatten } from "@/lib/json/flatten";
 import { joinPath } from "@/lib/json/paths";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 
 export function TreeView() {
   const parsedValue = useJsonEditor((s) => s.parsedValue);
   const expanded = useJsonEditor((s) => s.expanded);
   const togglePath = useJsonEditor((s) => s.togglePath);
   const applyPatchAt = useJsonEditor((s) => s.applyPatchAt);
-  const { toast } = useToast();
+  const copy = useCopyToClipboard();
 
   const expandedSet = useMemo(() => new Set(expanded), [expanded]);
   const rows = useMemo(
@@ -62,8 +62,7 @@ export function TreeView() {
                 row={row}
                 onToggle={togglePath}
                 onCopyPath={async (p) => {
-                  await navigator.clipboard.writeText(p);
-                  toast({ title: "Path copied", description: p || "root" });
+                  await copy(p, "Path copied");
                 }}
                 onEditSave={(p, value) => applyPatchAt(p, "set", value)}
                 onAddChild={(p, key, value) => {

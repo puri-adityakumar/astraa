@@ -1,6 +1,7 @@
 "use server";
 
 import { OpenRouter } from "@openrouter/sdk";
+import { logError } from "./error-handler";
 
 const MAX_TOPIC_LENGTH = 500;
 const MIN_WORD_COUNT = 10;
@@ -67,7 +68,7 @@ export async function generateText(topic: string, wordCount: number): Promise<Ge
 
     return { success: true, text };
   } catch (error) {
-    console.error("OpenRouter Error:", error);
+    logError(error, { context: "openrouter/generateText" });
     return { success: false, error: "Failed to generate text. Please try again or check API Key." };
   }
 }

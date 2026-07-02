@@ -11,6 +11,7 @@ import { jsonToCsv, isCsvCompatible } from "@/lib/json/convert/csv";
 import { jsonToMarkdown } from "@/lib/json/convert/markdown";
 import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import type { ConvertFormat } from "@/lib/json/types";
 
 const FORMATS: { id: ConvertFormat; label: string; ext: string }[] = [
@@ -25,6 +26,7 @@ export function ConvertView() {
   const setConvertFormat = useJsonEditor((s) => s.setConvertFormat);
   const setText = useJsonEditor((s) => s.setText);
   const { toast } = useToast();
+  const copy = useCopyToClipboard();
   const [output, setOutput] = useState("");
   const [yamlInput, setYamlInput] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -71,11 +73,7 @@ export function ConvertView() {
   const ext = FORMATS.find((f) => f.id === convertFormat)?.ext ?? "txt";
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    toast({
-      title: "Copied",
-      description: `${convertFormat.toUpperCase()} copied.`,
-    });
+    await copy(output, `${convertFormat.toUpperCase()} copied`);
   };
   const onDownload = () => {
     downloadContent(output, `data.${ext}`, "text/plain");

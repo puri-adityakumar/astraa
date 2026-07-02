@@ -43,6 +43,49 @@ describe("getUserFriendlyError", () => {
     const result = getUserFriendlyError(null);
     expect(result.title).toBe("Unknown Error");
   });
+
+  describe("technical field redaction (funnel)", () => {
+    it("redacts Unix paths from the technical field", () => {
+      const result = getUserFriendlyError(new Error("failed to load /home/user/secret.txt"));
+      expect(result.technical).toContain("[path]");
+      expect(result.technical).not.toContain("/home/user/secret.txt");
+      expect(result.technical).not.toContain("secret.txt");
+    });
+
+    it("redacts Windows paths from the technical field", () => {
+      const result = getUserFriendlyError(new Error("Cannot open C:\\Users\\admin\\secret.txt"));
+      expect(result.technical).toContain("[path]");
+      expect(result.technical).not.toContain("admin");
+    });
+
+    it("redacts URLs from the technical field", () => {
+      // UNIX_PATH_RE matches before URL_RE, so the URL's host becomes [path]
+      // rather than [url] (see the sanitizeErrorMessage tests). Either way, the
+      // sensitive host segment is removed from the technical field.
+      const result = getUserFriendlyError(new Error("visit https://evil.com token=abc"));
+      expect(result.technical).not.toContain("evil.com");
+      expect(result.technical).not.toContain("https://");
+    });
+
+    it("redacts emails from the technical field", () => {
+      // "Contact <user@x.com> for details" — redacted regardless of token.
+      const result = getUserFriendlyError(new Error("Contact user@example.com for details"));
+      expect(result.technical).toContain("[email]");
+      expect(result.technical).not.toContain("user@example.com");
+    });
+
+    it("does not alter the user-facing message/title/action fields", () => {
+      const result = getUserFriendlyError(new Error("failed to load /home/user/secret.txt"));
+      // User-facing fields are static friendly strings, never derived from the raw message.
+      expect(result.title).toBe("Something Went Wrong");
+      expect(result.message).toBe(
+        "An unexpected error occurred. Please try again or contact support if the problem persists.",
+      );
+      expect(result.action).toBe("Try Again");
+      expect(result.message).not.toContain("/home/user");
+      expect(result.title).not.toContain("/home/user");
+    });
+  });
 });
 
 describe("sanitizeErrorMessage", () => {

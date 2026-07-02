@@ -27,7 +27,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
       message:
         "Unable to connect to the server. Please check your internet connection and try again.",
       action: "Retry",
-      technical: error.message,
+      technical: sanitizeErrorMessage(error.message),
     };
   }
 
@@ -40,7 +40,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Request Timeout",
         message: "The request took too long to complete. Please try again.",
         action: "Retry",
-        technical: error.message,
+        technical: sanitizeErrorMessage(error.message),
       };
     }
 
@@ -50,7 +50,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Permission Denied",
         message: "You don't have permission to perform this action.",
         action: "Go Back",
-        technical: error.message,
+        technical: sanitizeErrorMessage(error.message),
       };
     }
 
@@ -60,7 +60,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Invalid Input",
         message: "The provided input is invalid. Please check your data and try again.",
         action: "Fix Input",
-        technical: error.message,
+        technical: sanitizeErrorMessage(error.message),
       };
     }
 
@@ -71,7 +71,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         message:
           "There was a problem with the file. Please ensure it's the correct format and size.",
         action: "Try Another File",
-        technical: error.message,
+        technical: sanitizeErrorMessage(error.message),
       };
     }
 
@@ -81,7 +81,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
       message:
         "An unexpected error occurred. Please try again or contact support if the problem persists.",
       action: "Try Again",
-      technical: error.message,
+      technical: sanitizeErrorMessage(error.message),
     };
   }
 
@@ -90,7 +90,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
     title: "Unknown Error",
     message: "An unexpected error occurred. Please try again.",
     action: "Try Again",
-    technical: String(error),
+    technical: sanitizeErrorMessage(String(error)),
   };
 }
 
