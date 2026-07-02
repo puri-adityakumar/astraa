@@ -1,9 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Copy, Download, AlertCircle, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { generateTypeScript } from "@/lib/json/generate/typescript";
 import { generateZod } from "@/lib/json/generate/zod";
@@ -11,6 +8,7 @@ import { generateJsonSchema } from "@/lib/json/generate/json-schema";
 import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { OutputPanel } from "@/components/json/output-panel";
 import type { GenerateFormat } from "@/lib/json/types";
 
 const FORMATS: { id: GenerateFormat; label: string; ext: string }[] = [
@@ -72,64 +70,15 @@ export function GenerateView() {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="inline-flex rounded-md border bg-muted p-0.5">
-        {FORMATS.map((f) => (
-          <button
-            key={f.id}
-            onClick={() => setGenerateFormat(f.id)}
-            aria-pressed={generateFormat === f.id}
-            className={cn(
-              "px-3 py-1.5 text-sm rounded-sm min-h-touch",
-              "transition-colors duration-100 ease-out",
-              generateFormat === f.id
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
-
-      {error ? (
-        <div
-          className={cn(
-            "flex items-start gap-2 p-3 rounded-md border",
-            "border-destructive/40 bg-destructive/10 text-destructive text-sm",
-          )}
-        >
-          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" aria-hidden />
-          <span>{error}</span>
-        </div>
-      ) : pending ? (
-        <div
-          className={cn(
-            "flex items-center gap-2 h-[50vh] p-3 rounded-md border",
-            "bg-muted/30 text-sm text-muted-foreground",
-          )}
-        >
-          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-          <span>Generating…</span>
-        </div>
-      ) : (
-        <textarea
-          readOnly
-          value={output}
-          spellCheck={false}
-          placeholder="Output will appear here…"
-          className={cn("w-full h-[50vh] p-3 rounded-md border bg-muted/30", "font-mono text-xs")}
-        />
-      )}
-
-      <div className="flex flex-wrap items-center gap-2">
-        <Button variant="outline" size="sm" onClick={onCopy} disabled={!output || pending}>
-          <Copy className="h-4 w-4 mr-2" aria-hidden /> Copy
-        </Button>
-        <Button variant="outline" size="sm" onClick={onDownload} disabled={!output || pending}>
-          <Download className="h-4 w-4 mr-2" aria-hidden /> Download
-        </Button>
-      </div>
-    </div>
+    <OutputPanel
+      formats={FORMATS}
+      format={generateFormat}
+      onFormatChange={(id) => setGenerateFormat(id as GenerateFormat)}
+      output={output}
+      error={error}
+      onCopy={onCopy}
+      onDownload={onDownload}
+      pending={pending}
+    />
   );
 }
