@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { HashGeneratorClient } from "@/components/hash/hash-generator";
+import { LastUpdated } from "@/components/last-updated";
+import { createToolMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createToolMetadata({
   title: "Hash Generator",
   description:
     "Generate secure hash outputs including MD5, SHA-1, SHA-256, and SHA-512. Free online hashing tool for developers with instant client-side processing.",
@@ -15,32 +17,15 @@ export const metadata: Metadata = {
     "checksum generator",
     "hash calculator",
   ],
-  openGraph: {
-    title: "Hash Generator",
-    description: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
-    url: "/tools/hash",
-    images: ["/assets/astraa_banner.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "Hash Generator",
-    description: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
-  },
-  alternates: {
-    canonical: "/tools/hash",
-  },
-};
+  path: "/tools/hash",
+  ogDescription: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly in your browser.",
+});
 
 export default function HashGeneratorPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <HashGeneratorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">Last updated: {lastUpdated}</p>
+      <LastUpdated />
     </>
   );
 }

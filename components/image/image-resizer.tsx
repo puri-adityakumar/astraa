@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ImagePreview } from "./image-preview";
 import { ImageControls } from "./image-controls";
 import { calculateDimensions, resizeImage, downloadImage } from "@/lib/image/image-utils";
+import { readFileAsDataURL } from "@/lib/file-reader";
 import type { ImageOptions } from "@/lib/image/types";
 
 export function ImageResizerClient() {
@@ -57,7 +58,7 @@ export function ImageResizerClient() {
     return () => clearTimeout(timer);
   }, [calculateEstimate]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -73,17 +74,20 @@ export function ImageResizerClient() {
     setFileSize(file.size);
     setEstimatedSize(null); // Reset estimate until calculated
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        setOriginalSize({ width: img.width, height: img.height });
-        setDimensions({ width: img.width, height: img.height });
-      };
-      img.src = event.target?.result as string;
-      setImage(event.target?.result as string);
+    let dataUrl: string;
+    try {
+      dataUrl = await readFileAsDataURL(file);
+    } catch {
+      return; // Reading failed; nothing to do (matches prior silent behavior).
+    }
+
+    const img = new Image();
+    img.onload = () => {
+      setOriginalSize({ width: img.width, height: img.height });
+      setDimensions({ width: img.width, height: img.height });
     };
-    reader.readAsDataURL(file);
+    img.src = dataUrl;
+    setImage(dataUrl);
   };
 
   const handleDownload = async () => {

@@ -23,6 +23,7 @@ import { debounce } from "@/lib/regex-tester/debounce";
 import { runMatchesSafe } from "@/lib/regex-tester/redos-client";
 import { useToolSettings } from "@/lib/stores/tool-settings";
 import { copyToClipboard } from "@/lib/clipboard";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 
 const TEST_BYTE_CAP = 100 * 1024;
 const DEBOUNCE_MS = 150;
@@ -38,6 +39,7 @@ export function RegexTesterClient() {
   const setReplacement = useRegexTester((s) => s.setReplacement);
 
   const { toast } = useToast();
+  const copy = useCopyToClipboard();
 
   const [hoveredMatchId, setHoveredMatchId] = useState<number | null>(null);
   const [debouncedPattern, setDebouncedPattern] = useState(pattern);
@@ -218,16 +220,7 @@ export function RegexTesterClient() {
       }
       if (e.shiftKey && e.key.toLowerCase() === "c") {
         e.preventDefault();
-        const result = await copyToClipboard(literal);
-        toast(
-          result.success
-            ? { title: "Literal copied" }
-            : {
-                title: "Copy failed",
-                description: result.error,
-                variant: "destructive",
-              },
-        );
+        await copy(literal, "Literal copied");
         return;
       }
       if (e.shiftKey && e.key.toLowerCase() === "s") {
@@ -237,7 +230,7 @@ export function RegexTesterClient() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [pattern, flags, testString, replaceOpen, literal, handleShare, setReplaceOpen, toast]);
+  }, [pattern, flags, testString, replaceOpen, literal, handleShare, setReplaceOpen, copy]);
 
   const reduceMotion = useReducedMotion();
   const containerVariants = reduceMotion ? {} : staggerContainer;

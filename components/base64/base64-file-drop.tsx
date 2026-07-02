@@ -4,7 +4,7 @@ import { useCallback, useRef, useState, type DragEvent } from "react";
 import { FileText, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { FileTooLargeError, MAX_FILE_BYTES, readFileAsBytes } from "@/lib/base64";
+import { FileTooLargeError, MAX_BASE64_FILE_BYTES, readFileAsBytes } from "@/lib/base64";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,7 @@ export interface Base64FileDropProps {
   onFile: (file: { name: string; bytes: Uint8Array } | null) => void;
 }
 
-const MAX_MB = MAX_FILE_BYTES / 1024 / 1024;
+const MAX_MB = MAX_BASE64_FILE_BYTES / 1024 / 1024;
 
 export function Base64FileDrop({ file, onFile }: Base64FileDropProps) {
   const inputRef = useRef<HTMLInputElement>(null);

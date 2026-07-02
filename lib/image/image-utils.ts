@@ -1,3 +1,4 @@
+import { downloadBlob } from "@/lib/download";
 import type { ImageDimensions, ImageOptions } from "./types";
 
 /**
@@ -44,12 +45,7 @@ export function downloadImage(canvas: HTMLCanvasElement, options: ImageOptions):
   canvas.toBlob(
     (blob) => {
       if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `resized-image.${options.format.split("/")[1]}`;
-      a.click();
-      URL.revokeObjectURL(url);
+      downloadBlob(blob, `resized-image.${options.format.split("/")[1]}`);
     },
     options.format,
     options.quality / 100,

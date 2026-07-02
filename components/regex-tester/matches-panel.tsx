@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { downloadContent } from "@/lib/download";
 import { matchesToCsv, matchesToJson } from "@/lib/regex-tester/export";
 import type { MatchResult } from "@/lib/regex-tester/types";
 
@@ -23,18 +24,6 @@ export interface MatchesPanelProps {
 function truncate(value: string, max: number): string {
   if (value.length <= max) return value;
   return value.slice(0, max - 1) + "…";
-}
-
-function downloadBlob(content: string, filename: string, mime: string): void {
-  const blob = new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 export function MatchesPanel({
@@ -94,9 +83,9 @@ export function MatchesPanel({
   }
 
   const handleExportJson = () =>
-    downloadBlob(matchesToJson(matches), "regex-matches.json", "application/json");
+    downloadContent(matchesToJson(matches), "regex-matches.json", "application/json");
   const handleExportCsv = () =>
-    downloadBlob(matchesToCsv(matches), "regex-matches.csv", "text/csv");
+    downloadContent(matchesToCsv(matches), "regex-matches.csv", "text/csv");
 
   return (
     <div className="space-y-2">

@@ -1,11 +1,4 @@
-const downloadBlob = (blob: Blob, filename: string) => {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-};
+import { downloadContent } from "@/lib/download";
 
 const stripExt = (name: string): string => {
   const idx = name.lastIndexOf(".");
@@ -16,7 +9,7 @@ const escapeHtml = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 export function exportAsMarkdown(name: string, content: string): void {
-  downloadBlob(new Blob([content], { type: "text/markdown" }), `${stripExt(name)}.md`);
+  downloadContent(content, `${stripExt(name)}.md`, "text/markdown");
 }
 
 const buildStandaloneHtml = (name: string, body: string): string => `<!doctype html>
@@ -35,10 +28,7 @@ table{border-collapse:collapse;}th,td{border:1px solid #ddd;padding:.4rem .6rem;
 
 export function exportAsHtml(name: string, renderedNode: HTMLElement | null): void {
   const body = renderedNode?.innerHTML ?? "";
-  downloadBlob(
-    new Blob([buildStandaloneHtml(name, body)], { type: "text/html" }),
-    `${stripExt(name)}.html`,
-  );
+  downloadContent(buildStandaloneHtml(name, body), `${stripExt(name)}.html`, "text/html");
 }
 
 export function exportAsPdf(name: string, renderedNode: HTMLElement | null): void {

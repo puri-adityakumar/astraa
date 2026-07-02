@@ -7,12 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Copy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { copyToClipboard } from "@/lib/clipboard";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { formatSql } from "@/lib/sql/format";
 import { WorkInProgress } from "@/components/wip";
 
 export function SqlFormatterClient() {
   const { toast } = useToast();
+  const copy = useCopyToClipboard();
   const [sql, setSql] = useState("");
   const [formattedSql, setFormattedSql] = useState("");
 
@@ -29,19 +30,7 @@ export function SqlFormatterClient() {
   };
 
   const handleCopyToClipboard = async () => {
-    const result = await copyToClipboard(formattedSql);
-    if (result.success) {
-      toast({
-        title: "Copied!",
-        description: "SQL copied to clipboard",
-      });
-    } else {
-      toast({
-        title: "Copy failed",
-        description: result.error,
-        variant: "destructive",
-      });
-    }
+    await copy(formattedSql, "Copied!");
   };
 
   return (

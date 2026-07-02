@@ -8,6 +8,7 @@ import { Lock, Unlock, RotateCcw } from "lucide-react";
 import { FormatSelector } from "./format-selector";
 import type { ImageOptions } from "@/lib/image/types";
 import { cn } from "@/lib/utils";
+import { formatBytes as formatBytesShared } from "@/lib/format";
 
 interface ImageControlsProps {
   dimensions: { width: number; height: number };
@@ -25,14 +26,9 @@ interface ImageControlsProps {
   disabled: boolean;
 }
 
-function formatBytes(bytes: number | null, decimals = 0) {
+function formatBytes(bytes: number | null): string {
   if (!bytes) return "--";
-  if (bytes === 0) return "0 Bytes";
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+  return formatBytesShared(bytes, 0);
 }
 
 export function ImageControls({

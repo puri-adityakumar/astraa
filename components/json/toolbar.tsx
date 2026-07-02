@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { repair } from "@/lib/json/repair";
 import { validateFile, readFileAsText, MAX_DOCUMENT_BYTES } from "@/lib/json/validators";
+import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
 
 export function Toolbar() {
@@ -39,15 +40,7 @@ export function Toolbar() {
   };
 
   const onDownload = () => {
-    const blob = new Blob([text], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+    downloadContent(text, filename, "application/json");
   };
 
   const onUpload = async (file: File) => {

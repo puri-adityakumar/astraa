@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
+import { downloadBlob } from "@/lib/download";
 import type { MatchResult } from "@/lib/regex-tester/types";
 
 export interface SnippetCardExportProps {
@@ -191,14 +192,7 @@ export function SnippetCardExport({ pattern, flags, matches }: SnippetCardExport
         canvas.toBlob((b) => resolve(b), "image/png"),
       );
       if (!blob) throw new Error("Failed to encode PNG blob.");
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `regex-${shortHash(pattern, flags)}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      downloadBlob(blob, `regex-${shortHash(pattern, flags)}.png`);
       toast({
         title: "Snippet exported",
         description: "PNG saved to your downloads.",

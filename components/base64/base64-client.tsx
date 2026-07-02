@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { useToolSettings } from "@/lib/stores/tool-settings";
-import { copyToClipboard } from "@/lib/clipboard";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import {
   decodeToBytes,
@@ -55,6 +55,7 @@ export function Base64Client() {
   const [status, setStatus] = useState<Base64Status>({ kind: "idle" });
 
   const { toast } = useToast();
+  const copy = useCopyToClipboard();
 
   useEffect(() => {
     useToolSettings.getState().updateToolUsage("base64");
@@ -157,17 +158,8 @@ export function Base64Client() {
 
   const handleCopy = useCallback(async () => {
     if (output.length === 0) return;
-    const result = await copyToClipboard(output);
-    toast(
-      result.success
-        ? { title: "Copied" }
-        : {
-            title: "Copy failed",
-            description: result.error,
-            variant: "destructive",
-          },
-    );
-  }, [output, toast]);
+    await copy(output, "Copied");
+  }, [output, copy]);
 
   const handleDownload = useCallback(() => {
     if (output.length === 0) return;
@@ -258,21 +250,12 @@ export function Base64Client() {
       if (e.key === "Enter") {
         e.preventDefault();
         if (output.length === 0) return;
-        const result = await copyToClipboard(output);
-        toast(
-          result.success
-            ? { title: "Copied" }
-            : {
-                title: "Copy failed",
-                description: result.error,
-                variant: "destructive",
-              },
-        );
+        await copy(output, "Copied");
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [output, toast]);
+  }, [output, copy]);
 
   const reduceMotion = useReducedMotion();
   const containerVariants = reduceMotion ? {} : staggerContainer;

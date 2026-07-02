@@ -9,6 +9,7 @@ import { useJsonEditor } from "@/lib/stores/json-editor";
 import { generateTypeScript } from "@/lib/json/generate/typescript";
 import { generateZod } from "@/lib/json/generate/zod";
 import { generateJsonSchema } from "@/lib/json/generate/json-schema";
+import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
 import type { GenerateFormat } from "@/lib/json/types";
 
@@ -68,15 +69,7 @@ export function GenerateView() {
     toast({ title: "Copied" });
   };
   const onDownload = () => {
-    const blob = new Blob([output], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Root.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+    downloadContent(output, `Root.${ext}`, "text/plain");
   };
 
   return (

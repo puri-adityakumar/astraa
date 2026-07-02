@@ -9,6 +9,7 @@ import { useJsonEditor } from "@/lib/stores/json-editor";
 import { jsonToYaml, yamlToJson } from "@/lib/json/convert/yaml";
 import { jsonToCsv, isCsvCompatible } from "@/lib/json/convert/csv";
 import { jsonToMarkdown } from "@/lib/json/convert/markdown";
+import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
 import type { ConvertFormat } from "@/lib/json/types";
 
@@ -77,15 +78,7 @@ export function ConvertView() {
     });
   };
   const onDownload = () => {
-    const blob = new Blob([output], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `data.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+    downloadContent(output, `data.${ext}`, "text/plain");
   };
 
   return (

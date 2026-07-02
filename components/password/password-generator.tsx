@@ -6,20 +6,19 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import {
   generatePassword,
   generateMemorablePassword,
   generatePin,
 } from "@/lib/password/password-utils";
-import { copyToClipboard } from "@/lib/clipboard";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
 import { Shuffle, Lightbulb, Hash } from "lucide-react";
 
 type GenMode = "random" | "memorable" | "pin";
 
 export function PasswordGeneratorClient() {
-  const { toast } = useToast();
+  const copy = useCopyToClipboard();
 
   // -- State --
   const [mode, setMode] = useState<GenMode>("random");
@@ -67,19 +66,7 @@ export function PasswordGeneratorClient() {
 
   const handleCopyToClipboard = async () => {
     if (!password) return;
-    const result = await copyToClipboard(password);
-    if (result.success) {
-      toast({
-        title: "Copied!",
-        description: "Password copied to clipboard",
-      });
-    } else {
-      toast({
-        title: "Copy failed",
-        description: result.error,
-        variant: "destructive",
-      });
-    }
+    await copy(password, "Copied!");
   };
 
   return (
