@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Copy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { copyToClipboard } from "@/lib/clipboard";
+import { formatSql } from "@/lib/sql/format";
 import { WorkInProgress } from "@/components/wip";
 
 export function SqlFormatterClient() {
@@ -15,32 +16,9 @@ export function SqlFormatterClient() {
   const [sql, setSql] = useState("");
   const [formattedSql, setFormattedSql] = useState("");
 
-  const formatSql = () => {
+  const handleFormat = () => {
     try {
-      // Basic SQL formatting for demonstration
-      // In production, you'd want to use a proper SQL formatter
-      const formatted = sql
-        .replace(/\s+/g, " ")
-        .replace(/ ,/g, ",")
-        .replace(/\( /g, "(")
-        .replace(/ \)/g, ")")
-        .replace(/ +/g, " ")
-        .trim()
-        .replace(/SELECT /gi, "SELECT\n  ")
-        .replace(/FROM /gi, "\nFROM\n  ")
-        .replace(/WHERE /gi, "\nWHERE\n  ")
-        .replace(/ORDER BY /gi, "\nORDER BY\n  ")
-        .replace(/GROUP BY /gi, "\nGROUP BY\n  ")
-        .replace(/HAVING /gi, "\nHAVING\n  ")
-        .replace(/LIMIT /gi, "\nLIMIT\n  ")
-        .replace(/AND /gi, "\n  AND ")
-        .replace(/OR /gi, "\n  OR ")
-        .replace(/JOIN /gi, "\nJOIN\n  ")
-        .replace(/LEFT JOIN /gi, "\nLEFT JOIN\n  ")
-        .replace(/RIGHT JOIN /gi, "\nRIGHT JOIN\n  ")
-        .replace(/INNER JOIN /gi, "\nINNER JOIN\n  ");
-
-      setFormattedSql(formatted);
+      setFormattedSql(formatSql(sql));
     } catch {
       toast({
         title: "Error",
@@ -84,7 +62,7 @@ export function SqlFormatterClient() {
                 placeholder="Paste your SQL query here..."
                 className="font-mono min-h-[300px]"
               />
-              <Button className="w-full" onClick={formatSql} disabled={!sql}>
+              <Button className="w-full" onClick={handleFormat} disabled={!sql}>
                 Format SQL
               </Button>
             </div>

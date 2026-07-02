@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { evaluateExpression, scientificFunctions } from "./calculator-utils";
+import {
+  evaluateExpression,
+  scientificFunctions,
+  applyScientificFunction,
+} from "./calculator-utils";
 
 describe("evaluateExpression", () => {
   it("evaluates basic addition", () => {
@@ -101,5 +105,37 @@ describe("scientificFunctions", () => {
   });
   it("calculates natural log", () => {
     expect(scientificFunctions.ln(Math.E)).toBeCloseTo(1);
+  });
+});
+
+describe("applyScientificFunction", () => {
+  describe("DEG mode", () => {
+    it("sin(180°) snaps to 0 (not ~1.2e-16)", () => {
+      expect(applyScientificFunction("sin", 180, "DEG")).toBe(0);
+    });
+    it("sin(90°) snaps to 1", () => {
+      expect(applyScientificFunction("sin", 90, "DEG")).toBe(1);
+    });
+    it("cos(180°) snaps to -1", () => {
+      expect(applyScientificFunction("cos", 180, "DEG")).toBe(-1);
+    });
+    it("cos(0°) snaps to 1", () => {
+      expect(applyScientificFunction("cos", 0, "DEG")).toBe(1);
+    });
+    it("tan(45°) snaps to 1", () => {
+      expect(applyScientificFunction("tan", 45, "DEG")).toBe(1);
+    });
+  });
+
+  describe("RAD mode", () => {
+    it("sin(π) snaps to 0", () => {
+      expect(applyScientificFunction("sin", Math.PI, "RAD")).toBe(0);
+    });
+    it("sin(π/2) snaps to 1", () => {
+      expect(applyScientificFunction("sin", Math.PI / 2, "RAD")).toBe(1);
+    });
+    it("cos(0) snaps to 1", () => {
+      expect(applyScientificFunction("cos", 0, "RAD")).toBe(1);
+    });
   });
 });

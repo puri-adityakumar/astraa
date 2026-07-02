@@ -27,7 +27,7 @@ export const BG_PRESETS: BgPreset[] = [
   { id: "solid-brand", name: "Astraa", css: "hsl(var(--primary))" },
 ];
 
-export const THEMES: ThemeOption[] = [
+export const THEMES = [
   { id: "github-dark", name: "GitHub Dark" },
   { id: "github-light", name: "GitHub Light" },
   { id: "dracula", name: "Dracula" },
@@ -37,7 +37,7 @@ export const THEMES: ThemeOption[] = [
   { id: "catppuccin-mocha", name: "Catppuccin Mocha" },
   { id: "monokai", name: "Monokai" },
   { id: "solarized-dark", name: "Solarized Dark" },
-];
+] as const satisfies readonly ThemeOption[];
 
 export const FONTS: FontOption[] = [
   { family: "JetBrains Mono", label: "JetBrains Mono" },
@@ -46,7 +46,7 @@ export const FONTS: FontOption[] = [
   { family: "IBM Plex Mono", label: "IBM Plex Mono" },
 ];
 
-export const LANGUAGES: LanguageOption[] = [
+export const LANGUAGES = [
   { id: "typescript", name: "TypeScript" },
   { id: "javascript", name: "JavaScript" },
   { id: "python", name: "Python" },
@@ -67,7 +67,7 @@ export const LANGUAGES: LanguageOption[] = [
   { id: "sql", name: "SQL" },
   { id: "bash", name: "Bash" },
   { id: "markdown", name: "Markdown" },
-];
+] as const satisfies readonly LanguageOption[];
 
 export const DEFAULT_CODE = `function greet(name: string) {
   return \`Hello, \${name}!\`;

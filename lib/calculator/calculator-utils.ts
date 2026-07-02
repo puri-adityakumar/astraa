@@ -30,6 +30,31 @@ export const scientificFunctions = {
   },
 };
 
+export type ScientificTrigFn = "sin" | "cos" | "tan";
+export type AngleMode = "DEG" | "RAD";
+
+/**
+ * Apply a trigonometric function (sin/cos/tan) to a value, converting the
+ * input from degrees to radians when `angleMode` is "DEG", then snap the
+ * result to the nearest exact integer (0, 1, -1) when within an epsilon of
+ * 1e-10. This compensates for floating-point drift so that, e.g., sin(180°)
+ * returns exactly 0 rather than ~1.2e-16.
+ */
+export function applyScientificFunction(
+  fn: ScientificTrigFn,
+  value: number,
+  angleMode: AngleMode,
+): number {
+  const input = angleMode === "DEG" ? value * (Math.PI / 180) : value;
+  let result = scientificFunctions[fn](input);
+
+  if (Math.abs(result) < 1e-10) result = 0;
+  if (Math.abs(result - 1) < 1e-10) result = 1;
+  if (Math.abs(result + 1) < 1e-10) result = -1;
+
+  return result;
+}
+
 const WHITESPACE_RE = /\s+/g;
 
 export function evaluateExpression(expression: string): number {

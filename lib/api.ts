@@ -16,7 +16,7 @@ export async function getCryptoPrice(cryptoId: string, currency: string): Promis
       throw new Error(`API request failed: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as Record<string, Record<string, number>>;
     const price = data[cryptoId]?.[currency.toLowerCase()];
 
     if (price === undefined) {
@@ -44,7 +44,7 @@ export async function getExchangeRate(from: string, to: string): Promise<number 
       throw new Error("Primary API failed");
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as Record<string, Record<string, number>>;
     // The API structure is { date: "...", [from]: { [to]: rate, ... } }
     const rate = data[from.toLowerCase()]?.[to.toLowerCase()];
 
@@ -62,7 +62,7 @@ export async function getExchangeRate(from: string, to: string): Promise<number 
       if (!backupResponse.ok) {
         throw new Error(`Backup API failed: ${backupResponse.status}`);
       }
-      const backupData = await backupResponse.json();
+      const backupData = (await backupResponse.json()) as { rates: Record<string, number> };
       const backupRate = backupData.rates[to];
 
       if (backupRate === undefined) {

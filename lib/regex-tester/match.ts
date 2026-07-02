@@ -52,7 +52,7 @@ export function runMatches(regex: RegExp, input: string): RunMatchesResult {
   return { results, elapsedMs, capped, timedOut };
 }
 
-function toMatchResult(m: RegExpExecArray): MatchResult {
+export function toMatchResult(m: RegExpExecArray): MatchResult {
   const full = m[0];
   const indices = (m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }).indices;
   const groups: (string | undefined)[] = [];

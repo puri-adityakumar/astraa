@@ -6,7 +6,10 @@ const MAX_TOPIC_LENGTH = 500;
 const MIN_WORD_COUNT = 10;
 const MAX_WORD_COUNT = 5000;
 
-export async function generateText(topic: string, wordCount: number) {
+export type GenerateTextResult =
+  { success: true; text: string } | { success: false; error: string };
+
+export async function generateText(topic: string, wordCount: number): Promise<GenerateTextResult> {
   if (typeof topic !== "string" || topic.trim().length === 0) {
     return { success: false, error: "Topic must be a non-empty string." };
   }
@@ -52,11 +55,15 @@ export async function generateText(topic: string, wordCount: number) {
       ],
     });
 
-    const text = completion.choices?.[0]?.message?.content;
+    const content = completion.choices?.[0]?.message?.content;
 
-    if (!text) {
+    if (!content) {
       throw new Error("No content received from API");
     }
+
+    // The OpenRouter API may return content as a string or an array of content
+    // parts; normalize to a single string for the caller.
+    const text = typeof content === "string" ? content : String(content);
 
     return { success: true, text };
   } catch (error) {

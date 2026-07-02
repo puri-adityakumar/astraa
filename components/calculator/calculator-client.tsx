@@ -5,7 +5,11 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CalculatorDisplay } from "@/components/calculator/calculator-display";
 import { CalculatorButton } from "@/components/calculator/calculator-button";
-import { evaluateExpression, scientificFunctions } from "@/lib/calculator/calculator-utils";
+import {
+  evaluateExpression,
+  applyScientificFunction,
+  scientificFunctions,
+} from "@/lib/calculator/calculator-utils";
 
 export function CalculatorClient() {
   const [display, setDisplay] = useState("0");
@@ -99,12 +103,7 @@ export function CalculatorClient() {
         let result: number;
 
         if (fn === "sin" || fn === "cos" || fn === "tan") {
-          const input = angleMode === "DEG" ? num * (Math.PI / 180) : num;
-          result = scientificFunctions[fn](input);
-
-          if (Math.abs(result) < 1e-10) result = 0;
-          if (Math.abs(result - 1) < 1e-10) result = 1;
-          if (Math.abs(result + 1) < 1e-10) result = -1;
+          result = applyScientificFunction(fn, num, angleMode);
         } else {
           result = scientificFunctions[fn](num);
         }

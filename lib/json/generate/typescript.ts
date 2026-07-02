@@ -1,20 +1,5 @@
 import type { JsonValue } from "../types";
-
-function pascalCase(s: string): string {
-  if (!s) return "Root";
-  const cleaned = s.replace(/[^A-Za-z0-9_]/g, " ");
-  return (
-    cleaned
-      .split(/\s+/)
-      .filter(Boolean)
-      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-      .join("") || "Root"
-  );
-}
-
-function isSafeIdentifier(key: string): boolean {
-  return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key);
-}
+import { pascalCase, isSafeIdentifier } from "../identifier";
 
 function tsType(value: JsonValue, name: string, interfaces: Map<string, string>): string {
   if (value === null) return "null";

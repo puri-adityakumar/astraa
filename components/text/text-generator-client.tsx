@@ -28,7 +28,7 @@ export function TextGeneratorClient() {
         setGeneratedText(String(result.text));
         toast.success("Text generated successfully!");
       } else {
-        toast.error(result.error || "Something went wrong");
+        toast.error(!result.success ? result.error : "Something went wrong");
       }
     });
   };

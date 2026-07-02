@@ -3,9 +3,14 @@ import type { NextRequest } from "next/server";
 import { Redis } from "@upstash/redis";
 
 // Create Redis client directly in middleware (can't import from lib in edge runtime)
+const KV_REST_API_URL = process.env.KV_REST_API_URL;
+const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+if (!KV_REST_API_URL || !KV_REST_API_TOKEN) {
+  console.error("Missing Upstash Redis env vars (KV_REST_API_URL / KV_REST_API_TOKEN)");
+}
 const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
+  url: KV_REST_API_URL ?? "",
+  token: KV_REST_API_TOKEN ?? "",
 });
 
 const VISITOR_COUNT_KEY = "astraa:visitor_count";
