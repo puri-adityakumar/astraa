@@ -6,10 +6,7 @@ export type MiniTestResult = {
   reason: string;
 };
 
-export function runMiniTests(
-  regex: RegExp | null,
-  tests: MiniTest[],
-): MiniTestResult[] {
+export function runMiniTests(regex: RegExp | null, tests: MiniTest[]): MiniTestResult[] {
   return tests.map((test) => {
     if (regex === null) {
       return {

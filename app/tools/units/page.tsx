@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { UnitConverterClient } from "@/components/units/unit-converter";
+import { LastUpdated } from "@/components/last-updated";
+import { createToolMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createToolMetadata({
   title: "Unit Converter",
   description:
     "Convert between different units of measurement including length, weight, temperature, and more. Free online unit conversion tool with metric and imperial support.",
@@ -17,36 +19,15 @@ export const metadata: Metadata = {
     "unit conversion calculator",
     "measurement tool",
   ],
-  openGraph: {
-    title: "Unit Converter",
-    description:
-      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
-    url: "/tools/units",
-    images: ["/assets/astraa_banner.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "Unit Converter",
-    description:
-      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
-  },
-  alternates: {
-    canonical: "/tools/units",
-  },
-};
+  path: "/tools/units",
+  ogDescription: "Convert length, weight, temperature, and more. Free online unit conversion tool.",
+});
 
 export default function UnitConverterPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <UnitConverterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <LastUpdated />
     </>
   );
 }

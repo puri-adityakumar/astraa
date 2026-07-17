@@ -11,9 +11,7 @@ export type MatchResult = {
   groupIndices?: (number | null)[];
 };
 
-export type CompileResult =
-  | { ok: true; regex: RegExp }
-  | { ok: false; error: string };
+export type CompileResult = { ok: true; regex: RegExp } | { ok: false; error: string };
 
 export type StarterPattern = {
   id: string;
@@ -24,12 +22,7 @@ export type StarterPattern = {
 };
 
 export type CheatsheetCategory =
-  | "anchors"
-  | "quantifiers"
-  | "classes"
-  | "groups"
-  | "lookaround"
-  | "escapes";
+  "anchors" | "quantifiers" | "classes" | "groups" | "lookaround" | "escapes";
 
 export type CheatsheetToken = {
   id: string;

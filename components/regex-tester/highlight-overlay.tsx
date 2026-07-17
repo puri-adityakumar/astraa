@@ -21,8 +21,7 @@ const GROUP_COLORS = [
 ] as const;
 
 type Segment =
-  | { kind: "text"; text: string }
-  | { kind: "match"; matchId: number; match: MatchResult };
+  { kind: "text"; text: string } | { kind: "match"; matchId: number; match: MatchResult };
 
 function buildSegments(text: string, matches: MatchResult[]): Segment[] {
   if (matches.length === 0) {
@@ -60,8 +59,7 @@ function buildSegments(text: string, matches: MatchResult[]): Segment[] {
 }
 
 type MatchPart =
-  | { kind: "outside"; text: string }
-  | { kind: "group"; text: string; groupIndex: number };
+  { kind: "outside"; text: string } | { kind: "group"; text: string; groupIndex: number };
 
 function partitionMatch(match: MatchResult): MatchPart[] {
   const { full, groups, groupIndices } = match;
@@ -113,10 +111,7 @@ function partitionMatch(match: MatchResult): MatchPart[] {
 }
 
 export const HighlightOverlay = forwardRef<HTMLPreElement, HighlightOverlayProps>(
-  function HighlightOverlay(
-    { text, matches, hoveredMatchId, onHoverMatch, className },
-    ref,
-  ) {
+  function HighlightOverlay({ text, matches, hoveredMatchId, onHoverMatch, className }, ref) {
     const segments = useMemo(() => buildSegments(text, matches), [text, matches]);
 
     return (
@@ -153,13 +148,10 @@ export const HighlightOverlay = forwardRef<HTMLPreElement, HighlightOverlayProps
             >
               {parts.map((part, partIndex) => {
                 if (part.kind === "outside") {
-                  return (
-                    <span key={`p-${matchId}-${partIndex}`}>{part.text}</span>
-                  );
+                  return <span key={`p-${matchId}-${partIndex}`}>{part.text}</span>;
                 }
                 const color =
-                  GROUP_COLORS[part.groupIndex % GROUP_COLORS.length] ??
-                  GROUP_COLORS[0];
+                  GROUP_COLORS[part.groupIndex % GROUP_COLORS.length] ?? GROUP_COLORS[0];
                 return (
                   <span
                     key={`p-${matchId}-${partIndex}`}

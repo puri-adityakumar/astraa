@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { HashSelector } from "./hash-selector"
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { HashSelector } from "./hash-selector";
 
 interface HashInputProps {
-  value: string
-  selectedHash: string
-  onChange: (value: string) => void
-  onHashChange: (value: string) => void
-  onGenerate: () => void
+  value: string;
+  selectedHash: string;
+  onChange: (value: string) => void;
+  onHashChange: (value: string) => void;
+  onGenerate: () => void;
 }
 
-export function HashInput({ 
-  value, 
+export function HashInput({
+  value,
   selectedHash,
-  onChange, 
+  onChange,
   onHashChange,
-  onGenerate 
+  onGenerate,
 }: HashInputProps) {
   return (
     <div className="space-y-4">
@@ -34,14 +34,11 @@ export function HashInput({
       </div>
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-        <HashSelector
-          selectedHash={selectedHash}
-          onHashChange={onHashChange}
-        />
+        <HashSelector selectedHash={selectedHash} onHashChange={onHashChange} />
         <Button className="flex-1 min-h-[40px]" onClick={onGenerate}>
           Generate Hash
         </Button>
       </div>
     </div>
-  )
+  );
 }

@@ -4,12 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
 
@@ -110,9 +105,7 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Recent
             </h2>
-            <span className="text-xs tabular-nums text-muted-foreground/70">
-              {files.length}/10
-            </span>
+            <span className="text-xs tabular-nums text-muted-foreground/70">{files.length}/10</span>
           </div>
           <FileList onSelect={onSelect} onDelete={onDelete} />
         </div>
@@ -127,9 +120,7 @@ export function Sidebar({ onSelect, onDelete }: SidebarProps) {
         >
           <SheetContent side="left" className="w-72 p-0">
             <SheetHeader className="border-b px-4 py-3">
-              <SheetTitle className="text-sm">
-                Recent files ({files.length}/10)
-              </SheetTitle>
+              <SheetTitle className="text-sm">Recent files ({files.length}/10)</SheetTitle>
             </SheetHeader>
             <div className="p-2">
               <FileList onSelect={onSelect} onDelete={onDelete} />

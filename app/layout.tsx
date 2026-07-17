@@ -1,26 +1,26 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import { IBM_Plex_Mono } from 'next/font/google';
+import "./globals.css";
+import type { Metadata } from "next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { IBM_Plex_Mono } from "next/font/google";
 
 const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-ibm-plex-mono',
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-ibm-plex-mono",
+  display: "swap",
 });
-import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/footer';
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ToolsProvider } from '@/lib/tools-context';
-import { ActivityProvider } from '@/lib/activity-tracker';
-import { PageTransition } from '@/components/ui/page-transition';
-import { LandingBackground } from '@/components/landing-background';
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { TooltipProvider } from "@/components/ui/tooltip"
+import { ToolsProvider } from "@/lib/tools-context";
+import { ActivityProvider } from "@/lib/activity-tracker";
+import { PageTransition } from "@/components/ui/page-transition";
+import { LandingBackground } from "@/components/landing-background";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.astraa.tech"),
@@ -61,8 +61,7 @@ export const metadata: Metadata = {
     url: "https://www.astraa.tech",
     siteName: "Astraa",
     title: "Astraa - Free Online Utility Tools",
-    description:
-      "15+ free online utility tools for developers and creators. No signup required.",
+    description: "15+ free online utility tools for developers and creators. No signup required.",
     images: [
       {
         url: "/assets/astraa_banner.jpg",
@@ -87,14 +86,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} font-sans`} suppressHydrationWarning>
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} font-sans`}
+        suppressHydrationWarning
+      >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -102,10 +100,10 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "Organization",
-                "name": "Astraa",
-                "url": "https://www.astraa.tech",
-                "logo": "https://www.astraa.tech/assets/astraa_pfp.png",
-                "sameAs": [
+                name: "Astraa",
+                url: "https://www.astraa.tech",
+                logo: "https://www.astraa.tech/assets/astraa_pfp.png",
+                sameAs: [
                   "https://github.com/puri-adityakumar/astraa",
                   "https://x.com/astraadottech",
                   "https://t.me/astraadottech",
@@ -114,29 +112,27 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "WebApplication",
-                "name": "Astraa",
-                "description":
-                  "Browser-based utility toolkit for developers and creators",
-                "url": "https://www.astraa.tech",
-                "applicationCategory": "UtilityApplication",
-                "operatingSystem": "Web",
-                "datePublished": "2025-01-01",
-                "dateModified": new Date().toISOString().split("T")[0],
-                "offers": {
+                name: "Astraa",
+                description: "Browser-based utility toolkit for developers and creators",
+                url: "https://www.astraa.tech",
+                applicationCategory: "UtilityApplication",
+                operatingSystem: "Web",
+                datePublished: "2025-01-01",
+                dateModified: new Date().toISOString().split("T")[0],
+                offers: {
                   "@type": "Offer",
-                  "price": "0",
-                  "priceCurrency": "USD",
+                  price: "0",
+                  priceCurrency: "USD",
                 },
               },
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
-                "name": "Astraa",
-                "url": "https://www.astraa.tech",
-                "potentialAction": {
+                name: "Astraa",
+                url: "https://www.astraa.tech",
+                potentialAction: {
                   "@type": "SearchAction",
-                  "target":
-                    "https://www.astraa.tech/explore?q={search_term_string}",
+                  target: "https://www.astraa.tech/explore?q={search_term_string}",
                   "query-input": "required name=search_term_string",
                 },
               },

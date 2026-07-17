@@ -4,12 +4,7 @@ import { useMemo, useState } from "react";
 import { Sparkles, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { STARTERS } from "@/lib/regex-tester/starters";
@@ -76,9 +71,7 @@ export function ReferencePanel({ onInsertAtCaret }: ReferencePanelProps) {
     const q = search.trim().toLowerCase();
     const filtered = q
       ? CHEATSHEET.filter(
-          (t) =>
-            t.token.toLowerCase().includes(q) ||
-            t.label.toLowerCase().includes(q),
+          (t) => t.token.toLowerCase().includes(q) || t.label.toLowerCase().includes(q),
         )
       : CHEATSHEET;
     return CATEGORY_ORDER.map((cat) => ({
@@ -91,9 +84,7 @@ export function ReferencePanel({ onInsertAtCaret }: ReferencePanelProps) {
   return (
     <Tabs
       value={selectedTab}
-      onValueChange={(v) =>
-        setSelectedTab(v as Parameters<typeof setSelectedTab>[0])
-      }
+      onValueChange={(v) => setSelectedTab(v as Parameters<typeof setSelectedTab>[0])}
       className="w-full"
     >
       <TabsList className="grid grid-cols-5 w-full">
@@ -155,9 +146,7 @@ export function ReferencePanel({ onInsertAtCaret }: ReferencePanelProps) {
         />
         <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
           {grouped.length === 0 && (
-            <p className="text-xs italic text-muted-foreground">
-              No tokens matched.
-            </p>
+            <p className="text-xs italic text-muted-foreground">No tokens matched.</p>
           )}
           {grouped.map((group) => (
             <div key={group.category} className="space-y-2">

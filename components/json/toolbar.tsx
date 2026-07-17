@@ -1,25 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import {
-  Sparkles,
-  Minimize2,
-  Wrench,
-  ArrowDownAZ,
-  Copy,
-  Download,
-  Upload,
-} from "lucide-react";
+import { Sparkles, Minimize2, Wrench, ArrowDownAZ, Copy, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { repair } from "@/lib/json/repair";
-import {
-  validateFile,
-  readFileAsText,
-  MAX_DOCUMENT_BYTES,
-} from "@/lib/json/validators";
+import { validateFile, readFileAsText, MAX_DOCUMENT_BYTES } from "@/lib/json/validators";
+import { downloadContent } from "@/lib/download";
 import { logError } from "@/lib/error-handler";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 
 export function Toolbar() {
   const text = useJsonEditor((s) => s.text);
@@ -29,6 +19,7 @@ export function Toolbar() {
   const sortKeysAction = useJsonEditor((s) => s.sortKeysAction);
   const setText = useJsonEditor((s) => s.setText);
   const { toast } = useToast();
+  const copy = useCopyToClipboard();
   const fileInput = useRef<HTMLInputElement>(null);
 
   const onRepair = async () => {
@@ -46,20 +37,11 @@ export function Toolbar() {
   };
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    toast({ title: "Copied" });
+    await copy(text);
   };
 
   const onDownload = () => {
-    const blob = new Blob([text], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+    downloadContent(text, filename, "application/json");
   };
 
   const onUpload = async (file: File) => {
@@ -134,11 +116,7 @@ export function Toolbar() {
       <Button size="sm" variant="ghost" onClick={onDownload}>
         <Download className="h-4 w-4 mr-2" aria-hidden /> Download
       </Button>
-      <Button
-        size="sm"
-        variant="ghost"
-        onClick={() => fileInput.current?.click()}
-      >
+      <Button size="sm" variant="ghost" onClick={() => fileInput.current?.click()}>
         <Upload className="h-4 w-4 mr-2" aria-hidden /> Upload
       </Button>
       <input

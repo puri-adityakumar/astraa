@@ -1,6 +1,6 @@
-export type PathSegment = string | number;
+import { SAFE_KEY } from "./identifier";
 
-const SAFE_KEY = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+export type PathSegment = string | number;
 
 export function joinPath(parent: string, segment: PathSegment): string {
   if (typeof segment === "number") {

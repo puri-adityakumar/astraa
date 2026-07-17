@@ -1,6 +1,6 @@
 import type { Highlighter } from "shiki";
 import { LANGUAGES, THEMES } from "./defaults";
-import type { HighlightResult } from "./types";
+import type { HighlightResult, LanguageId, ThemeId } from "./types";
 
 let highlighterPromise: Promise<Highlighter> | null = null;
 
@@ -36,12 +36,14 @@ export async function highlight(
   language: string,
   theme: string,
 ): Promise<HighlightResult> {
-  const lang = isSupportedLanguage(language) ? language : getDefaultLanguage();
-  const themeId = isSupportedTheme(theme) ? theme : "github-dark";
+  const lang: LanguageId = (
+    isSupportedLanguage(language) ? language : getDefaultLanguage()
+  ) as LanguageId;
+  const themeId: ThemeId = (isSupportedTheme(theme) ? theme : "github-dark") as ThemeId;
   const h = await getHighlighter();
-  if (!h.getLoadedThemes().includes(themeId)) await h.loadTheme(themeId as never);
-  if (!h.getLoadedLanguages().includes(lang)) await h.loadLanguage(lang as never);
-  const tokenized = h.codeToTokens(code, { lang: lang as never, theme: themeId });
+  if (!h.getLoadedThemes().includes(themeId)) await h.loadTheme(themeId);
+  if (!h.getLoadedLanguages().includes(lang)) await h.loadLanguage(lang);
+  const tokenized = h.codeToTokens(code, { lang, theme: themeId });
   return {
     lines: tokenized.tokens.map((line) =>
       line.map((t) =>

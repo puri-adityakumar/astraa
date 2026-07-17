@@ -1,18 +1,5 @@
 import type { JsonValue } from "../types";
-
-function pascalCase(s: string): string {
-  if (!s) return "Root";
-  const cleaned = s.replace(/[^A-Za-z0-9_]/g, " ");
-  return cleaned
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-    .join("") || "Root";
-}
-
-function isSafeIdentifier(key: string): boolean {
-  return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key);
-}
+import { pascalCase, isSafeIdentifier } from "../identifier";
 
 function tsType(value: JsonValue, name: string, interfaces: Map<string, string>): string {
   if (value === null) return "null";
@@ -28,11 +15,7 @@ function tsType(value: JsonValue, name: string, interfaces: Map<string, string>)
   const ifName = pascalCase(name);
   const lines: string[] = [];
   for (const [key, v] of Object.entries(value)) {
-    const fieldType = tsType(
-      v as JsonValue,
-      `${ifName}${pascalCase(key)}`,
-      interfaces,
-    );
+    const fieldType = tsType(v as JsonValue, `${ifName}${pascalCase(key)}`, interfaces);
     const safeKey = isSafeIdentifier(key) ? key : JSON.stringify(key);
     lines.push(`  ${safeKey}: ${fieldType};`);
   }
@@ -41,10 +24,7 @@ function tsType(value: JsonValue, name: string, interfaces: Map<string, string>)
   return ifName;
 }
 
-export async function generateTypeScript(
-  jsonText: string,
-  typeName: string,
-): Promise<string> {
+export async function generateTypeScript(jsonText: string, typeName: string): Promise<string> {
   const value = JSON.parse(jsonText) as JsonValue;
   const interfaces = new Map<string, string>();
   const rootType = tsType(value, typeName, interfaces);
@@ -53,10 +33,7 @@ export async function generateTypeScript(
   }
   const ordered = Array.from(interfaces.values()).reverse();
   if (rootType !== pascalCase(typeName) && !interfaces.has(pascalCase(typeName))) {
-    return [
-      ...ordered,
-      `export type ${pascalCase(typeName)} = ${rootType};`,
-    ].join("\n\n");
+    return [...ordered, `export type ${pascalCase(typeName)} = ${rootType};`].join("\n\n");
   }
   return ordered.join("\n\n");
 }

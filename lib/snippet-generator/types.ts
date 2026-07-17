@@ -1,5 +1,13 @@
 // lib/snippet-generator/types.ts
 
+import type { LANGUAGES, THEMES } from "./defaults";
+
+/** Literal union of supported theme ids (derived from the THEMES table). */
+export type ThemeId = (typeof THEMES)[number]["id"];
+
+/** Literal union of supported language ids (derived from the LANGUAGES table). */
+export type LanguageId = (typeof LANGUAGES)[number]["id"];
+
 export type Mode = "code" | "screenshot";
 
 export type WindowChrome = "macos" | "none";

@@ -56,8 +56,10 @@ function emitJs(pattern: string, flags: string): string {
 
 function emitPython(pattern: string, flags: string): string {
   const flagNotes: string[] = [];
-  if (flags.includes("g")) flagNotes.push("# Python 're' is global by default; iterate with re.finditer().");
-  if (flags.includes("y")) flagNotes.push("# 'y' (sticky) flag is JS-only — not represented in Python.");
+  if (flags.includes("g"))
+    flagNotes.push("# Python 're' is global by default; iterate with re.finditer().");
+  if (flags.includes("y"))
+    flagNotes.push("# 'y' (sticky) flag is JS-only — not represented in Python.");
   return [
     "# Python",
     "import re",
@@ -89,11 +91,12 @@ function emitGo(pattern: string, flags: string): string {
   const inline = goInlineFlags(flags);
   const expr = inline ? `(?${inline})${pattern}` : pattern;
   const notes: string[] = [];
-  if (flags.includes("u")) notes.push("// Go regexp is UTF-8 native — no explicit unicode flag needed.");
+  if (flags.includes("u"))
+    notes.push("// Go regexp is UTF-8 native — no explicit unicode flag needed.");
   if (flags.includes("y")) notes.push("// 'y' (sticky) flag is JS-only — not represented in Go.");
   return [
     "// Go",
-    "import \"regexp\"",
+    'import "regexp"',
     `re := regexp.MustCompile(\`${expr}\`)`,
     flags.includes("g")
       ? "matches := re.FindAllString(input, -1)"
@@ -113,11 +116,7 @@ function emitPhp(pattern: string, flags: string): string {
   ].join("\n");
 }
 
-export function emitCode(
-  pattern: string,
-  flags: string,
-  lang: CodeLang,
-): string {
+export function emitCode(pattern: string, flags: string, lang: CodeLang): string {
   if (pattern.length === 0) return "// Enter a pattern to generate code.";
   switch (lang) {
     case "js":

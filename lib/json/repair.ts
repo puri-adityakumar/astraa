@@ -1,6 +1,4 @@
-export type RepairResult =
-  | { ok: true; text: string }
-  | { ok: false; error: string };
+export type RepairResult = { ok: true; text: string } | { ok: false; error: string };
 
 export async function repair(text: string): Promise<RepairResult> {
   try {

@@ -31,11 +31,7 @@ export function TopExport({ getNode }: Props) {
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            disabled={busy}
-            className="rounded-l-none px-2"
-            aria-label="More export options"
-          >
+          <Button disabled={busy} className="rounded-l-none px-2" aria-label="More export options">
             <ChevronDown className="h-4 w-4" aria-hidden />
           </Button>
         </DropdownMenuTrigger>

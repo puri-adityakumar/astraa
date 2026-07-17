@@ -16,13 +16,15 @@ npm run test:watch # Run tests in watch mode
 ## Architecture
 
 **Core pattern**: Server component pages render client components:
+
 - `app/tools/[tool]/page.tsx` → exports metadata, renders client component
 - `components/[tool]/[tool]-client.tsx` → `"use client"` directive, UI logic
 - `lib/[tool]/` → pure logic, utilities, types (no React)
 
-**State**: Zustand stores in `lib/stores/` (UserPreferences, ToolSettings, ActivityTracking) persisted via IndexedDB with localStorage fallback. Context: ToolsContext (`lib/tools-context.tsx`), ActivityProvider (`lib/activity-tracker.tsx`).
+**State**: Zustand stores in `lib/stores/` (`ToolSettings` + tool-local editor stores: json-editor, markdown-editor, snippet-generator, regex-tester) persisted via `createZustandStorage()` (IndexedDB with localStorage fallback). App-level Context mounted in `app/layout.tsx`: ToolsContext (`lib/tools-context.tsx`), ActivityProvider (`lib/activity-tracker.tsx`).
 
 **External APIs**:
+
 - OpenRouter (`lib/openrouter.ts`): Server action, AI text generation
 - CoinGecko (`lib/crypto-data.ts`): Crypto prices
 - Currency APIs (`lib/api.ts`): Exchange rates with fallback
@@ -41,16 +43,17 @@ npm run test:watch # Run tests in watch mode
 **Formatting**: Always use **double quotes**, **semicolons**, **2-space** indentation, **trailing commas** in multi-line objects/arrays, max 100 character line length.
 
 **Import Order**:
+
 ```typescript
 // 1. External libraries
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState } from "react";
+import { motion } from "framer-motion";
 // 2. Internal utilities
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 // 3. Components
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 // 4. Types
-import type { Tool } from "@/lib/tools"
+import type { Tool } from "@/lib/tools";
 ```
 
 ## Naming Conventions
@@ -117,13 +120,13 @@ export default function MyToolPage() {
 ## Error Handling
 
 ```typescript
-import { getUserFriendlyError, logError } from "@/lib/error-handler"
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
-  const details = getUserFriendlyError(error)
-  toast({ title: details.title, description: details.message, variant: "destructive" })
-  logError(error, { context: "additional context" })
+  const details = getUserFriendlyError(error);
+  toast({ title: details.title, description: details.message, variant: "destructive" });
+  logError(error, { context: "additional context" });
 }
 ```
 
@@ -159,6 +162,7 @@ export function AnimatedComponent() {
 Before turning a design/spec into an implementation plan, walk through these checks. Treat any "no" as either a gap to fix in the spec or a deliberate, documented decision in an "Out of scope" section.
 
 ### Project alignment
+
 - Server page → client component pattern (`app/tools/[name]/page.tsx` → `components/[name]/[name]-client.tsx` → `lib/[name]/*`)
 - Global state lives in `lib/stores/[name].ts` using Zustand + `createZustandStorage()`
 - Tool registered in `lib/tools.ts` (or game in `lib/games.ts`) with `name`, `description`, `path`, `icon`, optional `wip`
@@ -168,6 +172,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Tailwind class order respected, classes composed via `cn()`
 
 ### Design uniformity
+
 - Layout matches other tools — centered card (`max-w-2xl mx-auto`) is the default; any divergence is justified in the spec
 - Reuses `components/ui/*` primitives before introducing new ones
 - Includes heading + tagline + "All processing happens locally in your browser" line where applicable
@@ -175,6 +180,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Dark/light follows `next-themes` and HSL semantic tokens
 
 ### UX coverage
+
 - Empty state, loading state, error states are all specified
 - Mobile / small-screen behavior is specified — layout works below `640px`
 - Keyboard shortcuts enumerated
@@ -183,6 +189,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Destructive actions gated by confirmation
 
 ### Accessibility
+
 - Touch targets ≥ 44px (`min-h-touch`/`min-w-touch`)
 - `aria-label` on icon-only buttons
 - Semantic HTML, every action keyboard-reachable
@@ -190,36 +197,43 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Dynamic content handled for screen readers (live regions, focus moves)
 
 ### Security / data
+
 - User-supplied content rendered safely (no untrusted HTML)
 - Upload/storage size limits set
 - Data persisted only locally unless explicitly designed for sync
 - Sensitive data sanitized before logging
 
 ### Performance / bundle
+
 - Heavy dependencies (>100KB) dynamic-imported and justified
 - Initial route bundle impact assessed
 - Hot-path renders debounced where appropriate
 
 ### Complexity
+
 - Would a smaller v1 still hit the goal?
 - Each component does one thing
 - Abstractions earn their cost
 
 ### Testing
+
 - Pure logic in `lib/` has unit tests, including boundary conditions
 - Manual verification checklist exists for UI behaviors not covered by units
 
 ### Storage / migration
-- Schema version recorded and migration path planned (`lib/stores/migration.ts`)
+
+- Schema version recorded and migration path planned (per-store `version` + `migrate` in `lib/stores/<name>.ts`, backed by `createZustandStorage()`)
 - Caps on stored data prevent quota issues
 - Fallback behavior when storage unavailable
 
 ### Observability
+
 - Tool usage tracked via `updateToolUsage(toolId)`
 - Sentry instrumentation on meaningful flows
 - Errors logged with enough context to debug
 
 ### Out-of-scope clarity
+
 - What's NOT being built is explicit, so deferred work is distinguishable from forgotten work
 
 ## Git Workflow

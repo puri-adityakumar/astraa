@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { useSnippetGenerator } from "@/lib/stores/snippet-generator";
 import { LANGUAGES, THEMES } from "@/lib/snippet-generator/defaults";
+import { formatBytes } from "@/lib/format";
 
 function useFontsReady(): boolean {
   const [ready, setReady] = useState(false);
@@ -22,12 +23,6 @@ function useFontsReady(): boolean {
 
 function estimateBytes(w: number, h: number, scale = 2): number {
   return Math.round((w * h * scale * scale * 0.18) | 0);
-}
-
-function formatBytes(n: number): string {
-  if (n < 1024) return `${n} B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export function CanvasStatus() {
@@ -69,7 +64,7 @@ export function CanvasStatus() {
             fonts ready
           </Chip>
         )}
-        <span className="font-mono tabular-nums">~ {formatBytes(estSize)} · 2×</span>
+        <span className="font-mono tabular-nums">~ {formatBytes(estSize, 0)} · 2×</span>
       </div>
     </div>
   );

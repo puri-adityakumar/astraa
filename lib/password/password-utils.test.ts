@@ -4,42 +4,60 @@ import { generatePassword, generatePin } from "./password-utils";
 describe("generatePassword", () => {
   it("generates password of correct length", () => {
     const result = generatePassword(16, {
-      uppercase: true, lowercase: true, numbers: true, symbols: false,
+      uppercase: true,
+      lowercase: true,
+      numbers: true,
+      symbols: false,
     });
     expect(result.success).toBe(true);
     if (result.success) expect(result.password).toHaveLength(16);
   });
   it("includes uppercase when enabled", () => {
     const result = generatePassword(50, {
-      uppercase: true, lowercase: false, numbers: false, symbols: false,
+      uppercase: true,
+      lowercase: false,
+      numbers: false,
+      symbols: false,
     });
     expect(result.success).toBe(true);
     if (result.success) expect(result.password).toMatch(/^[A-Z]+$/);
   });
   it("includes lowercase when enabled", () => {
     const result = generatePassword(50, {
-      uppercase: false, lowercase: true, numbers: false, symbols: false,
+      uppercase: false,
+      lowercase: true,
+      numbers: false,
+      symbols: false,
     });
     expect(result.success).toBe(true);
     if (result.success) expect(result.password).toMatch(/^[a-z]+$/);
   });
   it("includes numbers when enabled", () => {
     const result = generatePassword(50, {
-      uppercase: false, lowercase: false, numbers: true, symbols: false,
+      uppercase: false,
+      lowercase: false,
+      numbers: true,
+      symbols: false,
     });
     expect(result.success).toBe(true);
     if (result.success) expect(result.password).toMatch(/^[0-9]+$/);
   });
   it("fails when no character types selected", () => {
     const result = generatePassword(16, {
-      uppercase: false, lowercase: false, numbers: false, symbols: false,
+      uppercase: false,
+      lowercase: false,
+      numbers: false,
+      symbols: false,
     });
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error).toContain("at least one");
   });
   it("fails when length too short for selected types", () => {
     const result = generatePassword(2, {
-      uppercase: true, lowercase: true, numbers: true, symbols: true,
+      uppercase: true,
+      lowercase: true,
+      numbers: true,
+      symbols: true,
     });
     expect(result.success).toBe(false);
   });

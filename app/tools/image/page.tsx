@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { ImageResizerClient } from "@/components/image/image-resizer";
+import { LastUpdated } from "@/components/last-updated";
+import { createToolMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createToolMetadata({
   title: "Image Resizer",
   description:
     "Upload and resize your images with multiple format options. Support for JPEG, PNG, and WebP formats with quality control. Free browser-based image tool.",
@@ -15,36 +17,16 @@ export const metadata: Metadata = {
     "image tools",
     "resize image online",
   ],
-  openGraph: {
-    title: "Image Resizer",
-    description:
-      "Resize and convert images to JPEG, PNG, or WebP with quality control. Free and private.",
-    url: "/tools/image",
-    images: ["/assets/astraa_banner.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "Image Resizer",
-    description:
-      "Resize and convert images to JPEG, PNG, or WebP with quality control. Free and private.",
-  },
-  alternates: {
-    canonical: "/tools/image",
-  },
-};
+  path: "/tools/image",
+  ogDescription:
+    "Resize and convert images to JPEG, PNG, or WebP with quality control. Free and private.",
+});
 
 export default function ImageResizerPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <ImageResizerClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <LastUpdated />
     </>
   );
 }

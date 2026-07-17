@@ -113,9 +113,9 @@ export default function PasswordPage() {
 
 ```typescript
 // components/password/password-generator.tsx (Client Component)
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
 export function PasswordGenerator() {
   // Component implementation
@@ -145,11 +145,11 @@ Use index files for clean imports.
 
 ```typescript
 // lib/hash/index.ts
-export * from "./hash-utils"
-export * from "./types"
+export * from "./hash-utils";
+export * from "./types";
 
 // Usage
-import { generateHash, type HashAlgorithm } from "@/lib/hash"
+import { generateHash, type HashAlgorithm } from "@/lib/hash";
 ```
 
 ## Code Style Guidelines
@@ -158,31 +158,31 @@ import { generateHash, type HashAlgorithm } from "@/lib/hash"
 
 ```typescript
 // 1. External libraries
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 // 2. Internal utilities
-import { useToast } from "@/hooks/use-toast"
-import { cn } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 // 3. Components
-import { Button } from "@/components/ui/button"
-import { HashInput } from "./hash-input"
+import { Button } from "@/components/ui/button";
+import { HashInput } from "./hash-input";
 
 // 4. Types
-import type { Tool } from "@/lib/tools"
+import type { Tool } from "@/lib/tools";
 ```
 
 ### Naming Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Components | PascalCase | `PasswordGenerator` |
-| Functions | camelCase | `generatePassword` |
-| Constants | UPPER_SNAKE_CASE | `TOAST_LIMIT` |
-| Types/Interfaces | PascalCase | `Tool`, `PasswordResult` |
-| Files | kebab-case | `password-generator.tsx` |
-| Props | Descriptive | `handleGenerate` not `handleClick` |
+| Type             | Convention       | Example                            |
+| ---------------- | ---------------- | ---------------------------------- |
+| Components       | PascalCase       | `PasswordGenerator`                |
+| Functions        | camelCase        | `generatePassword`                 |
+| Constants        | UPPER_SNAKE_CASE | `TOAST_LIMIT`                      |
+| Types/Interfaces | PascalCase       | `Tool`, `PasswordResult`           |
+| Files            | kebab-case       | `password-generator.tsx`           |
+| Props            | Descriptive      | `handleGenerate` not `handleClick` |
 
 ### Component Structure
 
@@ -240,23 +240,23 @@ import { cn } from "@/lib/utils"
 ### Error Handling
 
 ```typescript
-import { getUserFriendlyError, logError } from "@/lib/error-handler"
-import { useToast } from "@/hooks/use-toast"
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
+import { useToast } from "@/hooks/use-toast";
 
 export function MyComponent() {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   async function handleAction() {
     try {
-      await riskyOperation()
+      await riskyOperation();
     } catch (error) {
-      const details = getUserFriendlyError(error)
+      const details = getUserFriendlyError(error);
       toast({
         title: details.title,
         description: details.message,
-        variant: "destructive"
-      })
-      logError(error, { context: "my-component-action" })
+        variant: "destructive",
+      });
+      logError(error, { context: "my-component-action" });
     }
   }
 }
@@ -266,25 +266,23 @@ export function MyComponent() {
 
 ```typescript
 // For async operations
-type Result<T> =
-  | { success: true; data: T }
-  | { success: false; error: string }
+type Result<T> = { success: true; data: T } | { success: false; error: string };
 
 async function fetchData(): Promise<Result<Data>> {
   try {
-    const data = await api.getData()
-    return { success: true, data }
+    const data = await api.getData();
+    return { success: true, data };
   } catch (error) {
-    return { success: false, error: "Failed to fetch data" }
+    return { success: false, error: "Failed to fetch data" };
   }
 }
 
 // Usage
-const result = await fetchData()
+const result = await fetchData();
 if (result.success) {
-  console.log(result.data)
+  console.log(result.data);
 } else {
-  console.error(result.error)
+  console.error(result.error);
 }
 ```
 
@@ -320,17 +318,17 @@ export function AnimatedList({ items }: { items: Item[] }) {
 // Prefer unknown over any
 function handleError(error: unknown) {
   if (error instanceof Error) {
-    console.error(error.message)
+    console.error(error.message);
   }
 }
 
 // Use path aliases
-import { Button } from "@/components/ui/button"
-import { generateHash } from "@/lib/hash"
+import { Button } from "@/components/ui/button";
+import { generateHash } from "@/lib/hash";
 
 // Explicit return types for public functions
 export function calculateTotal(items: Item[]): number {
-  return items.reduce((sum, item) => sum + item.price, 0)
+  return items.reduce((sum, item) => sum + item.price, 0);
 }
 ```
 
@@ -398,6 +396,7 @@ KV_REST_API_TOKEN=your_redis_token
 ### Deployment Platforms
 
 **Vercel (Recommended)**
+
 ```bash
 # Deploy via Vercel CLI
 npx vercel
@@ -483,15 +482,15 @@ Components are added to `components/ui/`.
 
 ```typescript
 // lib/stores/user-preferences.ts
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface UserPreferencesState {
-  theme: "light" | "dark" | "system"
-  setTheme: (theme: "light" | "dark" | "system") => void
+  theme: "light" | "dark" | "system";
+  setTheme: (theme: "light" | "dark" | "system") => void;
   // Add new state
-  newSetting: string
-  setNewSetting: (value: string) => void
+  newSetting: string;
+  setNewSetting: (value: string) => void;
 }
 
 export const useUserPreferences = create<UserPreferencesState>()(
@@ -501,11 +500,11 @@ export const useUserPreferences = create<UserPreferencesState>()(
       setTheme: (theme) => set({ theme }),
       // Add new actions
       newSetting: "default",
-      setNewSetting: (value) => set({ newSetting: value })
+      setNewSetting: (value) => set({ newSetting: value }),
     }),
-    { name: "user-preferences" }
-  )
-)
+    { name: "user-preferences" },
+  ),
+);
 ```
 
 ### Adding Animations
@@ -560,6 +559,7 @@ git push origin feat/new-tool
 **PRs must target the `development` branch** and must be assigned to an issue before submitting.
 
 Commit message format (Conventional Commits with scope):
+
 - `feat(scope):` New feature
 - `fix(scope):` Bug fix
 - `docs(scope):` Documentation

@@ -3,8 +3,7 @@
 import { useCallback, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { copyToClipboard } from "@/lib/clipboard";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
 
 export interface CopyButtonProps {
@@ -15,33 +14,17 @@ export interface CopyButtonProps {
   disabled?: boolean;
 }
 
-export function CopyButton({
-  text,
-  label,
-  size = "icon",
-  className,
-  disabled,
-}: CopyButtonProps) {
-  const { toast } = useToast();
+export function CopyButton({ text, label, size = "icon", className, disabled }: CopyButtonProps) {
+  const copy = useCopyToClipboard();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
-    const result = await copyToClipboard(text);
-    if (result.success) {
+    const success = await copy(text, "Copied!");
+    if (success) {
       setCopied(true);
-      toast({
-        title: "Copied!",
-        description: `${label} copied to clipboard`,
-      });
       window.setTimeout(() => setCopied(false), 1500);
-    } else {
-      toast({
-        title: "Copy failed",
-        description: result.error,
-        variant: "destructive",
-      });
     }
-  }, [text, label, toast]);
+  }, [text, copy]);
 
   const isIcon = size === "icon";
 
@@ -53,11 +36,7 @@ export function CopyButton({
       onClick={handleCopy}
       disabled={disabled || text.length === 0}
       aria-label={`Copy ${label}`}
-      className={cn(
-        "shrink-0 min-h-touch",
-        isIcon && "min-w-touch",
-        className,
-      )}
+      className={cn("shrink-0 min-h-touch", isIcon && "min-w-touch", className)}
     >
       {copied ? (
         <Check className="h-4 w-4" aria-hidden="true" />

@@ -1,60 +1,57 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowDownUp } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import { CurrencySelect } from "./currency-select"
-import type { CurrencyCode } from "@/lib/currency-data"
-import { getExchangeRate } from "@/lib/api"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowDownUp } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { CurrencySelect } from "./currency-select";
+import type { CurrencyCode } from "@/lib/currency-data";
+import { getExchangeRate } from "@/lib/api";
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
 
 interface FiatConverterProps {
-  amount: string
-  onAmountChange: (value: string) => void
-  onResult: (value: string) => void
-  result: string
+  amount: string;
+  onAmountChange: (value: string) => void;
+  onResult: (value: string) => void;
+  result: string;
 }
 
-export function FiatConverter({
-  amount,
-  onAmountChange,
-  onResult,
-  result
-}: FiatConverterProps) {
-  const { toast } = useToast()
-  const [fromCurrency, setFromCurrency] = useState<CurrencyCode>("USD")
-  const [toCurrency, setToCurrency] = useState<CurrencyCode>("EUR")
-  const [isLoading, setIsLoading] = useState(false)
+export function FiatConverter({ amount, onAmountChange, onResult, result }: FiatConverterProps) {
+  const { toast } = useToast();
+  const [fromCurrency, setFromCurrency] = useState<CurrencyCode>("USD");
+  const [toCurrency, setToCurrency] = useState<CurrencyCode>("EUR");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSwap = () => {
-    setFromCurrency(toCurrency)
-    setToCurrency(fromCurrency)
-  }
+    setFromCurrency(toCurrency);
+    setToCurrency(fromCurrency);
+  };
 
   useEffect(() => {
     const calculate = async () => {
       if (!amount || isNaN(Number(amount))) {
-        onResult("")
-        return
+        onResult("");
+        return;
       }
 
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const rate = await getExchangeRate(fromCurrency, toCurrency)
-        
+        const rate = await getExchangeRate(fromCurrency, toCurrency);
+
         if (rate === null) {
           onResult("Error");
+          const details = getUserFriendlyError(new Error("Failed to fetch exchange rates"));
           toast({
-            title: "Error",
-            description: "Failed to fetch exchange rates. Please try again.",
+            title: details.title,
+            description: details.message,
             variant: "destructive",
-          })
+          });
           return;
         }
 
-        const converted = (Number(amount) * rate).toFixed(2)
+        const converted = (Number(amount) * rate).toFixed(2);
         // Store just the numeric result or formatted string?
         // UnitConverter stores "1 USD = X EUR".
         // Let's store nicely formatted string in parent, but for the Input value?
@@ -68,25 +65,26 @@ export function FiatConverter({
         // Or just the number "123.45".
         // Let's go with just the number for the Input value.
 
-        onResult(converted) // Just the number string
+        onResult(converted); // Just the number string
       } catch (error) {
-        console.error(error)
+        logError(error, { context: "fiat/fetch-rate" });
+        const details = getUserFriendlyError(error);
         toast({
-          title: "Error",
-          description: "Failed to fetch exchange rates. Please try again.",
+          title: details.title,
+          description: details.message,
           variant: "destructive",
-        })
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
     const timer = setTimeout(() => {
-      calculate()
-    }, 500) // Debounce
+      calculate();
+    }, 500); // Debounce
 
-    return () => clearTimeout(timer)
-  }, [amount, fromCurrency, toCurrency, onResult, toast])
+    return () => clearTimeout(timer);
+  }, [amount, fromCurrency, toCurrency, onResult, toast]);
 
   return (
     <div className="space-y-6">
@@ -175,5 +173,5 @@ export function FiatConverter({
         </div>
       </div>
     </div>
-  )
+  );
 }

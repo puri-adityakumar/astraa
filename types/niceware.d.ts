@@ -1,11 +1,11 @@
-declare module 'niceware' {
-  type Passphrase = string[]
+declare module "niceware" {
+  type Passphrase = string[];
 
   interface Niceware {
-    bytesToPassphrase(bytes: Uint8Array): Passphrase
-    passphraseToBytes(passphrase: Passphrase): Uint8Array
+    bytesToPassphrase(bytes: Uint8Array): Passphrase;
+    passphraseToBytes(passphrase: Passphrase): Uint8Array;
   }
 
-  const niceware: Niceware
-  export default niceware
+  const niceware: Niceware;
+  export default niceware;
 }

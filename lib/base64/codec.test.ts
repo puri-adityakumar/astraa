@@ -1,22 +1,13 @@
 import { describe, expect, it } from "vitest";
-import {
-  encodeText,
-  encodeBytes,
-  decodeToText,
-  decodeToBytes,
-} from "./codec";
+import { encodeText, encodeBytes, decodeToText, decodeToBytes } from "./codec";
 
 describe("encodeText", () => {
   it("encodes ASCII to standard base64 with padding", () => {
-    expect(encodeText("hello", { urlSafe: false, wrap76: false })).toBe(
-      "aGVsbG8=",
-    );
+    expect(encodeText("hello", { urlSafe: false, wrap76: false })).toBe("aGVsbG8=");
   });
 
   it("strips padding when urlSafe is true", () => {
-    expect(encodeText("hello", { urlSafe: true, wrap76: false })).toBe(
-      "aGVsbG8",
-    );
+    expect(encodeText("hello", { urlSafe: true, wrap76: false })).toBe("aGVsbG8");
   });
 
   it("uses url-safe alphabet (no + or /) when urlSafe is true", () => {
@@ -28,9 +19,7 @@ describe("encodeText", () => {
   });
 
   it("encodes non-ASCII via UTF-8", () => {
-    expect(encodeText("héllo", { urlSafe: false, wrap76: false })).toBe(
-      "aMOpbGxv",
-    );
+    expect(encodeText("héllo", { urlSafe: false, wrap76: false })).toBe("aMOpbGxv");
   });
 
   it("inserts a newline every 76 chars when wrap76 is true", () => {
@@ -42,9 +31,7 @@ describe("encodeText", () => {
     expect(out).toContain("\n");
     expect(out.split("\n")[0]).toHaveLength(76);
     // round-trip works once newlines stripped
-    expect(decodeToText(noNewlines, { urlSafe: false, wrap76: false })).toBe(
-      "a".repeat(100),
-    );
+    expect(decodeToText(noNewlines, { urlSafe: false, wrap76: false })).toBe("a".repeat(100));
   });
 });
 
@@ -61,32 +48,21 @@ describe("encodeBytes", () => {
 
 describe("decodeToText", () => {
   it("decodes standard base64", () => {
-    expect(decodeToText("aGVsbG8=", { urlSafe: false, wrap76: false })).toBe(
-      "hello",
-    );
+    expect(decodeToText("aGVsbG8=", { urlSafe: false, wrap76: false })).toBe("hello");
   });
 
   it("decodes url-safe base64 without padding", () => {
-    expect(decodeToText("aGVsbG8", { urlSafe: true, wrap76: false })).toBe(
-      "hello",
-    );
+    expect(decodeToText("aGVsbG8", { urlSafe: true, wrap76: false })).toBe("hello");
   });
 
   it("transparently accepts url-safe alphabet even when urlSafe flag is false", () => {
     const stdEncoded = encodeText("??>>", { urlSafe: false, wrap76: false });
-    const safeEncoded = stdEncoded
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/g, "");
-    expect(decodeToText(safeEncoded, { urlSafe: false, wrap76: false })).toBe(
-      "??>>",
-    );
+    const safeEncoded = stdEncoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    expect(decodeToText(safeEncoded, { urlSafe: false, wrap76: false })).toBe("??>>");
   });
 
   it("strips ASCII whitespace before decoding", () => {
-    expect(decodeToText("aGVs\nbG8=", { urlSafe: false, wrap76: false })).toBe(
-      "hello",
-    );
+    expect(decodeToText("aGVs\nbG8=", { urlSafe: false, wrap76: false })).toBe("hello");
   });
 });
 

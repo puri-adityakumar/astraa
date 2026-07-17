@@ -121,11 +121,13 @@ Minimal navigation for tool and game pages.
 **Location:** `components/ui/floating-navbar.tsx`
 
 **Usage:**
+
 ```tsx
 <FloatingNav />
 ```
 
 **Features:**
+
 - Compact design for tool focus
 - Theme toggle
 - Home navigation
@@ -142,15 +144,17 @@ Secure password generation with multiple modes.
 **Props:** None (self-contained)
 
 **Usage:**
+
 ```tsx
-import { PasswordGenerator } from "@/components/password/password-generator"
+import { PasswordGenerator } from "@/components/password/password-generator";
 
 export default function PasswordPage() {
-  return <PasswordGenerator />
+  return <PasswordGenerator />;
 }
 ```
 
 **Sub-components:**
+
 - `PasswordOptions` - Configuration controls
 - `PasswordDisplay` - Result display with copy functionality
 - `PasswordStrength` - Visual strength indicator
@@ -212,6 +216,7 @@ Fiat and cryptocurrency conversion.
 **Location:** `components/currency/`
 
 **Components:**
+
 - `FiatConverter` - Traditional currency conversion
 - `CryptoConverter` - Cryptocurrency conversion
 - `CurrencySelect` - Currency picker dropdown
@@ -340,24 +345,24 @@ import {
 ### Toast
 
 ```typescript
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 
 export function MyComponent() {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   function handleSuccess() {
     toast({
       title: "Success",
-      description: "Operation completed"
-    })
+      description: "Operation completed",
+    });
   }
 
   function handleError() {
     toast({
       title: "Error",
       description: "Something went wrong",
-      variant: "destructive"
-    })
+      variant: "destructive",
+    });
   }
 }
 ```
@@ -371,23 +376,23 @@ Toast notification management.
 **Location:** `components/ui/use-toast.ts`
 
 ```typescript
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 
 export function MyComponent() {
-  const { toast, dismiss } = useToast()
+  const { toast, dismiss } = useToast();
 
   // Show toast
   const { id } = toast({
     title: "Notification",
     description: "This is a message",
-    variant: "default" // or "destructive"
-  })
+    variant: "default", // or "destructive"
+  });
 
   // Dismiss specific toast
-  dismiss(id)
+  dismiss(id);
 
   // Dismiss all toasts
-  dismiss()
+  dismiss();
 }
 ```
 
@@ -512,17 +517,18 @@ export function SnakeGame() {
 ```
 
 **Returns:**
+
 ```typescript
 interface SnakeGameReturn {
   gameState: {
-    snake: Array<{ x: number; y: number }>
-    food: { x: number; y: number }
-    direction: "UP" | "DOWN" | "LEFT" | "RIGHT"
-    isGameOver: boolean
-    score: number
-  }
-  resetGame: () => void
-  GRID_SIZE: number
+    snake: Array<{ x: number; y: number }>;
+    food: { x: number; y: number };
+    direction: "UP" | "DOWN" | "LEFT" | "RIGHT";
+    isGameOver: boolean;
+    score: number;
+  };
+  resetGame: () => void;
+  GRID_SIZE: number;
 }
 ```
 
@@ -652,21 +658,21 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 ```typescript
 // lib/tools.ts
-import type { LucideIcon } from "lucide-react"
+import type { LucideIcon } from "lucide-react";
 
 export type Tool = {
-  name: string
-  description: string
-  path: string
-  icon: LucideIcon
-  wip?: boolean
-  comingSoon?: boolean
-}
+  name: string;
+  description: string;
+  path: string;
+  icon: LucideIcon;
+  wip?: boolean;
+  comingSoon?: boolean;
+};
 
 export type ToolCategory = {
-  name: string
-  items: Tool[]
-}
+  name: string;
+  items: Tool[];
+};
 ```
 
 ### Store Types
@@ -674,24 +680,24 @@ export type ToolCategory = {
 ```typescript
 // lib/stores/types.ts
 export interface UserPreferences {
-  theme: "light" | "dark" | "system"
-  language: string
-  accessibility: AccessibilitySettings
-  privacy: PrivacySettings
-  keyboardShortcuts: Record<string, string>
+  theme: "light" | "dark" | "system";
+  language: string;
+  accessibility: AccessibilitySettings;
+  privacy: PrivacySettings;
+  keyboardShortcuts: Record<string, string>;
 }
 
 export interface AccessibilitySettings {
-  reducedMotion: boolean
-  highContrast: boolean
-  fontSize: "small" | "medium" | "large"
-  screenReader: boolean
+  reducedMotion: boolean;
+  highContrast: boolean;
+  fontSize: "small" | "medium" | "large";
+  screenReader: boolean;
 }
 
 export interface PrivacySettings {
-  analytics: boolean
-  errorReporting: boolean
-  cloudSync: boolean
-  dataSharing: boolean
+  analytics: boolean;
+  errorReporting: boolean;
+  cloudSync: boolean;
+  dataSharing: boolean;
 }
 ```

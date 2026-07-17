@@ -8,9 +8,9 @@ export function ToolsClient() {
   const { categories } = useTools();
 
   // Calculate stats
-  const tools = categories.flatMap(c => c.items);
+  const tools = categories.flatMap((c) => c.items);
   const totalTools = tools.length;
-  const availableTools = tools.filter(t => !t.comingSoon && !t.wip).length;
+  const availableTools = tools.filter((t) => !t.comingSoon && !t.wip).length;
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12 pt-16">
@@ -22,8 +22,7 @@ export function ToolsClient() {
       >
         <h1 className="text-fluid-4xl font-bold">Tools Arsenal</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto text-fluid-base">
-          Discover our collection of powerful tools designed to
-          enhance your workflow
+          Discover our collection of powerful tools designed to enhance your workflow
         </p>
         <div className="flex justify-center gap-4 text-sm text-muted-foreground">
           <span>{totalTools} Total Tools</span>
@@ -42,15 +41,11 @@ export function ToolsClient() {
           className="space-y-4 sm:space-y-6"
         >
           <div className="flex items-center gap-2 px-4">
-            <h2 className="text-fluid-2xl font-semibold">
-              {category.name}
-            </h2>
-            <span className="text-muted-foreground text-sm">
-              ({category.items.length})
-            </span>
+            <h2 className="text-fluid-2xl font-semibold">{category.name}</h2>
+            <span className="text-muted-foreground text-sm">({category.items.length})</span>
           </div>
           <ContentGrid
-            items={category.items.map(tool => ({
+            items={category.items.map((tool) => ({
               ...tool,
               category: category.name.toLowerCase(),
             }))}

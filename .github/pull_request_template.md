@@ -4,7 +4,7 @@
 
 ## Changes
 
-- 
+-
 
 ## Linked Issue
 

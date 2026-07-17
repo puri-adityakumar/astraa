@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { cn } from "@/lib/utils"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
   CommandEmpty,
@@ -14,56 +14,56 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import { useTools } from "@/lib/tools-context"
-import { games } from "@/lib/games"
-import { Badge } from "@/components/ui/badge"
-import { DialogTitle } from "@/components/ui/dialog"
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
-import { ArrowRight } from "lucide-react"
+} from "@/components/ui/command";
+import { useTools } from "@/lib/tools-context";
+import { games } from "@/lib/games";
+import { Badge } from "@/components/ui/badge";
+import { DialogTitle } from "@/components/ui/dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+import { ArrowRight } from "lucide-react";
 
 export function FloatingNav({ className }: { className?: string }) {
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [visible, setVisible] = useState(true)
-  const lastScrollY = useRef(0)
-  const router = useRouter()
-  const { categories } = useTools()
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const router = useRouter();
+  const { categories } = useTools();
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const currentScrollY = window.scrollY;
 
       if (currentScrollY < 50) {
         // Always show at top of page
-        setVisible(true)
+        setVisible(true);
       } else if (currentScrollY > lastScrollY.current) {
         // Scrolling down - hide
-        setVisible(false)
+        setVisible(false);
       } else {
         // Scrolling up - show
-        setVisible(true)
+        setVisible(true);
       }
 
-      lastScrollY.current = currentScrollY
-    }
+      lastScrollY.current = currentScrollY;
+    };
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Cmd+K is handled globally by CommandMenu — no duplicate listener needed here
 
   const runCommand = React.useCallback((command: () => unknown) => {
-    setSearchOpen(false)
-    command()
-  }, [])
+    setSearchOpen(false);
+    command();
+  }, []);
 
-  if (!mounted) return null
+  if (!mounted) return null;
 
   return (
     <>
@@ -79,7 +79,7 @@ export function FloatingNav({ className }: { className?: string }) {
               "border border-neutral-200/20 dark:border-neutral-800/20 rounded-full",
               "bg-background/50 backdrop-blur-md shadow-sm",
               "z-[5000] px-6 py-2 items-center justify-between gap-4",
-              className
+              className,
             )}
           >
             {/* Left: Logo */}
@@ -98,7 +98,8 @@ export function FloatingNav({ className }: { className?: string }) {
               <Search className="h-4 w-4 mr-2" />
               <span className="text-sm">Search...</span>
               <kbd className="ml-auto hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted/50 px-1.5 font-mono text-[10px]">
-                <span>⌘</span><span>K</span>
+                <span>⌘</span>
+                <span>K</span>
               </kbd>
             </Button>
 
@@ -144,8 +145,16 @@ export function FloatingNav({ className }: { className?: string }) {
                   <div className="flex items-center gap-2">
                     <tool.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
                     <span>{tool.name}</span>
-                    {tool.wip && <Badge variant="secondary" className="text-xs">WIP</Badge>}
-                    {tool.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
+                    {tool.wip && (
+                      <Badge variant="secondary" className="text-xs">
+                        WIP
+                      </Badge>
+                    )}
+                    {tool.comingSoon && (
+                      <Badge variant="outline" className="text-xs">
+                        Soon
+                      </Badge>
+                    )}
                   </div>
                   <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                 </CommandItem>
@@ -165,7 +174,11 @@ export function FloatingNav({ className }: { className?: string }) {
                 <div className="flex items-center gap-2">
                   <game.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
                   <span>{game.name}</span>
-                  {game.comingSoon && <Badge variant="outline" className="text-xs">Soon</Badge>}
+                  {game.comingSoon && (
+                    <Badge variant="outline" className="text-xs">
+                      Soon
+                    </Badge>
+                  )}
                 </div>
                 <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
               </CommandItem>
@@ -174,5 +187,5 @@ export function FloatingNav({ className }: { className?: string }) {
         </CommandList>
       </CommandDialog>
     </>
-  )
+  );
 }

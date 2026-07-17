@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  AlertCircle,
-  ArrowLeftRight,
-  CheckCircle2,
-  Copy,
-  Download,
-  Trash2,
-} from "lucide-react";
+import { AlertCircle, ArrowLeftRight, CheckCircle2, Copy, Download, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -92,9 +85,7 @@ export function Base64Output({
         <Label htmlFor="base64-output" className="text-sm font-medium">
           Output
         </Label>
-        {(mode === "decode" || status.kind === "error") && (
-          <StatusPill status={status} />
-        )}
+        {(mode === "decode" || status.kind === "error") && <StatusPill status={status} />}
       </div>
 
       <Textarea
@@ -109,10 +100,7 @@ export function Base64Output({
               : "Decoded text will appear here."
         }
         aria-label="Output"
-        className={cn(
-          "font-mono text-sm leading-relaxed min-h-[8rem] resize-y",
-          "bg-muted/30",
-        )}
+        className={cn("font-mono text-sm leading-relaxed min-h-[8rem] resize-y", "bg-muted/30")}
       />
 
       <div className="flex flex-wrap items-center gap-2">

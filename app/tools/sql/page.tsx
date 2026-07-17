@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { SqlFormatterClient } from "@/components/sql/sql-formatter-client";
+import { LastUpdated } from "@/components/last-updated";
+import { createToolMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createToolMetadata({
   title: "SQL Formatter",
   description:
     "Format and beautify SQL queries instantly in your browser. Supports SELECT, JOIN, WHERE, and more. Free online SQL formatting tool for developers.",
@@ -15,40 +17,19 @@ export const metadata: Metadata = {
     "SQL tool",
     "developer tools",
   ],
+  path: "/tools/sql",
+  ogDescription: "Format and beautify SQL queries instantly. Free browser-based developer tool.",
   robots: {
     index: false,
     follow: true,
   },
-  openGraph: {
-    title: "SQL Formatter",
-    description:
-      "Format and beautify SQL queries instantly. Free browser-based developer tool.",
-    url: "/tools/sql",
-    images: ["/assets/astraa_banner.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "SQL Formatter",
-    description:
-      "Format and beautify SQL queries instantly. Free browser-based developer tool.",
-  },
-  alternates: {
-    canonical: "/tools/sql",
-  },
-};
+});
 
 export default function SqlFormatterPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <SqlFormatterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <LastUpdated />
     </>
   );
 }

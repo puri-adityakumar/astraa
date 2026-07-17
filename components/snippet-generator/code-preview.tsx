@@ -110,16 +110,16 @@ export function CodePreview({
         {result
           ? result.lines.map((line, i) => (
               <div key={i}>
-                {line.length === 0 ? " " : line.map((t, j) => (
-                  <span key={j} style={t.color ? { color: t.color } : undefined}>
-                    {t.content}
-                  </span>
-                ))}
+                {line.length === 0
+                  ? " "
+                  : line.map((t, j) => (
+                      <span key={j} style={t.color ? { color: t.color } : undefined}>
+                        {t.content}
+                      </span>
+                    ))}
               </div>
             ))
-          : code.split("\n").map((line, i) => (
-              <div key={i}>{line.length === 0 ? " " : line}</div>
-            ))}
+          : code.split("\n").map((line, i) => <div key={i}>{line.length === 0 ? " " : line}</div>)}
       </pre>
       <textarea
         value={code}

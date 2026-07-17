@@ -67,14 +67,9 @@ export function ReplacePanel() {
       {replaceOpen && (
         <div id="regex-replace-body" className="space-y-3">
           <div className="space-y-1.5">
-            <label
-              htmlFor="regex-replacement"
-              className="text-xs font-medium text-foreground"
-            >
+            <label htmlFor="regex-replacement" className="text-xs font-medium text-foreground">
               Replacement pattern{" "}
-              <span className="text-muted-foreground">
-                (supports $1, $2, $&lt;name&gt;)
-              </span>
+              <span className="text-muted-foreground">(supports $1, $2, $&lt;name&gt;)</span>
             </label>
             <Input
               id="regex-replacement"
@@ -90,17 +85,12 @@ export function ReplacePanel() {
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium text-foreground">
-                Preview
-              </span>
+              <span className="text-xs font-medium text-foreground">Preview</span>
               <CopyButton
                 text={previewState.result}
                 label="replacement result"
                 size="icon"
-                disabled={
-                  pattern.length === 0 ||
-                  previewState.result.length === 0
-                }
+                disabled={pattern.length === 0 || previewState.result.length === 0}
               />
             </div>
             {previewState.error ? (
@@ -119,10 +109,7 @@ export function ReplacePanel() {
                 )}
               />
             )}
-            <p
-              className="text-xs text-muted-foreground tabular-nums"
-              aria-live="polite"
-            >
+            <p className="text-xs text-muted-foreground tabular-nums" aria-live="polite">
               Length: {testString.length.toLocaleString()} →{" "}
               {previewState.result.length.toLocaleString()} (delta{" "}
               {previewState.delta > 0

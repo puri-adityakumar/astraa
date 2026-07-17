@@ -10,11 +10,7 @@ export interface Base64ModeTabsProps {
 
 export function Base64ModeTabs({ mode, onChange }: Base64ModeTabsProps) {
   return (
-    <Tabs
-      value={mode}
-      onValueChange={(v) => onChange(v as Base64Mode)}
-      className="w-full"
-    >
+    <Tabs value={mode} onValueChange={(v) => onChange(v as Base64Mode)} className="w-full">
       <TabsList className="grid grid-cols-2 w-full">
         <TabsTrigger value="encode">Encode</TabsTrigger>
         <TabsTrigger value="decode">Decode</TabsTrigger>

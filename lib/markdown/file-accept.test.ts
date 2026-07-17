@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { acceptMarkdownFile, MAX_FILE_BYTES } from "./file-accept";
+import { acceptMarkdownFile, MAX_MARKDOWN_FILE_BYTES } from "./file-accept";
 
 const makeFile = (name: string, size: number, text = "x".repeat(size)) => {
   const file = new File([text], name);
@@ -44,7 +44,7 @@ describe("acceptMarkdownFile", () => {
   });
 
   it("rejects > 5 MB", async () => {
-    const file = makeFile("big.md", MAX_FILE_BYTES + 1);
+    const file = makeFile("big.md", MAX_MARKDOWN_FILE_BYTES + 1);
     const r = await acceptMarkdownFile(file);
     expect(r.kind).toBe("rejected");
     if (r.kind === "rejected") {
@@ -53,7 +53,7 @@ describe("acceptMarkdownFile", () => {
   });
 
   it("accepts exactly at 5 MB boundary", async () => {
-    const file = makeFile("ok.md", MAX_FILE_BYTES);
+    const file = makeFile("ok.md", MAX_MARKDOWN_FILE_BYTES);
     const r = await acceptMarkdownFile(file);
     expect(r.kind).toBe("ok");
   });

@@ -1,3 +1,4 @@
+export { downloadBlob } from "@/lib/download";
 export type ExportScale = 1 | 2;
 
 export function buildExportFilename(filename: string, timestamp: number): string {
@@ -7,10 +8,7 @@ export function buildExportFilename(filename: string, timestamp: number): string
   return `${safe}-${timestamp}.png`;
 }
 
-export async function exportSnippet(
-  node: HTMLElement,
-  scale: ExportScale,
-): Promise<Blob> {
+export async function exportSnippet(node: HTMLElement, scale: ExportScale): Promise<Blob> {
   await document.fonts.ready;
   const mod = await import("dom-to-image-more");
   const toBlob = mod.default.toBlob ?? mod.toBlob;
@@ -27,17 +25,6 @@ export async function exportSnippet(
   });
   if (!blob) throw new Error("Export failed: empty blob");
   return blob;
-}
-
-export function downloadBlob(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 export async function copyBlobToClipboard(blob: Blob): Promise<void> {

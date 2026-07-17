@@ -1,33 +1,33 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useState, useEffect, useMemo } from "react"
-import { Github, Twitter, Send } from "lucide-react"
-import { Logo } from "@/components/logo"
-import { AvatarCircles } from "@/components/ui/avatar-circles"
+import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
+import { Github, Twitter, Send } from "lucide-react";
+import { Logo } from "@/components/logo";
+import { AvatarCircles } from "@/components/ui/avatar-circles";
 
 interface Contributor {
-  id: number
-  login: string
-  avatar_url: string
-  html_url: string
+  id: number;
+  login: string;
+  avatar_url: string;
+  html_url: string;
 }
 
 export function Footer() {
-  const [contributors, setContributors] = useState<Contributor[]>([])
+  const [contributors, setContributors] = useState<Contributor[]>([]);
 
   useEffect(() => {
-    fetch('https://api.github.com/repos/puri-adityakumar/astraa/contributors')
-      .then(res => res.json())
-      .then(data => {
+    fetch("https://api.github.com/repos/puri-adityakumar/astraa/contributors")
+      .then((res) => res.json())
+      .then((data) => {
         if (Array.isArray(data)) {
-          setContributors(data)
+          setContributors(data);
         }
       })
       .catch(() => {
         // Silent fail - avatar will show default
-      })
-  }, [])
+      });
+  }, []);
 
   // Transform contributors for AvatarCircles
   const avatarUrls = useMemo(() => {
@@ -35,16 +35,18 @@ export function Footer() {
       return contributors.slice(0, 5).map((c) => ({
         imageUrl: c.avatar_url,
         profileUrl: c.html_url,
-      }))
+      }));
     }
-    return [{
-      imageUrl: "https://github.com/puri-adityakumar.png",
-      profileUrl: "https://github.com/puri-adityakumar",
-    }]
-  }, [contributors])
+    return [
+      {
+        imageUrl: "https://github.com/puri-adityakumar.png",
+        profileUrl: "https://github.com/puri-adityakumar",
+      },
+    ];
+  }, [contributors]);
 
   // Calculate remaining contributors count
-  const remainingCount = contributors.length > 5 ? contributors.length - 5 : 0
+  const remainingCount = contributors.length > 5 ? contributors.length - 5 : 0;
 
   return (
     <footer className="relative z-10 bg-gradient-to-b from-transparent via-background/40 to-background w-full">
@@ -56,17 +58,13 @@ export function Footer() {
               <Logo className="text-3xl md:text-4xl [&>span:last-child]:text-base md:[&>span:last-child]:text-xl" />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              A collection of helpful utility tools for developers and creators,
-              built with modern web technologies. Designed for speed,
-              accessibility, and ease of use.
+              A collection of helpful utility tools for developers and creators, built with modern
+              web technologies. Designed for speed, accessibility, and ease of use.
             </p>
 
             <div className="flex items-center gap-3">
               <span className="text-sm font-semibold text-foreground">Contributed by:</span>
-              <AvatarCircles
-                avatarUrls={avatarUrls}
-                numPeople={remainingCount}
-              />
+              <AvatarCircles avatarUrls={avatarUrls} numPeople={remainingCount} />
             </div>
           </div>
 
@@ -105,8 +103,6 @@ export function Footer() {
 
             {/* Text Links */}
             <div className="flex items-center gap-4 md:gap-6 text-sm text-muted-foreground">
-
-
               <Link
                 href="https://astraa.notion.site/roadmap"
                 target="_blank"
@@ -131,10 +127,7 @@ export function Footer() {
               >
                 Changelog
               </Link>
-              <Link
-                href="/privacy"
-                className="hover:text-foreground transition-colors"
-              >
+              <Link href="/privacy" className="hover:text-foreground transition-colors">
                 Privacy Policy
               </Link>
             </div>
@@ -149,5 +142,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

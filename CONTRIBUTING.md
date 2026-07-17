@@ -26,18 +26,18 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear an
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | A new feature |
-| `fix` | A bug fix |
-| `docs` | Documentation only changes |
-| `style` | Code style changes (formatting, semicolons, etc.) |
+| Type       | Description                                             |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | A new feature                                           |
+| `fix`      | A bug fix                                               |
+| `docs`     | Documentation only changes                              |
+| `style`    | Code style changes (formatting, semicolons, etc.)       |
 | `refactor` | Code change that neither fixes a bug nor adds a feature |
-| `perf` | Performance improvements |
-| `test` | Adding or updating tests |
-| `chore` | Maintenance tasks, dependency updates, etc. |
-| `ci` | CI/CD configuration changes |
-| `build` | Build system or external dependency changes |
+| `perf`     | Performance improvements                                |
+| `test`     | Adding or updating tests                                |
+| `chore`    | Maintenance tasks, dependency updates, etc.             |
+| `ci`       | CI/CD configuration changes                             |
+| `build`    | Build system or external dependency changes             |
 
 ### Examples
 
@@ -99,11 +99,11 @@ npm run dev
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_ENV` | Yes | `dev` shows WIP features for testing, `prod` shows "Coming Soon" cards |
+| Variable             | Required | Description                                                                 |
+| -------------------- | -------- | --------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_ENV`    | Yes      | `dev` shows WIP features for testing, `prod` shows "Coming Soon" cards      |
 | `OPENROUTER_API_KEY` | Optional | API key for AI text generation ([get one here](https://openrouter.ai/keys)) |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry error tracking token |
+| `SENTRY_AUTH_TOKEN`  | Optional | Sentry error tracking token                                                 |
 
 ### Available Commands
 
@@ -121,6 +121,7 @@ npm run test:watch # Run tests in watch mode
 Unit tests cover pure utility functions in `lib/` (calculator, hash, password, unit conversions, error handler).
 
 **Before submitting a PR:**
+
 1. Run `npm test` and ensure all tests pass
 2. Run `npm run build` to verify the production build succeeds
 3. If you modify a function in `lib/`, add or update its tests in the corresponding `.test.ts` file
@@ -197,26 +198,32 @@ lib/[tool]/                        → Pure logic, no React
 When merging the `development` branch to `main`, follow this convention:
 
 **PR Title Format:**
+
 ```
 release(v<VERSION>): merge development to main
 ```
 
 **Examples:**
+
 - `release(v0.1.0): merge development to main`
 - `release(v0.2.0): merge development to main`
 - `release(v1.0.0): merge development to main`
 
 **PR Description Template:**
+
 ```markdown
 ## Version: v<VERSION>
 
 ### Summary
+
 Merging development branch to main for release v<VERSION>
 
 ### Key Changes
+
 - List major changes (features, fixes, improvements)
 
 ### Checklist
+
 - [ ] All CI checks passing
 - [ ] Tested on mobile and desktop
 - [ ] Build successful
@@ -224,6 +231,7 @@ Merging development branch to main for release v<VERSION>
 ```
 
 **Versioning:**
+
 - Use [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`
 - `v0.x.x` = Pre-release (alpha/beta)
 - `v1.0.0` = First stable production release

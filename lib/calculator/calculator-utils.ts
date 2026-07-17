@@ -1,16 +1,17 @@
 export type Operation = {
-  symbol: string
-  precedence: number
-  execute: (a: number, b: number) => number
-}
+  symbol: string;
+  precedence: number;
+  associativity: "left" | "right";
+  execute: (a: number, b: number) => number;
+};
 
 export const operations: { [key: string]: Operation } = {
-  '+': { symbol: '+', precedence: 1, execute: (a, b) => a + b },
-  '-': { symbol: '-', precedence: 1, execute: (a, b) => a - b },
-  '*': { symbol: '×', precedence: 2, execute: (a, b) => a * b },
-  '/': { symbol: '÷', precedence: 2, execute: (a, b) => a / b },
-  '^': { symbol: '^', precedence: 3, execute: (a, b) => Math.pow(a, b) }
-}
+  "+": { symbol: "+", precedence: 1, associativity: "left", execute: (a, b) => a + b },
+  "-": { symbol: "-", precedence: 1, associativity: "left", execute: (a, b) => a - b },
+  "*": { symbol: "×", precedence: 2, associativity: "left", execute: (a, b) => a * b },
+  "/": { symbol: "÷", precedence: 2, associativity: "left", execute: (a, b) => a / b },
+  "^": { symbol: "^", precedence: 3, associativity: "right", execute: (a, b) => Math.pow(a, b) },
+};
 
 export const scientificFunctions = {
   sin: Math.sin,
@@ -26,11 +27,35 @@ export const scientificFunctions = {
     let result = 1;
     for (let i = 2; i <= n; i++) result *= i;
     return result;
-  }
+  },
+};
+
+export type ScientificTrigFn = "sin" | "cos" | "tan";
+export type AngleMode = "DEG" | "RAD";
+
+/**
+ * Apply a trigonometric function (sin/cos/tan) to a value, converting the
+ * input from degrees to radians when `angleMode` is "DEG", then snap the
+ * result to the nearest exact integer (0, 1, -1) when within an epsilon of
+ * 1e-10. This compensates for floating-point drift so that, e.g., sin(180°)
+ * returns exactly 0 rather than ~1.2e-16.
+ */
+export function applyScientificFunction(
+  fn: ScientificTrigFn,
+  value: number,
+  angleMode: AngleMode,
+): number {
+  const input = angleMode === "DEG" ? value * (Math.PI / 180) : value;
+  let result = scientificFunctions[fn](input);
+
+  if (Math.abs(result) < 1e-10) result = 0;
+  if (Math.abs(result - 1) < 1e-10) result = 1;
+  if (Math.abs(result + 1) < 1e-10) result = -1;
+
+  return result;
 }
 
 const WHITESPACE_RE = /\s+/g;
-const OPERATOR_SET = new Set(["+", "-", "*", "/", "^"]);
 
 export function evaluateExpression(expression: string): number {
   // Remove whitespace and validate
@@ -38,85 +63,136 @@ export function evaluateExpression(expression: string): number {
   if (!expression) return 0;
 
   // Tokenize the expression
-  const tokens = tokenize(expression)
+  const tokens = tokenize(expression);
 
   // Convert to postfix notation
-  const postfix = toPostfix(tokens)
+  const postfix = toPostfix(tokens);
 
   // Evaluate postfix expression
-  return evaluatePostfix(postfix)
+  return evaluatePostfix(postfix);
+}
+
+// Returns true for binary operators (+, -, *, /, ^). Parentheses and the
+// postfix percent operator are handled separately and are NOT binary operators.
+function isBinaryOperator(token: string): boolean {
+  return Boolean(operations[token]);
 }
 
 function tokenize(expression: string): string[] {
-  const tokens: string[] = []
-  let current = ''
+  const tokens: string[] = [];
+  let current = "";
+
+  const flush = () => {
+    if (current) {
+      tokens.push(current);
+      current = "";
+    }
+  };
 
   for (let i = 0; i < expression.length; i++) {
-    const char = expression[i]
-
-    if (char && isOperator(char)) {
-      if (current) tokens.push(current)
-      tokens.push(char)
-      current = ''
+    const char = expression[i];
+    if (char && isTokenBoundary(char)) {
+      // Binary operators, parentheses, and % each form their own token.
+      flush();
+      tokens.push(char);
     } else if (char) {
-      current += char
+      current += char;
     }
   }
 
-  if (current) tokens.push(current)
+  flush();
 
-  return tokens
+  return tokens;
 }
 
-function isOperator(char: string): boolean {
-  return OPERATOR_SET.has(char);
+// Single characters that terminate a number/operand token and are emitted as
+// standalone tokens. Includes binary operators, parentheses, and percent.
+function isTokenBoundary(char: string): boolean {
+  return isBinaryOperator(char) || char === "(" || char === ")" || char === "%";
 }
 
 function toPostfix(tokens: string[]): string[] {
-  const output: string[] = []
-  const operators: string[] = []
+  const output: string[] = [];
+  const operators: string[] = [];
 
   for (const token of tokens) {
-    if (isOperator(token)) {
+    if (isBinaryOperator(token)) {
       while (operators.length > 0) {
-        const lastOp = operators[operators.length - 1]
-        if (!lastOp || !operations[lastOp] || !operations[token]) break
-        if (operations[lastOp].precedence < operations[token].precedence) break
-        const popped = operators.pop()
-        if (popped) output.push(popped)
+        const top = operators[operators.length - 1];
+        // Stop at a left paren or any non-operator on the stack.
+        if (!top || top === "(" || !operations[top] || !operations[token]) break;
+        // Pop higher-precedence ops, and equal-precedence ops only when the
+        // incoming operator is left-associative. Right-associative ^ therefore
+        // does not pop an equal-precedence ^ on the stack.
+        const shouldPop =
+          operations[top].precedence > operations[token].precedence ||
+          (operations[top].precedence === operations[token].precedence &&
+            operations[token].associativity === "left");
+        if (!shouldPop) break;
+        const popped = operators.pop();
+        if (popped) output.push(popped);
       }
-      operators.push(token)
+      operators.push(token);
+    } else if (token === "(") {
+      operators.push(token);
+    } else if (token === ")") {
+      // Pop operators to output until the matching left paren (discard both).
+      while (operators.length > 0) {
+        const top = operators[operators.length - 1];
+        if (top === "(") {
+          operators.pop();
+          break;
+        }
+        const popped = operators.pop();
+        if (popped) output.push(popped);
+      }
+    } else if (token === "%") {
+      // Postfix unary operator: emit directly to output so it binds to the
+      // immediately preceding operand during postfix evaluation.
+      output.push(token);
     } else {
-      output.push(token)
+      output.push(token);
     }
   }
 
+  // Drain remaining operators. Parentheses are structural, not operators, and
+  // are never emitted to output.
   while (operators.length > 0) {
-    const popped = operators.pop()
-    if (popped) output.push(popped)
+    const popped = operators.pop();
+    if (popped && isBinaryOperator(popped)) {
+      output.push(popped);
+    }
   }
 
-  return output
+  return output;
 }
 
 function evaluatePostfix(tokens: string[]): number {
-  const stack: number[] = []
+  const stack: number[] = [];
 
   for (const token of tokens) {
-    if (isOperator(token) && operations[token]) {
-      const b = stack.pop()
-      const a = stack.pop()
-      
+    if (isBinaryOperator(token) && operations[token]) {
+      const b = stack.pop();
+      const a = stack.pop();
+
       if (a !== undefined && b !== undefined) {
-        stack.push(operations[token].execute(a, b))
+        stack.push(operations[token]!.execute(a, b));
       } else {
         // Handle error case for fewer operands than needed
-        return NaN
+        return NaN;
+      }
+    } else if (token === "%") {
+      // Postfix unary percent: divide the preceding operand by 100.
+      const a = stack.pop();
+      if (a !== undefined) {
+        stack.push(a / 100);
+      } else {
+        return NaN;
       }
     } else {
-      stack.push(Number(token))
+      stack.push(Number(token));
     }
   }
 
-  return stack[0] ?? 0
+  return stack[0] ?? 0;
 }

@@ -1,0 +1,16 @@
+# Build output
+.next
+out
+build
+dist
+
+# Dependencies
+node_modules
+
+# Generated / vendored
+docs/audit
+package-lock.json
+pnpm-lock.yaml
+
+# Next.js
+next-env.d.ts

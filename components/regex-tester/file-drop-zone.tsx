@@ -1,26 +1,14 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type DragEvent,
-} from "react";
+import { useCallback, useEffect, useRef, useState, type DragEvent } from "react";
 import { Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { readFileAsText } from "@/lib/file-reader";
 import { cn } from "@/lib/utils";
 
 export const MAX_DROP_BYTES = 100 * 1024;
 
-export const DROP_ACCEPT = [
-  ".txt",
-  ".log",
-  ".csv",
-  ".json",
-  ".md",
-  ".html",
-] as const;
+export const DROP_ACCEPT = [".txt", ".log", ".csv", ".json", ".md", ".html"] as const;
 
 export interface FileDropZoneProps {
   onText: (text: string) => void;
@@ -63,7 +51,7 @@ export function FileDropZone({ onText, className }: FileDropZoneProps) {
   }, []);
 
   const handleDrop = useCallback(
-    (e: DragEvent<HTMLDivElement>) => {
+    async (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
       dragDepthRef.current = 0;
@@ -90,24 +78,20 @@ export function FileDropZone({ onText, className }: FileDropZoneProps) {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result;
-        if (typeof result !== "string") return;
+      try {
+        const result = await readFileAsText(file);
         onText(result);
         toast({
           title: "File loaded",
           description: `${file.name} pasted into the test string.`,
         });
-      };
-      reader.onerror = () => {
+      } catch (error) {
         toast({
           title: "Could not read file",
-          description: reader.error?.message ?? "Unknown error",
+          description: error instanceof Error ? error.message : "Unknown error",
           variant: "destructive",
         });
-      };
-      reader.readAsText(file);
+      }
     },
     [onText, toast],
   );

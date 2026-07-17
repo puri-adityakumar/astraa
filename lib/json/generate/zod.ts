@@ -1,18 +1,5 @@
 import type { JsonValue } from "../types";
-
-function pascalCase(s: string): string {
-  if (!s) return "Root";
-  const cleaned = s.replace(/[^A-Za-z0-9_]/g, " ");
-  return cleaned
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-    .join("") || "Root";
-}
-
-function isSafeIdentifier(key: string): boolean {
-  return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key);
-}
+import { pascalCase, isSafeIdentifier } from "../identifier";
 
 function zodOf(value: JsonValue, indent: number): string {
   const pad = "  ".repeat(indent);
@@ -38,10 +25,7 @@ function zodOf(value: JsonValue, indent: number): string {
   return `z.object({\n${fields.join(",\n")}\n${pad}})`;
 }
 
-export async function generateZod(
-  jsonText: string,
-  typeName: string,
-): Promise<string> {
+export async function generateZod(jsonText: string, typeName: string): Promise<string> {
   const value = JSON.parse(jsonText) as JsonValue;
   const name = pascalCase(typeName);
   const body = zodOf(value, 0);

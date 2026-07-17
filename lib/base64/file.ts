@@ -1,10 +1,7 @@
-import { MAX_FILE_BYTES } from "./types";
+import { MAX_BASE64_FILE_BYTES } from "./types";
+import { readFileAsArrayBuffer } from "@/lib/file-reader";
 
-export type ImageMime =
-  | "image/png"
-  | "image/jpeg"
-  | "image/gif"
-  | "image/webp";
+export type ImageMime = "image/png" | "image/jpeg" | "image/gif" | "image/webp";
 
 const PNG_SIG = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] as const;
 const JPEG_SIG = [0xff, 0xd8, 0xff] as const;
@@ -45,7 +42,9 @@ export class FileTooLargeError extends Error {
   constructor(public sizeBytes: number) {
     super(
       `File too large: ${(sizeBytes / 1024 / 1024).toFixed(1)} MB exceeds the ${(
-        MAX_FILE_BYTES / 1024 / 1024
+        MAX_BASE64_FILE_BYTES /
+        1024 /
+        1024
       ).toFixed(0)} MB limit.`,
     );
     this.name = "FileTooLargeError";
@@ -53,21 +52,9 @@ export class FileTooLargeError extends Error {
 }
 
 export async function readFileAsBytes(file: File): Promise<Uint8Array> {
-  if (file.size > MAX_FILE_BYTES) {
+  if (file.size > MAX_BASE64_FILE_BYTES) {
     throw new FileTooLargeError(file.size);
   }
-  return new Promise<Uint8Array>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (result instanceof ArrayBuffer) {
-        resolve(new Uint8Array(result));
-      } else {
-        reject(new Error("FileReader returned an unexpected result type."));
-      }
-    };
-    reader.onerror = () =>
-      reject(reader.error ?? new Error("Failed to read file."));
-    reader.readAsArrayBuffer(file);
-  });
+  const buffer = await readFileAsArrayBuffer(file);
+  return new Uint8Array(buffer);
 }

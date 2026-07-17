@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { CalculatorClient } from "@/components/calculator/calculator-client";
+import { LastUpdated } from "@/components/last-updated";
+import { createToolMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createToolMetadata({
   title: "Scientific Calculator",
   description:
     "Perform complex math calculations with our free Google-style scientific calculator. Supports trigonometry, logarithms, and advanced operations in your browser.",
@@ -15,36 +17,16 @@ export const metadata: Metadata = {
     "free calculator",
     "browser calculator",
   ],
-  openGraph: {
-    title: "Scientific Calculator",
-    description:
-      "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
-    url: "/tools/calculator",
-    images: ["/assets/astraa_banner.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "Scientific Calculator",
-    description:
-      "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
-  },
-  alternates: {
-    canonical: "/tools/calculator",
-  },
-};
+  path: "/tools/calculator",
+  ogDescription:
+    "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
+});
 
 export default function CalculatorPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <CalculatorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <LastUpdated />
     </>
   );
 }

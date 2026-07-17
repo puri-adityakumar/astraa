@@ -1,11 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  BG_PRESETS,
-  THEMES,
-  FONTS,
-  LANGUAGES,
-  DEFAULT_STATE,
-} from "./defaults";
+import { BG_PRESETS, THEMES, FONTS, LANGUAGES, DEFAULT_STATE } from "./defaults";
 
 describe("defaults", () => {
   it("ships exactly 12 background presets", () => {

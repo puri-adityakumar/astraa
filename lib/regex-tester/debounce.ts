@@ -2,10 +2,7 @@ export type Debounced<F extends (...args: never[]) => unknown> = F & {
   cancel: () => void;
 };
 
-export function debounce<F extends (...args: never[]) => unknown>(
-  fn: F,
-  ms: number,
-): Debounced<F> {
+export function debounce<F extends (...args: never[]) => unknown>(fn: F, ms: number): Debounced<F> {
   let timer: ReturnType<typeof setTimeout> | null = null;
 
   const wrapped = ((...args: Parameters<F>) => {

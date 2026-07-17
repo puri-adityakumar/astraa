@@ -3,18 +3,18 @@
  */
 
 export interface ErrorDetails {
-  title: string
-  message: string
-  action?: string
-  technical?: string
+  title: string;
+  message: string;
+  action?: string;
+  technical?: string;
 }
 
 // Pre-compiled RegExp constants for sanitization (avoids re-creation per call)
-const WINDOWS_PATH_RE = /[A-Za-z]:\\[\w\\\-. ]+/g
-const UNIX_PATH_RE = /\/[\w\/\-. ]+/g
-const URL_RE = /https?:\/\/[^\s]+/g
-const EMAIL_RE = /[\w.-]+@[\w.-]+\.\w+/g
-const IP_RE = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g
+const WINDOWS_PATH_RE = /[A-Za-z]:\\[\w\\\-. ]+/g;
+const UNIX_PATH_RE = /\/[\w\/\-. ]+/g;
+const URL_RE = /https?:\/\/[^\s]+/g;
+const EMAIL_RE = /[\w.-]+@[\w.-]+\.\w+/g;
+const IP_RE = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
 
 /**
  * Convert various error types into user-friendly messages
@@ -24,14 +24,15 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
   if (error instanceof TypeError && error.message.includes("fetch")) {
     return {
       title: "Connection Error",
-      message: "Unable to connect to the server. Please check your internet connection and try again.",
+      message:
+        "Unable to connect to the server. Please check your internet connection and try again.",
       action: "Retry",
-      technical: error.message,
-    }
+      technical: sanitizeErrorMessage(error.message),
+    };
   }
 
   if (error instanceof Error) {
-    const lowerMessage = error.message.toLowerCase()
+    const lowerMessage = error.message.toLowerCase();
 
     // Timeout errors
     if (lowerMessage.includes("timeout")) {
@@ -39,8 +40,8 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Request Timeout",
         message: "The request took too long to complete. Please try again.",
         action: "Retry",
-        technical: error.message,
-      }
+        technical: sanitizeErrorMessage(error.message),
+      };
     }
 
     // Permission errors
@@ -49,8 +50,8 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Permission Denied",
         message: "You don't have permission to perform this action.",
         action: "Go Back",
-        technical: error.message,
-      }
+        technical: sanitizeErrorMessage(error.message),
+      };
     }
 
     // Validation errors
@@ -59,27 +60,29 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Invalid Input",
         message: "The provided input is invalid. Please check your data and try again.",
         action: "Fix Input",
-        technical: error.message,
-      }
+        technical: sanitizeErrorMessage(error.message),
+      };
     }
 
     // File errors
     if (lowerMessage.includes("file") || lowerMessage.includes("upload")) {
       return {
         title: "File Error",
-        message: "There was a problem with the file. Please ensure it's the correct format and size.",
+        message:
+          "There was a problem with the file. Please ensure it's the correct format and size.",
         action: "Try Another File",
-        technical: error.message,
-      }
+        technical: sanitizeErrorMessage(error.message),
+      };
     }
 
     // Generic error
     return {
       title: "Something Went Wrong",
-      message: "An unexpected error occurred. Please try again or contact support if the problem persists.",
+      message:
+        "An unexpected error occurred. Please try again or contact support if the problem persists.",
       action: "Try Again",
-      technical: error.message,
-    }
+      technical: sanitizeErrorMessage(error.message),
+    };
   }
 
   // Unknown error type
@@ -87,39 +90,22 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
     title: "Unknown Error",
     message: "An unexpected error occurred. Please try again.",
     action: "Try Again",
-    technical: String(error),
-  }
+    technical: sanitizeErrorMessage(String(error)),
+  };
 }
 
 /**
  * Log error with context for debugging
  */
 export function logError(error: unknown, context?: Record<string, unknown>) {
-  const errorDetails = getUserFriendlyError(error)
+  const errorDetails = getUserFriendlyError(error);
 
   console.error("Error occurred:", {
     ...errorDetails,
     context,
     timestamp: new Date().toISOString(),
     userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "unknown",
-  })
-}
-
-/**
- * Handle async errors with user-friendly messages
- */
-export async function handleAsyncError<T>(
-  promise: Promise<T>,
-  errorCallback?: (error: ErrorDetails) => void
-): Promise<T | null> {
-  try {
-    return await promise
-  } catch (error) {
-    const errorDetails = getUserFriendlyError(error)
-    logError(error)
-    errorCallback?.(errorDetails)
-    return null
-  }
+  });
 }
 
 /**
@@ -131,5 +117,5 @@ export function sanitizeErrorMessage(message: string): string {
     .replace(UNIX_PATH_RE, "[path]")
     .replace(URL_RE, "[url]")
     .replace(EMAIL_RE, "[email]")
-    .replace(IP_RE, "[ip]")
+    .replace(IP_RE, "[ip]");
 }

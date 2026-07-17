@@ -14,30 +14,22 @@ describe("runMiniTests", () => {
   });
 
   it("passes should-match when regex matches", () => {
-    const out = runMiniTests(/\d+/, [
-      { id: "a", kind: "should-match", input: "abc 123" },
-    ]);
+    const out = runMiniTests(/\d+/, [{ id: "a", kind: "should-match", input: "abc 123" }]);
     expect(out[0]?.passed).toBe(true);
   });
 
   it("fails should-match when regex does not match", () => {
-    const out = runMiniTests(/\d+/, [
-      { id: "a", kind: "should-match", input: "no digits here" },
-    ]);
+    const out = runMiniTests(/\d+/, [{ id: "a", kind: "should-match", input: "no digits here" }]);
     expect(out[0]?.passed).toBe(false);
   });
 
   it("passes should-not-match when regex does not match", () => {
-    const out = runMiniTests(/\d+/, [
-      { id: "a", kind: "should-not-match", input: "letters only" },
-    ]);
+    const out = runMiniTests(/\d+/, [{ id: "a", kind: "should-not-match", input: "letters only" }]);
     expect(out[0]?.passed).toBe(true);
   });
 
   it("fails should-not-match when regex matches", () => {
-    const out = runMiniTests(/\d+/, [
-      { id: "a", kind: "should-not-match", input: "123" },
-    ]);
+    const out = runMiniTests(/\d+/, [{ id: "a", kind: "should-not-match", input: "123" }]);
     expect(out[0]?.passed).toBe(false);
   });
 

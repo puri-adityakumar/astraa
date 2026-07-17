@@ -8,15 +8,16 @@ import type { ContentItem } from "@/components/content-grid";
 
 export function GamesClient() {
   // Convert games to ContentItem format
-  const gameItems: ContentItem[] = useMemo(() =>
-    games.map(game => ({
-      ...game,
-      category: "game",
-    })),
+  const gameItems: ContentItem[] = useMemo(
+    () =>
+      games.map((game) => ({
+        ...game,
+        category: "game",
+      })),
     [],
   );
 
-  const availableCount = gameItems.filter(g => !g.comingSoon).length;
+  const availableCount = gameItems.filter((g) => !g.comingSoon).length;
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12 pt-16">

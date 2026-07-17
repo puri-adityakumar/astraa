@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Select,
@@ -6,13 +6,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { currencies } from "@/lib/currency-data"
+} from "@/components/ui/select";
+import { currencies } from "@/lib/currency-data";
 
 interface CurrencySelectProps {
-  value: string
-  onValueChange: (value: string) => void
-  label: string
+  value: string;
+  onValueChange: (value: string) => void;
+  label: string;
 }
 
 export function CurrencySelect({ value, onValueChange, label }: CurrencySelectProps) {
@@ -43,5 +43,5 @@ export function CurrencySelect({ value, onValueChange, label }: CurrencySelectPr
         ))}
       </SelectContent>
     </Select>
-  )
+  );
 }

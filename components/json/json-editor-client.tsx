@@ -29,10 +29,9 @@ export function JsonEditorClient() {
 
   useEffect(() => {
     try {
-      const worker = new Worker(
-        new URL("@/lib/json/parse-worker.ts", import.meta.url),
-        { type: "module" },
-      );
+      const worker = new Worker(new URL("@/lib/json/parse-worker.ts", import.meta.url), {
+        type: "module",
+      });
       clientRef.current = createParseClient(worker);
     } catch (e) {
       logError(e, { context: "json-editor/worker-init" });
@@ -46,8 +45,17 @@ export function JsonEditorClient() {
     window.clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(async () => {
       if (clientRef.current) {
-        const result = await clientRef.current.parse(text);
-        setParseResult(result.value, result.diagnostics);
+        try {
+          const result = await clientRef.current.parse(text);
+          setParseResult(result.value, result.diagnostics);
+        } catch (e) {
+          // The only rejection path is destroy() (on unmount), which rejects
+          // with an AbortError; the worker itself always resolves. Swallow the
+          // abort so unmount doesn't surface an unhandled rejection, and don't
+          // touch store state since the result is no longer needed.
+          if (e instanceof Error && e.name === "AbortError") return;
+          logError(e, { context: "json-editor/parse" });
+        }
       } else {
         try {
           const value = text.trim() === "" ? null : JSON.parse(text);
@@ -72,9 +80,8 @@ export function JsonEditorClient() {
           JSON Editor
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">
-          Edit, format, convert and generate types from JSON. Tree view,
-          YAML/CSV/Markdown converters, TypeScript and Zod generators. Up to
-          50&nbsp;MB, parsed off the main thread.
+          Edit, format, convert and generate types from JSON. Tree view, YAML/CSV/Markdown
+          converters, TypeScript and Zod generators. Up to 50&nbsp;MB, parsed off the main thread.
         </p>
         <p className="text-xs text-muted-foreground/70">
           All processing happens locally in your browser

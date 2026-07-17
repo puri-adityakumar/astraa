@@ -40,10 +40,7 @@ function rangeFirst(value: string): Atom {
   return from ?? null;
 }
 
-function expandQuantifier(
-  base: string,
-  quantifierValue: string,
-): string | null {
+function expandQuantifier(base: string, quantifierValue: string): string | null {
   const lazy = quantifierValue.endsWith("?") && quantifierValue.length > 1;
   const core = lazy ? quantifierValue.slice(0, -1) : quantifierValue;
 

@@ -9,4 +9,4 @@ export type Base64Status =
   | { kind: "valid"; inputBytes: number; outputBytes: number }
   | { kind: "invalid"; reason: string }
   | { kind: "error"; message: string };
-export const MAX_FILE_BYTES = 25 * 1024 * 1024;
+export const MAX_BASE64_FILE_BYTES = 25 * 1024 * 1024;
