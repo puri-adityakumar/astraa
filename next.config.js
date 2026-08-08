@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  agentRules: false,
   images: { unoptimized: false },
   async headers() {
-    return [
+    const headers = [
       {
         source: "/(.*)",
         headers: [
@@ -28,25 +29,32 @@ const nextConfig = {
           },
         ],
       },
-      {
-        source: "/_next/static/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/assets/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=86400",
-          },
-        ],
-      },
     ];
+
+    if (process.env.NODE_ENV === "production") {
+      headers.push(
+        {
+          source: "/_next/static/(.*)",
+          headers: [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=31536000, immutable",
+            },
+          ],
+        },
+        {
+          source: "/assets/(.*)",
+          headers: [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=86400",
+            },
+          ],
+        },
+      );
+    }
+
+    return headers;
   },
 };
 
@@ -66,6 +74,11 @@ module.exports = withSentryConfig(module.exports, {
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
+
+  // Keep local verification fully offline when explicitly requested.
+  sourcemaps: {
+    disable: process.env.ASTRAA_DISABLE_SENTRY_SOURCE_MAPS === "true",
+  },
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/

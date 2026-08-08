@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useMemo, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp } from "lucide-react"
@@ -14,13 +14,11 @@ export function UnitConverterClient() {
   const [value, setValue] = useState("1")
   const [fromUnit, setFromUnit] = useState<Unit>(unitCategories[0]?.units[0] ?? {} as Unit)
   const [toUnit, setToUnit] = useState<Unit>(unitCategories[0]?.units[1] ?? {} as Unit)
-  const [result, setResult] = useState<string>("")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  useEffect(() => {
+  const result = useMemo(() => {
     if (!value || isNaN(Number(value))) {
-      setResult("")
-      return
+      return ""
     }
 
     const converted = convertUnit(
@@ -30,11 +28,9 @@ export function UnitConverterClient() {
       category
     )
 
-    setResult(
-      converted.toLocaleString(undefined, {
-        maximumFractionDigits: 6,
-      })
-    )
+    return converted.toLocaleString(undefined, {
+      maximumFractionDigits: 6,
+    })
   }, [value, fromUnit, toUnit, category])
 
   const handleCategoryChange = (newCategory: string) => {
@@ -49,16 +45,16 @@ export function UnitConverterClient() {
   const currentUnits = unitCategories.find(c => c.name === category)?.units || []
 
   return (
-    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
+    <div className="mx-auto max-w-5xl space-y-8 pb-8">
       {/* Header */}
-      <div className="space-y-4 text-center sm:text-left">
+      <div className="space-y-3 border-b pb-8 text-left">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Unit Converter
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
           Seamlessly convert between different units of measurement. Select a category from the menu to get started.
         </p>
-        <p className="text-xs text-muted-foreground/70">
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           All processing happens locally in your browser
         </p>
       </div>

@@ -14,20 +14,21 @@ export function Pomodoro() {
   const [isBreak, setIsBreak] = useState(false)
 
   useEffect(() => {
-    let interval: NodeJS.Timeout
+    if (!isRunning) return
 
-    if (isRunning && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((time) => time - 1)
-      }, 1000)
-    } else if (timeLeft === 0) {
-      setIsBreak(!isBreak)
-      setTimeLeft(isBreak ? WORK_TIME : BREAK_TIME)
-      setIsRunning(false)
-    }
+    const interval = window.setInterval(() => {
+      setTimeLeft((time) => {
+        if (time > 1) return time - 1
 
-    return () => clearInterval(interval)
-  }, [isRunning, timeLeft, isBreak])
+        const nextIsBreak = !isBreak
+        setIsBreak(nextIsBreak)
+        setIsRunning(false)
+        return nextIsBreak ? BREAK_TIME : WORK_TIME
+      })
+    }, 1000)
+
+    return () => window.clearInterval(interval)
+  }, [isRunning, isBreak])
 
   const toggleTimer = () => {
     setIsRunning(!isRunning)

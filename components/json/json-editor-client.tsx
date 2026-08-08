@@ -66,8 +66,8 @@ export function JsonEditorClient() {
   }, [text, setParseResult]);
 
   return (
-    <div className="container px-4 sm:px-6 max-w-[1400px] pt-24 pb-12 space-y-8">
-      <div className="space-y-4 text-center sm:text-left">
+    <div className="mx-auto max-w-[1400px] space-y-8 pb-8">
+      <div className="space-y-3 border-b pb-8 text-left">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           JSON Editor
         </h1>
@@ -76,7 +76,7 @@ export function JsonEditorClient() {
           YAML/CSV/Markdown converters, TypeScript and Zod generators. Up to
           50&nbsp;MB, parsed off the main thread.
         </p>
-        <p className="text-xs text-muted-foreground/70">
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           All processing happens locally in your browser
         </p>
       </div>

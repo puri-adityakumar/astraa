@@ -42,7 +42,7 @@ export function ContributeClient() {
   }, []);
 
   return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-16">
+    <div className="mx-auto max-w-5xl space-y-16 pb-8">
       {/* Header Section */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">

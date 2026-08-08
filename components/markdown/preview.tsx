@@ -144,7 +144,6 @@ export function Preview({ content }: PreviewProps) {
     Promise.all([
       import("remark-math"),
       import("rehype-katex"),
-      // @ts-expect-error CSS module has no type declarations
       import("katex/dist/katex.min.css"),
     ])
       .then(([rm, rk]) => {

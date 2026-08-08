@@ -27,7 +27,8 @@ export function CommandMenu() {
   const { categories } = useTools()
 
   React.useEffect(() => {
-    setMounted(true)
+    const mountTimer = window.setTimeout(() => setMounted(true), 0)
+    return () => window.clearTimeout(mountTimer)
   }, [])
 
   React.useEffect(() => {
@@ -53,8 +54,14 @@ export function CommandMenu() {
 
   // Reset search when dialog closes
   React.useEffect(() => {
+    let resetTimer: number | undefined
+
     if (!open) {
-      setSearch("")
+      resetTimer = window.setTimeout(() => setSearch(""), 0)
+    }
+
+    return () => {
+      if (resetTimer !== undefined) window.clearTimeout(resetTimer)
     }
   }, [open])
 
@@ -66,15 +73,16 @@ export function CommandMenu() {
   return (
     <>
       <Button
-        variant="ghost"
-        className="relative h-9 w-full justify-start rounded-full text-xs text-muted-foreground sm:pr-12 md:w-40 lg:w-56 xl:w-64 transition-all duration-200 hover:bg-transparent hover:text-foreground border-2 border-neutral-400/50 dark:border-neutral-600/50 px-4"
+        variant="outline"
+        className="relative h-10 w-full justify-start rounded-md px-3 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-52 lg:w-64"
         onClick={() => setOpen(true)}
         aria-label="Open command menu"
       >
-        <Search className="mr-2 h-3.5 w-3.5 shrink-0" />
-        <span className="text-xs">Search...</span>
-        <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-muted/50 px-1.5 font-mono text-[10px] opacity-100 sm:flex">
-          <span>⌘</span><span>K</span>
+        <Search className="mr-2 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <span>Search tools...</span>
+        <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden h-5 -translate-y-1/2 select-none items-center gap-1 rounded border bg-muted/50 px-1.5 font-mono text-[10px] text-muted-foreground sm:flex">
+          <span>⌘</span>
+          <span>K</span>
         </kbd>
       </Button>
       <AnimatePresence>
@@ -92,7 +100,7 @@ export function CommandMenu() {
             <CommandList>
               <CommandEmpty>
                 <div className="py-6 text-center text-sm text-muted-foreground">
-                  No results found for "{search}"
+                  No results found for “{search}”
                 </div>
               </CommandEmpty>
 

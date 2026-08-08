@@ -1,26 +1,19 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import { IBM_Plex_Mono } from 'next/font/google';
+import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-ibm-plex-mono',
-  display: 'swap',
-});
-import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/footer';
-import { Toaster } from "@/components/ui/toaster";
+import { Footer } from "@/components/footer";
+import { Navigation } from "@/components/navigation";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ToolsProvider } from '@/lib/tools-context';
-import { ActivityProvider } from '@/lib/activity-tracker';
-import { PageTransition } from '@/components/ui/page-transition';
-import { LandingBackground } from '@/components/landing-background';
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { TooltipProvider } from "@/components/ui/tooltip"
+import { PageTransition } from "@/components/ui/page-transition";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ActivityProvider } from "@/lib/activity-tracker";
+import { ToolsProvider } from "@/lib/tools-context";
+
+import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.astraa.tech"),
@@ -29,7 +22,8 @@ export const metadata: Metadata = {
     template: "%s | Astraa",
   },
   description:
-    "Discover 15+ free online utility tools including calculator, currency converter, password generator, hash tools, and markdown viewer. No signup required.",
+    "Discover 15+ free online utility tools including calculator, currency converter, " +
+    "password generator, hash tools, and markdown viewer. No signup required.",
   creator: "Aditya Kumar",
   keywords: [
     "utility tools",
@@ -62,7 +56,7 @@ export const metadata: Metadata = {
     siteName: "Astraa",
     title: "Astraa - Free Online Utility Tools",
     description:
-      "15+ free online utility tools for developers and creators. No signup required.",
+      "15+ free browser-based utility tools for developers and creators. No signup required.",
     images: [
       {
         url: "/assets/astraa_banner.jpg",
@@ -87,14 +81,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} font-sans`} suppressHydrationWarning>
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} font-sans`}
+        suppressHydrationWarning
+      >
+        <a className="skip-to-main" href="#main-content">
+          Skip to content
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -102,10 +98,10 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "Organization",
-                "name": "Astraa",
-                "url": "https://www.astraa.tech",
-                "logo": "https://www.astraa.tech/assets/astraa_pfp.png",
-                "sameAs": [
+                name: "Astraa",
+                url: "https://www.astraa.tech",
+                logo: "https://www.astraa.tech/assets/astraa_pfp.png",
+                sameAs: [
                   "https://github.com/puri-adityakumar/astraa",
                   "https://x.com/astraadottech",
                   "https://t.me/astraadottech",
@@ -114,29 +110,27 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "WebApplication",
-                "name": "Astraa",
-                "description":
-                  "Browser-based utility toolkit for developers and creators",
-                "url": "https://www.astraa.tech",
-                "applicationCategory": "UtilityApplication",
-                "operatingSystem": "Web",
-                "datePublished": "2025-01-01",
-                "dateModified": new Date().toISOString().split("T")[0],
-                "offers": {
+                name: "Astraa",
+                description: "Browser-based utility toolkit for developers and creators",
+                url: "https://www.astraa.tech",
+                applicationCategory: "UtilityApplication",
+                operatingSystem: "Web",
+                datePublished: "2025-01-01",
+                dateModified: new Date().toISOString().split("T")[0],
+                offers: {
                   "@type": "Offer",
-                  "price": "0",
-                  "priceCurrency": "USD",
+                  price: "0",
+                  priceCurrency: "USD",
                 },
               },
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
-                "name": "Astraa",
-                "url": "https://www.astraa.tech",
-                "potentialAction": {
+                name: "Astraa",
+                url: "https://www.astraa.tech",
+                potentialAction: {
                   "@type": "SearchAction",
-                  "target":
-                    "https://www.astraa.tech/explore?q={search_term_string}",
+                  target: "https://www.astraa.tech/explore?q={search_term_string}",
                   "query-input": "required name=search_term_string",
                 },
               },
@@ -152,12 +146,11 @@ export default function RootLayout({
           <TooltipProvider>
             <ToolsProvider>
               <ActivityProvider>
-                <LandingBackground />
-                <div className="min-h-screen flex flex-col">
+                <div className="relative flex min-h-screen flex-col bg-background">
                   <Navigation />
-                  <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
+                  <main id="main-content" className="flex w-full flex-1" tabIndex={-1}>
                     <PageTransition type="fade">
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+                      <div className="mx-auto w-full max-w-[1200px] border-x border-border/70 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
                         {children}
                       </div>
                     </PageTransition>

@@ -111,11 +111,13 @@ const Carousel = React.forwardRef<
         return;
       }
 
-      onSelect(api);
+      const selectionTimer = window.setTimeout(() => onSelect(api), 0);
       api.on('reInit', onSelect);
       api.on('select', onSelect);
 
       return () => {
+        window.clearTimeout(selectionTimer);
+        api?.off('reInit', onSelect);
         api?.off('select', onSelect);
       };
     }, [api, onSelect]);

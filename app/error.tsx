@@ -73,7 +73,7 @@ export default function Error({
             <div className="space-y-2">
               <h2 className="text-2xl md:text-3xl font-semibold">Something went wrong</h2>
               <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
-                Don't worry, it's not your fault. An unexpected error occurred.
+                Don’t worry, it’s not your fault. An unexpected error occurred.
                 Try refreshing the page or go back to continue.
               </p>
             </div>

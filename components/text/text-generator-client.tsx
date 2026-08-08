@@ -8,7 +8,6 @@ import { Loader2, Copy, Sparkles } from "lucide-react";
 import { generateText } from "@/lib/openrouter";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 export function TextGeneratorClient() {
   const [topic, setTopic] = useState("");
@@ -51,9 +50,9 @@ export function TextGeneratorClient() {
   };
 
   return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
+    <div className="mx-auto max-w-5xl space-y-8 pb-8">
       {/* Heading */}
-      <div className="space-y-2 text-center sm:text-left">
+      <div className="space-y-3 border-b pb-8 text-left">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           AI Text Generator
         </h1>
@@ -105,16 +104,12 @@ export function TextGeneratorClient() {
             size="icon"
             onClick={handleGenerate}
             disabled={isPending || !topic}
-            className={cn(
-              "h-10 w-10 shrink-0 rounded-full transition-all duration-300",
-              !isPending &&
-                "bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 hover:scale-105 shadow-[0_0_15px_-3px_rgba(6,182,212,0.6)]",
-            )}
+            className="h-10 w-10 shrink-0 rounded-full"
           >
             {isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <Sparkles className="h-5 w-5 text-white" />
+              <Sparkles className="h-5 w-5" />
             )}
             <span className="sr-only">Generate</span>
           </Button>
@@ -122,7 +117,7 @@ export function TextGeneratorClient() {
       </div>
 
       {/* Output Area */}
-      <div className="relative min-h-[500px] rounded-xl border border-border bg-card/50 shadow-sm backdrop-blur-sm transition-all">
+      <div className="relative min-h-[500px] rounded-xl border bg-card shadow-geist">
         {generatedText ? (
           <>
             <Textarea

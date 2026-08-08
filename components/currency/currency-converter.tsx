@@ -18,9 +18,9 @@ export function CurrencyConverterClient() {
   }
 
   return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
+    <div className="mx-auto max-w-5xl space-y-8 pb-8">
       {/* Header */}
-      <div className="space-y-4 text-center sm:text-left">
+      <div className="space-y-3 border-b pb-8 text-left">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Currency Converter
         </h1>

@@ -268,13 +268,13 @@ export function RegexTesterClient() {
 
   return (
     <motion.div
-      className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8"
+      className="mx-auto max-w-2xl space-y-8 pb-8"
       variants={containerVariants}
       initial="hidden"
       animate="show"
     >
       <motion.div
-        className="space-y-4 text-center sm:text-left"
+        className="space-y-3 border-b pb-8 text-left"
         variants={headerVariants}
       >
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -283,7 +283,7 @@ export function RegexTesterClient() {
         <p className="text-muted-foreground text-base sm:text-lg">
           Test JavaScript regular expressions live, with capture-group highlights, replace mode, and shareable URLs.
         </p>
-        <p className="text-xs text-muted-foreground/70">
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           All processing happens locally in your browser
         </p>
       </motion.div>

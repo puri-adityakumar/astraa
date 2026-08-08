@@ -1,60 +1,30 @@
-"use client"
-
-import { motion } from "framer-motion"
-import { Construction } from "lucide-react"
-import { ReactNode, useState, useEffect } from "react"
+import type { ReactNode } from "react";
+import { Construction } from "lucide-react";
 
 interface WorkInProgressProps {
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 export function WorkInProgress({ children }: WorkInProgressProps) {
-  const [showWip, setShowWip] = useState(false)
+  const showWip = process.env.NEXT_PUBLIC_ENV === "prod";
 
-  useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV === 'prod') {
-      setShowWip(true)
-    }
-  }, [])
+  if (!showWip) return <>{children}</>;
 
-  if (showWip) {
-    return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center space-y-6"
-        >
-          {/* Icon */}
-          <Construction className="h-16 w-16 text-primary mx-auto" />
-
-          {/* Heading with gradient */}
-          <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Under Construction
-          </h1>
-
-          {/* Animated dots in mono font */}
-          <p className="text-xl text-muted-foreground font-mono flex items-center justify-center gap-0">
-            work in progress
-            <motion.span
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-            >.</motion.span>
-            <motion.span
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-            >.</motion.span>
-            <motion.span
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
-            >.</motion.span>
-          </p>
-        </motion.div>
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center py-12">
+      <div className="site-dots w-full max-w-2xl rounded-xl border p-8 text-center shadow-geist sm:p-14">
+        <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-md border bg-background">
+          <Construction className="h-5 w-5" aria-hidden="true" />
+        </div>
+        <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          Work in progress
+        </p>
+        <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">Under construction.</h1>
+        <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-muted-foreground">
+          This part of Astraa is still being assembled. Check back after the next
+          release.
+        </p>
       </div>
-    )
-  }
-
-  // Default: render children (works for both SSR initial render and dev mode)
-  return <>{children}</>
+    </div>
+  );
 }

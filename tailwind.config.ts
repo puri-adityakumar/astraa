@@ -36,9 +36,9 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'sans-serif'],
-        mono: ['var(--font-geist-mono)', 'monospace'],
-        logo: ['Funnel Display', 'sans-serif'],
+        sans: ["var(--font-geist-sans)", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
+        logo: ["var(--font-geist-sans)", "sans-serif"],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],
@@ -87,13 +87,24 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       borderRadius: {
-        lg: '0.75rem',
-        md: '0.5rem',
-        sm: '0.25rem',
+        lg: "var(--radius-medium)",
+        md: "var(--radius)",
+        sm: "0.25rem",
+        xl: "var(--radius-large)",
+      },
+      boxShadow: {
+        geist: "var(--shadow-small)",
+        "geist-menu": "var(--shadow-menu)",
+        "geist-modal": "var(--shadow-modal)",
       },
       colors: {
         background: 'hsl(var(--background))',
+        "background-2": "hsl(var(--background-2))",
         foreground: 'hsl(var(--foreground))',
+        surface: {
+          DEFAULT: "hsl(var(--surface))",
+          hover: "hsl(var(--surface-hover))",
+        },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',

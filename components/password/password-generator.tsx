@@ -58,7 +58,8 @@ export function PasswordGeneratorClient() {
 
   // Auto-generate on option changes
   useEffect(() => {
-    generate()
+    const timer = window.setTimeout(generate, 0)
+    return () => window.clearTimeout(timer)
   }, [generate])
 
   const handleCopyToClipboard = async () => {
@@ -79,21 +80,21 @@ export function PasswordGeneratorClient() {
   }
 
   return (
-    <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8 pb-8">
       {/* Header */}
-      <div className="space-y-4 text-center sm:text-left">
+      <div className="space-y-3 border-b pb-8 text-left">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Password Generator
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg text-pretty">
           Generate secure, random passwords, memorable passphrases, or PIN codes instantly.
         </p>
-        <p className="text-xs text-muted-foreground/70">
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           All processing happens locally in your browser
         </p>
       </div>
 
-      <div className="bg-card border border-border/50 rounded-xl shadow-sm p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+      <div className="space-y-6 rounded-xl border bg-card p-4 shadow-geist sm:space-y-8 sm:p-6 md:p-8">
 
         {/* 1. Choose Password Type (Tabs) */}
         <div className="space-y-4">

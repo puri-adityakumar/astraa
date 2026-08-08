@@ -1,21 +1,44 @@
-"use client"
+import Link from "next/link";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+interface LogoProps {
+  className?: string;
+}
 
-export function Logo({ className }: { className?: string }) {
+function AstraaMark() {
   return (
-    <Link href="/" className="flex items-center gap-1">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={cn("text-2xl font-semibold", className)}
-      >
-        <span className="font-logo text-white">astraa</span>
-        <span className="font-mono text-sm text-muted-foreground ml-1">अस्त्र</span>
-      </motion.div>
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M12 2.5 14.6 9.4 21.5 12l-6.9 2.6L12 21.5l-2.6-6.9L2.5 12l6.9-2.6L12 2.5Z"
+        fill="currentColor"
+      />
+      <circle cx="12" cy="12" fill="hsl(var(--background))" r="2.1" />
+    </svg>
+  );
+}
+
+export function Logo({ className }: LogoProps) {
+  return (
+    <Link
+      href="/"
+      className={cn(
+        "inline-flex min-h-touch items-center gap-2.5 rounded-md text-foreground " +
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        className,
+      )}
+      aria-label="Astraa home"
+    >
+      <AstraaMark />
+      <span className="text-[15px] font-semibold tracking-[-0.03em]">astraa</span>
+      <span className="border-l pl-2 font-mono text-[11px] text-muted-foreground">
+        अस्त्र
+      </span>
     </Link>
-  )
+  );
 }

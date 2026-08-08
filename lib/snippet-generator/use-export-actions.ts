@@ -23,7 +23,11 @@ export function useExportActions(getNode: () => HTMLElement | null) {
   const { toast } = useToast();
 
   useEffect(() => {
-    setClipboardSupported(isClipboardSupported());
+    const supportTimer = window.setTimeout(
+      () => setClipboardSupported(isClipboardSupported()),
+      0,
+    );
+    return () => window.clearTimeout(supportTimer);
   }, []);
 
   const doDownload = async (scale: ExportScale) => {

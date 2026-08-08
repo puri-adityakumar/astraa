@@ -19,8 +19,8 @@ export function SnippetGeneratorClient() {
   }, [updateToolUsage]);
 
   return (
-    <div className="container max-w-[1400px] pt-24 pb-12">
-      <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
+    <div className="mx-auto max-w-[1400px] pb-8">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b pb-8">
         <div className="min-w-0">
           <h1 className="text-fluid-xl font-semibold">Code Snippet Generator</h1>
           <p className="text-sm text-muted-foreground">

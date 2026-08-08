@@ -117,15 +117,15 @@ export function ImageResizerClient() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-8 pt-24 pb-12">
-      <div className="space-y-2 text-center sm:text-left">
+    <div className="mx-auto max-w-5xl space-y-8 pb-8">
+      <div className="space-y-3 border-b pb-8 text-left">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Image Resizer
         </h1>
         <p className="text-muted-foreground text-lg">
           Upload and resize your images with format options.
         </p>
-        <p className="text-xs text-muted-foreground/70">
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
           All processing happens locally in your browser
         </p>
       </div>

@@ -1,96 +1,95 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import type { LucideIcon } from "lucide-react"
-import { staggerContainerFast, staggerItem } from "@/lib/animations/variants"
-import { useReducedMotion } from "@/lib/animations/hooks"
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ArrowUpRight, type LucideIcon } from "lucide-react";
 
-const container = staggerContainerFast
-
-const item = staggerItem
+import { Badge } from "@/components/ui/badge";
+import { staggerContainerFast, staggerItem } from "@/lib/animations/variants";
+import { useReducedMotion } from "@/lib/animations/hooks";
 
 export interface ContentItem {
-  name: string
-  description: string
-  path: string
-  icon: LucideIcon
-  wip?: boolean
-  comingSoon?: boolean
-  category?: string
+  name: string;
+  description: string;
+  path: string;
+  icon: LucideIcon;
+  wip?: boolean;
+  comingSoon?: boolean;
+  category?: string;
 }
 
 interface ContentGridProps {
-  items: ContentItem[]
-  emptyMessage?: string
+  items: ContentItem[];
+  emptyMessage?: string;
 }
 
 export function ContentGrid({ items, emptyMessage = "No items found" }: ContentGridProps) {
-  const shouldReduce = useReducedMotion()
+  const shouldReduce = useReducedMotion();
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-12 px-4">
-        <p className="text-muted-foreground text-lg">{emptyMessage}</p>
+      <div className="rounded-xl border border-dashed px-6 py-16 text-center">
+        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
       </div>
-    )
+    );
   }
 
   return (
     <motion.div
-      variants={shouldReduce ? {} : container}
+      variants={shouldReduce ? {} : staggerContainerFast}
       initial="hidden"
       animate="show"
-      className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4"
+      className="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2 lg:grid-cols-3"
     >
-      {items.map((contentItem) => (
-        <motion.div 
-          key={contentItem.path} 
-          variants={shouldReduce ? {} : item}
-          whileHover={shouldReduce ? {} : { y: -8 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        >
-          <Link href={contentItem.comingSoon ? "#" : contentItem.path}>
-            <Card className="p-5 sm:p-6 glass glass-hover group space-y-3 sm:space-y-4 h-full min-h-touch relative overflow-hidden">
-              {/* Hover gradient effect */}
-              {!shouldReduce && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      {items.map((contentItem, index) => {
+        const Icon = contentItem.icon;
+        const typeLabel = contentItem.category === "game" ? "Game" : "Tool";
+
+        return (
+          <motion.div
+            key={contentItem.path}
+            variants={shouldReduce ? {} : staggerItem}
+            className="bg-background"
+          >
+            <Link
+              href={contentItem.comingSoon ? "#" : contentItem.path}
+              className="group relative flex min-h-[210px] flex-col bg-background p-5 transition-colors duration-150 hover:bg-background-2 sm:p-6"
+              aria-disabled={contentItem.comingSoon}
+              onClick={(event) => {
+                if (contentItem.comingSoon) event.preventDefault();
+              }}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md border bg-muted/30">
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </div>
+                <ArrowUpRight
+                  className="h-4 w-4 text-muted-foreground transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+                  aria-hidden="true"
                 />
-              )}
-              
-              <div className="relative z-10">
-                <div className="flex items-center justify-between">
-                  <motion.div
-                    whileHover={shouldReduce ? {} : { rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <contentItem.icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary group-hover:text-accent transition-colors" />
-                  </motion.div>
-                  <div className="flex gap-2">
-                    {contentItem.wip && (
-                      <Badge variant="secondary" className="text-xs">Work in Progress</Badge>
-                    )}
-                    {contentItem.comingSoon && (
-                      <Badge variant="secondary" className="text-xs">Coming Soon</Badge>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                    {contentItem.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm sm:text-base group-hover:text-foreground/80 transition-colors">
-                    {contentItem.description}
-                  </p>
-                </div>
               </div>
-            </Card>
-          </Link>
-        </motion.div>
-      ))}
+
+              <div className="mt-auto pt-8">
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                    {typeLabel} {String(index + 1).padStart(2, "0")}
+                  </span>
+                  {contentItem.wip && <Badge variant="outline">WIP</Badge>}
+                  {contentItem.comingSoon && (
+                    <Badge variant="outline">Coming soon</Badge>
+                  )}
+                </div>
+                <h3 className="text-base font-semibold tracking-[-0.02em]">
+                  {contentItem.name}
+                </h3>
+                <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                  {contentItem.description}
+                </p>
+              </div>
+            </Link>
+          </motion.div>
+        );
+      })}
     </motion.div>
-  )
+  );
 }

@@ -51,8 +51,9 @@ export function PageTransition({ children, type = "fade" }: PageTransitionProps)
   const selectedVariant = variants[type]
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
+        className="w-full"
         key={pathname}
         initial={selectedVariant.initial}
         animate={selectedVariant.animate}
