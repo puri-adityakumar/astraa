@@ -1,118 +1,218 @@
-import { Key, Hash, Type, DollarSign, Music, Image as ImageIcon, Ruler, Calculator, Code, FileJson, Database, Terminal, Binary, FileText, type LucideIcon } from "lucide-react"
+import {
+  Key,
+  Hash,
+  Type,
+  DollarSign,
+  Music,
+  Image as ImageIcon,
+  Ruler,
+  Calculator,
+  Code,
+  FileJson,
+  Database,
+  Terminal,
+  Binary,
+  FileText,
+  type LucideIcon,
+} from "lucide-react";
+
+import { isAvailable, isComingSoon } from "@/lib/catalog";
+import type { CatalogEntry } from "@/lib/catalog";
+
+const TOOL_IDS = [
+  "password",
+  "hash",
+  "text",
+  "currency",
+  "image",
+  "units",
+  "calculator",
+  "markdown",
+  "music",
+  "base64",
+  "snippet-generator",
+  "json",
+  "sql",
+  "regex",
+] as const;
+
+export type ToolId = (typeof TOOL_IDS)[number];
 
 export type ToolCategory = {
-  name: string
-  items: Tool[]
-}
+  name: string;
+  items: Tool[];
+};
 
-export type Tool = {
-  name: string
-  description: string
-  path: string
-  icon: LucideIcon
-  wip?: boolean
-  comingSoon?: boolean
-}
+export type Tool = CatalogEntry & {
+  id: ToolId;
+  icon: LucideIcon;
+  relatedToolIds: readonly ToolId[];
+};
 
 export const toolCategories: ToolCategory[] = [
   {
     name: "Utilities",
     items: [
       {
-        name: 'Password Generator',
-        description: 'Create strong, secure passwords',
-        path: '/tools/password',
-        icon: Key
+        id: "password",
+        name: "Password Generator",
+        description: "Create customizable random or memorable passwords in your browser",
+        path: "/tools/password",
+        icon: Key,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["hash", "base64"],
       },
       {
-        name: 'Hash Generator',
-        description: 'Generate various hash outputs',
-        path: '/tools/hash',
-        icon: Hash
+        id: "hash",
+        name: "Hash Generator",
+        description: "Generate MD5 and SHA hash outputs in your browser",
+        path: "/tools/hash",
+        icon: Hash,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["password", "base64", "json"],
       },
       {
-        name: 'Text Generator',
-        description: 'Smart, context-aware Lorem Ipsum alternative',
-        path: '/tools/text',
-        icon: Type
+        id: "text",
+        name: "AI Text Generator",
+        description: "Generate placeholder copy through Astraa's server and an AI provider",
+        path: "/tools/text",
+        icon: Type,
+        status: "available",
+        processing: "server",
+        relatedToolIds: ["markdown", "snippet-generator", "regex"],
       },
       {
-        name: 'Currency Converter',
-        description: 'Real-time currency conversion',
-        path: '/tools/currency',
-        icon: DollarSign
+        id: "currency",
+        name: "Currency Converter",
+        description:
+          "Send a pair to Astraa's rate endpoint, then convert the amount in your browser",
+        path: "/tools/currency",
+        icon: DollarSign,
+        status: "available",
+        processing: "server",
+        relatedToolIds: ["units", "calculator"],
       },
       {
-        name: 'Image Resizer',
-        description: 'Resize images easily',
-        path: '/tools/image',
-        icon: ImageIcon
+        id: "image",
+        name: "Image Resizer",
+        description: "Resize and convert JPEG, PNG, and WebP images in your browser",
+        path: "/tools/image",
+        icon: ImageIcon,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["snippet-generator", "base64"],
       },
       {
-        name: 'Unit Converter',
-        description: 'Convert between various units',
-        path: '/tools/units',
-        icon: Ruler
+        id: "units",
+        name: "Unit Converter",
+        description: "Convert common metric and imperial measurements in your browser",
+        path: "/tools/units",
+        icon: Ruler,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["calculator", "currency"],
       },
       {
-        name: 'Calculator',
-        description: 'Scientific calculator with advanced functions',
-        path: '/tools/calculator',
-        icon: Calculator
+        id: "calculator",
+        name: "Scientific Calculator",
+        description: "Run scientific calculations in your browser",
+        path: "/tools/calculator",
+        icon: Calculator,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["units", "currency"],
       },
       {
-        name: 'Markdown Viewer',
-        description: 'Drop a markdown file to view, edit, and export',
-        path: '/tools/markdown',
-        icon: FileText
+        id: "markdown",
+        name: "Markdown Editor",
+        description: "Write, preview, store, and export Markdown in your browser",
+        path: "/tools/markdown",
+        icon: FileText,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["json", "text", "snippet-generator"],
       },
       {
-        name: 'Lofi Focus Studio',
-        description: 'Stream lofi music with productivity tools',
-        path: '/tools/music',
+        id: "music",
+        name: "Lofi Focus Studio",
+        description: "Planned streaming audio and focus tools",
+        path: "/tools/music",
         icon: Music,
-        comingSoon: true
+        status: "coming-soon",
+        processing: "hybrid",
+        relatedToolIds: ["text", "markdown"],
       },
-
-    ]
+    ],
   },
   {
     name: "Developer Tools",
     items: [
       {
-        name: 'Base64 Encoder/Decoder',
-        description: 'Encode and decode Base64 strings',
-        path: '/tools/base64',
-        icon: Binary
+        id: "base64",
+        name: "Base64 Encoder/Decoder",
+        description: "Encode and decode Base64 text or files in your browser",
+        path: "/tools/base64",
+        icon: Binary,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["json", "hash", "image"],
       },
       {
-        name: 'Code Snippet Generator',
-        description: 'Generate beautiful code and screenshot images',
-        path: '/tools/snippet-generator',
+        id: "snippet-generator",
+        name: "Code Snippet Generator",
+        description: "Turn code or screenshots into shareable images in your browser",
+        path: "/tools/snippet-generator",
         icon: Code,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["image", "markdown", "json"],
       },
       {
-        name: 'JSON Editor',
-        description: 'Edit, format, convert and generate types — up to 50 MB',
-        path: '/tools/json',
+        id: "json",
+        name: "JSON Editor",
+        description: "Edit, validate, convert, and generate types from JSON in your browser",
+        path: "/tools/json",
         icon: FileJson,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["base64", "markdown", "regex"],
       },
       {
-        name: 'SQL Formatter',
-        description: 'Format and validate SQL queries',
-        path: '/tools/sql',
+        id: "sql",
+        name: "SQL Formatter",
+        description: "Format SQL layout and keyword casing locally in your browser",
+        path: "/tools/sql",
         icon: Database,
-        comingSoon: true
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["json", "regex"],
       },
       {
-        name: 'Regex Tester',
-        description: 'Test and validate regular expressions',
-        path: '/tools/regex',
-        icon: Terminal
-      }
-    ]
-  }
-]
+        id: "regex",
+        name: "Regex Tester",
+        description: "Test JavaScript regular expressions safely in your browser",
+        path: "/tools/regex",
+        icon: Terminal,
+        status: "available",
+        processing: "local",
+        relatedToolIds: ["json", "text", "snippet-generator"],
+      },
+    ],
+  },
+];
 
-// Flatten all tools for search
-export const tools = toolCategories.flatMap(category => category.items)
+export const tools = toolCategories.flatMap((category) => category.items);
+
+export const availableTools = tools.filter(isAvailable);
+export const comingSoonTools = tools.filter(isComingSoon);
+export const localTools = availableTools.filter((tool) => tool.processing === "local");
+
+export function getToolById(id: ToolId): Tool | undefined {
+  return tools.find((tool) => tool.id === id);
+}
+
+export function getToolByPath(path: string): Tool | undefined {
+  return tools.find((tool) => tool.path === path);
+}

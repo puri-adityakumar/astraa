@@ -1,81 +1,136 @@
-import { describe, it, expect } from "vitest";
-import { getUserFriendlyError, sanitizeErrorMessage } from "./error-handler";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import {
+  AppError,
+  createDiagnosticRecord,
+  createSafeErrorReport,
+  formatSafeErrorReport,
+  getUserFriendlyError,
+  logError,
+  sanitizeErrorMessage,
+} from "./error-handler";
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("getUserFriendlyError", () => {
-  it("handles network/fetch errors", () => {
-    const error = new TypeError("Failed to fetch");
-    const result = getUserFriendlyError(error);
-    expect(result.title).toBe("Connection Error");
-    expect(result.action).toBe("Retry");
+  it("maps named domain errors to stable public copy", () => {
+    expect(getUserFriendlyError(new AppError("CONNECTION_ERROR"))).toMatchObject({
+      code: "CONNECTION_ERROR",
+      title: "Connection Error",
+      retryable: true,
+    });
+    expect(getUserFriendlyError({ code: "INVALID_PAIR" })).toMatchObject({
+      code: "INVALID_INPUT",
+      title: "Invalid Input",
+    });
   });
-  it("handles timeout errors", () => {
-    const error = new Error("Request timeout");
-    const result = getUserFriendlyError(error);
-    expect(result.title).toBe("Request Timeout");
+
+  it("maps timeout names without matching message substrings", () => {
+    expect(getUserFriendlyError(new DOMException("private details", "TimeoutError"))).toMatchObject(
+      { code: "REQUEST_TIMEOUT", title: "Request Timeout" },
+    );
   });
-  it("handles permission errors", () => {
-    const error = new Error("Permission denied");
-    const result = getUserFriendlyError(error);
-    expect(result.title).toBe("Permission Denied");
-  });
-  it("handles validation errors", () => {
-    const error = new Error("Invalid input value");
-    const result = getUserFriendlyError(error);
-    expect(result.title).toBe("Invalid Input");
-  });
-  it("handles file errors", () => {
-    const error = new Error("File too large");
-    const result = getUserFriendlyError(error);
-    expect(result.title).toBe("File Error");
-  });
-  it("handles generic Error", () => {
-    const error = new Error("Something broke");
-    const result = getUserFriendlyError(error);
-    expect(result.title).toBe("Something Went Wrong");
-    expect(result.technical).toBe("Something broke");
-  });
-  it("handles non-Error types", () => {
-    const result = getUserFriendlyError("string error");
-    expect(result.title).toBe("Unknown Error");
-    expect(result.technical).toBe("string error");
-  });
-  it("handles null/undefined", () => {
-    const result = getUserFriendlyError(null);
-    expect(result.title).toBe("Unknown Error");
+
+  it("returns generic safe copy for unexpected and unknown values", () => {
+    const secret = "admin@example.com at /home/aditya/private.ts";
+    const errorResult = getUserFriendlyError(new Error(secret));
+    const unknownResult = getUserFriendlyError(secret);
+
+    expect(errorResult.code).toBe("UNEXPECTED_ERROR");
+    expect(unknownResult.code).toBe("UNEXPECTED_ERROR");
+    expect(JSON.stringify([errorResult, unknownResult])).not.toContain(secret);
   });
 });
 
-describe("sanitizeErrorMessage", () => {
-  it("removes Windows paths", () => {
-    const result = sanitizeErrorMessage("Error at C:\\Users\\admin\\file.txt");
+describe("diagnostic records", () => {
+  it("redacts error messages, stacks, and allowlisted context before logging", () => {
+    const error = new Error(
+      "admin@example.com failed at https://example.com/private?token=secret and " +
+        "C:\\Users\\aditya\\secret.ts",
+    );
+    const diagnostic = createDiagnosticRecord(
+      error,
+      {
+        operation: "text.generate",
+        routeTemplate: "/tools/text?topic=private",
+        topic: "private prompt",
+        details: {
+          errorCode: "UPSTREAM_UNAVAILABLE",
+          authorization: "Bearer secret",
+        },
+      },
+      new Date("2026-08-08T00:00:00.000Z"),
+    );
+    const serialized = JSON.stringify(diagnostic);
+
+    for (const sensitive of [
+      "admin@example.com",
+      "example.com",
+      "token=secret",
+      "C:\\Users\\aditya",
+      "private prompt",
+      "Bearer secret",
+      "topic=private",
+    ]) {
+      expect(serialized).not.toContain(sensitive);
+    }
+    expect(diagnostic).toMatchObject({
+      code: "UNEXPECTED_ERROR",
+      context: {
+        operation: "text.generate",
+        routeTemplate: "/tools/text",
+        details: { errorCode: "UPSTREAM_UNAVAILABLE" },
+      },
+      timestamp: "2026-08-08T00:00:00.000Z",
+    });
+  });
+
+  it("never sends raw values to console output", () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const secret = "secret@example.com /home/user/private.txt";
+
+    logError(new Error(secret), { operation: "boundary.capture", password: "hidden" });
+
+    const logged = JSON.stringify(consoleSpy.mock.calls);
+    expect(logged).not.toContain("secret@example.com");
+    expect(logged).not.toContain("/home/user/private.txt");
+    expect(logged).not.toContain("hidden");
+  });
+
+  it("creates copy-safe support details with only code, digest, route, and time", () => {
+    const report = createSafeErrorReport(
+      new Error("secret@example.com"),
+      "digest_123",
+      "/tools/text?topic=private",
+      new Date("2026-08-08T00:00:00.000Z"),
+    );
+
+    expect(report).toEqual({
+      code: "UNEXPECTED_ERROR",
+      digest: "digest_123",
+      routeTemplate: "/tools/text",
+      timestamp: "2026-08-08T00:00:00.000Z",
+    });
+    expect(JSON.stringify(report)).not.toContain("secret@example.com");
+    expect(formatSafeErrorReport(report)).toBe(
+      "Code: UNEXPECTED_ERROR\n" +
+        "Digest: digest_123\n" +
+        "Route: /tools/text\n" +
+        "Timestamp: 2026-08-08T00:00:00.000Z",
+    );
+  });
+});
+
+describe("sanitizeErrorMessage compatibility", () => {
+  it("uses the shared ordered redaction pipeline", () => {
+    const result = sanitizeErrorMessage(
+      "https://api.example.com/private /home/user/file.ts 192.168.1.20",
+    );
+    expect(result).toContain("[url]");
     expect(result).toContain("[path]");
-    expect(result).not.toContain("admin");
-  });
-  it("removes Unix paths", () => {
-    const result = sanitizeErrorMessage("Error at /home/user/secret/file.ts");
-    expect(result).toContain("[path]");
-    expect(result).not.toContain("secret");
-  });
-  it("removes URLs", () => {
-    // Note: UNIX_PATH_RE (/\/[\w\/\-. ]+/g) matches before URL_RE in the chain,
-    // so "https://api.secret.com/key" becomes "https:[path]" rather than "[url]".
-    // The sensitive content is still removed; only the replacement token differs.
-    const result = sanitizeErrorMessage("Failed to fetch https://api.secret.com/key");
-    expect(result).toContain("[path]");
-    expect(result).not.toContain("secret");
-  });
-  it("removes email addresses", () => {
-    const result = sanitizeErrorMessage("Contact admin@company.com for help");
-    expect(result).toContain("[email]");
-    expect(result).not.toContain("admin@company.com");
-  });
-  it("removes IP addresses", () => {
-    const result = sanitizeErrorMessage("Connection to 192.168.1.100 failed");
     expect(result).toContain("[ip]");
-    expect(result).not.toContain("192.168.1.100");
-  });
-  it("leaves clean messages unchanged", () => {
-    const msg = "Something went wrong";
-    expect(sanitizeErrorMessage(msg)).toBe(msg);
+    expect(result).not.toContain("example.com");
   });
 });

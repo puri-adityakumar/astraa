@@ -45,9 +45,7 @@ function MermaidBlock({ source }: { source: string }) {
   useEffect(() => {
     let cancelled = false;
     getMermaid()
-      .then((mermaid) =>
-        mermaid.render(`m-${Math.random().toString(36).slice(2)}`, source),
-      )
+      .then((mermaid) => mermaid.render(`m-${Math.random().toString(36).slice(2)}`, source))
       .then((res) => {
         if (!cancelled) {
           setSvg(res.svg);
@@ -141,11 +139,7 @@ export function Preview({ content }: PreviewProps) {
 
   useEffect(() => {
     if (!hasMath || mathPlugins) return;
-    Promise.all([
-      import("remark-math"),
-      import("rehype-katex"),
-      import("katex/dist/katex.min.css"),
-    ])
+    Promise.all([import("remark-math"), import("rehype-katex"), import("katex/dist/katex.min.css")])
       .then(([rm, rk]) => {
         setMathPlugins({ remark: rm.default, rehype: rk.default });
       })
@@ -163,10 +157,7 @@ export function Preview({ content }: PreviewProps) {
         <p className="text-muted-foreground">Nothing to preview.</p>
       ) : (
         <ReactMarkdown
-          remarkPlugins={[
-            remarkGfm,
-            ...(hasMath && mathPlugins ? [mathPlugins.remark] : []),
-          ]}
+          remarkPlugins={[remarkGfm, ...(hasMath && mathPlugins ? [mathPlugins.remark] : [])]}
           rehypePlugins={hasMath && mathPlugins ? [mathPlugins.rehype] : []}
           components={{ code: CodeBlock }}
         >

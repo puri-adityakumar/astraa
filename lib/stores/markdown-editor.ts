@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { createZustandStorage } from "./storage";
 
-export type FileEntry = {
+type FileEntry = {
   id: string;
   name: string;
   content: string;
@@ -10,7 +10,7 @@ export type FileEntry = {
   updatedAt: number;
 };
 
-export type Mode = "view" | "edit";
+type Mode = "view" | "edit";
 
 export type MarkdownEditorState = {
   schemaVersion: 3;

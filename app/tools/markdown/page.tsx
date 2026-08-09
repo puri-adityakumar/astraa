@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
+
 import { MarkdownEditorClient } from "@/components/markdown/markdown-editor-client";
+import { RelatedTools } from "@/components/related-tools";
+import { ToolGuide } from "@/components/tool-guide";
 import "./print.css";
 
 export const metadata: Metadata = {
-  title: "Markdown Editor | astraa",
+  title: "Markdown Editor",
   description:
-    "Write Markdown with live preview. Local-only file storage, math and diagram rendering, drag-drop images, and PDF export. Free browser-based tool.",
+    "Write and preview Markdown with math, diagrams, dropped images, and HTML or PDF export. Documents stay in local browser storage.",
   keywords: [
     "markdown editor",
     "markdown preview",
@@ -15,16 +18,15 @@ export const metadata: Metadata = {
     "developer tools",
   ],
   openGraph: {
-    title: "Markdown Editor | astraa",
-    description:
-      "Write Markdown with live preview, math, diagrams, and PDF export. All local in your browser.",
+    title: "Markdown Editor",
+    description: "Write and preview Markdown with math, diagrams, and export in this browser.",
     url: "/tools/markdown",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
-    title: "Markdown Editor | astraa",
-    description: "Write Markdown with live preview. Free, local, browser-based.",
+    title: "Markdown Editor",
+    description: "Write and preview Markdown with local browser storage and export.",
   },
   alternates: {
     canonical: "/tools/markdown",
@@ -32,5 +34,11 @@ export const metadata: Metadata = {
 };
 
 export default function MarkdownEditorPage() {
-  return <MarkdownEditorClient />;
+  return (
+    <>
+      <MarkdownEditorClient />
+      <ToolGuide toolId="markdown" />
+      <RelatedTools toolId="markdown" />
+    </>
+  );
 }

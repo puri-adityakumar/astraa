@@ -7,10 +7,17 @@ type Request = {
   pattern: string;
   flags: string;
   input: string;
+  replacement: string;
 };
 
 type Response =
-  | { type: "done"; results: MatchResult[]; elapsedMs: number; capped: boolean }
+  | {
+      type: "done";
+      results: MatchResult[];
+      elapsedMs: number;
+      capped: boolean;
+      replacementResult: string;
+    }
   | { type: "error"; error: string }
   | { type: "timeout" };
 
@@ -18,9 +25,7 @@ const MATCH_CAP = 10000;
 
 function toMatchResult(m: RegExpExecArray): MatchResult {
   const full = m[0];
-  const indices = (
-    m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }
-  ).indices;
+  const indices = (m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }).indices;
   const groups: (string | undefined)[] = [];
   const groupIndices: (number | null)[] = [];
   for (let i = 1; i < m.length; i++) {
@@ -45,7 +50,7 @@ function toMatchResult(m: RegExpExecArray): MatchResult {
 }
 
 self.onmessage = (event: MessageEvent<Request>) => {
-  const { pattern, flags, input } = event.data;
+  const { pattern, flags, input, replacement } = event.data;
   const start = performance.now();
   let regex: RegExp;
   try {
@@ -79,11 +84,21 @@ self.onmessage = (event: MessageEvent<Request>) => {
     }
   }
 
-  const response: Response = {
-    type: "done",
-    results,
-    elapsedMs: performance.now() - start,
-    capped,
-  };
-  self.postMessage(response);
+  try {
+    const replacementRegex = new RegExp(
+      pattern,
+      flags.includes("d") ? flags.replace("d", "") : flags,
+    );
+    const response: Response = {
+      type: "done",
+      results,
+      elapsedMs: performance.now() - start,
+      capped,
+      replacementResult: input.replace(replacementRegex, replacement),
+    };
+    self.postMessage(response);
+  } catch {
+    const response: Response = { type: "error", error: "Regex execution failed" };
+    self.postMessage(response);
+  }
 };

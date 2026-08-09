@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+
 import { CalculatorClient } from "@/components/calculator/calculator-client";
+import { RelatedTools } from "@/components/related-tools";
+import { ToolGuide } from "@/components/tool-guide";
 
 export const metadata: Metadata = {
   title: "Scientific Calculator",
   description:
-    "Perform complex math calculations with our free Google-style scientific calculator. Supports trigonometry, logarithms, and advanced operations in your browser.",
+    "Calculate arithmetic, powers, trigonometric functions, logarithms, roots, and factorials in your browser. No account or install required.",
   keywords: [
     "scientific calculator",
     "online calculator",
@@ -12,21 +15,18 @@ export const metadata: Metadata = {
     "trigonometry calculator",
     "logarithm calculator",
     "advanced calculator",
-    "free calculator",
     "browser calculator",
   ],
   openGraph: {
     title: "Scientific Calculator",
-    description:
-      "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
+    description: "Calculate arithmetic and scientific functions directly in your browser.",
     url: "/tools/calculator",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Scientific Calculator",
-    description:
-      "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
+    description: "Calculate arithmetic and scientific functions directly in your browser.",
   },
   alternates: {
     canonical: "/tools/calculator",
@@ -34,17 +34,11 @@ export const metadata: Metadata = {
 };
 
 export default function CalculatorPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <CalculatorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="calculator" />
+      <RelatedTools toolId="calculator" />
     </>
   );
 }

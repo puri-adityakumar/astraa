@@ -15,7 +15,7 @@ export function ModeToggle() {
 
   return (
     <div
-      role="tablist"
+      role="group"
       aria-label="Snippet mode"
       className="inline-flex rounded-md border bg-muted p-0.5"
     >
@@ -24,12 +24,12 @@ export function ModeToggle() {
         return (
           <button
             key={id}
-            role="tab"
-            aria-selected={active}
+            type="button"
+            aria-pressed={active}
             aria-label={label}
             onClick={() => setMode(id)}
             className={cn(
-              "inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-sm min-h-touch",
+              "inline-flex min-h-touch min-w-touch items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-xs font-medium",
               "transition-colors duration-100 ease-out",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               active
@@ -38,7 +38,7 @@ export function ModeToggle() {
             )}
           >
             <Icon className="h-3.5 w-3.5" aria-hidden />
-            <span className="hidden sm:inline">{label}</span>
+            <span>{label}</span>
           </button>
         );
       })}

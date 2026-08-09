@@ -1,126 +1,62 @@
-# Astraa Documentation
+# Astraa documentation
 
-A modern, browser-based utility tools and games suite built with Next.js 16, TypeScript, and React 19.
+This index connects Astraa's public technical references without duplicating their source
+material or the repository's contributor procedures.
 
-## Table of Contents
+- [Architecture](./ARCHITECTURE.md): rendering, state, remote data, privacy, and quality boundaries.
+- [Components](./COMPONENTS.md): composition and component-level conventions.
+- [Server interfaces](./API.md): rate routes, text action, contributors, and client caching.
+- [Development](./DEVELOPMENT.md): setup, workflows, tests, environment, and contribution gates.
+- [Performance](./PERFORMANCE.md): repeatable mobile lab profile, current medians, and follow-ups.
+- [SEO](./SEO.md): search-data limitations, technical scope, and post-deployment checks.
 
-- [Overview](#overview)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [Running the Application](#running-the-application)
-- [Documentation Index](#documentation-index)
-
-## Overview
-
-Astraa provides an integrated platform of developer and creator utilities that run entirely in the browser. No backend processing required for most features.
-
-**Key Features:**
-- Password, hash, and text generators
-- Currency and cryptocurrency converters
-- Image resizer and unit converter
-- Calculator and developer tools
-- Browser-based games
-- Dark/light theme support
-- Activity tracking dashboard
-- Keyboard navigation (cmd+k)
-
-## Quick Start
+## Quick start
 
 ```bash
-# Clone the repository
-git clone https://github.com/puri-adityakumar/astraa.git
-cd astraa
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Installation
-
-### Prerequisites
-
-- Node.js 18.17 or later
-- npm 9.0 or later
-
-### Steps
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/puri-adityakumar/astraa.git
-
-# 2. Navigate to project directory
-cd astraa
-
-# 3. Install dependencies
-npm install
-
-# 4. Copy environment variables (optional)
+npm ci
 cp .env.sample .env.local
-
-# 5. Configure environment variables
-# OPENROUTER_API_KEY - Required for AI text generation
-```
-
-### Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
-| `OPENROUTER_API_KEY` | Optional | API key for AI-powered text generation |
-| `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL (visitor counting) |
-| `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |
-
-## Running the Application
-
-### Development
-
-```bash
 npm run dev
 ```
 
-Starts the development server at `http://localhost:3000` with hot reload.
+Most tools work without provider credentials. Crypto rates and AI-generated text
+need their server-side variables to call their respective providers.
 
-### Production Build
+## Technology
 
-```bash
-npm run build
-npm start
-```
+| Area                | Choice                                                      |
+| ------------------- | ----------------------------------------------------------- |
+| Framework           | Next.js App Router, React, TypeScript                       |
+| Styling             | Tailwind CSS, Radix-based local primitives, Geist           |
+| Motion              | Framer Motion with reduced-motion support                   |
+| Focused state       | Zustand with IndexedDB/localStorage adapter                 |
+| Tests               | Vitest, Playwright, axe-core                                |
+| Static checks       | TypeScript, ESLint, Knip                                    |
+| Monitoring          | Optional sanitized Sentry, Vercel Analytics, Speed Insights |
+| Server cache/limits | Next fetch cache, React cache, optional Upstash Redis       |
 
-### Linting
+## Environment variables
 
-```bash
-npm run lint
-```
+| Variable                                                    | Required           | Purpose                                         |
+| ----------------------------------------------------------- | ------------------ | ----------------------------------------------- |
+| `OPENROUTER_API_KEY`                                        | For AI text        | Server-only OpenRouter credential               |
+| `COINGECKO_API_KEY`                                         | For crypto rates   | Server-only CoinGecko credential                |
+| `KV_REST_API_URL`                                           | Production AI text | Upstash REST endpoint                           |
+| `KV_REST_API_TOKEN`                                         | Production AI text | Upstash REST credential                         |
+| `RATE_LIMIT_SALT`                                           | Production AI text | Secret salt for anonymous rate-limit identities |
+| `SENTRY_DSN` / `SENTRY_ENVIRONMENT`                         | Optional           | Server/edge error monitoring                    |
+| `NEXT_PUBLIC_SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_ENVIRONMENT` | Optional           | Client error monitoring configuration           |
+| `SENTRY_AUTH_TOKEN`                                         | Optional CI only   | Source-map upload during builds                 |
+| `ASTRAA_ENABLE_ANALYTICS`                                   | Optional           | Set to `false` to omit Vercel telemetry         |
 
-## Documentation Index
+Use `.env.sample` as the source of truth and never commit real secrets.
 
-| Document | Description |
-|----------|-------------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture, diagrams, and data flow |
-| [API.md](./API.md) | API integrations and external services |
-| [COMPONENTS.md](./COMPONENTS.md) | Component hierarchy, hooks, and usage |
-| [DEVELOPMENT.md](./DEVELOPMENT.md) | Development guidelines and workflows |
+## Contributor procedures
 
-## Tech Stack
-
-| Category | Technologies |
-|----------|--------------|
-| Framework | Next.js 16, React 19 |
-| Language | TypeScript 5.9 |
-| Styling | Tailwind CSS 3.4, Framer Motion |
-| UI Components | Radix UI, Shadcn/UI |
-| State | Zustand 5, React Context |
-| Forms | React Hook Form, Zod 4 |
-| Database | Upstash Redis |
-| Monitoring | Sentry, Vercel Analytics |
-
-## License
-
-MIT License - see [LICENSE](../LICENSE) for details.
+Human issue, pull-request, review, and release policy lives in the
+[contribution guide](https://github.com/puri-adityakumar/astraa/blob/development/CONTRIBUTING.md).
+Repository-owned coding-agent procedures live in the tracked
+[feature workflow](https://github.com/puri-adityakumar/astraa/blob/development/.agents/skills/astraa-feature-workflow/SKILL.md),
+[architecture](https://github.com/puri-adityakumar/astraa/blob/development/.agents/skills/astraa-architecture/SKILL.md),
+and
+[code-quality](https://github.com/puri-adityakumar/astraa/blob/development/.agents/skills/astraa-code-quality/SKILL.md)
+skills.

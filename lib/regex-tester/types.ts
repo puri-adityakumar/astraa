@@ -11,9 +11,7 @@ export type MatchResult = {
   groupIndices?: (number | null)[];
 };
 
-export type CompileResult =
-  | { ok: true; regex: RegExp }
-  | { ok: false; error: string };
+export type CompileResult = { ok: true; regex: RegExp } | { ok: false; error: string };
 
 export type StarterPattern = {
   id: string;
@@ -23,13 +21,8 @@ export type StarterPattern = {
   description: string;
 };
 
-export type CheatsheetCategory =
-  | "anchors"
-  | "quantifiers"
-  | "classes"
-  | "groups"
-  | "lookaround"
-  | "escapes";
+type CheatsheetCategory =
+  "anchors" | "quantifiers" | "classes" | "groups" | "lookaround" | "escapes";
 
 export type CheatsheetToken = {
   id: string;
@@ -83,7 +76,7 @@ export type TokenizeResult = {
   balanced: boolean;
 };
 
-export type MiniTestKind = "should-match" | "should-not-match";
+type MiniTestKind = "should-match" | "should-not-match";
 
 export type MiniTest = {
   id: string;
@@ -91,7 +84,5 @@ export type MiniTest = {
   input: string;
   expected?: string;
 };
-
-export type MatchExportFormat = "json" | "csv";
 
 export type CodeLang = "js" | "python" | "java" | "go" | "php";

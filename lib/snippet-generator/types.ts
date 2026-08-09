@@ -60,7 +60,7 @@ export type LanguageOption = {
   name: string;
 };
 
-export type HighlightToken = {
+type HighlightToken = {
   content: string;
   color?: string;
 };

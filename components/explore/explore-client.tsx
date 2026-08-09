@@ -7,11 +7,10 @@ import { ContentGrid, type ContentItem } from "@/components/content-grid";
 import { Badge } from "@/components/ui/badge";
 import { fadeInUp } from "@/lib/animations/variants";
 import { useReducedMotion } from "@/lib/animations/hooks";
-import { games } from "@/lib/games";
-import { useTools } from "@/lib/tools-context";
+import { availableGames, comingSoonGames, games } from "@/lib/games";
+import { availableTools, comingSoonTools, tools } from "@/lib/tools";
 
 export function ExploreClient() {
-  const { tools } = useTools();
   const shouldReduce = useReducedMotion();
 
   const toolItems: ContentItem[] = tools.map((tool) => ({
@@ -41,12 +40,14 @@ export function ExploreClient() {
           </div>
           <div>
             <p className="max-w-xl text-base leading-7 text-muted-foreground">
-              Small, precise tools for development, content, data, and focused work.
-              Everything opens instantly and most processing stays on your device.
+              Small, precise tools for development, content, data, and focused work. Available tools
+              open directly; planned entries are clearly labelled.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <Badge variant="outline">{tools.length} tools</Badge>
-              <Badge variant="outline">{games.length} games</Badge>
+              <Badge variant="outline">{availableTools.length} available tools</Badge>
+              <Badge variant="outline">{comingSoonTools.length} planned tools</Badge>
+              <Badge variant="outline">{formatGameCount(availableGames.length)} available</Badge>
+              <Badge variant="outline">{formatGameCount(comingSoonGames.length)} planned</Badge>
               <Badge variant="outline">No sign-up</Badge>
             </div>
           </div>
@@ -54,7 +55,7 @@ export function ExploreClient() {
       </motion.header>
 
       <CatalogSection
-        count={tools.length}
+        count={availableTools.length}
         description="Utilities for data, code, files, calculations, and everyday browser tasks."
         icon={Wrench}
         items={toolItems}
@@ -62,14 +63,22 @@ export function ExploreClient() {
       />
 
       <CatalogSection
-        count={games.length}
-        description="Small browser games for a quick reset between focused sessions."
+        count={availableGames.length}
+        description={`${formatGameCount(availableGames.length)} ${
+          availableGames.length === 1 ? "is" : "are"
+        } playable now; ${formatGameCount(comingSoonGames.length)} ${
+          comingSoonGames.length === 1 ? "remains" : "remain"
+        } planned.`}
         icon={Gamepad2}
         items={gameItems}
         title="Games"
       />
     </div>
   );
+}
+
+function formatGameCount(count: number): string {
+  return `${count} ${count === 1 ? "game" : "games"}`;
 }
 
 interface CatalogSectionProps {
@@ -80,13 +89,7 @@ interface CatalogSectionProps {
   title: string;
 }
 
-function CatalogSection({
-  count,
-  description,
-  icon: Icon,
-  items,
-  title,
-}: CatalogSectionProps) {
+function CatalogSection({ count, description, icon: Icon, items, title }: CatalogSectionProps) {
   return (
     <section aria-labelledby={`${title.toLowerCase()}-heading`}>
       <div className="mb-5 flex flex-col gap-3 border-b pb-5 sm:flex-row sm:items-end sm:justify-between">

@@ -1,7 +1,36 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   agentRules: false,
-  images: { unoptimized: false },
+  images: {
+    unoptimized: false,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "github.com",
+        pathname: "/puri-adityakumar.png",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        pathname: "/u/**",
+      },
+      {
+        protocol: "https",
+        hostname: "assets.coincap.io",
+        pathname: "/assets/icons/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn-icons-png.flaticon.com",
+        pathname: "/512/1213/1213032.png",
+      },
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+        pathname: "/w40/**",
+      },
+    ],
+  },
   async headers() {
     const headers = [
       {
@@ -32,26 +61,15 @@ const nextConfig = {
     ];
 
     if (process.env.NODE_ENV === "production") {
-      headers.push(
-        {
-          source: "/_next/static/(.*)",
-          headers: [
-            {
-              key: "Cache-Control",
-              value: "public, max-age=31536000, immutable",
-            },
-          ],
-        },
-        {
-          source: "/assets/(.*)",
-          headers: [
-            {
-              key: "Cache-Control",
-              value: "public, max-age=86400",
-            },
-          ],
-        },
-      );
+      headers.push({
+        source: "/assets/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400",
+          },
+        ],
+      });
     }
 
     return headers;
@@ -59,7 +77,6 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-
 
 // Injected content via Sentry wizard below
 
@@ -83,8 +100,8 @@ module.exports = withSentryConfig(module.exports, {
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
+  // Keep source-map uploads scoped to the standard production set.
+  widenClientFileUpload: false,
 
   // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -93,11 +110,8 @@ module.exports = withSentryConfig(module.exports, {
   // tunnelRoute: "/monitoring",
 
   webpack: {
-    // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-    // See the following for more information:
-    // https://docs.sentry.io/product/crons/
-    // https://vercel.com/docs/cron-jobs
-    automaticVercelMonitors: true,
+    // Astraa has no configured cron jobs to monitor.
+    automaticVercelMonitors: false,
 
     // Tree-shaking options for reducing bundle size
     treeshake: {

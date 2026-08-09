@@ -1,10 +1,12 @@
 import nextConfig from "eslint-config-next";
 import coreWebVitals from "eslint-config-next/core-web-vitals";
 
-export default [
+const eslintConfig = [
   ...nextConfig,
   ...coreWebVitals,
   {
     ignores: ["**/*.test.ts"],
   },
 ];
+
+export default eslintConfig;

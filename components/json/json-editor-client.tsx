@@ -11,7 +11,6 @@ import { ConvertView } from "./convert-view";
 import { GenerateView } from "./generate-view";
 import { DropzoneOverlay } from "./dropzone-overlay";
 import { useJsonEditor } from "@/lib/stores/json-editor";
-import { useToolSettings } from "@/lib/stores/tool-settings";
 import { createParseClient, type ParseClient } from "@/lib/json/parse-client";
 import { logError } from "@/lib/error-handler";
 
@@ -19,23 +18,17 @@ export function JsonEditorClient() {
   const text = useJsonEditor((s) => s.text);
   const view = useJsonEditor((s) => s.view);
   const setParseResult = useJsonEditor((s) => s.setParseResult);
-  const updateToolUsage = useToolSettings((s) => s.updateToolUsage);
   const clientRef = useRef<ParseClient | null>(null);
   const debounceRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    updateToolUsage("/tools/json");
-  }, [updateToolUsage]);
-
-  useEffect(() => {
     try {
-      const worker = new Worker(
-        new URL("@/lib/json/parse-worker.ts", import.meta.url),
-        { type: "module" },
-      );
+      const worker = new Worker(new URL("@/lib/json/parse-worker.ts", import.meta.url), {
+        type: "module",
+      });
       clientRef.current = createParseClient(worker);
     } catch (e) {
-      logError(e, { context: "json-editor/worker-init" });
+      logError(e, { operation: "json-editor/worker-init" });
     }
     return () => {
       clientRef.current?.destroy();
@@ -72,12 +65,11 @@ export function JsonEditorClient() {
           JSON Editor
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">
-          Edit, format, convert and generate types from JSON. Tree view,
-          YAML/CSV/Markdown converters, TypeScript and Zod generators. Up to
-          50&nbsp;MB, parsed off the main thread.
+          Edit, format, convert and generate types from JSON. Tree view, YAML/CSV/Markdown
+          converters, TypeScript and Zod generators. Up to 50&nbsp;MB, parsed off the main thread.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-          All processing happens locally in your browser
+          JSON is processed in this browser
         </p>
       </div>
 

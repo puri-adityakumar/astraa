@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -35,31 +31,13 @@
     // Path mappings for cleaner imports
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@/components/*": [
-        "./components/*",
-        "./src/components/*"
-      ],
-      "@/lib/*": [
-        "./lib/*",
-        "./src/lib/*"
-      ],
-      "@/types/*": [
-        "./types/*",
-        "./src/types/*"
-      ],
-      "@/config/*": [
-        "./src/config/*"
-      ],
-      "@/hooks/*": [
-        "./hooks/*",
-        "./src/hooks/*"
-      ],
-      "@/app/*": [
-        "./app/*"
-      ]
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*", "./src/components/*"],
+      "@/lib/*": ["./lib/*", "./src/lib/*"],
+      "@/types/*": ["./types/*", "./src/types/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/hooks/*": ["./hooks/*", "./src/hooks/*"],
+      "@/app/*": ["./app/*"]
     }
   },
   "include": [
@@ -69,10 +47,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "out",
-    ".next",
-    "tests"
-  ]
+  "exclude": ["node_modules", "out", ".next", "tests"]
 }

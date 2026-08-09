@@ -1,573 +1,116 @@
-# Development Guide
+# Development guide
 
-Development guidelines, workflows, and best practices for Astraa.
+This guide records the local setup, project boundaries, and executable development context for
+human contributors working on Astraa.
 
-## Table of Contents
-
-- [Project Structure](#project-structure)
-- [Folder Conventions](#folder-conventions)
-- [Code Style Guidelines](#code-style-guidelines)
-- [Testing Approach](#testing-approach)
-- [Build and Deployment](#build-and-deployment)
-- [Common Workflows](#common-workflows)
-
-## Project Structure
-
-```
-astraa/
-├── app/                      # Next.js App Router pages
-│   ├── layout.tsx            # Root layout
-│   ├── page.tsx              # Landing page
-│   ├── error.tsx             # Error boundary
-│   ├── global-error.tsx      # Global error boundary
-│   ├── not-found.tsx         # 404 page
-│   ├── robots.ts             # robots.txt generation
-│   ├── sitemap.ts            # sitemap.xml generation
-│   ├── api/                  # API routes (stats endpoint)
-│   ├── tools/                # Tool pages
-│   │   ├── page.tsx          # Tools listing
-│   │   ├── password/         # Password generator
-│   │   ├── hash/             # Hash generator
-│   │   ├── currency/         # Currency converter
-│   │   ├── text/             # Text generator
-│   │   ├── image/            # Image resizer
-│   │   ├── units/            # Unit converter
-│   │   ├── calculator/       # Calculator
-│   │   ├── json/             # JSON validator
-│   │   ├── sql/              # SQL formatter
-│   │   └── music/            # Lofi Focus Studio
-│   ├── games/                # Game pages
-│   │   ├── page.tsx          # Games listing
-│   │   ├── snake/            # Snake game
-│   │   ├── memory/           # Memory game
-│   │   ├── dino/             # Dino game
-│   │   ├── pacman/           # Pacman game
-│   │   ├── sudoku/           # Sudoku game
-│   │   └── word-search/      # Word Search game
-│   ├── explore/              # Activity feed
-│   ├── contribute/           # Contribution page
-│   └── privacy/              # Privacy policy
-├── components/               # React components
-│   ├── ui/                   # Shadcn/UI components
-│   ├── home/                 # Landing page components
-│   ├── password/             # Password tool components
-│   ├── hash/                 # Hash tool components
-│   ├── currency/             # Currency tool components
-│   ├── calculator/           # Calculator components
-│   ├── colors/               # Color picker components
-│   ├── image/                # Image resizer components
-│   ├── music/                # Music player components
-│   └── units/                # Unit converter components
-├── middleware.ts              # Edge middleware (visitor counting via Upstash Redis)
-├── lib/                      # Utilities and logic
-│   ├── tools.ts              # Tools catalog
-│   ├── games.ts              # Games catalog
-│   ├── tools-context.tsx     # Tools context provider
-│   ├── activity-tracker.tsx  # Activity tracking
-│   ├── api.ts                # External API calls
-│   ├── openrouter.ts         # AI text generation
-│   ├── redis.ts              # Upstash Redis client
-│   ├── utils.ts              # General utilities
-│   ├── clipboard.ts          # Clipboard utilities
-│   ├── error-handler.ts      # Error handling
-│   ├── crypto-data.ts        # Cryptocurrency data
-│   ├── currency-data.ts      # Currency data
-│   ├── unit-conversions.ts   # Unit conversion logic
-│   ├── stores/               # Zustand stores
-│   ├── animations/           # Framer Motion utilities
-│   ├── password/             # Password generation logic
-│   ├── hash/                 # Hash generation logic
-│   ├── calculator/           # Calculator logic
-│   ├── image/                # Image processing logic
-│   └── games/                # Game-specific logic (snake, memory, dino)
-├── instrumentation-client.ts  # Sentry client-side instrumentation
-├── instrumentation.ts         # Sentry server-side instrumentation
-├── hooks/                    # Custom React hooks
-├── types/                    # TypeScript type definitions
-├── public/                   # Static assets
-├── tailwind.config.ts        # Tailwind configuration
-├── tsconfig.json             # TypeScript configuration
-└── next.config.js            # Next.js configuration
-```
-
-## Folder Conventions
-
-### Page Components
-
-Server components in `app/` render client components from `components/`.
-
-```typescript
-// app/tools/password/page.tsx (Server Component)
-import { Metadata } from "next"
-import { PasswordGenerator } from "@/components/password/password-generator"
-
-export const metadata: Metadata = {
-  title: "Password Generator | astraa",
-  description: "Generate secure passwords"
-}
-
-export default function PasswordPage() {
-  return <PasswordGenerator />
-}
-```
-
-```typescript
-// components/password/password-generator.tsx (Client Component)
-"use client"
-
-import { useState } from "react"
-
-export function PasswordGenerator() {
-  // Component implementation
-}
-```
-
-### Feature Folders
-
-Group related functionality together.
-
-```
-lib/password/
-├── password-utils.ts    # Core logic
-├── types.ts             # Type definitions
-└── index.ts             # Public exports
-
-components/password/
-├── password-generator.tsx   # Main component
-├── password-options.tsx     # Configuration UI
-├── password-display.tsx     # Result display
-└── index.ts                 # Public exports
-```
-
-### Index Exports
-
-Use index files for clean imports.
-
-```typescript
-// lib/hash/index.ts
-export * from "./hash-utils"
-export * from "./types"
-
-// Usage
-import { generateHash, type HashAlgorithm } from "@/lib/hash"
-```
-
-## Code Style Guidelines
-
-### Import Order
-
-```typescript
-// 1. External libraries
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-
-// 2. Internal utilities
-import { useToast } from "@/hooks/use-toast"
-import { cn } from "@/lib/utils"
-
-// 3. Components
-import { Button } from "@/components/ui/button"
-import { HashInput } from "./hash-input"
-
-// 4. Types
-import type { Tool } from "@/lib/tools"
-```
-
-### Naming Conventions
-
-| Type | Convention | Example |
-|------|------------|---------|
-| Components | PascalCase | `PasswordGenerator` |
-| Functions | camelCase | `generatePassword` |
-| Constants | UPPER_SNAKE_CASE | `TOAST_LIMIT` |
-| Types/Interfaces | PascalCase | `Tool`, `PasswordResult` |
-| Files | kebab-case | `password-generator.tsx` |
-| Props | Descriptive | `handleGenerate` not `handleClick` |
-
-### Component Structure
-
-```typescript
-"use client"
-
-import { useState, useCallback } from "react"
-import { Button } from "@/components/ui/button"
-
-interface ComponentProps {
-  initialValue?: string
-  onSubmit: (value: string) => void
-}
-
-export function ComponentName({ initialValue = "", onSubmit }: ComponentProps) {
-  // State declarations
-  const [value, setValue] = useState(initialValue)
-
-  // Handlers grouped together
-  const handleSubmit = useCallback(() => {
-    onSubmit(value)
-  }, [value, onSubmit])
-
-  // Render
-  return (
-    <div className="container max-w-2xl pt-24 pb-12 space-y-8">
-      {/* content */}
-    </div>
-  )
-}
-```
-
-### Styling with Tailwind
-
-```typescript
-import { cn } from "@/lib/utils"
-
-// Conditional classes
-<div className={cn(
-  "base-class px-4 py-2",
-  isActive && "bg-primary text-primary-foreground",
-  isDisabled && "opacity-50 cursor-not-allowed"
-)} />
-
-// Fluid typography
-<h1 className="text-fluid-xl font-bold">Title</h1>
-<p className="text-fluid-base">Body text</p>
-
-// Glass morphism
-<div className="glass glass-hover rounded-lg p-4">
-  Content
-</div>
-```
-
-### Error Handling
-
-```typescript
-import { getUserFriendlyError, logError } from "@/lib/error-handler"
-import { useToast } from "@/hooks/use-toast"
-
-export function MyComponent() {
-  const { toast } = useToast()
-
-  async function handleAction() {
-    try {
-      await riskyOperation()
-    } catch (error) {
-      const details = getUserFriendlyError(error)
-      toast({
-        title: details.title,
-        description: details.message,
-        variant: "destructive"
-      })
-      logError(error, { context: "my-component-action" })
-    }
-  }
-}
-```
-
-### Result Types
-
-```typescript
-// For async operations
-type Result<T> =
-  | { success: true; data: T }
-  | { success: false; error: string }
-
-async function fetchData(): Promise<Result<Data>> {
-  try {
-    const data = await api.getData()
-    return { success: true, data }
-  } catch (error) {
-    return { success: false, error: "Failed to fetch data" }
-  }
-}
-
-// Usage
-const result = await fetchData()
-if (result.success) {
-  console.log(result.data)
-} else {
-  console.error(result.error)
-}
-```
-
-### Animations
-
-```typescript
-import { motion } from "framer-motion"
-import { fadeInUp, staggerContainer } from "@/lib/animations/variants"
-import { useReducedMotion } from "@/lib/animations/hooks"
-
-export function AnimatedList({ items }: { items: Item[] }) {
-  const shouldReduce = useReducedMotion()
-
-  return (
-    <motion.ul
-      variants={shouldReduce ? {} : staggerContainer}
-      initial="hidden"
-      animate="show"
-    >
-      {items.map((item) => (
-        <motion.li key={item.id} variants={shouldReduce ? {} : fadeInUp}>
-          {item.name}
-        </motion.li>
-      ))}
-    </motion.ul>
-  )
-}
-```
-
-### TypeScript Configuration
-
-```typescript
-// Prefer unknown over any
-function handleError(error: unknown) {
-  if (error instanceof Error) {
-    console.error(error.message)
-  }
-}
-
-// Use path aliases
-import { Button } from "@/components/ui/button"
-import { generateHash } from "@/lib/hash"
-
-// Explicit return types for public functions
-export function calculateTotal(items: Item[]): number {
-  return items.reduce((sum, item) => sum + item.price, 0)
-}
-```
-
-## Testing Approach
-
-Currently no test suite configured. Manual testing recommended during development.
-
-### Manual Testing Checklist
-
-- [ ] Test all tool functionalities
-- [ ] Verify responsive design (mobile, tablet, desktop)
-- [ ] Check dark/light theme switching
-- [ ] Test keyboard navigation
-- [ ] Verify accessibility with screen reader
-- [ ] Test error states and edge cases
-- [ ] Check browser compatibility
-
-### Recommended Testing Tools
+## Local commands
 
 ```bash
-# Lighthouse audit
-npx lighthouse http://localhost:3000 --view
-
-# Accessibility testing
-# Use browser extensions: axe DevTools, WAVE
-```
-
-## Build and Deployment
-
-### Development Server
-
-```bash
+npm ci
 npm run dev
+npm run check
+npm run build:e2e -- --webpack
+npm run test:e2e
+npm run measure:performance
 ```
 
-Starts at `http://localhost:3000` with hot reload.
+The development server defaults to `http://localhost:3000`. Use another port
+with `npm run dev -- --port 3002` when the default is occupied.
 
-### Production Build
+## Project layout
 
-```bash
-npm run build
-npm start
+```text
+app/                         Next App Router pages, metadata, errors, API routes
+components/                  Feature components and used UI primitives
+hooks/                       Cross-feature client hooks
+lib/                         Pure logic, server resources, focused stores
+lib/observability/           Sanitization and Sentry policy
+lib/rates/                   Rate contracts, providers, and client resource
+lib/stores/                  JSON/Markdown/regex/snippet stores and storage adapter
+public/                      Static assets
+plans/                       Reviewed implementation plans and status
 ```
 
-### Build Output
+## Contributor workflow
 
-```
-.next/
-├── static/          # Static assets
-├── server/          # Server-side code
-└── cache/           # Build cache
-```
+Human issue, assignment, commit, pull-request, review, and release rules live only in
+[CONTRIBUTING.md](https://github.com/puri-adityakumar/astraa/blob/development/CONTRIBUTING.md).
+Coding-agent feature orchestration, placement decisions, and completion checks live in the tracked
+[feature workflow](https://github.com/puri-adityakumar/astraa/blob/development/.agents/skills/astraa-feature-workflow/SKILL.md),
+[architecture](https://github.com/puri-adityakumar/astraa/blob/development/.agents/skills/astraa-architecture/SKILL.md),
+and
+[code-quality](https://github.com/puri-adityakumar/astraa/blob/development/.agents/skills/astraa-code-quality/SKILL.md)
+skills. The package scripts and CI workflow remain the executable verification truth.
 
-### Environment Variables
+## State decisions
 
-```bash
-# .env.local (development) — see .env.sample
-NEXT_PUBLIC_ENV=dev
-OPENROUTER_API_KEY=your_key_here
-KV_REST_API_URL=your_redis_url
-KV_REST_API_TOKEN=your_redis_token
-# SENTRY_AUTH_TOKEN=your_sentry_token  # optional
-```
+Prefer, in order:
 
-### Deployment Platforms
+1. a derived value;
+2. component-local state;
+3. URL state when the user should share or restore it;
+4. a focused Zustand store when one editor needs durable state.
 
-**Vercel (Recommended)**
-```bash
-# Deploy via Vercel CLI
-npx vercel
-```
+Persisted stores must use `createZustandStorage()`, own a schema version and
+migration, cap stored data, and remain usable when storage fails. Add a selector
+for each component instead of subscribing to the whole store.
 
-**Docker** (not currently configured — no Dockerfile in repo)
+## Remote data and caching
 
-## Common Workflows
+Keep provider keys and policy on the server. Validate query parameters before
+fetching, set explicit upstream timeouts, validate provider payloads, map errors
+to stable public codes, and document cache behavior.
 
-### Adding a New Tool
+Client caches must have a key strategy, TTL, size bound, invalidation path,
+in-flight deduplication, and cancellation semantics. Derived inputs such as a
+currency amount should not change the resource key.
 
-1. **Define tool in catalog:**
+## Error handling
 
 ```typescript
-// lib/tools.ts
-import { ToolIcon } from "lucide-react"
+import { getUserFriendlyError, logError } from "@/lib/error-handler";
 
-// Add to appropriate category in toolCategories array
-{
-  name: "New Tool",
-  description: "Tool description",
-  path: "/tools/new-tool",
-  icon: ToolIcon,
-  wip: false,        // Optional: show as work in progress
-  comingSoon: false  // Optional: show as coming soon
+try {
+  await riskyOperation();
+} catch (error) {
+  const details = getUserFriendlyError(error);
+  toast({
+    title: details.title,
+    description: details.message,
+    variant: "destructive",
+  });
+  logError(error, { operation: "feature/action" });
 }
 ```
 
-2. **Create page:**
+Never log credentials, user-entered documents, prompts, clipboard values,
+request bodies, or raw provider output. Extend the tests in
+`lib/observability/` before adding a new sensitive diagnostic field.
 
-```typescript
-// app/tools/new-tool/page.tsx
-import { Metadata } from "next"
-import { NewToolClient } from "@/components/new-tool/new-tool-client"
+## Testing strategy
 
-export const metadata: Metadata = {
-  title: "New Tool | astraa",
-  description: "Tool description"
-}
+Pure logic receives co-located Vitest tests, including empty, maximum, malformed, timeout, abort,
+race, and migration cases where relevant. Playwright exercises the built production app across the
+registry, persisted editors, remote-boundary fixtures, keyboard interactions, reduced motion, and
+serious/critical WCAG 2.2 axe checks. Provider calls stay fixture-backed in browser tests.
 
-export default function NewToolPage() {
-  return <NewToolClient />
-}
-```
+`npm run check` is the deterministic fast gate: format, zero-warning lint, strict TypeScript, Vitest,
+and Knip. Build once with `npm run build:e2e -- --webpack` before `npm run test:e2e`; Playwright
+starts that artifact and does not rebuild it. See `docs/PERFORMANCE.md` before proposing budgets.
 
-3. **Create component:**
+Run `npm run knip` after deleting or moving files. `knip.jsonc` explicitly marks
+framework entries, browser workers, and preserved coming-soon implementations;
+do not widen an ignore pattern to hide unexplained dead code.
 
-```typescript
-// components/new-tool/new-tool-client.tsx
-"use client"
+## Environment
 
-export function NewToolClient() {
-  return (
-    <div className="container max-w-2xl pt-24 pb-12 space-y-8">
-      {/* Tool implementation */}
-    </div>
-  )
-}
-```
+Copy `.env.sample` to `.env.local`. Production-backed features use:
 
-4. **Add utility functions (if needed):**
+- `OPENROUTER_API_KEY` for text generation;
+- `COINGECKO_API_KEY` for crypto rates;
+- `KV_REST_API_URL`, `KV_REST_API_TOKEN`, and `RATE_LIMIT_SALT` for durable AI rate limiting;
+- Sentry DSN/environment pairs for optional sanitized error monitoring;
+- `SENTRY_AUTH_TOKEN` only in CI for optional source-map upload;
+- `ASTRAA_ENABLE_ANALYTICS=false` to omit Vercel analytics at build time.
 
-```typescript
-// lib/new-tool/utils.ts
-export function processData(input: string): Result {
-  // Implementation
-}
-```
-
-### Adding a UI Component
-
-Use Shadcn/UI CLI:
-
-```bash
-npx shadcn@latest add button
-npx shadcn@latest add dialog
-npx shadcn@latest add dropdown-menu
-```
-
-Components are added to `components/ui/`.
-
-### Updating Zustand Store
-
-```typescript
-// lib/stores/user-preferences.ts
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
-
-interface UserPreferencesState {
-  theme: "light" | "dark" | "system"
-  setTheme: (theme: "light" | "dark" | "system") => void
-  // Add new state
-  newSetting: string
-  setNewSetting: (value: string) => void
-}
-
-export const useUserPreferences = create<UserPreferencesState>()(
-  persist(
-    (set) => ({
-      theme: "system",
-      setTheme: (theme) => set({ theme }),
-      // Add new actions
-      newSetting: "default",
-      setNewSetting: (value) => set({ newSetting: value })
-    }),
-    { name: "user-preferences" }
-  )
-)
-```
-
-### Adding Animations
-
-```typescript
-// lib/animations/variants.ts
-
-// Add new variant
-export const slideIn = {
-  hidden: { x: -20, opacity: 0 },
-  show: {
-    x: 0,
-    opacity: 1,
-    transition: { duration: 0.3 }
-  }
-}
-
-// Usage in component
-import { slideIn } from "@/lib/animations/variants"
-
-<motion.div variants={slideIn} initial="hidden" animate="show">
-  Content
-</motion.div>
-```
-
-### Linting
-
-```bash
-npm run lint
-```
-
-Fix issues automatically where possible:
-
-```bash
-npm run lint -- --fix
-```
-
-### Git Workflow
-
-```bash
-# Create feature branch
-git checkout -b feat/new-tool
-
-# Make changes and commit
-git add .
-git commit -m "feat(tools): add new tool"
-
-# Push and create PR targeting development branch
-git push origin feat/new-tool
-```
-
-**PRs must target the `development` branch** and must be assigned to an issue before submitting.
-
-Commit message format (Conventional Commits with scope):
-- `feat(scope):` New feature
-- `fix(scope):` Bug fix
-- `docs(scope):` Documentation
-- `style(scope):` Code style changes
-- `refactor(scope):` Code refactoring
-- `perf(scope):` Performance improvement
-- `test(scope):` Adding tests
-- `chore(scope):` Maintenance tasks
-- `ci(scope):` CI changes
-- `build(scope):` Build system changes
-- `release(vX.Y.Z):` Merge development to main
+Never prefix server secrets with `NEXT_PUBLIC_`.

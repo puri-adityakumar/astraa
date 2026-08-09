@@ -1,20 +1,10 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  fadeInUp,
-  staggerContainer,
-  staggerItem,
-} from "@/lib/animations/variants";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/animations/variants";
 import { useReducedMotion } from "@/lib/animations/hooks";
 import { PatternRow } from "./pattern-row";
 import type { PatternHighlightInputHandle } from "./pattern-highlight-input";
@@ -27,15 +17,26 @@ import { StatusFooter } from "./status-footer";
 import { SnippetCardExport } from "./snippet-card-export";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { compileRegex } from "@/lib/regex-tester/compile";
-import { runMatches } from "@/lib/regex-tester/match";
 import { encodeState, decodeState } from "@/lib/regex-tester/url-state";
 import { debounce } from "@/lib/regex-tester/debounce";
-import { runMatchesSafe } from "@/lib/regex-tester/redos-client";
-import { useToolSettings } from "@/lib/stores/tool-settings";
+import {
+  createEmptyResult,
+  runMatchesSafe,
+  type SafeMatchResult,
+} from "@/lib/regex-tester/redos-client";
 import { copyToClipboard } from "@/lib/clipboard";
 
 const TEST_BYTE_CAP = 100 * 1024;
 const DEBOUNCE_MS = 150;
+const IDLE_MATCH_RESULT = createEmptyResult("idle");
+
+interface MatchSnapshot {
+  pattern: string;
+  flags: string;
+  input: string;
+  replacement: string;
+  result: SafeMatchResult;
+}
 
 export function RegexTesterClient() {
   const pattern = useRegexTester((s) => s.pattern);
@@ -53,7 +54,8 @@ export function RegexTesterClient() {
   const [debouncedPattern, setDebouncedPattern] = useState(pattern);
   const [debouncedFlags, setDebouncedFlags] = useState(flags);
   const [debouncedTest, setDebouncedTest] = useState(testString);
-  const [hardTimeout, setHardTimeout] = useState(false);
+  const [debouncedReplacement, setDebouncedReplacement] = useState(replacement);
+  const [matchSnapshot, setMatchSnapshot] = useState<MatchSnapshot | null>(null);
   const testStringRef = useRef<TestStringAreaHandle>(null);
   const patternInputRef = useRef<PatternHighlightInputHandle>(null);
 
@@ -107,54 +109,52 @@ export function RegexTesterClient() {
       setDebouncedPattern(pattern);
       setDebouncedFlags(flags);
       setDebouncedTest(testString);
+      setDebouncedReplacement(replacement);
     }, DEBOUNCE_MS);
     sync();
     return sync.cancel;
-  }, [pattern, flags, testString]);
-
-  useEffect(() => {
-    useToolSettings.getState().updateToolUsage("regex-tester");
-  }, []);
+  }, [pattern, flags, testString, replacement]);
 
   const compileResult = useMemo(
     () => compileRegex(debouncedPattern, debouncedFlags),
     [debouncedPattern, debouncedFlags],
   );
 
-  const patternError =
-    !compileResult.ok && pattern.length > 0 ? compileResult.error : null;
-
-  const matchResult = useMemo(() => {
-    if (!compileResult.ok) {
-      return { results: [], elapsedMs: 0, capped: false, timedOut: false };
-    }
-    return runMatches(compileResult.regex, debouncedTest);
-  }, [compileResult, debouncedTest]);
-
-  const matches = matchResult.results;
+  const patternError = !compileResult.ok && pattern.length > 0 ? compileResult.error : null;
 
   useEffect(() => {
-    let cancelled = false;
-    if (!matchResult.timedOut) {
-      // Defer the reset to avoid the cascading-render lint rule.
-      const id = window.setTimeout(() => {
-        if (!cancelled) setHardTimeout(false);
-      }, 0);
-      return () => {
-        cancelled = true;
-        window.clearTimeout(id);
-      };
-    }
-    runMatchesSafe(debouncedPattern, debouncedFlags, debouncedTest).then(
-      (safe) => {
-        if (cancelled) return;
-        setHardTimeout(safe.hardTimeout);
-      },
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [matchResult.timedOut, debouncedPattern, debouncedFlags, debouncedTest]);
+    if (!compileResult.ok) return;
+    const controller = new AbortController();
+
+    void runMatchesSafe(debouncedPattern, debouncedFlags, debouncedTest, {
+      replacement: debouncedReplacement,
+      signal: controller.signal,
+    }).then((result) => {
+      if (result.status === "cancelled") return;
+      setMatchSnapshot({
+        pattern: debouncedPattern,
+        flags: debouncedFlags,
+        input: debouncedTest,
+        replacement: debouncedReplacement,
+        result,
+      });
+    });
+
+    return () => controller.abort();
+  }, [compileResult, debouncedPattern, debouncedFlags, debouncedTest, debouncedReplacement]);
+
+  const snapshotIsCurrent =
+    matchSnapshot?.pattern === debouncedPattern &&
+    matchSnapshot.flags === debouncedFlags &&
+    matchSnapshot.input === debouncedTest &&
+    matchSnapshot.replacement === debouncedReplacement;
+  const matchResult =
+    compileResult.ok && snapshotIsCurrent ? matchSnapshot.result : IDLE_MATCH_RESULT;
+  const matches = matchResult.results;
+  const executionError =
+    matchResult.status === "unavailable"
+      ? "Safe regex execution is unavailable in this browser."
+      : patternError;
 
   const handleJumpToMatch = useCallback(
     (matchId: number) => {
@@ -250,16 +250,7 @@ export function RegexTesterClient() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [
-    pattern,
-    flags,
-    testString,
-    replaceOpen,
-    literal,
-    handleShare,
-    setReplaceOpen,
-    toast,
-  ]);
+  }, [pattern, flags, testString, replaceOpen, literal, handleShare, setReplaceOpen, toast]);
 
   const reduceMotion = useReducedMotion();
   const containerVariants = reduceMotion ? {} : staggerContainer;
@@ -273,18 +264,16 @@ export function RegexTesterClient() {
       initial="hidden"
       animate="show"
     >
-      <motion.div
-        className="space-y-3 border-b pb-8 text-left"
-        variants={headerVariants}
-      >
+      <motion.div className="space-y-3 border-b pb-8 text-left" variants={headerVariants}>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Regex Tester
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">
-          Test JavaScript regular expressions live, with capture-group highlights, replace mode, and shareable URLs.
+          Test JavaScript regular expressions live, with capture-group highlights, replace mode, and
+          shareable URLs.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-          All processing happens locally in your browser
+          Test content is processed in this browser
         </p>
       </motion.div>
 
@@ -294,13 +283,7 @@ export function RegexTesterClient() {
             ref={patternInputRef}
             error={patternError}
             onShare={handleShare}
-            exportSlot={
-              <SnippetCardExport
-                pattern={pattern}
-                flags={flags}
-                matches={matches}
-              />
-            }
+            exportSlot={<SnippetCardExport pattern={pattern} flags={flags} matches={matches} />}
           />
           <TestStringArea
             ref={testStringRef}
@@ -314,7 +297,12 @@ export function RegexTesterClient() {
             onHoverMatch={setHoveredMatchId}
             onJumpToMatch={handleJumpToMatch}
           />
-          <ReplacePanel />
+          <ReplacePanel
+            previewResult={matchResult.replacementResult}
+            previewError={executionError ?? matchResult.replacementError}
+            inputLength={debouncedTest.length}
+            isRunning={compileResult.ok && matchResult.status === "idle"}
+          />
           <div className="hidden sm:block">
             <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
           </div>
@@ -324,7 +312,9 @@ export function RegexTesterClient() {
             bytes={testBytes}
             cap={TEST_BYTE_CAP}
             timedOut={matchResult.timedOut}
-            hardTimeout={hardTimeout}
+            hardTimeout={matchResult.hardTimeout}
+            unavailable={matchResult.status === "unavailable"}
+            running={compileResult.ok && matchResult.status === "idle"}
           />
         </Card>
       </motion.div>

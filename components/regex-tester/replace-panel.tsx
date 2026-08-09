@@ -1,42 +1,32 @@
 "use client";
 
-import { useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRegexTester } from "@/lib/stores/regex-tester";
-import { compileRegex } from "@/lib/regex-tester/compile";
-import { applyReplace } from "@/lib/regex-tester/replace";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
 
-export function ReplacePanel() {
+interface ReplacePanelProps {
+  previewResult: string;
+  previewError: string | null;
+  inputLength: number;
+  isRunning: boolean;
+}
+
+export function ReplacePanel({
+  previewResult,
+  previewError,
+  inputLength,
+  isRunning,
+}: ReplacePanelProps) {
   const pattern = useRegexTester((s) => s.pattern);
-  const flags = useRegexTester((s) => s.flags);
-  const testString = useRegexTester((s) => s.testString);
   const replacement = useRegexTester((s) => s.replacement);
   const setReplacement = useRegexTester((s) => s.setReplacement);
   const replaceOpen = useRegexTester((s) => s.replaceOpen);
   const setReplaceOpen = useRegexTester((s) => s.setReplaceOpen);
 
-  const previewState = useMemo(() => {
-    if (pattern.length === 0) {
-      return { result: "", error: null, delta: 0 };
-    }
-    const compiled = compileRegex(pattern, flags);
-    if (!compiled.ok) {
-      return { result: "", error: compiled.error, delta: 0 };
-    }
-    const r = applyReplace(compiled.regex, testString, replacement);
-    if (!r.ok) {
-      return { result: "", error: r.error, delta: 0 };
-    }
-    return {
-      result: r.result,
-      error: null,
-      delta: r.result.length - testString.length,
-    };
-  }, [pattern, flags, testString, replacement]);
+  const delta = previewResult.length - inputLength;
 
   return (
     <div className="space-y-2">
@@ -67,14 +57,9 @@ export function ReplacePanel() {
       {replaceOpen && (
         <div id="regex-replace-body" className="space-y-3">
           <div className="space-y-1.5">
-            <label
-              htmlFor="regex-replacement"
-              className="text-xs font-medium text-foreground"
-            >
+            <label htmlFor="regex-replacement" className="text-xs font-medium text-foreground">
               Replacement pattern{" "}
-              <span className="text-muted-foreground">
-                (supports $1, $2, $&lt;name&gt;)
-              </span>
+              <span className="text-muted-foreground">(supports $1, $2, $&lt;name&gt;)</span>
             </label>
             <Input
               id="regex-replacement"
@@ -90,28 +75,24 @@ export function ReplacePanel() {
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium text-foreground">
-                Preview
-              </span>
+              <span className="text-xs font-medium text-foreground">Preview</span>
               <CopyButton
-                text={previewState.result}
+                text={previewResult}
                 label="replacement result"
                 size="icon"
-                disabled={
-                  pattern.length === 0 ||
-                  previewState.result.length === 0
-                }
+                disabled={pattern.length === 0 || previewResult.length === 0 || isRunning}
               />
             </div>
-            {previewState.error ? (
+            {previewError ? (
               <p className="text-xs text-destructive" role="alert">
-                {previewState.error}
+                {previewError}
               </p>
             ) : (
               <Textarea
                 readOnly
-                value={previewState.result}
+                value={previewResult}
                 aria-label="Replacement preview"
+                placeholder={isRunning ? "Checking pattern safely…" : ""}
                 className={cn(
                   "font-mono text-sm leading-relaxed",
                   "min-h-[6rem] resize-y",
@@ -119,16 +100,9 @@ export function ReplacePanel() {
                 )}
               />
             )}
-            <p
-              className="text-xs text-muted-foreground tabular-nums"
-              aria-live="polite"
-            >
-              Length: {testString.length.toLocaleString()} →{" "}
-              {previewState.result.length.toLocaleString()} (delta{" "}
-              {previewState.delta > 0
-                ? `+${previewState.delta.toLocaleString()}`
-                : previewState.delta.toLocaleString()}
-              )
+            <p className="text-xs text-muted-foreground tabular-nums" aria-live="polite">
+              Length: {inputLength.toLocaleString()} → {previewResult.length.toLocaleString()}{" "}
+              (delta {delta > 0 ? `+${delta.toLocaleString()}` : delta.toLocaleString()})
             </p>
           </div>
         </div>

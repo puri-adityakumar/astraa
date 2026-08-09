@@ -13,17 +13,11 @@ function formatBytes(n: number): string {
   return `${(n / (1024 * 1024)).toFixed(2)} MB`;
 }
 
-export function Base64StatusFooter({
-  inputBytes,
-  outputBytes,
-}: Base64StatusFooterProps) {
+export function Base64StatusFooter({ inputBytes, outputBytes }: Base64StatusFooterProps) {
   return (
     <p
       aria-live="polite"
-      className={cn(
-        "text-xs text-muted-foreground tabular-nums",
-        "pt-3 border-t border-border",
-      )}
+      className={cn("text-xs text-muted-foreground tabular-nums", "pt-3 border-t border-border")}
     >
       {formatBytes(inputBytes)} in → {formatBytes(outputBytes)} out · UTF-8
     </p>

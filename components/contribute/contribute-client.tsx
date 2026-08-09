@@ -1,117 +1,91 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Github, Bug } from "lucide-react";
+import { BookOpen, CircleDot } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
+import type { Contributor } from "@/lib/github/contributors-service";
 
-interface Contributor {
-  id: number;
-  login: string;
-  avatar_url: string;
-  html_url: string;
-  contributions: number;
+interface ContributeClientProps {
+  contributors: Contributor[];
 }
 
-export function ContributeClient() {
-  const [contributors, setContributors] = useState<Contributor[]>([]);
-
-  // Exclude founder and bots from contributors
-  const EXCLUDED_USERS = [
-    "puri-adityakumar",
-    "vercel[bot]",
-    "dependabot[bot]",
-    "github-actions[bot]",
-  ];
-
-  useEffect(() => {
-    fetch("https://api.github.com/repos/puri-adityakumar/astraa/contributors")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const filtered = data.filter(
-            (contributor: Contributor) =>
-              !EXCLUDED_USERS.includes(contributor.login),
-          );
-          setContributors(filtered);
-        }
-      })
-      .catch(err => console.error("Failed to fetch contributors:", err));
-  }, []);
-
+export function ContributeClient({ contributors }: ContributeClientProps) {
   return (
     <div className="mx-auto max-w-5xl space-y-16 pb-8">
       {/* Header Section */}
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Contribute to{" "}
-          <span style={{ fontFamily: "'Funnel Display', sans-serif" }}>
-            astraa
-          </span>
-        </h1>
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Contribute to Astraa</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Built by developers, for developers. Help us shape the future of
-          this open-source collection of tools.
+          Browse an assigned or open issue, then read the contribution guide before starting a
+          focused change.
         </p>
         <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-          Open-source, privacy-first utility toolkit. All tools run locally in your browser with no data collection.
+          Start in the issue thread so ownership and the implementation approach are clear.
         </p>
-        <div className="flex items-center justify-center gap-4 pt-4">
-          <Button asChild size="lg" className="rounded-full px-8">
+        <div className="flex flex-col items-stretch justify-center gap-3 pt-4 sm:flex-row sm:items-center sm:gap-4">
+          <Button asChild size="lg" className="w-full rounded-full px-6 sm:w-auto sm:px-8">
             <Link
-              href="https://github.com/puri-adityakumar/astraa"
+              href="https://github.com/puri-adityakumar/astraa/issues"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Github className="mr-2 h-5 w-5" />
-              Star on GitHub
+              <CircleDot className="mr-2 h-5 w-5" aria-hidden="true" />
+              Browse open issues
+              <span className="sr-only"> (opens in a new tab)</span>
             </Link>
           </Button>
           <Button
             asChild
             variant="outline"
             size="lg"
-            className="rounded-full px-8"
+            className="w-full rounded-full px-6 sm:w-auto sm:px-8"
           >
             <Link
-              href="https://github.com/puri-adityakumar/astraa/issues"
+              href="https://github.com/puri-adityakumar/astraa/blob/main/CONTRIBUTING.md"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Bug className="mr-2 h-5 w-5" />
-              Report Issue
+              <BookOpen className="mr-2 h-5 w-5" aria-hidden="true" />
+              Read contribution guide
+              <span className="sr-only"> (opens in a new tab)</span>
             </Link>
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          {contributors.length > 0
-            ? `${contributors.length} contributors and growing`
-            : "Join our growing community of contributors"}
+          Want to support the project without taking an issue?{" "}
+          <Link
+            href="https://github.com/puri-adityakumar/astraa"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground hover:underline"
+          >
+            Star the repository
+            <span className="sr-only"> (opens in a new tab)</span>
+          </Link>
+          .
         </p>
 
         <div className="pt-8 max-w-xl mx-auto space-y-6">
           <blockquote className="font-mono text-sm sm:text-base text-muted-foreground leading-relaxed italic">
-            &quot;This was my first idea when I started coding. I wanted to
-            build this, but back then I didn&apos;t have the skills. Now I
-            do, so I made it happen.&quot;
+            &quot;This was my first idea when I started coding. I wanted to build this, but back
+            then I didn&apos;t have the skills. Now I do, so I made it happen.&quot;
           </blockquote>
           <div className="flex items-center justify-center gap-3">
             <div className="text-right leading-tight">
               <span className="text-sm font-semibold block">~ Aditya</span>
-              <span className="text-xs text-muted-foreground block">
-                Founder
-              </span>
+              <span className="text-xs text-muted-foreground block">Founder</span>
             </div>
             <Link
               href="https://github.com/puri-adityakumar"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-shrink-0 hover:opacity-80 transition-opacity"
+              aria-label="Aditya's GitHub profile (opens in a new tab)"
+              className="inline-flex min-h-touch min-w-touch flex-shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-80"
             >
               <Image
-                src="https://github.com/puri-adityakumar.png"
+                src="/assets/astraa_pfp.png"
                 alt="Aditya"
                 width={40}
                 height={40}
@@ -124,9 +98,7 @@ export function ContributeClient() {
 
       {/* Top Contributors Section */}
       <div className="space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center">
-          Top Contributors
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center">Top contributors</h2>
 
         {contributors.length > 0 ? (
           <div className="flex flex-col items-center gap-6">
@@ -136,19 +108,15 @@ export function ContributeClient() {
                 {contributors.slice(0, 4).map((contributor) => (
                   <Link
                     key={contributor.id}
-                    href={contributor.html_url}
+                    href={contributor.profileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`${contributor.login}'s GitHub profile (opens in a new tab)`}
                     className="transition-transform hover:scale-110 hover:z-10 relative"
                   >
                     <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-4 border-background shadow-lg">
-                      <AvatarImage
-                        src={contributor.avatar_url}
-                        alt={contributor.login}
-                      />
-                      <AvatarFallback>
-                        {contributor.login.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
+                      <AvatarImage src={contributor.avatarUrl} alt={contributor.login} />
+                      <AvatarFallback>{contributor.login.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </Link>
                 ))}
@@ -165,14 +133,17 @@ export function ContributeClient() {
               {contributors.slice(0, 5).map((contributor, index) => (
                 <Link
                   key={contributor.id}
-                  href={contributor.html_url}
+                  href={contributor.profileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-foreground transition-colors"
                 >
                   {contributor.login}
+                  <span className="sr-only"> (opens in a new tab)</span>
                   {index < Math.min(contributors.length, 5) - 1 && (
-                    <span className="ml-6 text-border">&bull;</span>
+                    <span className="ml-6 text-border" aria-hidden="true">
+                      &bull;
+                    </span>
                   )}
                 </Link>
               ))}
@@ -180,16 +151,14 @@ export function ContributeClient() {
           </div>
         ) : (
           <p className="text-center text-muted-foreground">
-            No contributors yet. Be the first to contribute!
+            Contributor profiles are unavailable. Browse open issues to get started.
           </p>
         )}
       </div>
 
       {/* Getting Started Section */}
       <div className="space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center">
-          Getting Started
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center">How to start</h2>
 
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="flex items-start gap-4">
@@ -197,9 +166,10 @@ export function ContributeClient() {
               1
             </div>
             <div>
-              <p className="font-medium">Star the repository</p>
+              <p className="font-medium">Find an issue</p>
               <p className="text-sm text-muted-foreground">
-                Show your support and help us reach more developers.
+                Choose an issue you opened or one assigned to you. Wait for assignment before
+                starting implementation.
               </p>
             </div>
           </div>
@@ -209,9 +179,7 @@ export function ContributeClient() {
               2
             </div>
             <div>
-              <p className="font-medium">
-                Read CONTRIBUTING.md & Code of Conduct
-              </p>
+              <p className="font-medium">Read the contribution guide and code of conduct</p>
               <p className="text-sm text-muted-foreground">
                 Understand our{" "}
                 <Link
@@ -221,8 +189,9 @@ export function ContributeClient() {
                   className="text-foreground hover:underline"
                 >
                   contribution guidelines
-                </Link>
-                {" "}and{" "}
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </Link>{" "}
+                and{" "}
                 <Link
                   href="https://github.com/puri-adityakumar/astraa/blob/main/CODE_OF_CONDUCT.md"
                   target="_blank"
@@ -230,8 +199,9 @@ export function ContributeClient() {
                   className="text-foreground hover:underline"
                 >
                   code of conduct
-                </Link>
-                {" "}before contributing.
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </Link>{" "}
+                before contributing.
               </p>
             </div>
           </div>
@@ -241,11 +211,9 @@ export function ContributeClient() {
               3
             </div>
             <div>
-              <p className="font-medium">
-                Check the Issues tab or raise a new issue
-              </p>
+              <p className="font-medium">Discuss the approach</p>
               <p className="text-sm text-muted-foreground">
-                Find tasks to work on or report bugs and feature requests.
+                Align on the intended behavior and scope in the issue before changing code.
               </p>
             </div>
           </div>
@@ -255,27 +223,10 @@ export function ContributeClient() {
               4
             </div>
             <div>
-              <p className="font-medium">Reach out to us</p>
+              <p className="font-medium">Verify and submit a focused change</p>
               <p className="text-sm text-muted-foreground">
-                Connect with us on{" "}
-                <Link
-                  href="https://x.com/astraadottech"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-foreground hover:underline"
-                >
-                  X (formerly Twitter)
-                </Link>
-                {" "}or{" "}
-                <Link
-                  href="https://t.me/astraadottech"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-foreground hover:underline"
-                >
-                  Telegram
-                </Link>
-                .
+                Run the required checks and open a surgical pull request against the development
+                branch.
               </p>
             </div>
           </div>
@@ -293,9 +244,7 @@ export function ContributeClient() {
             <p className="font-medium truncate">
               Sponsor <span className="font-logo">astraa</span>
             </p>
-            <p className="text-xs text-muted-foreground truncate">
-              Support open source work
-            </p>
+            <p className="text-xs text-muted-foreground truncate">Support open source work</p>
           </div>
           <div className="shrink-0">
             <iframe

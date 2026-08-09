@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { LofiStudioClient } from "@/components/music/lofi-studio-client";
+import { WorkInProgress } from "@/components/wip";
+import { getToolById } from "@/lib/tools";
+
+const musicTool = getToolById("music")!;
 
 export const metadata: Metadata = {
   title: "Lofi Focus Studio",
   description:
-    "Stay productive with lofi beats, a built-in pomodoro timer, and task management. Free browser-based focus tool to boost concentration and workflow.",
+    "Lofi Focus Studio is planned for Astraa. The proposed streaming audio, timer, and task features are not available yet.",
   keywords: [
     "lofi music",
     "focus music",
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Lofi Focus Studio",
     description:
-      "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
+      "A planned focus workspace; streaming audio and productivity features are not live.",
     url: "/tools/music",
     images: ["/assets/astraa_banner.jpg"],
   },
@@ -30,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Lofi Focus Studio",
     description:
-      "Lofi beats, pomodoro timer, and task management in one free productivity tool.",
+      "A planned focus workspace; streaming audio and productivity features are not live.",
   },
   alternates: {
     canonical: "/tools/music",
@@ -38,17 +41,5 @@ export const metadata: Metadata = {
 };
 
 export default function LofiPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
-  return (
-    <>
-      <LofiStudioClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
-    </>
-  );
+  return <WorkInProgress name={musicTool.name} kind="tool" />;
 }

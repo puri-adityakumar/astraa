@@ -1,19 +1,10 @@
 "use client";
 
-import {
-  useCallback,
-  useRef,
-  useState,
-  type DragEvent,
-} from "react";
+import { useCallback, useRef, useState, type DragEvent } from "react";
 import { FileText, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  FileTooLargeError,
-  MAX_FILE_BYTES,
-  readFileAsBytes,
-} from "@/lib/base64";
+import { FileTooLargeError, MAX_FILE_BYTES, readFileAsBytes } from "@/lib/base64";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import { cn } from "@/lib/utils";
 
@@ -49,7 +40,7 @@ export function Base64FileDrop({ file, onFile }: Base64FileDropProps) {
             description: details.message,
             variant: "destructive",
           });
-          logError(error, { context: "base64/file-drop" });
+          logError(error, { operation: "base64/file-drop" });
         }
       }
     },
@@ -108,7 +99,7 @@ export function Base64FileDrop({ file, onFile }: Base64FileDropProps) {
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        aria-label="Upload a file (tap or drag)"
+        aria-label="Choose a local file or drag it here"
         aria-describedby="base64-file-help"
         className={cn(
           "flex flex-col items-center justify-center gap-2 py-8 px-4",
@@ -123,10 +114,10 @@ export function Base64FileDrop({ file, onFile }: Base64FileDropProps) {
       >
         <Upload className="h-5 w-5" aria-hidden="true" />
         <span className="font-medium text-foreground">
-          {active ? "Drop to load" : "Tap to upload or drag a file"}
+          {active ? "Drop to load" : "Choose a local file or drag it here"}
         </span>
         <span id="base64-file-help" className="text-xs">
-          Max {MAX_MB.toFixed(0)} MB · processed locally
+          Max {MAX_MB.toFixed(0)} MB · processed in this browser
         </span>
         <input
           ref={inputRef}

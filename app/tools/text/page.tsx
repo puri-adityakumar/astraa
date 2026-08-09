@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+
+import { RelatedTools } from "@/components/related-tools";
 import { TextGeneratorClient } from "@/components/text/text-generator-client";
+import { ToolGuide } from "@/components/tool-guide";
 
 export const metadata: Metadata = {
   title: "AI Text Generator",
   description:
-    "Generate meaningful, context-aware placeholder text tailored to your topic. The modern alternative to Lorem Ipsum powered by AI. Free online text generator.",
+    "Generate topic-based placeholder prose through Astraa's server and configured AI provider. Topics may be up to 500 characters with a 10 to 1,000 word request.",
   keywords: [
     "AI text generator",
     "placeholder text",
@@ -17,16 +20,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "AI Text Generator",
-    description:
-      "Generate context-aware placeholder text with AI. The modern Lorem Ipsum alternative.",
+    description: "Generate topic-based placeholder prose through a configured AI provider.",
     url: "/tools/text",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "AI Text Generator",
-    description:
-      "Generate context-aware placeholder text with AI. The modern Lorem Ipsum alternative.",
+    description: "Generate topic-based placeholder prose through a configured AI provider.",
   },
   alternates: {
     canonical: "/tools/text",
@@ -34,17 +35,11 @@ export const metadata: Metadata = {
 };
 
 export default function TextGeneratorPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <TextGeneratorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="text" />
+      <RelatedTools toolId="text" />
     </>
   );
 }

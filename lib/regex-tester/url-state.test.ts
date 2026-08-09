@@ -113,10 +113,7 @@ describe("encodeState / decodeState", () => {
     const bytes = new TextEncoder().encode(bogusJson);
     let bin = "";
     for (const b of bytes) bin += String.fromCharCode(b);
-    const b64 = btoa(bin)
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/g, "");
+    const b64 = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
     expect(decodeState(b64)).toBeNull();
   });
 });

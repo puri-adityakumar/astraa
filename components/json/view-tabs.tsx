@@ -22,21 +22,21 @@ export function ViewTabs() {
   const setView = useJsonEditor((s) => s.setView);
   return (
     <div
-      role="tablist"
+      role="group"
       aria-label="JSON Editor view"
-      className="inline-flex rounded-md border bg-muted p-0.5"
+      className="grid w-full grid-cols-4 rounded-md border bg-muted p-0.5 sm:inline-flex sm:w-auto"
     >
       {VIEWS.map(({ id, label, short, Icon }) => {
         const active = view === id;
         return (
           <button
             key={id}
-            role="tab"
-            aria-selected={active}
+            type="button"
+            aria-pressed={active}
             aria-label={label}
             onClick={() => setView(id)}
             className={cn(
-              "inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-sm min-h-touch",
+              "inline-flex min-h-touch min-w-0 items-center justify-center gap-1 rounded-sm px-1.5 py-1.5 text-sm sm:gap-1.5 sm:px-3",
               "transition-colors duration-100 ease-out",
               active
                 ? "bg-background text-foreground shadow-sm"

@@ -22,6 +22,8 @@ export function TreeView() {
   );
 
   const parentRef = useRef<HTMLDivElement>(null);
+  // TanStack Virtual intentionally returns imperative functions that React Compiler cannot memoize.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,

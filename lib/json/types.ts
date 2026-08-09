@@ -1,4 +1,4 @@
-export type JsonPrimitive = string | number | boolean | null;
+type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
 export type JsonType = "string" | "number" | "boolean" | "null" | "object" | "array";
 
@@ -37,6 +37,4 @@ export type TreeRow = {
 
 export type PatchOp = "set" | "remove" | "add";
 
-export type ValidationResult =
-  | { ok: true }
-  | { ok: false; reason: "type" | "size" };
+export type ValidationResult = { ok: true } | { ok: false; reason: "type" | "size" };

@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { useToast } from "@/components/ui/use-toast"
-import { HashInput } from "./hash-input"
-import { HashOutput } from "./hash-output"
-import { generateHash } from "@/lib/hash"
-import { hashAlgorithms } from "@/lib/hash"
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { HashInput } from "./hash-input";
+import { HashOutput } from "./hash-output";
+import { generateHash } from "@/lib/hash";
+import { hashAlgorithms } from "@/lib/hash";
 
 export function HashGeneratorClient() {
-  const { toast } = useToast()
-  const [input, setInput] = useState("")
-  const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0]?.id ?? "sha256")
-  const [hash, setHash] = useState("")
+  const { toast } = useToast();
+  const [input, setInput] = useState("");
+  const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0]?.id ?? "sha256");
+  const [hash, setHash] = useState("");
 
   const handleGenerateHash = () => {
     if (!input) {
       toast({
         title: "Error",
         description: "Please enter some text to hash",
-        variant: "destructive"
-      })
-      return
+        variant: "destructive",
+      });
+      return;
     }
 
-    const newHash = generateHash(input, selectedHash)
-    setHash(newHash)
-  }
+    const newHash = generateHash(input, selectedHash);
+    setHash(newHash);
+  };
 
   return (
     <div className="mx-auto max-w-2xl space-y-8 pb-8">
@@ -35,10 +35,10 @@ export function HashGeneratorClient() {
           Hash Generator
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">
-          Generate secure hash outputs from your text input
+          Generate MD5, SHA-1, SHA-2, or SHA-3 digests for checksum comparison.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-          All processing happens locally in your browser
+          Text is processed in this browser
         </p>
       </div>
 
@@ -50,13 +50,8 @@ export function HashGeneratorClient() {
           onHashChange={setSelectedHash}
           onGenerate={handleGenerateHash}
         />
-        {hash && (
-          <HashOutput
-            type={selectedHash}
-            hash={hash}
-          />
-        )}
+        {hash && <HashOutput type={selectedHash} hash={hash} />}
       </Card>
     </div>
-  )
+  );
 }

@@ -1,222 +1,183 @@
 /**
- * Enhanced storage utilities for Zustand stores
- * Provides IndexedDB support for complex data and fallback to localStorage
+ * Browser persistence utilities for Zustand stores.
+ *
+ * Server rendering always receives a no-op adapter. In the browser, IndexedDB
+ * is preferred with a guarded localStorage fallback.
  */
 
-interface StorageAdapter {
-  getItem: (key: string) => Promise<string | null>
-  setItem: (key: string, value: string) => Promise<void>
-  removeItem: (key: string) => Promise<void>
+export interface StorageAdapter {
+  getItem: (key: string) => Promise<string | null>;
+  setItem: (key: string, value: string) => Promise<void>;
+  removeItem: (key: string) => Promise<void>;
 }
 
-class IndexedDBAdapter implements StorageAdapter {
-  private dbName = 'astraa-tools-db'
-  private version = 1
-  private storeName = 'store'
-  
-  private async getDB(): Promise<IDBDatabase> {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, this.version)
-      
-      request.onerror = () => reject(request.error)
-      request.onsuccess = () => resolve(request.result)
-      
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          db.createObjectStore(this.storeName)
-        }
-      }
-    })
+class NoopStorageAdapter implements StorageAdapter {
+  async getItem(): Promise<null> {
+    return null;
   }
-  
-  async getItem(key: string): Promise<string | null> {
-    try {
-      const db = await this.getDB()
-      const transaction = db.transaction([this.storeName], 'readonly')
-      const store = transaction.objectStore(this.storeName)
-      
-      return new Promise((resolve, reject) => {
-        const request = store.get(key)
-        request.onerror = () => reject(request.error)
-        request.onsuccess = () => resolve(request.result || null)
-      })
-    } catch (error) {
-      console.warn('IndexedDB getItem failed, falling back to localStorage:', error)
-      return localStorage.getItem(key)
-    }
-  }
-  
-  async setItem(key: string, value: string): Promise<void> {
-    try {
-      const db = await this.getDB()
-      const transaction = db.transaction([this.storeName], 'readwrite')
-      const store = transaction.objectStore(this.storeName)
-      
-      return new Promise((resolve, reject) => {
-        const request = store.put(value, key)
-        request.onerror = () => reject(request.error)
-        request.onsuccess = () => resolve()
-      })
-    } catch (error) {
-      console.warn('IndexedDB setItem failed, falling back to localStorage:', error)
-      localStorage.setItem(key, value)
-    }
-  }
-  
-  async removeItem(key: string): Promise<void> {
-    try {
-      const db = await this.getDB()
-      const transaction = db.transaction([this.storeName], 'readwrite')
-      const store = transaction.objectStore(this.storeName)
-      
-      return new Promise((resolve, reject) => {
-        const request = store.delete(key)
-        request.onerror = () => reject(request.error)
-        request.onsuccess = () => resolve()
-      })
-    } catch (error) {
-      console.warn('IndexedDB removeItem failed, falling back to localStorage:', error)
-      localStorage.removeItem(key)
-    }
-  }
+
+  async setItem(): Promise<void> {}
+
+  async removeItem(): Promise<void> {}
 }
 
 class LocalStorageAdapter implements StorageAdapter {
+  constructor(private readonly storage: Storage) {}
+
   async getItem(key: string): Promise<string | null> {
-    return localStorage.getItem(key)
+    return this.storage.getItem(key);
   }
-  
+
   async setItem(key: string, value: string): Promise<void> {
-    localStorage.setItem(key, value)
+    this.storage.setItem(key, value);
   }
-  
+
   async removeItem(key: string): Promise<void> {
-    localStorage.removeItem(key)
+    this.storage.removeItem(key);
   }
 }
 
-/**
- * Creates a storage adapter that uses IndexedDB with localStorage fallback
- */
+function getBrowserLocalStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return window.localStorage ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function createBrowserFallback(): StorageAdapter {
+  const storage = getBrowserLocalStorage();
+  return storage ? new LocalStorageAdapter(storage) : new NoopStorageAdapter();
+}
+
+class IndexedDBAdapter implements StorageAdapter {
+  private readonly dbName = "astraa-tools-db";
+  private readonly version = 1;
+  private readonly storeName = "store";
+
+  private async getDB(): Promise<IDBDatabase> {
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.open(this.dbName, this.version);
+
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        if (!db.objectStoreNames.contains(this.storeName)) {
+          db.createObjectStore(this.storeName);
+        }
+      };
+    });
+  }
+
+  async getItem(key: string): Promise<string | null> {
+    try {
+      const db = await this.getDB();
+      const transaction = db.transaction([this.storeName], "readonly");
+      const store = transaction.objectStore(this.storeName);
+
+      return await new Promise((resolve, reject) => {
+        const request = store.get(key);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          resolve(typeof request.result === "string" ? request.result : null);
+        };
+      });
+    } catch {
+      return createBrowserFallback().getItem(key);
+    }
+  }
+
+  async setItem(key: string, value: string): Promise<void> {
+    try {
+      const db = await this.getDB();
+      const transaction = db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+
+      await new Promise<void>((resolve, reject) => {
+        const request = store.put(value, key);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+    } catch {
+      await createBrowserFallback().setItem(key, value);
+    }
+  }
+
+  async removeItem(key: string): Promise<void> {
+    try {
+      const db = await this.getDB();
+      const transaction = db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+
+      await new Promise<void>((resolve, reject) => {
+        const request = store.delete(key);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+    } catch {
+      await createBrowserFallback().removeItem(key);
+    }
+  }
+}
+
 export function createEnhancedStorage(): StorageAdapter {
-  // Check if IndexedDB is available
-  if (typeof window !== 'undefined' && 'indexedDB' in window) {
-    return new IndexedDBAdapter()
+  if (typeof window === "undefined") {
+    return new NoopStorageAdapter();
   }
-  
-  // Fallback to localStorage
-  return new LocalStorageAdapter()
+
+  if (window.indexedDB) {
+    return new IndexedDBAdapter();
+  }
+
+  return createBrowserFallback();
 }
 
 /**
- * Creates a Zustand-compatible storage object for enhanced persistence
- * Includes concurrency control to prevent race conditions
+ * Creates a Zustand-compatible storage object with per-key serialization.
  */
-export function createZustandStorage() {
-  const adapter = createEnhancedStorage()
-  const locks = new Map<string, Promise<void>>()
+export function createZustandStorage(): StorageAdapter {
+  const adapter = createEnhancedStorage();
+  const locks = new Map<string, Promise<void>>();
 
-  /**
-   * Enqueues an operation for a specific key to ensure sequential execution
-   */
   const enqueue = async <T>(key: string, operation: () => Promise<T>): Promise<T> => {
-    // Get the current promise for this key or resolve immediately
-    const current = locks.get(key) || Promise.resolve()
+    const current = locks.get(key) ?? Promise.resolve();
+    const nextPromise = current.then(operation);
 
-    // Create a new promise that chains after the current one
-    const nextPromise = current.then(() => operation())
+    locks.set(
+      key,
+      nextPromise.then(
+        () => undefined,
+        () => undefined,
+      ),
+    );
 
-    // Update the lock with a promise that always resolves
-    // This ensures that even if an operation fails, the queue doesn't get stuck
-    // We explicitly cast the catch return to void to satisfy the map type
-    locks.set(key, nextPromise.then(() => {}).catch(() => {}))
+    return nextPromise;
+  };
 
-    return nextPromise
-  }
-  
   return {
     getItem: async (name: string): Promise<string | null> => {
       try {
-        // We wait for pending writes to finish before reading
-        return await enqueue(name, () => adapter.getItem(name))
-      } catch (error) {
-        console.error('Storage getItem error:', error)
-        return null
+        return await enqueue(name, () => adapter.getItem(name));
+      } catch {
+        return null;
       }
     },
     setItem: async (name: string, value: string): Promise<void> => {
       try {
-        await enqueue(name, () => adapter.setItem(name, value))
-      } catch (error) {
-        console.error('Storage setItem error:', error)
+        await enqueue(name, () => adapter.setItem(name, value));
+      } catch {
+        // Persistence is best-effort; editor state remains available in memory.
       }
     },
     removeItem: async (name: string): Promise<void> => {
       try {
-        await enqueue(name, () => adapter.removeItem(name))
-      } catch (error) {
-        console.error('Storage removeItem error:', error)
+        await enqueue(name, () => adapter.removeItem(name));
+      } catch {
+        // Persistence is best-effort; editor state remains available in memory.
       }
-    }
-  }
-}
-
-/**
- * Utility to clear all stored data (useful for debugging or reset functionality)
- */
-export async function clearAllStoredData(): Promise<void> {
-  const adapter = createEnhancedStorage()
-  
-  // Clear Zustand store data
-  const storeKeys = ['user-preferences', 'tool-settings', 'activity-tracking']
-  
-  for (const key of storeKeys) {
-    await adapter.removeItem(key)
-  }
-  
-
-}
-
-/**
- * Utility to export all stored data for backup purposes
- */
-export async function exportAllStoredData(): Promise<string> {
-  const adapter = createEnhancedStorage()
-  const data: Record<string, any> = {}
-  
-  const storeKeys = ['user-preferences', 'tool-settings', 'activity-tracking']
-  
-  for (const key of storeKeys) {
-    const value = await adapter.getItem(key)
-    if (value) {
-      try {
-        data[key] = JSON.parse(value)
-      } catch (error) {
-        data[key] = value
-      }
-    }
-  }
-  
-  return JSON.stringify(data, null, 2)
-}
-
-/**
- * Utility to import stored data from backup
- */
-export async function importStoredData(jsonData: string): Promise<boolean> {
-  try {
-    const data = JSON.parse(jsonData)
-    const adapter = createEnhancedStorage()
-    
-    for (const [key, value] of Object.entries(data)) {
-      await adapter.setItem(key, JSON.stringify(value))
-    }
-    
-
-    return true
-  } catch (error) {
-    console.error('Failed to import data:', error)
-    return false
-  }
+    },
+  };
 }

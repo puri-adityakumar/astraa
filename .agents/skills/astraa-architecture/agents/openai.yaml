@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astraa Architecture"
+  short_description: "Place Astraa work across project boundaries"
+  default_prompt: "Use $astraa-architecture to decide where this Astraa change belongs."

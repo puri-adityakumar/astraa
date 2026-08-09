@@ -11,10 +11,10 @@ import { useSnippetGenerator } from "@/lib/stores/snippet-generator";
 import type { Padding } from "@/lib/snippet-generator/types";
 
 const ASPECT_GLYPH: Record<string, { w: number; h: number }> = {
-  twitter:  { w: 20, h: 11 },
-  square:   { w: 14, h: 14 },
+  twitter: { w: 20, h: 11 },
+  square: { w: 14, h: 14 },
   linkedin: { w: 22, h: 11 },
-  story:    { w: 9,  h: 16 },
+  story: { w: 9, h: 16 },
 };
 
 function clampDimension(raw: string): number {
@@ -55,9 +55,7 @@ export function LayoutSection() {
       <div>
         <div className="flex items-baseline justify-between">
           <Label>Padding</Label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">
-            {s.padding}px
-          </span>
+          <span className="text-[11px] tabular-nums text-muted-foreground">{s.padding}px</span>
         </div>
         <div className="grid grid-cols-4 gap-1 p-0.5 rounded-md bg-muted">
           {PADDING_PRESETS.map((p) => (
@@ -94,11 +92,7 @@ export function LayoutSection() {
         <Label htmlFor="shadow-toggle" className="cursor-pointer">
           Drop shadow
         </Label>
-        <Switch
-          id="shadow-toggle"
-          checked={s.dropShadow}
-          onCheckedChange={s.setDropShadow}
-        />
+        <Switch id="shadow-toggle" checked={s.dropShadow} onCheckedChange={s.setDropShadow} />
       </div>
 
       <div>
@@ -117,12 +111,12 @@ export function LayoutSection() {
               a.id === "square"
                 ? "1 : 1"
                 : a.id === "linkedin"
-                ? "1.91 : 1"
-                : a.id === "story"
-                ? "9 : 16"
-                : a.id === "twitter"
-                ? "16 : 9"
-                : `${ratio} : 1`;
+                  ? "1.91 : 1"
+                  : a.id === "story"
+                    ? "9 : 16"
+                    : a.id === "twitter"
+                      ? "16 : 9"
+                      : `${ratio} : 1`;
             return (
               <button
                 key={a.id}
@@ -131,9 +125,7 @@ export function LayoutSection() {
                 className={cn(
                   "flex items-center gap-2 px-2 py-2 text-xs rounded-md border bg-background min-h-touch text-left",
                   "transition-colors duration-100 ease-out",
-                  active
-                    ? "border-primary bg-primary/10"
-                    : "border-border hover:bg-muted",
+                  active ? "border-primary bg-primary/10" : "border-border hover:bg-muted",
                 )}
               >
                 <span
@@ -145,9 +137,7 @@ export function LayoutSection() {
                   <span className="text-xs font-medium text-foreground">
                     {a.name.replace(/\s+\d+(?::|×).*$/, "")}
                   </span>
-                  <span className="text-[10px] tabular-nums text-muted-foreground">
-                    {label}
-                  </span>
+                  <span className="text-[10px] tabular-nums text-muted-foreground">{label}</span>
                 </span>
               </button>
             );

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+
+import { RelatedTools } from "@/components/related-tools";
 import { RegexTesterClient } from "@/components/regex-tester/regex-tester-client";
+import { ToolGuide } from "@/components/tool-guide";
 
 export const metadata: Metadata = {
-  title: "Regex Tester | astraa",
+  title: "Regex Tester",
   description:
     "Test and validate JavaScript regular expressions live in your browser. Capture-group highlights, replace mode, starter library, click-to-insert cheatsheet, and shareable URLs.",
   keywords: [
@@ -16,7 +19,7 @@ export const metadata: Metadata = {
     "regex builder",
   ],
   openGraph: {
-    title: "Regex Tester | astraa",
+    title: "Regex Tester",
     description:
       "Live JavaScript regex playground with capture-group highlights, replace mode, and shareable URLs.",
     url: "/tools/regex",
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Regex Tester | astraa",
+    title: "Regex Tester",
     description:
       "Live JavaScript regex playground with capture-group highlights, replace mode, and shareable URLs.",
   },
@@ -34,17 +37,11 @@ export const metadata: Metadata = {
 };
 
 export default function RegexTesterPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <RegexTesterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="regex" />
+      <RelatedTools toolId="regex" />
     </>
   );
 }

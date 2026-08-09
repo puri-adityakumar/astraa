@@ -1,0 +1,39 @@
+{
+  "links": [
+    {
+      "key": "docs",
+      "label": "Docs",
+      "siteHref": "/docs",
+      "readmeHref": "https://www.astraa.tech/docs",
+      "kind": "internal"
+    },
+    {
+      "key": "roadmap",
+      "label": "Roadmap",
+      "siteHref": "https://astraa.notion.site/roadmap",
+      "readmeHref": "https://astraa.notion.site/roadmap",
+      "kind": "external"
+    },
+    {
+      "key": "changelog",
+      "label": "Changelog",
+      "siteHref": "https://astraa.notion.site/changelog",
+      "readmeHref": "https://astraa.notion.site/changelog",
+      "kind": "external"
+    },
+    {
+      "key": "hallOfFame",
+      "label": "Hall of Fame",
+      "siteHref": "https://astraa.notion.site/documentation",
+      "readmeHref": "https://astraa.notion.site/documentation",
+      "kind": "external"
+    },
+    {
+      "key": "privacy",
+      "label": "Privacy",
+      "siteHref": "/privacy",
+      "readmeHref": null,
+      "kind": "internal"
+    }
+  ]
+}

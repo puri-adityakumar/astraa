@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
-import { AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
   CommandEmpty,
@@ -11,68 +10,81 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import { Search, ArrowRight } from "lucide-react"
-import { useTools } from "@/lib/tools-context"
-import { games } from "@/lib/games"
-import { Badge } from "@/components/ui/badge"
-import { DialogTitle } from "@/components/ui/dialog"
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
+} from "@/components/ui/command";
+import { Search, ArrowRight } from "lucide-react";
+import { toolCategories } from "@/lib/tools";
+import { games } from "@/lib/games";
+import { Badge } from "@/components/ui/badge";
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
-export function CommandMenu() {
-  const router = useRouter()
-  const [open, setOpen] = React.useState(false)
-  const [mounted, setMounted] = React.useState(false)
-  const [search, setSearch] = React.useState("")
-  const { categories } = useTools()
+interface CommandMenuProps {
+  onNavigate?: () => void;
+}
+
+export function CommandMenu({ onNavigate }: CommandMenuProps) {
+  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const wasOpenRef = React.useRef(false);
 
   React.useEffect(() => {
-    const mountTimer = window.setTimeout(() => setMounted(true), 0)
-    return () => window.clearTimeout(mountTimer)
-  }, [])
+    const shouldRestoreFocus = wasOpenRef.current && !open;
+    wasOpenRef.current = open;
+    if (!shouldRestoreFocus) return;
+
+    const frame = window.requestAnimationFrame(() => triggerRef.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, [open]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       // Cmd/Ctrl + K to open command menu
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((prev) => !prev)
+        e.preventDefault();
+        setOpen((prev) => !prev);
       }
       // Escape to close
       if (e.key === "Escape") {
-        setOpen(false)
+        setOpen(false);
       }
       // Cmd/Ctrl + / for quick search focus
       if (e.key === "/" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen(true)
+        e.preventDefault();
+        setOpen(true);
       }
-    }
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   // Reset search when dialog closes
   React.useEffect(() => {
-    let resetTimer: number | undefined
+    let resetTimer: number | undefined;
 
     if (!open) {
-      resetTimer = window.setTimeout(() => setSearch(""), 0)
+      resetTimer = window.setTimeout(() => setSearch(""), 0);
     }
 
     return () => {
-      if (resetTimer !== undefined) window.clearTimeout(resetTimer)
-    }
-  }, [open])
+      if (resetTimer !== undefined) window.clearTimeout(resetTimer);
+    };
+  }, [open]);
 
-  const runCommand = React.useCallback((command: () => unknown) => {
-    setOpen(false)
-    command()
-  }, [])
+  const runCommand = React.useCallback(
+    (command: () => unknown) => {
+      setOpen(false);
+      command();
+      onNavigate?.();
+    },
+    [onNavigate],
+  );
 
   return (
     <>
       <Button
+        ref={triggerRef}
         variant="outline"
         className="relative h-10 w-full justify-start rounded-md px-3 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-52 lg:w-64"
         onClick={() => setOpen(true)}
@@ -85,111 +97,105 @@ export function CommandMenu() {
           <span>K</span>
         </kbd>
       </Button>
-      <AnimatePresence>
-        {mounted && open && (
-          <CommandDialog open={open} onOpenChange={setOpen}>
-            <VisuallyHidden.Root>
-              <DialogTitle>Search tools and games</DialogTitle>
-            </VisuallyHidden.Root>
-            <CommandInput
-              placeholder="Type to search tools and games..."
-              value={search}
-              onValueChange={setSearch}
-              aria-label="Search input"
-            />
-            <CommandList>
-              <CommandEmpty>
-                <div className="py-6 text-center text-sm text-muted-foreground">
-                  No results found for “{search}”
-                </div>
-              </CommandEmpty>
-
-              {/* Synchronized with explore page - Tools categories */}
-              {categories.map((category) => (
-                <CommandGroup key={category.name} heading={category.name}>
-                  {category.items.map((tool) => (
-                    <CommandItem
-                      key={tool.path}
-                      value={`${tool.name} ${tool.description}`}
-                      onSelect={() => runCommand(() => router.push(tool.path))}
-                      className="flex items-center justify-between gap-2 cursor-pointer group"
-                      {...(tool.comingSoon && { disabled: true })}
-                    >
-                      <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <tool.icon className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
-                        <span className="truncate">{tool.name}</span>
-                        {tool.wip && (
-                          <Badge variant="secondary" className="text-xs shrink-0">
-                            WIP
-                          </Badge>
-                        )}
-                        {tool.comingSoon && (
-                          <Badge variant="outline" className="text-xs shrink-0">
-                            Coming Soon
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs text-muted-foreground hidden sm:inline truncate max-w-[200px]">
-                          {tool.description}
-                        </span>
-                        <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              ))}
-
-              {/* Synchronized with explore page - Games section */}
-              <CommandGroup heading="Games">
-                {games.map((game) => (
-                  <CommandItem
-                    key={game.path}
-                    value={`${game.name} ${game.description}`}
-                    onSelect={() => runCommand(() => router.push(game.path))}
-                    className="flex items-center justify-between gap-2 cursor-pointer group"
-                    {...(game.comingSoon && { disabled: true })}
-                  >
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <game.icon className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
-                      <span className="truncate">{game.name}</span>
-                      {game.comingSoon && (
-                        <Badge variant="outline" className="text-xs shrink-0">
-                          Coming Soon
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-muted-foreground hidden sm:inline truncate max-w-[200px]">
-                        {game.description}
-                      </span>
-                      <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-
-            {/* Keyboard shortcuts hint */}
-            <div className="border-t px-3 py-2 text-xs text-muted-foreground flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 text-[10px] font-semibold border rounded">↑↓</kbd>
-                  Navigate
-                </span>
-                <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 text-[10px] font-semibold border rounded">↵</kbd>
-                  Select
-                </span>
-                <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 text-[10px] font-semibold border rounded">Esc</kbd>
-                  Close
-                </span>
-              </div>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <VisuallyHidden.Root>
+          <DialogTitle>Search tools and games</DialogTitle>
+          <DialogDescription>
+            Search the Astraa catalog and open an available tool or game.
+          </DialogDescription>
+        </VisuallyHidden.Root>
+        <CommandInput
+          placeholder="Type to search tools and games..."
+          value={search}
+          onValueChange={setSearch}
+          aria-label="Search input"
+        />
+        <CommandList>
+          <CommandEmpty>
+            <div className="py-6 text-center text-sm text-muted-foreground">
+              No results found for “{search}”
             </div>
-          </CommandDialog>
-        )}
-      </AnimatePresence>
+          </CommandEmpty>
+
+          {/* Synchronized with explore page - Tools categories */}
+          {toolCategories.map((category) => (
+            <CommandGroup key={category.name} heading={category.name}>
+              {category.items.map((tool) => (
+                <CommandItem
+                  key={tool.path}
+                  value={`${tool.name} ${tool.description}`}
+                  onSelect={() => runCommand(() => router.push(tool.path))}
+                  className="flex items-center justify-between gap-2 cursor-pointer group"
+                  {...(tool.status === "coming-soon" && { disabled: true })}
+                >
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <tool.icon className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="truncate">{tool.name}</span>
+                    {tool.status === "coming-soon" && (
+                      <Badge variant="outline" className="text-xs shrink-0">
+                        Coming Soon
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-xs text-muted-foreground hidden sm:inline truncate max-w-[200px]">
+                      {tool.description}
+                    </span>
+                    <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
+
+          {/* Synchronized with explore page - Games section */}
+          <CommandGroup heading="Games">
+            {games.map((game) => (
+              <CommandItem
+                key={game.path}
+                value={`${game.name} ${game.description}`}
+                onSelect={() => runCommand(() => router.push(game.path))}
+                className="flex items-center justify-between gap-2 cursor-pointer group"
+                {...(game.status === "coming-soon" && { disabled: true })}
+              >
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <game.icon className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <span className="truncate">{game.name}</span>
+                  {game.status === "coming-soon" && (
+                    <Badge variant="outline" className="text-xs shrink-0">
+                      Coming Soon
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs text-muted-foreground hidden sm:inline truncate max-w-[200px]">
+                    {game.description}
+                  </span>
+                  <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+
+        {/* Keyboard shortcuts hint */}
+        <div className="border-t px-3 py-2 text-xs text-muted-foreground flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-semibold border rounded">↑↓</kbd>
+              Navigate
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-semibold border rounded">↵</kbd>
+              Select
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-semibold border rounded">Esc</kbd>
+              Close
+            </span>
+          </div>
+        </div>
+      </CommandDialog>
     </>
-  )
+  );
 }

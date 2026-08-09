@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
+
 import { ToolsClient } from "@/components/tools/tools-client";
+import { availableTools } from "@/lib/tools";
 
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "Explore Astraa's complete collection of free utility tools: scientific calculator, currency converter, password generator, hash generator, unit converter, markdown viewer, image resizer, and more. All tools run locally in your browser.",
-  keywords: ["utility tools", "developer tools", "online tools", "free tools"],
+    `Browse ${availableTools.length} available calculators, converters, editors, and ` +
+    "developer utilities. Each tool states whether processing is local or provider-backed.",
+  keywords: ["utility tools", "developer tools", "online tools", "browser tools"],
   openGraph: {
     title: "Tools",
-    description: "Free utility tools for developers and creators.",
+    description: `${availableTools.length} available utility tools for developers and creators.`,
     url: "/tools",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Tools",
-    description: "Free utility tools for developers.",
+    description: `${availableTools.length} available utility tools for developers.`,
   },
   alternates: { canonical: "/tools" },
 };

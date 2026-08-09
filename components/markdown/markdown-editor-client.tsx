@@ -12,7 +12,6 @@ import { Preview } from "./preview";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { useMarkdownEditor } from "@/lib/stores/markdown-editor";
-import { useToolSettings } from "@/lib/stores/tool-settings";
 import { acceptMarkdownFile } from "@/lib/markdown/file-accept";
 import { processImageDrop } from "@/lib/markdown/image-utils";
 import { exportAsHtml, exportAsMarkdown, exportAsPdf } from "@/lib/markdown/export";
@@ -21,20 +20,14 @@ import type { EditorHandle } from "./editor";
 
 const Editor = dynamic(() => import("./editor").then((m) => m.Editor), {
   ssr: false,
-  loading: () => (
-    <div className="p-4 text-sm text-muted-foreground">Loading editor…</div>
-  ),
+  loading: () => <div className="p-4 text-sm text-muted-foreground">Loading editor…</div>,
 });
 
 type PendingAction =
-  | { kind: "switch"; id: string }
-  | { kind: "view-toggle" }
-  | { kind: "delete"; id: string };
+  { kind: "switch"; id: string } | { kind: "view-toggle" } | { kind: "delete"; id: string };
 
 export function MarkdownEditorClient() {
-  const file = useMarkdownEditor((s) =>
-    s.files.find((f) => f.id === s.currentId),
-  );
+  const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentId));
   const files = useMarkdownEditor((s) => s.files);
   const mode = useMarkdownEditor((s) => s.mode);
   const draft = useMarkdownEditor((s) => s.draft);
@@ -123,10 +116,6 @@ export function MarkdownEditorClient() {
   }, [dirty]);
 
   useEffect(() => {
-    useToolSettings.getState().updateToolUsage("/tools/markdown");
-  }, []);
-
-  useEffect(() => {
     if (!fullscreen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setFullscreen(false);
@@ -196,7 +185,7 @@ export function MarkdownEditorClient() {
         toast({ title: "Image rejected", description: r.reason, variant: "destructive" });
       } else if (r.kind === "error") {
         toast({ title: "Couldn't read image", description: r.message, variant: "destructive" });
-        logError(new Error(r.message), { context: "markdown.image-drop" });
+        logError(new Error(r.message), { operation: "markdown.image-drop" });
       }
     },
     [toast],
@@ -228,13 +217,13 @@ export function MarkdownEditorClient() {
     <div className="mx-auto max-w-5xl space-y-8 pb-8">
       <div className="space-y-3 border-b pb-8 text-left">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Markdown
+          Markdown Editor
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
           Drop a markdown file to view it. Toggle to edit, then export as .md, .html, or PDF.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-          All processing happens locally in your browser
+          Processed in this browser
         </p>
       </div>
 

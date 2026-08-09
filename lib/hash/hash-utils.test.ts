@@ -1,5 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { generateHash } from "./hash-utils";
+import { hashAlgorithms } from "./types";
 
 describe("generateHash", () => {
   it("generates MD5 hash", () => {
@@ -10,7 +12,7 @@ describe("generateHash", () => {
   });
   it("generates SHA-256 hash", () => {
     expect(generateHash("hello", "sha256")).toBe(
-      "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+      "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
     );
   });
   it("generates SHA-512 hash", () => {
@@ -31,5 +33,36 @@ describe("generateHash", () => {
   it("handles empty string", () => {
     const hash = generateHash("", "sha256");
     expect(hash).toBe("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+  });
+});
+
+describe("hash algorithm descriptions", () => {
+  it("keeps algorithm IDs stable and avoids security superlatives", () => {
+    const forbiddenClaims = new RegExp(
+      ["ideal for " + "critical", "highly " + "secure", "strong" + "est"].join("|"),
+      "i",
+    );
+
+    expect(hashAlgorithms.map((algorithm) => algorithm.id)).toEqual([
+      "md5",
+      "sha1",
+      "sha256",
+      "sha512",
+      "sha3-256",
+      "sha3-512",
+    ]);
+    expect(hashAlgorithms.map((algorithm) => algorithm.description).join(" ")).not.toMatch(
+      forbiddenClaims,
+    );
+  });
+
+  it("identifies collision-broken legacy algorithms", () => {
+    for (const algorithmId of ["md5", "sha1"]) {
+      const description = hashAlgorithms.find(
+        (algorithm) => algorithm.id === algorithmId,
+      )?.description;
+      expect(description).toMatch(/legacy/i);
+      expect(description).toMatch(/collision/i);
+    }
   });
 });

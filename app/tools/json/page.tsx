@@ -1,11 +1,14 @@
 // app/tools/json/page.tsx
 import type { Metadata } from "next";
+
 import { JsonEditorClient } from "@/components/json/json-editor-client";
+import { RelatedTools } from "@/components/related-tools";
+import { ToolGuide } from "@/components/tool-guide";
 
 export const metadata: Metadata = {
   title: "JSON Editor",
   description:
-    "Edit, format, validate, repair and convert JSON in your browser. Tree view, YAML/CSV/Markdown converters, TypeScript and Zod generators. Handles up to 50 MB. 100% local.",
+    "Open JSON files up to 50 MB. Editing, formatting, validation, best-effort syntax repair, converters, and type generators run in this browser.",
   keywords: [
     "json editor",
     "json formatter",
@@ -19,14 +22,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "JSON Editor",
-    description: "Edit, format, convert and generate types from JSON. 100% local, up to 50 MB.",
+    description: "Edit, format, convert, and generate types from JSON in this browser.",
     url: "/tools/json",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "JSON Editor",
-    description: "Edit, format, convert and generate types from JSON. 100% local, up to 50 MB.",
+    description: "Edit, format, convert, and generate types from JSON in this browser.",
   },
   alternates: {
     canonical: "/tools/json",
@@ -34,17 +37,11 @@ export const metadata: Metadata = {
 };
 
 export default function JsonEditorPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <JsonEditorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="json" />
+      <RelatedTools toolId="json" />
     </>
   );
 }

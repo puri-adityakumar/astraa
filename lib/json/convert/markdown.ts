@@ -20,9 +20,7 @@ export function jsonToMarkdown(value: JsonValue): string {
   lines.push(`| ${headers.join(" | ")} |`);
   lines.push(`| ${headers.map(() => "---").join(" | ")} |`);
   for (const row of rows) {
-    const cells = headers.map((h) =>
-      escapeCell((row[h] ?? "") as JsonValue),
-    );
+    const cells = headers.map((h) => escapeCell((row[h] ?? "") as JsonValue));
     lines.push(`| ${cells.join(" | ")} |`);
   }
   return lines.join("\n");

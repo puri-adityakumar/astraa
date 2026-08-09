@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+
 import { PasswordGeneratorClient } from "@/components/password/password-generator";
+import { RelatedTools } from "@/components/related-tools";
+import { ToolGuide } from "@/components/tool-guide";
 
 export const metadata: Metadata = {
   title: "Password Generator",
   description:
-    "Create strong, secure passwords with customizable length and character options. Generate random passwords with uppercase, lowercase, numbers, and symbols instantly.",
+    "Create random passwords, multiword passphrases, or numeric PINs in your browser. Adjust length, numbers, symbols, and capitalization where supported.",
   keywords: [
     "password generator",
     "strong password",
@@ -17,16 +20,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Password Generator",
-    description:
-      "Generate strong, secure passwords with customizable options. Free and private.",
+    description: "Generate customizable random or memorable passwords locally in your browser.",
     url: "/tools/password",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Password Generator",
-    description:
-      "Generate strong, secure passwords with customizable options. Free and private.",
+    description: "Generate customizable random or memorable passwords locally in your browser.",
   },
   alternates: {
     canonical: "/tools/password",
@@ -34,17 +35,11 @@ export const metadata: Metadata = {
 };
 
 export default function PasswordGeneratorPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <PasswordGeneratorClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="password" />
+      <RelatedTools toolId="password" />
     </>
   );
 }

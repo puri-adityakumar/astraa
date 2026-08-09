@@ -10,43 +10,34 @@
 </p>
 
 <h2 align="center">
-  Astraa (अस्त्र) browser-based utility toolkit that brings together a collection of powerful tools and games in one place.
+  Astraa (अस्त्र) is a utility toolkit with focused browser tools and a clearly labelled roadmap for planned games.
 </h2 >
 
-
-
-<p align="center">
-  <a href="https://astraa.notion.site/roadmap">
-    <img src="https://img.shields.io/badge/Roadmap-Notion-000000?logo=notion&style=for-the-badge" alt="Roadmap" />
-  </a>
-  <a href="https://astraa.notion.site/roadmap">
-    <img src="https://img.shields.io/badge/Docs-Notion-000000?logo=notion&style=for-the-badge" alt="Docs" />
-  </a>
-  <a href="https://astraa.notion.site/">
-    <img src="https://img.shields.io/badge/Blog-Notion-000000?logo=notion&style=for-the-badge" alt="Blog" />
-  </a>
-  <a href="https://x.com/astraadottech">
-    <img src="https://img.shields.io/badge/Follow-000000?logo=x&style=for-the-badge" alt="Community" />
-  </a>
-</p>
+**Project destinations:** [Docs](https://www.astraa.tech/docs) ·
+[Roadmap](https://astraa.notion.site/roadmap) ·
+[Changelog](https://astraa.notion.site/changelog) ·
+[Hall of Fame](https://astraa.notion.site/documentation)
 
 ## Quick Start
 
 ### Prerequisites
-- **Node.js**: v18.17.0 or higher
-- **Package Manager**: npm, pnpm, or yarn
+
+- **Node.js**: v22 or higher
+- **Package Manager**: npm
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/puri-adityakumar/astraa.git
    cd astraa
    ```
 
 2. **Install dependencies**
+
    ```bash
-   npm install
+   npm ci
    ```
 
 3. **Start the development server**
@@ -55,6 +46,12 @@
    ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+## Documentation
+
+Read the [public technical documentation](https://www.astraa.tech/docs), or review its canonical
+[Markdown sources](https://github.com/puri-adityakumar/astraa/tree/development/docs) in this
+repository.
 
 ## Contributing
 
@@ -65,4 +62,3 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 <p align="center">
   <i>"If you find astraa useful, consider sponsoring the project ❤️"</i>
 </p>
-

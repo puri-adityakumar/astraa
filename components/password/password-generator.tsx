@@ -1,83 +1,86 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { PasswordDisplay } from "./password-display"
-import { Slider } from "@/components/ui/slider"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
-import { generatePassword, generateMemorablePassword, generatePin } from "@/lib/password/password-utils"
-import { copyToClipboard } from "@/lib/clipboard"
-import { cn } from "@/lib/utils"
-import { Shuffle, Lightbulb, Hash } from "lucide-react"
+import { useState, useEffect, useCallback } from "react";
+import { PasswordDisplay } from "./password-display";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  generatePassword,
+  generateMemorablePassword,
+  generatePin,
+} from "@/lib/password/password-utils";
+import { copyToClipboard } from "@/lib/clipboard";
+import { cn } from "@/lib/utils";
+import { Shuffle, Lightbulb, Hash } from "lucide-react";
 
-type GenMode = "random" | "memorable" | "pin"
+type GenMode = "random" | "memorable" | "pin";
 
 export function PasswordGeneratorClient() {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   // -- State --
-  const [mode, setMode] = useState<GenMode>("random")
-  const [password, setPassword] = useState("")
+  const [mode, setMode] = useState<GenMode>("random");
+  const [password, setPassword] = useState("");
 
   // Random Mode State
-  const [length, setLength] = useState([20])
+  const [length, setLength] = useState([20]);
   const [options, setOptions] = useState({
     uppercase: true,
     lowercase: true,
     numbers: true,
     symbols: false,
-  })
+  });
 
   // Memorable Mode State
-  const [wordCount, setWordCount] = useState([5])
+  const [wordCount, setWordCount] = useState([5]);
   const [memOptions, setMemOptions] = useState({
     capitalize: true,
-    fullWords: true
-  })
+  });
 
   // PIN Mode State
-  const [pinLength, setPinLength] = useState([4])
+  const [pinLength, setPinLength] = useState([4]);
 
   // -- Generation Logic --
   const generate = useCallback(() => {
-    let result
+    let result;
     if (mode === "random") {
-      result = generatePassword(length[0] ?? 20, options)
+      result = generatePassword(length[0] ?? 20, options);
     } else if (mode === "memorable") {
-      result = generateMemorablePassword(wordCount[0] ?? 5, memOptions.capitalize)
+      result = generateMemorablePassword(wordCount[0] ?? 5, memOptions.capitalize);
     } else {
-      result = generatePin(pinLength[0] ?? 4)
+      result = generatePin(pinLength[0] ?? 4);
     }
 
     if (result.success) {
-      setPassword(result.password)
+      setPassword(result.password);
     }
-  }, [mode, length, options, wordCount, memOptions.capitalize, pinLength])
+  }, [mode, length, options, wordCount, memOptions.capitalize, pinLength]);
 
   // Auto-generate on option changes
   useEffect(() => {
-    const timer = window.setTimeout(generate, 0)
-    return () => window.clearTimeout(timer)
-  }, [generate])
+    const timer = window.setTimeout(generate, 0);
+    return () => window.clearTimeout(timer);
+  }, [generate]);
 
   const handleCopyToClipboard = async () => {
-    if (!password) return
-    const result = await copyToClipboard(password)
+    if (!password) return;
+    const result = await copyToClipboard(password);
     if (result.success) {
       toast({
         title: "Copied!",
         description: "Password copied to clipboard",
-      })
+      });
     } else {
       toast({
         title: "Copy failed",
         description: result.error,
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-2xl space-y-8 pb-8">
@@ -87,53 +90,64 @@ export function PasswordGeneratorClient() {
           Password Generator
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg text-pretty">
-          Generate secure, random passwords, memorable passphrases, or PIN codes instantly.
+          Create random passwords, memorable passphrases, or numeric PINs.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-          All processing happens locally in your browser
+          Generated in this browser
         </p>
       </div>
 
       <div className="space-y-6 rounded-xl border bg-card p-4 shadow-geist sm:space-y-8 sm:p-6 md:p-8">
-
         {/* 1. Choose Password Type (Tabs) */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold">Choose password type</Label>
-          <div className="grid grid-cols-1 xs:grid-cols-3 p-1 bg-muted/50 rounded-lg">
+          <p id="password-mode-label" className="text-base font-semibold">
+            Choose password type
+          </p>
+          <div
+            role="group"
+            aria-labelledby="password-mode-label"
+            className="grid grid-cols-1 rounded-lg bg-muted/50 p-1 xs:grid-cols-3"
+          >
             <button
+              type="button"
               onClick={() => setMode("random")}
+              aria-pressed={mode === "random"}
               className={cn(
-                "flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-md transition-all duration-200",
+                "flex min-h-touch items-center justify-center gap-2 rounded-md py-2.5 text-sm font-medium transition-all duration-200",
                 mode === "random"
                   ? "bg-background text-foreground shadow-sm ring-1 ring-black/5 dark:ring-white/5"
-                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground",
               )}
             >
-              <Shuffle className="w-4 h-4" />
+              <Shuffle className="h-4 w-4" aria-hidden="true" />
               Random
             </button>
             <button
+              type="button"
               onClick={() => setMode("memorable")}
+              aria-pressed={mode === "memorable"}
               className={cn(
-                "flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-md transition-all duration-200",
+                "flex min-h-touch items-center justify-center gap-2 rounded-md py-2.5 text-sm font-medium transition-all duration-200",
                 mode === "memorable"
                   ? "bg-background text-foreground shadow-sm ring-1 ring-black/5 dark:ring-white/5"
-                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground",
               )}
             >
-              <Lightbulb className="w-4 h-4" />
+              <Lightbulb className="h-4 w-4" aria-hidden="true" />
               Memorable
             </button>
             <button
+              type="button"
               onClick={() => setMode("pin")}
+              aria-pressed={mode === "pin"}
               className={cn(
-                "flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-md transition-all duration-200",
+                "flex min-h-touch items-center justify-center gap-2 rounded-md py-2.5 text-sm font-medium transition-all duration-200",
                 mode === "pin"
                   ? "bg-background text-foreground shadow-sm ring-1 ring-black/5 dark:ring-white/5"
-                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground",
               )}
             >
-              <Hash className="w-4 h-4" />
+              <Hash className="h-4 w-4" aria-hidden="true" />
               PIN
             </button>
           </div>
@@ -150,14 +164,21 @@ export function PasswordGeneratorClient() {
                 {mode === "memorable" ? "Words" : "Characters"}
               </Label>
               <Slider
+                aria-label={
+                  mode === "random"
+                    ? "Password length"
+                    : mode === "memorable"
+                      ? "Passphrase word count"
+                      : "PIN length"
+                }
                 value={mode === "random" ? length : mode === "memorable" ? wordCount : pinLength}
                 onValueChange={(val) => {
-                  if (mode === "random") setLength(val)
-                  else if (mode === "memorable") setWordCount(val)
-                  else setPinLength(val)
+                  if (mode === "random") setLength(val);
+                  else if (mode === "memorable") setWordCount(val);
+                  else setPinLength(val);
                 }}
                 min={mode === "random" ? 6 : mode === "memorable" ? 3 : 3}
-                max={mode === "random" ? 64 : mode === "memorable" ? 15 : 12}
+                max={mode === "random" ? 64 : mode === "memorable" ? 10 : 12}
                 step={1}
                 className="flex-1"
               />
@@ -172,19 +193,29 @@ export function PasswordGeneratorClient() {
             {mode === "random" && (
               <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-8 gap-y-4">
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="numbers" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Numbers</Label>
+                  <Label
+                    htmlFor="numbers"
+                    className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base"
+                  >
+                    Numbers
+                  </Label>
                   <Switch
                     id="numbers"
                     checked={options.numbers}
-                    onCheckedChange={(c) => setOptions(prev => ({ ...prev, numbers: c }))}
+                    onCheckedChange={(c) => setOptions((prev) => ({ ...prev, numbers: c }))}
                   />
                 </div>
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="symbols" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Symbols</Label>
+                  <Label
+                    htmlFor="symbols"
+                    className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base"
+                  >
+                    Symbols
+                  </Label>
                   <Switch
                     id="symbols"
                     checked={options.symbols}
-                    onCheckedChange={(c) => setOptions(prev => ({ ...prev, symbols: c }))}
+                    onCheckedChange={(c) => setOptions((prev) => ({ ...prev, symbols: c }))}
                   />
                 </div>
               </div>
@@ -193,19 +224,16 @@ export function PasswordGeneratorClient() {
             {mode === "memorable" && (
               <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-8 gap-y-4">
                 <div className="flex items-center gap-3">
-                  <Label htmlFor="capitalize" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Capitalize</Label>
+                  <Label
+                    htmlFor="capitalize"
+                    className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base"
+                  >
+                    Capitalize
+                  </Label>
                   <Switch
                     id="capitalize"
                     checked={memOptions.capitalize}
-                    onCheckedChange={(c) => setMemOptions(prev => ({ ...prev, capitalize: c }))}
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <Label htmlFor="fullwords" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Full words</Label>
-                  <Switch
-                    id="fullwords"
-                    checked={memOptions.fullWords}
-                    onCheckedChange={(c) => setMemOptions(prev => ({ ...prev, fullWords: c }))}
+                    onCheckedChange={(c) => setMemOptions((prev) => ({ ...prev, capitalize: c }))}
                   />
                 </div>
               </div>
@@ -244,8 +272,7 @@ export function PasswordGeneratorClient() {
             </Button>
           </div>
         </div>
-
       </div>
     </div>
-  )
+  );
 }

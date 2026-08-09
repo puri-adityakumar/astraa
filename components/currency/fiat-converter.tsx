@@ -1,179 +1,140 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowDownUp } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import { CurrencySelect } from "./currency-select"
-import type { CurrencyCode } from "@/lib/currency-data"
-import { getExchangeRate } from "@/lib/api"
+import { useState } from "react";
+import { ArrowDownUp, RefreshCw } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useExchangeRate } from "@/hooks/use-exchange-rate";
+import type { CurrencyCode } from "@/lib/currency-data";
+import { formatConvertedAmount, parseConversionAmount } from "@/lib/rates/conversion";
+import { CurrencySelect } from "./currency-select";
 
 interface FiatConverterProps {
-  amount: string
-  onAmountChange: (value: string) => void
-  onResult: (value: string) => void
-  result: string
+  amount: string;
+  onAmountChange: (value: string) => void;
 }
 
-export function FiatConverter({
-  amount,
-  onAmountChange,
-  onResult,
-  result
-}: FiatConverterProps) {
-  const { toast } = useToast()
-  const [fromCurrency, setFromCurrency] = useState<CurrencyCode>("USD")
-  const [toCurrency, setToCurrency] = useState<CurrencyCode>("EUR")
-  const [isLoading, setIsLoading] = useState(false)
+interface FiatPair {
+  base: CurrencyCode;
+  quote: CurrencyCode;
+}
 
-  const handleSwap = () => {
-    setFromCurrency(toCurrency)
-    setToCurrency(fromCurrency)
-  }
+export function FiatConverter({ amount, onAmountChange }: FiatConverterProps) {
+  const [pair, setPair] = useState<FiatPair>({ base: "USD", quote: "EUR" });
+  const { rate, status, refresh } = useExchangeRate("fiat", pair.base, pair.quote);
+  const parsedAmount = parseConversionAmount(amount);
+  const result = formatConvertedAmount(amount, rate, 2);
+  const hasInvalidAmount = amount.trim() !== "" && parsedAmount === null;
 
-  useEffect(() => {
-    const calculate = async () => {
-      if (!amount || isNaN(Number(amount))) {
-        onResult("")
-        return
-      }
+  const handleSwap = (): void => {
+    setPair((current) => ({ base: current.quote, quote: current.base }));
+  };
 
-      setIsLoading(true)
-      try {
-        const rate = await getExchangeRate(fromCurrency, toCurrency)
-        
-        if (rate === null) {
-          onResult("Error");
-          toast({
-            title: "Error",
-            description: "Failed to fetch exchange rates. Please try again.",
-            variant: "destructive",
-          })
-          return;
-        }
-
-        const converted = (Number(amount) * rate).toFixed(2)
-        // Store just the numeric result or formatted string?
-        // UnitConverter stores "1 USD = X EUR".
-        // Let's store nicely formatted string in parent, but for the Input value?
-        // Ideally the Input shows just the Number.
-
-        // Revised plan: onResult updates the parent state (which we might unused if we display locally).
-        // Let's return the formatted string to parent (for potential other uses)
-        // AND keep a local or derived display for the input?
-
-        // Actually, let's make the Input show the full formatted string "EUR 123.45" or similar?
-        // Or just the number "123.45".
-        // Let's go with just the number for the Input value.
-
-        onResult(converted) // Just the number string
-      } catch (error) {
-        console.error(error)
-        toast({
-          title: "Error",
-          description: "Failed to fetch exchange rates. Please try again.",
-          variant: "destructive",
-        })
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    const timer = setTimeout(() => {
-      calculate()
-    }, 500) // Debounce
-
-    return () => clearTimeout(timer)
-  }, [amount, fromCurrency, toCurrency, onResult, toast])
+  const statusMessage = getStatusMessage(status, hasInvalidAmount, rate !== null);
 
   return (
     <div className="space-y-6">
-      <div className="space-y-6">
-        {/* From Section */}
-        <div className="space-y-2">
-          <Label className="text-base font-semibold">From</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <Input
-                id="fiat-amount"
-                type="number"
-                value={amount}
-                onChange={(e) => onAmountChange(e.target.value)}
-                placeholder="Enter amount"
-                className="h-11 font-mono text-lg"
-              />
-            </div>
-            <div className="w-full sm:w-[280px]">
-              <CurrencySelect
-                value={fromCurrency}
-                onValueChange={(value) => setFromCurrency(value as CurrencyCode)}
-                label="currency"
-              />
-            </div>
+      <div className="space-y-2">
+        <Label htmlFor="fiat-amount" className="text-base font-semibold">
+          From
+        </Label>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex-1">
+            <Input
+              id="fiat-amount"
+              type="number"
+              min="0"
+              inputMode="decimal"
+              value={amount}
+              onChange={(event) => onAmountChange(event.target.value)}
+              placeholder="Enter amount"
+              className="h-11 font-mono text-lg"
+              aria-invalid={hasInvalidAmount}
+              aria-describedby="fiat-rate-status"
+            />
           </div>
-        </div>
-
-        {/* Swap Button */}
-        <div className="flex justify-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleSwap}
-            className="rounded-full hover:bg-muted"
-            aria-label="Swap currencies"
-          >
-            <ArrowDownUp className="h-4 w-4 text-muted-foreground" />
-          </Button>
-        </div>
-
-        {/* To Section */}
-        <div className="space-y-2">
-          <Label className="text-base font-semibold">To</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Result Display directly in 'To' section if possible, or keep separate.
-                 Since onResult is passed up, we might display it here as a read-only input or
-                 just pass the props. But wait, the parent handles result display.
-                 Actually, looking at UnitConverter, we merged the result into the "To" input.
-                 Let's do that here too for consistency. We need to pass 'result' down or assume parent handles it.
-                 The prop 'onResult' implies parent state.
-                 However, the current FiatConverter implementation calculates it on button click.
-                 Let's switch to automatic effect-based calculation like UnitConverter.
-             */}
-            {/*
-                We need to change how this component works to be automatic.
-                First, let's keep the layout simple, and maybe we can render the result *here*
-                if we lift the calculation state or pass it down.
-                Currently `onResult` sets a string in parent.
-                Let's simplify: Display a readonly Input here that shows the loading state or result.
-             */}
-            <div className="flex-1 relative">
-              <Input
-                readOnly
-                placeholder="Result"
-                value={isLoading ? "Converting..." : result}
-                className="h-11 font-mono text-lg bg-muted/50"
-              />
-              {/*
-                  Wait, the parent `CurrencyConverterClient` displays the result in a separate box below.
-                  We should probably follow the UnitConverter pattern completely and hide that box,
-                  instead showing it in this input. But `amount` is state in parent?
-                  Yes, `onAmountChange` updates parent.
-                  Let's make this component handle the calculation automatically internally or via effect?
-                  The parent passes `amount`.
-              */}
-            </div>
-            <div className="w-full sm:w-[280px]">
-              <CurrencySelect
-                value={toCurrency}
-                onValueChange={(value) => setToCurrency(value as CurrencyCode)}
-                label="currency"
-              />
-            </div>
+          <div className="w-full sm:w-[280px]">
+            <CurrencySelect
+              value={pair.base}
+              onValueChange={(base) =>
+                setPair((current) => ({ ...current, base: base as CurrencyCode }))
+              }
+              label="From currency"
+            />
           </div>
         </div>
       </div>
+
+      <div className="flex justify-center">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={handleSwap}
+          className="min-h-touch min-w-touch rounded-full hover:bg-muted"
+          aria-label={`Swap ${pair.base} and ${pair.quote}`}
+        >
+          <ArrowDownUp className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="fiat-result" className="text-base font-semibold">
+          To
+        </Label>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="relative flex-1">
+            <Input
+              id="fiat-result"
+              readOnly
+              value={result}
+              placeholder={status === "loading" ? "Loading rate..." : "Result"}
+              className="h-11 bg-muted/50 font-mono text-lg"
+              aria-label={`Converted amount in ${pair.quote}`}
+            />
+          </div>
+          <div className="w-full sm:w-[280px]">
+            <CurrencySelect
+              value={pair.quote}
+              onValueChange={(quote) =>
+                setPair((current) => ({ ...current, quote: quote as CurrencyCode }))
+              }
+              label="To currency"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="fiat-rate-status"
+        className="flex min-h-touch items-center justify-between gap-3 text-sm text-muted-foreground"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span>{result ? `${amount} ${pair.base} = ${result} ${pair.quote}` : statusMessage}</span>
+        {status === "error" && (
+          <Button type="button" variant="outline" size="sm" onClick={refresh}>
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Retry
+          </Button>
+        )}
+      </div>
     </div>
-  )
+  );
+}
+
+function getStatusMessage(
+  status: "error" | "loading" | "ready" | "refreshing",
+  hasInvalidAmount: boolean,
+  hasRate: boolean,
+): string {
+  if (hasInvalidAmount) return "Enter a non-negative finite amount.";
+  if (status === "loading") return "Loading the exchange rate…";
+  if (status === "refreshing") return "Updating the exchange rate…";
+  if (status === "error" && hasRate) return "Showing the last rate; refresh failed.";
+  if (status === "error") return "The exchange rate is unavailable.";
+  return "Enter an amount to convert.";
 }

@@ -1,32 +1,33 @@
 import type { Metadata } from "next";
+
 import { CurrencyConverterClient } from "@/components/currency/currency-converter";
+import { RelatedTools } from "@/components/related-tools";
+import { ToolGuide } from "@/components/tool-guide";
 
 export const metadata: Metadata = {
   title: "Currency Converter",
   description:
-    "Convert between world currencies and cryptocurrencies using real-time exchange rates. Fast, free, and accurate currency conversion tool with 150+ currencies.",
+    "Convert supported fiat currencies and cryptocurrencies with provider-backed rates. The selected pair reaches the rate provider; the amount stays in your browser.",
   keywords: [
     "currency converter",
     "exchange rate",
     "forex converter",
     "cryptocurrency converter",
-    "real-time exchange rates",
+    "current exchange rates",
     "money converter",
     "USD to EUR",
     "currency calculator",
   ],
   openGraph: {
     title: "Currency Converter",
-    description:
-      "Convert currencies and crypto with real-time exchange rates. Free and accurate.",
+    description: "Convert fiat currencies and crypto with cached provider-backed rates.",
     url: "/tools/currency",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Currency Converter",
-    description:
-      "Convert currencies and crypto with real-time exchange rates. Free and accurate.",
+    description: "Convert fiat currencies and crypto with cached provider-backed rates.",
   },
   alternates: {
     canonical: "/tools/currency",
@@ -34,17 +35,11 @@ export const metadata: Metadata = {
 };
 
 export default function CurrencyConverterPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <CurrencyConverterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="currency" />
+      <RelatedTools toolId="currency" />
     </>
   );
 }

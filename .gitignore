@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
 
 # next.js
 /.next/
@@ -43,11 +45,24 @@ next-env.d.ts
 .env.sentry-build-plugin
 
 
-#agents
-.agents/
+# agents
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/astraa-architecture/
+!.agents/skills/astraa-architecture/**
+!.agents/skills/astraa-code-quality/
+!.agents/skills/astraa-code-quality/**
+!.agents/skills/astraa-feature-workflow/
+!.agents/skills/astraa-feature-workflow/**
 .agent/
-.claude/
+
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/astraa-architecture
+!.claude/skills/astraa-code-quality
+!.claude/skills/astraa-feature-workflow
 
 # superpowers plans
 docs/superpowers/
-

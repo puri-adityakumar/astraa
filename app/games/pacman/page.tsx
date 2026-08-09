@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { WorkInProgress } from "@/components/wip";
+import { getGameByPath } from "@/lib/games";
+
+const game = getGameByPath("/games/pacman")!;
 
 export const metadata: Metadata = {
-  title: "Pac-Man",
-  description:
-    "Play Pac-Man online in your browser. Navigate mazes, eat pellets, avoid ghosts, and chase high scores. Classic arcade gameplay, free and no download.",
+  title: "Pacman",
+  description: "An arcade-style browser maze game is planned for Astraa but is not playable yet.",
   robots: { index: false, follow: true },
   openGraph: {
-    title: "Pac-Man",
-    description: "Play Pac-Man arcade game online.",
+    title: "Pacman",
+    description: "A planned browser maze game that is not playable yet.",
     url: "/games/pacman",
   },
   alternates: { canonical: "/games/pacman" },
 };
 
 export default function PacmanPage() {
-  return <WorkInProgress />;
+  return <WorkInProgress name={game.name} kind="game" />;
 }

@@ -27,7 +27,7 @@ describe("emitCode", () => {
     const out = emitCode(pattern, flags, "java");
     expect(out).toContain("Pattern.compile");
     expect(out).toContain("Pattern.CASE_INSENSITIVE");
-    expect(out).toContain("\"\\\\d+\"");
+    expect(out).toContain('"\\\\d+"');
   });
 
   it("emits Go with inline flags", () => {

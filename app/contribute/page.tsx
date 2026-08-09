@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import { ContributeClient } from "@/components/contribute/contribute-client";
+import { getContributors } from "@/lib/github/contributors";
 
 export const metadata: Metadata = {
   title: "Contribute",
   description:
-    "Help build Astraa, an open-source utility toolkit. Contribute on GitHub, report issues, suggest features, or join our community on X and Telegram.",
+    "Browse open or assigned GitHub issues and read Astraa's contribution guide before proposing a focused change.",
   openGraph: {
     title: "Contribute to Astraa",
-    description:
-      "Join our open-source community and help build free utility tools.",
+    description: "Browse GitHub issues and follow Astraa's contribution guide.",
     url: "/contribute",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Contribute to Astraa",
-    description: "Help build open-source utility tools.",
+    description: "Browse GitHub issues and follow Astraa's contribution guide.",
   },
   alternates: { canonical: "/contribute" },
 };
 
-export default function ContributePage() {
-  return <ContributeClient />;
+export default async function ContributePage() {
+  const contributors = await getContributors();
+  return <ContributeClient contributors={contributors} />;
 }

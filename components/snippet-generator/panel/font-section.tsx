@@ -26,9 +26,7 @@ export function FontSection() {
                 className={cn(
                   "flex flex-col items-start gap-0.5 px-2.5 py-2 text-left rounded-md border bg-background min-h-touch",
                   "transition-colors duration-100 ease-out",
-                  active
-                    ? "border-primary bg-primary/10"
-                    : "border-border hover:bg-muted",
+                  active ? "border-primary bg-primary/10" : "border-border hover:bg-muted",
                 )}
               >
                 <span
@@ -50,12 +48,11 @@ export function FontSection() {
       </div>
       <div>
         <div className="flex items-baseline justify-between">
-          <Label>Size</Label>
-          <span className="text-[11px] tabular-nums text-muted-foreground">
-            {font.size}px
-          </span>
+          <Label id="snippet-font-size-label">Font size</Label>
+          <span className="text-[11px] tabular-nums text-muted-foreground">{font.size}px</span>
         </div>
         <Slider
+          aria-labelledby="snippet-font-size-label"
           value={[font.size]}
           min={12}
           max={20}

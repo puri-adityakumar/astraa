@@ -5,13 +5,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { Palette, Monitor, Type, LayoutGrid, Share2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { BgSection } from "./bg-section";
 import { WindowSection } from "./window-section";
 import { ThemeSection } from "./theme-section";
@@ -91,9 +85,7 @@ export function MobilePanelTrigger(props: Props) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button className="lg:hidden fixed bottom-4 right-4 z-50 shadow-lg">
-          Customize
-        </Button>
+        <Button className="lg:hidden fixed bottom-4 right-4 z-50 shadow-lg">Customize</Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[70vh] overflow-y-auto p-0">
         <SheetHeader className="px-4 py-4 border-b">

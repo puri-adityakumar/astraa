@@ -29,18 +29,12 @@ export function CodeEmitPanel() {
   const codeLang = useRegexTester((s) => s.codeLang);
   const setCodeLang = useRegexTester((s) => s.setCodeLang);
 
-  const output = useMemo(
-    () => emitCode(pattern, flags, codeLang),
-    [pattern, flags, codeLang],
-  );
+  const output = useMemo(() => emitCode(pattern, flags, codeLang), [pattern, flags, codeLang]);
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <Select
-          value={codeLang}
-          onValueChange={(v) => setCodeLang(v as CodeLang)}
-        >
+        <Select value={codeLang} onValueChange={(v) => setCodeLang(v as CodeLang)}>
           <SelectTrigger className="w-[148px] min-h-touch text-sm">
             <SelectValue />
           </SelectTrigger>
@@ -58,10 +52,7 @@ export function CodeEmitPanel() {
         readOnly
         value={output}
         aria-label="Generated code snippet"
-        className={cn(
-          "font-mono text-xs leading-relaxed",
-          "min-h-[10rem] resize-y bg-muted/30",
-        )}
+        className={cn("font-mono text-xs leading-relaxed", "min-h-[10rem] resize-y bg-muted/30")}
         spellCheck={false}
       />
     </div>

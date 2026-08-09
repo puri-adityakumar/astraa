@@ -3,9 +3,7 @@ import { sniffImageMime } from "./file";
 
 describe("sniffImageMime", () => {
   it("identifies PNG magic bytes (89 50 4E 47 0D 0A 1A 0A)", () => {
-    const bytes = new Uint8Array([
-      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00,
-    ]);
+    const bytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
     expect(sniffImageMime(bytes)).toBe("image/png");
   });
 
@@ -15,16 +13,12 @@ describe("sniffImageMime", () => {
   });
 
   it("identifies GIF87a magic bytes (47 49 46 38 37 61)", () => {
-    const bytes = new Uint8Array([
-      0x47, 0x49, 0x46, 0x38, 0x37, 0x61,
-    ]);
+    const bytes = new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x37, 0x61]);
     expect(sniffImageMime(bytes)).toBe("image/gif");
   });
 
   it("identifies GIF89a magic bytes (47 49 46 38 39 61)", () => {
-    const bytes = new Uint8Array([
-      0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
-    ]);
+    const bytes = new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61]);
     expect(sniffImageMime(bytes)).toBe("image/gif");
   });
 

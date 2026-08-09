@@ -55,7 +55,7 @@ export function DropzoneOverlay() {
         setText(content);
         toast({ title: "Loaded", description: file.name });
       } catch (err) {
-        logError(err, { context: "json-editor/dropzone" });
+        logError(err, { operation: "json-editor/dropzone" });
         toast({ title: "Drop failed", variant: "destructive" });
       }
     };

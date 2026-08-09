@@ -8,12 +8,7 @@ interface LogoProps {
 
 function AstraaMark() {
   return (
-    <svg
-      aria-hidden="true"
-      className="h-5 w-5"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
       <path
         d="M12 2.5 14.6 9.4 21.5 12l-6.9 2.6L12 21.5l-2.6-6.9L2.5 12l6.9-2.6L12 2.5Z"
         fill="currentColor"
@@ -36,9 +31,7 @@ export function Logo({ className }: LogoProps) {
     >
       <AstraaMark />
       <span className="text-[15px] font-semibold tracking-[-0.03em]">astraa</span>
-      <span className="border-l pl-2 font-mono text-[11px] text-muted-foreground">
-        अस्त्र
-      </span>
+      <span className="border-l pl-2 font-mono text-[11px] text-muted-foreground">अस्त्र</span>
     </Link>
   );
 }

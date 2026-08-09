@@ -1,8 +1,6 @@
 import type { JsonValue } from "../types";
 
-export type CsvResult =
-  | { ok: true; value: JsonValue }
-  | { ok: false; error: string };
+export type CsvResult = { ok: true; value: JsonValue } | { ok: false; error: string };
 
 export function isCsvCompatible(value: JsonValue): boolean {
   if (!Array.isArray(value) || value.length === 0) return false;
@@ -11,9 +9,7 @@ export function isCsvCompatible(value: JsonValue): boolean {
       item !== null &&
       typeof item === "object" &&
       !Array.isArray(item) &&
-      Object.values(item).every(
-        (v) => v === null || typeof v !== "object",
-      ),
+      Object.values(item).every((v) => v === null || typeof v !== "object"),
   );
 }
 

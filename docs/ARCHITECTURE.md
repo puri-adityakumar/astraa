@@ -1,377 +1,124 @@
 # Architecture
 
-System architecture and design patterns for Astraa.
+Astraa is a Next.js App Router application built around small browser tools,
+server-owned remote resources, and explicit feature boundaries.
 
-## Table of Contents
-
-- [System Overview](#system-overview)
-- [Frontend Structure](#frontend-structure)
-- [Routing Architecture](#routing-architecture)
-- [State Management](#state-management)
-- [Data Flow](#data-flow)
-- [Error Handling](#error-handling)
-
-## System Overview
+## Rendering and feature boundary
 
 ```mermaid
-graph TB
-    subgraph Client["Browser Client"]
-        UI[React Components]
-        State[State Management]
-        Tools[Tool Logic]
-    end
-
-    subgraph External["External Services"]
-        OR[OpenRouter API]
-        CG[CoinGecko API]
-        FX[Currency API]
-        Sentry[Sentry]
-    end
-
-    UI --> State
-    State --> Tools
-    Tools --> OR
-    Tools --> CG
-    Tools --> FX
-    UI --> Sentry
+flowchart LR
+  Page["Server page + metadata"] --> Client["Focused client component"]
+  Client --> Logic["Pure feature logic in lib/"]
+  Client --> Store["Optional focused Zustand store"]
+  Client --> Resource["Optional server route or action"]
+  Resource --> Provider["Remote provider"]
 ```
 
-**Architecture Type:** Client-side rendered SPA with Next.js App Router
+The default tool shape is:
 
-**Key Characteristics:**
-- Minimal backend — server actions for AI text generation, API routes for specific integrations
-- Browser-based processing for tools
-- External APIs for live data
-- Client-side state persistence (IndexedDB primary, localStorage fallback)
-- Edge middleware for visitor counting (Upstash Redis)
-
-## Frontend Structure
-
-```
-app/
-├── layout.tsx              # Root layout with providers
-├── page.tsx                # Landing page
-├── error.tsx               # Error boundary
-├── global-error.tsx        # Global error boundary
-├── not-found.tsx           # 404 page
-├── api/                    # API routes
-├── tools/
-│   ├── page.tsx            # Tools listing
-│   ├── password/           # Password generator
-│   ├── hash/               # Hash generator
-│   ├── currency/           # Currency converter
-│   ├── text/               # Text generator
-│   ├── image/              # Image resizer
-│   ├── units/              # Unit converter
-│   ├── calculator/         # Calculator
-│   ├── json/               # JSON validator
-│   ├── sql/                # SQL formatter
-│   └── music/              # Lofi Focus Studio
-├── games/
-│   ├── page.tsx            # Games listing
-│   ├── snake/              # Snake game
-│   ├── memory/             # Memory game
-│   ├── dino/               # Dino game
-│   ├── pacman/             # Pacman game
-│   ├── sudoku/             # Sudoku game
-│   └── word-search/        # Word Search game
-├── explore/                # Activity feed
-├── contribute/             # Contribution page
-└── privacy/                # Privacy policy
+```text
+app/tools/example/page.tsx
+components/example/example-client.tsx
+lib/example/
 ```
 
-### Page Component Pattern
+Interactive games follow the same boundary with `app/games/<game>/`, a focused
+client under `components/games/`, and a framework-free engine under
+`lib/games/<game>/`. Memory uses component-local state; only its cancellable
+resolution delay touches a browser timer.
 
-Server component (page) renders client component:
+Server pages own route metadata and render client components only when browser
+interactivity is required. Pure parsing, conversion, validation, and formatting
+logic stays under `lib/` and receives unit tests.
 
-```typescript
-// app/tools/password/page.tsx (Server Component)
-import { Metadata } from "next"
-import { PasswordGenerator } from "@/components/password/password-generator"
+## Registries and availability
 
-export const metadata: Metadata = {
-  title: "Password Generator | astraa",
-  description: "Generate secure passwords"
-}
+`lib/tools.ts` and `lib/games.ts` are immutable registries. Catalogs, metadata,
+the sitemap, related links, and the command menu consume their stable IDs,
+canonical paths, `status`, and `processing` fields directly. `coming-soon`
+entries remain noninteractive, noindex, and absent from the sitemap.
 
-export default function PasswordPage() {
-  return <PasswordGenerator />
-}
-```
+Incomplete public ideas stay fail-closed through their route and registry state.
+Implementation code is added only within a committed launch plan; hidden game
+prototypes do not receive permanent Knip exemptions.
 
-```typescript
-// components/password/password-generator.tsx (Client Component)
-"use client"
+## State and persistence
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+Global presentation state is limited to `next-themes` and component-local
+state. JSON, Markdown, regex, and snippet tools use focused Zustand stores in
+`lib/stores/`.
 
-export function PasswordGenerator() {
-  const [password, setPassword] = useState("")
-  // ...component logic
-}
-```
+Persisted stores use `createZustandStorage()`:
 
-## Routing Architecture
+- SSR receives a safe no-op adapter;
+- the browser prefers IndexedDB;
+- localStorage is the fallback;
+- operations are serialized per key;
+- failures leave the editor usable in memory;
+- each store owns its schema version and migration.
 
-```mermaid
-graph LR
-    subgraph Public["Public Routes"]
-        Home["/"]
-        Tools["/tools"]
-        Games["/games"]
-        Explore["/explore"]
-        Contribute["/contribute"]
-        Privacy["/privacy"]
-    end
+There is no global activity, preferences, visitor, or tool-usage store.
 
-    subgraph Tool["Tool Routes"]
-        Password["/tools/password"]
-        Hash["/tools/hash"]
-        Currency["/tools/currency"]
-        Text["/tools/text"]
-        Image["/tools/image"]
-        Units["/tools/units"]
-        Calculator["/tools/calculator"]
-        JSON["/tools/json"]
-        SQL["/tools/sql"]
-        Music["/tools/music"]
-    end
+## Remote data
 
-    subgraph Game["Game Routes"]
-        Snake["/games/snake"]
-        Memory["/games/memory"]
-        Dino["/games/dino"]
-        Pacman["/games/pacman"]
-        Sudoku["/games/sudoku"]
-        WordSearch["/games/word-search"]
-    end
+Provider credentials never enter the client bundle.
 
-    Home --> Tools
-    Home --> Games
-    Tools --> Tool
-    Games --> Game
-```
+- Crypto rates pass through `/api/rates/crypto` and CoinGecko.
+- Fiat rates pass through `/api/rates/fiat` with a fallback provider.
+- AI text uses the `generateText` server action and a server-side rate limiter.
+- GitHub contributors are fetched and cached by a server-only helper.
 
-**No authentication required** - all routes are public.
+Browser rate requests are keyed by pair, bounded, TTL-based, deduplicated, and
+abortable. The UI derives converted amounts locally so typing does not refetch.
 
-### Middleware
+## Errors, privacy, and observability
 
-```typescript
-// middleware.ts
-// Edge middleware for visitor counting via Upstash Redis
-// - Tracks unique visitors on the home page
-// - Uses 24-hour dedup cookie to prevent double-counting
-// - Non-blocking increment using Next.js after() API
-```
+Memory game state is ephemeral and local: it is not persisted, sent to a
+provider, or recorded as product telemetry.
 
-### Navigation Components
+`lib/error-handler.ts` maps unknown failures to stable public errors.
+`lib/observability/` sanitizes diagnostic messages, context, breadcrumbs, and
+Sentry events before reporting. Tool input, credentials, request bodies,
+clipboard data, URLs with query details, email addresses, IP addresses, and
+file paths are redacted.
 
-| Route Type | Navigation Component |
-|------------|---------------------|
-| Landing page | `LandingNavigation` (full header) |
-| Tool/Game pages | `FloatingNavbar` (minimal) |
+Sentry remains disabled unless both a DSN and environment are configured.
+Session replay, logs, and default PII collection are disabled. Vercel Analytics
+and Speed Insights load only in production and can be omitted at build time with
+`ASTRAA_ENABLE_ANALYTICS=false`.
 
-## State Management
+There is no homepage visitor counter, visitor cookie, or stats endpoint.
+Upstash is used only for the configured public AI-action rate limiter.
 
-### Architecture
+## Documentation rendering
 
-```mermaid
-graph TB
-    subgraph Context["React Context"]
-        TC[ToolsContext]
-        AC[ActivityContext]
-    end
+`lib/docs/catalog.json` explicitly maps each public documentation route to a
+tracked Markdown source. Its browser-safe typed wrapper supplies navigation and
+sitemap paths, while a server-only loader resolves source keys through a fixed
+allowlist of absolute files instead of joining request-controlled paths.
 
-    subgraph Zustand["Zustand Stores"]
-        UP[UserPreferences]
-        TS[ToolSettings]
-        AT[ActivityTracking]
-    end
+Documentation pages server-render GitHub Flavored Markdown and math while
+skipping raw HTML. Mermaid fences are the only strict optional client island:
+they enhance lazily and keep their readable source visible during loading,
+failure, retry, and JavaScript-disabled browsing.
 
-    subgraph Storage["Persistence"]
-        IDB[(IndexedDB)]
-        LS[(localStorage fallback)]
-    end
+## SEO and accessibility
 
-    TC --> Components
-    AC --> Components
-    UP --> IDB
-    TS --> IDB
-    AT --> IDB
-    IDB -.->|fallback| LS
-```
+Route pages export metadata with canonical URLs, descriptions, social cards,
+and indexability matching route availability. Root metadata supplies the site
+identity and structured data. `robots.ts` allows public crawling and disallows
+`/api/`. Only `sitemap.ts` consumes `getIndexablePaths()`, which combines static
+public pages, `DOCS_PATHS`, available tool paths, and games when their explicit
+indexing gate is enabled.
 
-### Zustand Stores
+The root layout provides a skip link, semantic main landmark, theme support,
+tooltips, toasts, navigation, and footer. Interactive components must keep
+44-pixel touch targets, keyboard access, visible focus, screen-reader status
+updates, and reduced-motion behavior.
 
-```typescript
-// lib/stores/user-preferences.ts
-interface UserPreferences {
-  theme: 'light' | 'dark' | 'system'
-  language: string
-  accessibility: {
-    reducedMotion: boolean
-    highContrast: boolean
-    fontSize: 'small' | 'medium' | 'large'
-    screenReader: boolean
-  }
-  privacy: {
-    analytics: boolean
-    errorReporting: boolean
-    cloudSync: boolean
-    dataSharing: boolean
-  }
-  keyboardShortcuts: Record<string, string>
-}
-```
+## Quality gates
 
-```typescript
-// lib/stores/tool-settings.ts
-interface ToolSettings {
-  [toolId: string]: {
-    lastUsed: number
-    favorites: boolean
-    customSettings: Record<string, unknown>
-  }
-}
-```
-
-### Context Providers
-
-```typescript
-// lib/tools-context.tsx
-interface ToolsContextType {
-  tools: Tool[]
-  categories: string[]
-  getToolsByCategory: (category: string) => Tool[]
-  updateTool: (id: string, updates: Partial<Tool>) => void
-}
-
-// lib/activity-tracker.tsx
-interface ActivityContextType {
-  recentActivity: ActivityItem[]
-  popularTools: PopularTool[]
-  addActivity: (item: ActivityItem) => void
-}
-```
-
-## Data Flow
-
-### Tool Data Flow
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Component
-    participant Store
-    participant API
-
-    User->>Component: Interaction
-    Component->>Store: Update state
-    Store->>localStorage: Persist
-    Component->>API: Fetch data (if needed)
-    API-->>Component: Response
-    Component->>User: Update UI
-```
-
-### Example: Currency Converter
-
-```typescript
-// components/currency/fiat-converter.tsx
-"use client"
-
-import { useState, useEffect } from "react"
-import { getExchangeRates } from "@/lib/api"
-
-export function FiatConverter() {
-  const [rates, setRates] = useState<ExchangeRates | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchRates() {
-      try {
-        const data = await getExchangeRates()
-        setRates(data)
-      } catch (error) {
-        // Handle error
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchRates()
-  }, [])
-
-  // Render logic
-}
-```
-
-## Error Handling
-
-### Error Boundary Structure
-
-```mermaid
-graph TB
-    App[App Layout]
-    GEB[Global Error Boundary]
-    PEB[Page Error Boundary]
-    CEB[Component Error Boundary]
-
-    App --> GEB
-    GEB --> PEB
-    PEB --> CEB
-```
-
-### Implementation
-
-```typescript
-// lib/error-handler.ts
-export function getUserFriendlyError(error: unknown): ErrorDetails {
-  // Sanitize and format error for user display
-  return {
-    title: "Something went wrong",
-    message: sanitizedMessage,
-    code: errorCode
-  }
-}
-
-export function logError(error: unknown, context?: Record<string, unknown>) {
-  // Log to console (Sentry captures errors at boundary level via global-error.tsx)
-  console.error(error, context)
-}
-```
-
-```typescript
-// Usage in components
-try {
-  await riskyOperation()
-} catch (error) {
-  const details = getUserFriendlyError(error)
-  toast({
-    title: details.title,
-    description: details.message,
-    variant: "destructive"
-  })
-  logError(error, { context: "currency-conversion" })
-}
-```
-
-### Sentry Integration
-
-```mermaid
-graph LR
-    Client[Client Error]
-    Server[Server Error]
-    Edge[Edge Error]
-    Sentry[Sentry Dashboard]
-
-    Client --> |instrumentation-client.ts| Sentry
-    Server --> |sentry.server.config.ts| Sentry
-    Edge --> |sentry.edge.config.ts| Sentry
-```
-
-**Note:** `logError()` in `lib/error-handler.ts` logs to console only. Sentry captures errors at boundary level via `global-error.tsx` and the instrumentation files above.
-
-**Configuration:**
-- Trace sample rate: 100% (development)
-- Session replay: 10% normal, 100% on error
-- Source maps uploaded for debugging
+The repository enforces TypeScript strictness, ESLint, Vitest, Knip, a clean npm
+dependency graph, and a production build. Worker files, framework conventions,
+and deliberate follow-up clients are declared in `knip.jsonc`; other unused
+files or dependencies are failures.

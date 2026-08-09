@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astraa Code Quality"
+  short_description: "Review Astraa code and choose quality gates"
+  default_prompt: "Use $astraa-code-quality to review this Astraa change for release readiness."

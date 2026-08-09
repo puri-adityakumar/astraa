@@ -7,12 +7,8 @@ export default function NotFound() {
       <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
         Error / 404
       </p>
-      <h1 className="mt-4 font-mono text-8xl font-semibold tracking-[-0.08em] sm:text-9xl">
-        404
-      </h1>
-      <p className="mt-4 text-base text-muted-foreground">
-        This page could not be found.
-      </p>
+      <h1 className="mt-4 font-mono text-8xl font-semibold tracking-[-0.08em] sm:text-9xl">404</h1>
+      <p className="mt-4 text-base text-muted-foreground">This page could not be found.</p>
       <Button className="mt-7" asChild>
         <Link href="/">Go back home</Link>
       </Button>

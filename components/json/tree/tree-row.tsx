@@ -31,14 +31,7 @@ const ROW_ACTION_CLASS = cn(
   "transition-colors duration-100 ease-out",
 );
 
-export function TreeRow({
-  row,
-  onToggle,
-  onCopyPath,
-  onEditSave,
-  onAddChild,
-  onRemove,
-}: Props) {
+export function TreeRow({ row, onToggle, onCopyPath, onEditSave, onAddChild, onRemove }: Props) {
   const isContainer = row.type === "object" || row.type === "array";
   const [editOpen, setEditOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -81,9 +74,7 @@ export function TreeRow({
             : row.key}
       </span>
       <span className="text-muted-foreground">:</span>
-      <span className={cn("ml-1 truncate", TYPE_COLOR[row.type])}>
-        {row.preview}
-      </span>
+      <span className={cn("ml-1 truncate", TYPE_COLOR[row.type])}>{row.preview}</span>
       <div
         className={cn(
           "ml-auto flex items-center gap-0.5",
@@ -139,12 +130,7 @@ function RowAction({
   children: React.ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className={ROW_ACTION_CLASS}
-    >
+    <button type="button" onClick={onClick} aria-label={label} className={ROW_ACTION_CLASS}>
       {children}
     </button>
   );

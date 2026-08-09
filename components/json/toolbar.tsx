@@ -1,24 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import {
-  Sparkles,
-  Minimize2,
-  Wrench,
-  ArrowDownAZ,
-  Copy,
-  Download,
-  Upload,
-} from "lucide-react";
+import { Sparkles, Minimize2, Wrench, ArrowDownAZ, Copy, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { repair } from "@/lib/json/repair";
-import {
-  validateFile,
-  readFileAsText,
-  MAX_DOCUMENT_BYTES,
-} from "@/lib/json/validators";
+import { validateFile, readFileAsText, MAX_DOCUMENT_BYTES } from "@/lib/json/validators";
 import { logError } from "@/lib/error-handler";
 
 export function Toolbar() {
@@ -80,8 +68,8 @@ export function Toolbar() {
       setText(content);
       toast({ title: "Loaded", description: file.name });
     } catch (e) {
-      logError(e, { context: "json-editor/upload" });
-      toast({ title: "Upload failed", variant: "destructive" });
+      logError(e, { operation: "json-editor/upload" });
+      toast({ title: "Could not open file", variant: "destructive" });
     }
   };
 
@@ -134,12 +122,8 @@ export function Toolbar() {
       <Button size="sm" variant="ghost" onClick={onDownload}>
         <Download className="h-4 w-4 mr-2" aria-hidden /> Download
       </Button>
-      <Button
-        size="sm"
-        variant="ghost"
-        onClick={() => fileInput.current?.click()}
-      >
-        <Upload className="h-4 w-4 mr-2" aria-hidden /> Upload
+      <Button size="sm" variant="ghost" onClick={() => fileInput.current?.click()}>
+        <Upload className="h-4 w-4 mr-2" aria-hidden /> Open
       </Button>
       <input
         ref={fileInput}

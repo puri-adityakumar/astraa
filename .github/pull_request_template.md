@@ -4,7 +4,7 @@
 
 ## Changes
 
-- 
+-
 
 ## Linked Issue
 
@@ -13,8 +13,11 @@ Closes #
 ## Checklist
 
 - [ ] Target branch is `development` (not `main`)
-- [ ] Tests pass locally (`npm test`)
-- [ ] Build succeeds (`npm run build`)
+- [ ] Linked issue and assignment requirements are satisfied
+- [ ] Repository quality gates pass (`npm run check`)
+- [ ] Production E2E build succeeds (`npm run build:e2e -- --webpack`)
+- [ ] Browser suite passes (`npm run test:e2e`)
+- [ ] Relevant unit tests were added or updated and pass locally
 - [ ] Tested on mobile and desktop
 - [ ] Tested in dark and light themes
-- [ ] Follows project conventions (double quotes, semicolons, 2-space indent)
+- [ ] Change follows the applicable contributor and repository-skill guidance

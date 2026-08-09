@@ -29,12 +29,16 @@ export function StatusBar() {
     >
       <div className="flex flex-wrap items-center gap-3">
         <span className="tabular-nums">{formatBytes(bytes)}</span>
-        <span aria-hidden className="text-muted-foreground/40">·</span>
+        <span aria-hidden className="text-muted-foreground/40">
+          ·
+        </span>
         <span className="tabular-nums">{lines} lines</span>
-        <span aria-hidden className="text-muted-foreground/40">·</span>
+        <span aria-hidden className="text-muted-foreground/40">
+          ·
+        </span>
         {valid ? (
-          <span className="inline-flex items-center gap-1 text-success">
-            <Check className="h-3.5 w-3.5" aria-hidden /> Valid
+          <span className="inline-flex items-center gap-1 text-foreground">
+            <Check className="h-3.5 w-3.5 text-success" aria-hidden /> Valid
           </span>
         ) : diagnostics.length > 0 ? (
           <span
@@ -49,7 +53,7 @@ export function StatusBar() {
       </div>
       <span className="inline-flex items-center gap-1">
         <ShieldCheck className="h-3.5 w-3.5 text-success" aria-hidden />
-        100% local
+        Processed in this browser
       </span>
     </div>
   );

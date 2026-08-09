@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { useToolSettings } from "@/lib/stores/tool-settings";
 import { copyToClipboard } from "@/lib/clipboard";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import {
@@ -27,11 +26,7 @@ import { Base64StatusFooter } from "./base64-status-footer";
 import { Base64ImagePreview } from "./base64-image-preview";
 import { Base64HexPanel } from "./base64-hex-panel";
 import { motion } from "framer-motion";
-import {
-  fadeInUp,
-  staggerContainer,
-  staggerItem,
-} from "@/lib/animations/variants";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/animations/variants";
 import { useReducedMotion } from "@/lib/animations/hooks";
 
 const DEBOUNCE_MS = 150;
@@ -59,10 +54,6 @@ export function Base64Client() {
   const [status, setStatus] = useState<Base64Status>({ kind: "idle" });
 
   const { toast } = useToast();
-
-  useEffect(() => {
-    useToolSettings.getState().updateToolUsage("base64");
-  }, []);
 
   // Debounced derive of output + status from inputs/options.
   const inputKey = useMemo(
@@ -117,13 +108,12 @@ export function Base64Client() {
           }
         } else {
           // decode
-          const source = inputType === "text"
-            ? textInput
-            : fileInput
-              ? new TextDecoder("utf-8", { fatal: false }).decode(
-                  fileInput.bytes,
-                )
-              : "";
+          const source =
+            inputType === "text"
+              ? textInput
+              : fileInput
+                ? new TextDecoder("utf-8", { fatal: false }).decode(fileInput.bytes)
+                : "";
           if (source.trim().length === 0) {
             setOutput("");
             setDecodedBytes(null);
@@ -152,7 +142,7 @@ export function Base64Client() {
         setOutput("");
         setDecodedBytes(null);
         setStatus({ kind: "error", message: details.message });
-        logError(error, { context: "base64/convert" });
+        logError(error, { operation: "base64/convert" });
       }
     }, DEBOUNCE_MS);
     return () => {
@@ -205,7 +195,7 @@ export function Base64Client() {
         description: details.message,
         variant: "destructive",
       });
-      logError(error, { context: "base64/download" });
+      logError(error, { operation: "base64/download" });
     }
   }, [output, mode, inputType, fileInput, textInput, options, toast]);
 
@@ -228,36 +218,29 @@ export function Base64Client() {
     setStatus({ kind: "idle" });
   }, []);
 
-  const handleModeChange = useCallback(
-    (next: Base64Mode) => {
-      setMode(next);
-      setOutput("");
-      setDecodedBytes(null);
-      setStatus({ kind: "idle" });
-    },
-    [],
-  );
+  const handleModeChange = useCallback((next: Base64Mode) => {
+    setMode(next);
+    setOutput("");
+    setDecodedBytes(null);
+    setStatus({ kind: "idle" });
+  }, []);
 
-  const handleInputTypeChange = useCallback(
-    (next: Base64InputType) => {
-      setInputType(next);
-      if (next === "text") setFileInput(null);
-      else setTextInput("");
-      setOutput("");
-      setDecodedBytes(null);
-      setStatus({ kind: "idle" });
-    },
-    [],
-  );
+  const handleInputTypeChange = useCallback((next: Base64InputType) => {
+    setInputType(next);
+    if (next === "text") setFileInput(null);
+    else setTextInput("");
+    setOutput("");
+    setDecodedBytes(null);
+    setStatus({ kind: "idle" });
+  }, []);
 
   const inputBytes =
     status.kind === "valid"
       ? status.inputBytes
       : inputType === "text"
         ? byteLength(textInput)
-        : fileInput?.bytes.length ?? 0;
-  const outputBytes =
-    status.kind === "valid" ? status.outputBytes : output.length;
+        : (fileInput?.bytes.length ?? 0);
+  const outputBytes = status.kind === "valid" ? status.outputBytes : output.length;
 
   const imageMime = useMemo(() => {
     if (mode !== "decode" || !decodedBytes) return null;
@@ -298,60 +281,45 @@ export function Base64Client() {
       initial="hidden"
       animate="show"
     >
-      <motion.div
-        className="space-y-3 border-b pb-8 text-left"
-        variants={headerVariants}
-      >
+      <motion.div className="space-y-3 border-b pb-8 text-left" variants={headerVariants}>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Base64 Encoder &amp; Decoder
+          Base64 Encoder/Decoder
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg">
-          Convert text and files to and from Base64 — with URL-safe variant support and inline image preview.
+          Convert text and files to and from Base64 — with URL-safe variant support and inline image
+          preview.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-          All processing happens locally in your browser
+          Processed in this browser
         </p>
       </motion.div>
       <motion.div variants={itemVariants}>
         <Card className="p-4 sm:p-6 space-y-6">
-        <Base64ModeTabs mode={mode} onChange={handleModeChange} />
-        <Base64Input
-          inputType={inputType}
-          onInputTypeChange={handleInputTypeChange}
-          textValue={textInput}
-          onTextChange={setTextInput}
-          file={fileInput}
-          onFileChange={setFileInput}
-          placeholder={
-            mode === "encode"
-              ? "Paste text to encode…"
-              : "Paste base64 to decode…"
-          }
-        />
-        <Base64OptionsRow
-          mode={mode}
-          options={options}
-          onChange={setOptions}
-        />
-        <Base64Output
-          mode={mode}
-          output={output}
-          status={status}
-          onCopy={handleCopy}
-          onDownload={handleDownload}
-          onSwap={handleSwap}
-          onClear={handleClear}
-        />
-        {mode === "decode" && decodedBytes && imageMime && (
-          <Base64ImagePreview bytes={decodedBytes} mime={imageMime} />
-        )}
-        {mode === "decode" && decodedBytes && (
-          <Base64HexPanel bytes={decodedBytes} />
-        )}
-        <Base64StatusFooter
-          inputBytes={inputBytes}
-          outputBytes={outputBytes}
-        />
+          <Base64ModeTabs mode={mode} onChange={handleModeChange} />
+          <Base64Input
+            inputType={inputType}
+            onInputTypeChange={handleInputTypeChange}
+            textValue={textInput}
+            onTextChange={setTextInput}
+            file={fileInput}
+            onFileChange={setFileInput}
+            placeholder={mode === "encode" ? "Paste text to encode…" : "Paste base64 to decode…"}
+          />
+          <Base64OptionsRow mode={mode} options={options} onChange={setOptions} />
+          <Base64Output
+            mode={mode}
+            output={output}
+            status={status}
+            onCopy={handleCopy}
+            onDownload={handleDownload}
+            onSwap={handleSwap}
+            onClear={handleClear}
+          />
+          {mode === "decode" && decodedBytes && imageMime && (
+            <Base64ImagePreview bytes={decodedBytes} mime={imageMime} />
+          )}
+          {mode === "decode" && decodedBytes && <Base64HexPanel bytes={decodedBytes} />}
+          <Base64StatusFooter inputBytes={inputBytes} outputBytes={outputBytes} />
         </Card>
       </motion.div>
     </motion.div>

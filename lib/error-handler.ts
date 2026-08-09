@@ -1,135 +1,190 @@
-/**
- * Error handling utilities for user-friendly error messages
- */
+import { sanitizeDiagnosticContext, sanitizeDiagnosticMessage } from "@/lib/observability/sanitize";
+
+export type PublicErrorCode =
+  | "CONNECTION_ERROR"
+  | "FILE_ERROR"
+  | "INVALID_INPUT"
+  | "PERMISSION_DENIED"
+  | "REQUEST_TIMEOUT"
+  | "UNEXPECTED_ERROR";
 
 export interface ErrorDetails {
-  title: string
-  message: string
-  action?: string
-  technical?: string
+  code: PublicErrorCode;
+  title: string;
+  message: string;
+  action: string;
+  retryable: boolean;
 }
 
-// Pre-compiled RegExp constants for sanitization (avoids re-creation per call)
-const WINDOWS_PATH_RE = /[A-Za-z]:\\[\w\\\-. ]+/g
-const UNIX_PATH_RE = /\/[\w\/\-. ]+/g
-const URL_RE = /https?:\/\/[^\s]+/g
-const EMAIL_RE = /[\w.-]+@[\w.-]+\.\w+/g
-const IP_RE = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g
+export interface DiagnosticRecord {
+  code: PublicErrorCode;
+  context: Record<string, unknown>;
+  message: string;
+  name: string;
+  stack?: string;
+  timestamp: string;
+}
 
-/**
- * Convert various error types into user-friendly messages
- */
-export function getUserFriendlyError(error: unknown): ErrorDetails {
-  // Network errors
-  if (error instanceof TypeError && error.message.includes("fetch")) {
-    return {
-      title: "Connection Error",
-      message: "Unable to connect to the server. Please check your internet connection and try again.",
-      action: "Retry",
-      technical: error.message,
-    }
-  }
+export interface SafeErrorReport {
+  code: PublicErrorCode;
+  digest?: string;
+  routeTemplate: string;
+  timestamp: string;
+}
 
-  if (error instanceof Error) {
-    const lowerMessage = error.message.toLowerCase()
-
-    // Timeout errors
-    if (lowerMessage.includes("timeout")) {
-      return {
-        title: "Request Timeout",
-        message: "The request took too long to complete. Please try again.",
-        action: "Retry",
-        technical: error.message,
-      }
-    }
-
-    // Permission errors
-    if (lowerMessage.includes("permission") || lowerMessage.includes("unauthorized")) {
-      return {
-        title: "Permission Denied",
-        message: "You don't have permission to perform this action.",
-        action: "Go Back",
-        technical: error.message,
-      }
-    }
-
-    // Validation errors
-    if (lowerMessage.includes("invalid")) {
-      return {
-        title: "Invalid Input",
-        message: "The provided input is invalid. Please check your data and try again.",
-        action: "Fix Input",
-        technical: error.message,
-      }
-    }
-
-    // File errors
-    if (lowerMessage.includes("file") || lowerMessage.includes("upload")) {
-      return {
-        title: "File Error",
-        message: "There was a problem with the file. Please ensure it's the correct format and size.",
-        action: "Try Another File",
-        technical: error.message,
-      }
-    }
-
-    // Generic error
-    return {
-      title: "Something Went Wrong",
-      message: "An unexpected error occurred. Please try again or contact support if the problem persists.",
-      action: "Try Again",
-      technical: error.message,
-    }
-  }
-
-  // Unknown error type
-  return {
-    title: "Unknown Error",
+const PUBLIC_ERRORS: Record<PublicErrorCode, ErrorDetails> = {
+  CONNECTION_ERROR: {
+    code: "CONNECTION_ERROR",
+    title: "Connection Error",
+    message: "The service could not be reached. Check your connection and try again.",
+    action: "Retry",
+    retryable: true,
+  },
+  FILE_ERROR: {
+    code: "FILE_ERROR",
+    title: "File Error",
+    message: "The file could not be processed. Check its format and size, then try again.",
+    action: "Try Another File",
+    retryable: true,
+  },
+  INVALID_INPUT: {
+    code: "INVALID_INPUT",
+    title: "Invalid Input",
+    message: "The provided input is invalid. Check it and try again.",
+    action: "Fix Input",
+    retryable: false,
+  },
+  PERMISSION_DENIED: {
+    code: "PERMISSION_DENIED",
+    title: "Permission Denied",
+    message: "This action is not permitted.",
+    action: "Go Back",
+    retryable: false,
+  },
+  REQUEST_TIMEOUT: {
+    code: "REQUEST_TIMEOUT",
+    title: "Request Timeout",
+    message: "The request took too long to complete. Please try again.",
+    action: "Retry",
+    retryable: true,
+  },
+  UNEXPECTED_ERROR: {
+    code: "UNEXPECTED_ERROR",
+    title: "Something Went Wrong",
     message: "An unexpected error occurred. Please try again.",
     action: "Try Again",
-    technical: String(error),
+    retryable: true,
+  },
+};
+
+export class AppError extends Error {
+  constructor(public readonly code: PublicErrorCode) {
+    super(code);
+    this.name = "AppError";
   }
 }
 
-/**
- * Log error with context for debugging
- */
-export function logError(error: unknown, context?: Record<string, unknown>) {
-  const errorDetails = getUserFriendlyError(error)
-
-  console.error("Error occurred:", {
-    ...errorDetails,
-    context,
-    timestamp: new Date().toISOString(),
-    userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "unknown",
-  })
+export function getUserFriendlyError(error: unknown): ErrorDetails {
+  return PUBLIC_ERRORS[getPublicErrorCode(error)];
 }
 
-/**
- * Handle async errors with user-friendly messages
- */
-export async function handleAsyncError<T>(
-  promise: Promise<T>,
-  errorCallback?: (error: ErrorDetails) => void
-): Promise<T | null> {
-  try {
-    return await promise
-  } catch (error) {
-    const errorDetails = getUserFriendlyError(error)
-    logError(error)
-    errorCallback?.(errorDetails)
-    return null
-  }
+export function createDiagnosticRecord(
+  error: unknown,
+  context: Record<string, unknown> = {},
+  now: Date = new Date(),
+): DiagnosticRecord {
+  const publicError = getUserFriendlyError(error);
+  const rawMessage = error instanceof Error ? error.message : String(error);
+  const rawStack = error instanceof Error ? error.stack : undefined;
+
+  return {
+    code: publicError.code,
+    context: sanitizeDiagnosticContext(context),
+    message: sanitizeDiagnosticMessage(rawMessage),
+    name: sanitizeErrorName(error instanceof Error ? error.name : "UnknownThrownValue"),
+    ...(rawStack ? { stack: sanitizeDiagnosticMessage(rawStack, 4_000) } : {}),
+    timestamp: now.toISOString(),
+  };
 }
 
-/**
- * Create a safe error message for display (removes sensitive info)
- */
+export function logError(error: unknown, context: Record<string, unknown> = {}): DiagnosticRecord {
+  const diagnostic = createDiagnosticRecord(error, context);
+  console.error("Astraa diagnostic:", diagnostic);
+  return diagnostic;
+}
+
+export function createSafeErrorReport(
+  error: unknown,
+  digest: string | undefined,
+  routeTemplate: string,
+  now: Date = new Date(),
+): SafeErrorReport {
+  const context = sanitizeDiagnosticContext({ digest, routeTemplate });
+  return {
+    code: getUserFriendlyError(error).code,
+    ...(typeof context.digest === "string" ? { digest: context.digest } : {}),
+    routeTemplate:
+      typeof context.routeTemplate === "string" ? context.routeTemplate : "/[app-route]",
+    timestamp: now.toISOString(),
+  };
+}
+
+export function formatSafeErrorReport(report: SafeErrorReport): string {
+  return [
+    `Code: ${report.code}`,
+    ...(report.digest ? [`Digest: ${report.digest}`] : []),
+    `Route: ${report.routeTemplate}`,
+    `Timestamp: ${report.timestamp}`,
+  ].join("\n");
+}
+
 export function sanitizeErrorMessage(message: string): string {
-  return message
-    .replace(WINDOWS_PATH_RE, "[path]")
-    .replace(UNIX_PATH_RE, "[path]")
-    .replace(URL_RE, "[url]")
-    .replace(EMAIL_RE, "[email]")
-    .replace(IP_RE, "[ip]")
+  return sanitizeDiagnosticMessage(message);
+}
+
+function getPublicErrorCode(error: unknown): PublicErrorCode {
+  if (error instanceof AppError) return error.code;
+  if (isNamedError(error, "TimeoutError")) return "REQUEST_TIMEOUT";
+
+  const code = readErrorCode(error);
+  switch (code) {
+    case "INVALID_INPUT":
+    case "INVALID_PAIR":
+      return "INVALID_INPUT";
+    case "PERMISSION_DENIED":
+    case "UNAUTHORIZED":
+      return "PERMISSION_DENIED";
+    case "FILE_ERROR":
+      return "FILE_ERROR";
+    case "UPSTREAM_TIMEOUT":
+      return "REQUEST_TIMEOUT";
+    case "CONNECTION_ERROR":
+    case "NOT_CONFIGURED":
+    case "SERVICE_UNAVAILABLE":
+    case "UPSTREAM_UNAVAILABLE":
+      return "CONNECTION_ERROR";
+    default:
+      return "UNEXPECTED_ERROR";
+  }
+}
+
+function readErrorCode(error: unknown): string | null {
+  if (typeof error !== "object" || error === null || !("code" in error)) return null;
+  return typeof (error as { code?: unknown }).code === "string"
+    ? (error as { code: string }).code
+    : null;
+}
+
+function isNamedError(error: unknown, name: string): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "name" in error &&
+    (error as { name?: unknown }).name === name
+  );
+}
+
+function sanitizeErrorName(value: string): string {
+  const sanitized = value.replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 80);
+  return sanitized || "Error";
 }

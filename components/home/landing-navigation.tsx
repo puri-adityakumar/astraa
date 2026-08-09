@@ -1,20 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Github, Menu, X } from "lucide-react";
+import { ChevronRight, Github, Menu, X } from "lucide-react";
 
 import { CommandMenu } from "@/components/command-menu";
 import { Logo } from "@/components/logo";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const ThemeToggle = dynamic(
+  () => import("@/components/theme-toggle").then((module) => module.ThemeToggle),
+  {
+    loading: () => (
+      <div
+        className="h-[50px] w-[138px] rounded-full border bg-background shadow-geist"
+        aria-hidden="true"
+        data-theme-toggle-placeholder
+      />
+    ),
+    ssr: false,
+  },
+);
+
 const NAVIGATION_LINKS = [
-  { href: "/explore", label: "Explore" },
   { href: "/tools", label: "Tools" },
   { href: "/games", label: "Games" },
+  { href: "/docs", label: "Docs" },
   { href: "/contribute", label: "Contribute" },
 ];
 
@@ -25,15 +39,20 @@ function isLinkActive(pathname: string, href: string): boolean {
 export function LandingNavigation() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsMenuOpen(false);
+      if (event.key !== "Escape" || !isMenuOpen) return;
+
+      event.preventDefault();
+      setIsMenuOpen(false);
+      window.requestAnimationFrame(() => menuButtonRef.current?.focus());
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, []);
+  }, [isMenuOpen]);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/85 backdrop-blur-xl">
@@ -45,7 +64,7 @@ export function LandingNavigation() {
           <Logo />
         </div>
 
-        <div className="hidden items-center gap-1 lg:flex">
+        <div className="hidden items-center gap-1 lg:flex" data-main-navigation-links="desktop">
           {NAVIGATION_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -56,6 +75,7 @@ export function LandingNavigation() {
                   "hover:text-foreground",
                 isLinkActive(pathname, link.href) && "bg-muted text-foreground",
               )}
+              aria-current={isLinkActive(pathname, link.href) ? "page" : undefined}
             >
               {link.label}
             </Link>
@@ -76,6 +96,7 @@ export function LandingNavigation() {
         </div>
 
         <Button
+          ref={menuButtonRef}
           variant="outline"
           size="icon"
           className="ml-auto shrink-0 lg:hidden"
@@ -96,9 +117,9 @@ export function LandingNavigation() {
         <div id="mobile-navigation" className="border-t bg-background lg:hidden">
           <div className="mx-auto w-full max-w-[1200px] border-x border-border/70 p-4 sm:px-6">
             <div className="mb-4 md:hidden">
-              <CommandMenu />
+              <CommandMenu onNavigate={() => setIsMenuOpen(false)} />
             </div>
-            <div className="grid gap-1">
+            <div className="grid gap-1" data-main-navigation-links="mobile">
               {NAVIGATION_LINKS.map((link) => (
                 <Link
                   key={link.href}
@@ -108,10 +129,11 @@ export function LandingNavigation() {
                       "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                     isLinkActive(pathname, link.href) && "bg-muted text-foreground",
                   )}
+                  aria-current={isLinkActive(pathname, link.href) ? "page" : undefined}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
-                  <span aria-hidden="true">↗</span>
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               ))}
             </div>

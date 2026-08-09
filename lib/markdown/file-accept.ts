@@ -2,8 +2,7 @@ export const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_EXT = [".md", ".markdown", ".txt"] as const;
 
 export type AcceptResult =
-  | { kind: "ok"; name: string; text: string }
-  | { kind: "rejected"; reason: string };
+  { kind: "ok"; name: string; text: string } | { kind: "rejected"; reason: string };
 
 const hasAllowedExt = (name: string): boolean => {
   const lower = name.toLowerCase();

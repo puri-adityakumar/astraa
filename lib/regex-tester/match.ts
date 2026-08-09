@@ -1,7 +1,7 @@
 import type { MatchResult } from "./types";
 
 export const MATCH_CAP = 10000;
-export const TIME_BUDGET_MS = 250;
+const TIME_BUDGET_MS = 250;
 
 export type RunMatchesResult = {
   results: MatchResult[];
@@ -17,9 +17,7 @@ export function runMatches(regex: RegExp, input: string): RunMatchesResult {
   let timedOut = false;
 
   // Ensure the `d` flag so exec() exposes per-group indices for highlighting.
-  const re = regex.flags.includes("d")
-    ? regex
-    : new RegExp(regex.source, regex.flags + "d");
+  const re = regex.flags.includes("d") ? regex : new RegExp(regex.source, regex.flags + "d");
 
   if (!re.global && !re.sticky) {
     const m = re.exec(input);
@@ -56,9 +54,7 @@ export function runMatches(regex: RegExp, input: string): RunMatchesResult {
 
 function toMatchResult(m: RegExpExecArray): MatchResult {
   const full = m[0];
-  const indices = (
-    m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }
-  ).indices;
+  const indices = (m as RegExpExecArray & { indices?: ([number, number] | undefined)[] }).indices;
   const groups: (string | undefined)[] = [];
   const groupIndices: (number | null)[] = [];
   for (let i = 1; i < m.length; i++) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Laptop, Moon, Sun, type LucideIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -20,12 +19,6 @@ const THEME_OPTIONS: ThemeOption[] = [
 
 export function ThemeToggle() {
   const { setTheme, theme } = useTheme();
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    const hydrationTimer = window.setTimeout(() => setIsHydrated(true), 0);
-    return () => window.clearTimeout(hydrationTimer);
-  }, []);
 
   return (
     <div
@@ -35,7 +28,7 @@ export function ThemeToggle() {
     >
       {THEME_OPTIONS.map((option) => {
         const Icon = option.icon;
-        const isActive = isHydrated && theme === option.value;
+        const isActive = theme === option.value;
 
         return (
           <button

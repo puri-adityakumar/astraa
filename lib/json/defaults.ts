@@ -1,31 +1,28 @@
 import type { IndentOption, View, ConvertFormat, GenerateFormat } from "./types";
 
-export const SAMPLE_JSON = `[
-  {
-    "slug": "snippet",
-    "name": "Code Snippet Generator",
-    "released": "2026-04-02",
-    "users": 12450,
-    "rating": 4.8,
-    "premium": false
+export const SAMPLE_JSON = `{
+  "title": "Fictional garden checklist",
+  "revision": 3,
+  "published": false,
+  "labels": ["sample", "planning"],
+  "summary": null,
+  "settings": {
+    "theme": "moonlight",
+    "showCompleted": true
   },
-  {
-    "slug": "markdown",
-    "name": "Markdown Editor",
-    "released": "2026-03-18",
-    "users": 8560,
-    "rating": 4.6,
-    "premium": false
-  },
-  {
-    "slug": "json",
-    "name": "JSON Editor",
-    "released": "2026-05-29",
-    "users": 2100,
-    "rating": 4.9,
-    "premium": true
-  }
-]`;
+  "items": [
+    {
+      "id": 1,
+      "task": "Sketch a winding path",
+      "done": true
+    },
+    {
+      "id": 2,
+      "task": "Choose imaginary flowers",
+      "done": false
+    }
+  ]
+}`;
 
 export const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
 export const MAX_PERSIST_BYTES = 256 * 1024;
@@ -33,11 +30,7 @@ export const MAX_REPAIR_BYTES = 5 * 1024 * 1024;
 
 export const INDENT_OPTIONS: IndentOption[] = [2, 4, "tab"];
 
-export const ALLOWED_MIME = [
-  "application/json",
-  "text/plain",
-  "",
-] as const;
+export const ALLOWED_MIME = ["application/json", "text/plain", ""] as const;
 
 export const DEFAULT_STATE = {
   schemaVersion: 1 as const,
@@ -49,7 +42,7 @@ export const DEFAULT_STATE = {
   parsedValue: null,
   diagnostics: [],
   parsedAt: 0,
-  expanded: ["", "[0]", "[1]", "[2]"] as string[],
+  expanded: ["", "settings", "items", "items[0]", "items[1]"] as string[],
   convertFormat: "yaml" as ConvertFormat,
   generateFormat: "typescript" as GenerateFormat,
 };

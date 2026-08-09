@@ -7,15 +7,15 @@ import { Label } from "@/components/ui/label";
 import { useSnippetGenerator } from "@/lib/stores/snippet-generator";
 
 const THEME_SWATCH: Record<string, { bg: string; accent: string }> = {
-  "github-dark":       { bg: "#0d1117", accent: "#79c0ff" },
-  "github-light":      { bg: "#ffffff", accent: "#6f42c1" },
-  "dracula":           { bg: "#282a36", accent: "#bd93f9" },
-  "one-dark-pro":      { bg: "#282c34", accent: "#c678dd" },
-  "nord":              { bg: "#2e3440", accent: "#88c0d0" },
-  "tokyo-night":       { bg: "#1a1b26", accent: "#7aa2f7" },
-  "catppuccin-mocha":  { bg: "#1e1e2e", accent: "#cba6f7" },
-  "monokai":           { bg: "#272822", accent: "#f92672" },
-  "solarized-dark":    { bg: "#002b36", accent: "#b58900" },
+  "github-dark": { bg: "#0d1117", accent: "#79c0ff" },
+  "github-light": { bg: "#ffffff", accent: "#6f42c1" },
+  dracula: { bg: "#282a36", accent: "#bd93f9" },
+  "one-dark-pro": { bg: "#282c34", accent: "#c678dd" },
+  nord: { bg: "#2e3440", accent: "#88c0d0" },
+  "tokyo-night": { bg: "#1a1b26", accent: "#7aa2f7" },
+  "catppuccin-mocha": { bg: "#1e1e2e", accent: "#cba6f7" },
+  monokai: { bg: "#272822", accent: "#f92672" },
+  "solarized-dark": { bg: "#002b36", accent: "#b58900" },
 };
 
 const FALLBACK = { bg: "#0d1117", accent: "#79c0ff" };
@@ -37,7 +37,9 @@ export function ThemeSection() {
           className="w-full border rounded-md px-2 py-1.5 bg-background min-h-touch transition-colors duration-100 ease-out hover:border-input focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           {LANGUAGES.map((l) => (
-            <option key={l.id} value={l.id}>{l.name}</option>
+            <option key={l.id} value={l.id}>
+              {l.name}
+            </option>
           ))}
         </select>
       </div>

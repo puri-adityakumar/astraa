@@ -1,22 +1,16 @@
 // components/snippet-generator/snippet-generator-client.tsx
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Canvas } from "./canvas";
 import { CanvasStatus } from "./canvas-status";
 import { ModeToggle } from "./mode-toggle";
 import { TopExport } from "./top-export";
 import { DesktopPanel, MobilePanelTrigger } from "./panel/panel";
-import { useToolSettings } from "@/lib/stores/tool-settings";
 
 export function SnippetGeneratorClient() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const getCanvasNode = useCallback(() => canvasRef.current, []);
-  const updateToolUsage = useToolSettings((s) => s.updateToolUsage);
-
-  useEffect(() => {
-    updateToolUsage("/tools/snippet-generator");
-  }, [updateToolUsage]);
 
   return (
     <div className="mx-auto max-w-[1400px] pb-8">
@@ -24,8 +18,7 @@ export function SnippetGeneratorClient() {
         <div className="min-w-0">
           <h1 className="text-fluid-xl font-semibold">Code Snippet Generator</h1>
           <p className="text-sm text-muted-foreground">
-            Make shareable code or screenshot images. All processing happens
-            locally in your browser.
+            Turn code or a screenshot into a styled PNG. Processed in this browser.
           </p>
         </div>
         <div className="flex items-center gap-3">

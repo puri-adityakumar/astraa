@@ -55,6 +55,7 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor(
         keymap.of([...defaultKeymap, ...historyKeymap, ...searchKeymap, indentWithTab]),
         search(),
         markdown(),
+        EditorView.contentAttributes.of({ "aria-label": "Markdown editor" }),
         themeCompartment.of([]),
         EditorView.lineWrapping,
         EditorView.updateListener.of((u) => {

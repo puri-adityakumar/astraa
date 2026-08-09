@@ -3,11 +3,7 @@
 import { useCallback, useState } from "react";
 import { ImageDown, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import type { MatchResult } from "@/lib/regex-tester/types";
@@ -166,11 +162,7 @@ function roundedRect(
   ctx.closePath();
 }
 
-function clipToWidth(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-): string {
+function clipToWidth(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   if (ctx.measureText(text).width <= maxWidth) return text;
   let lo = 0;
   let hi = text.length;
@@ -185,11 +177,7 @@ function clipToWidth(
   return text.slice(0, lo) + "…";
 }
 
-export function SnippetCardExport({
-  pattern,
-  flags,
-  matches,
-}: SnippetCardExportProps) {
+export function SnippetCardExport({ pattern, flags, matches }: SnippetCardExportProps) {
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
 
@@ -222,7 +210,7 @@ export function SnippetCardExport({
         description: details.message,
         variant: "destructive",
       });
-      logError(error, { context: "regex-tester/snippet-export" });
+      logError(error, { operation: "regex-tester/snippet-export" });
     } finally {
       setBusy(false);
     }

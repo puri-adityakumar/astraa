@@ -74,9 +74,7 @@ export function Base64HexPanel({ bytes }: Base64HexPanelProps) {
               <span className="text-muted-foreground select-none">
                 {row.offset.toString(16).padStart(4, "0").toUpperCase()}
               </span>
-              <span>
-                {row.values.map((b) => toHex(b)).join(" ")}
-              </span>
+              <span>{row.values.map((b) => toHex(b)).join(" ")}</span>
             </div>
           ))}
         </div>

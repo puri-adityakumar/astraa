@@ -1,123 +1,78 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowRight, Braces, Github, LockKeyhole } from "lucide-react";
+import { ArrowRight, Github } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-const FEATURE_ITEMS = [
-  {
-    title: "14+ focused tools",
-    description: "Purpose-built utilities for everyday work.",
-    icon: Braces,
-  },
-  {
-    title: "Local by default",
-    description: "Your files and input stay in your browser.",
-    icon: LockKeyhole,
-  },
-  {
-    title: "Open and free",
-    description: "No account, paywall, or installation required.",
-    icon: Github,
-  },
-];
+import { HOME_CATALOG_COUNTS, HOME_FEATURED_TOOLS } from "./home-content";
 
 export function HeroSection() {
   return (
-    <section className="relative -mx-4 -my-8 overflow-hidden sm:-mx-6 sm:-my-10 lg:-mx-8 lg:-my-12">
-      <div className="site-grid pointer-events-none absolute inset-0 opacity-65" />
-      <div className="pointer-events-none absolute left-1/2 top-[44%] h-[620px] w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border/60" />
-      <div className="pointer-events-none absolute left-1/2 top-[44%] h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border/70" />
-      <div className="pointer-events-none absolute left-1/2 top-[44%] h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/70 blur-3xl" />
+    <section
+      className="relative -mx-4 -mt-8 overflow-hidden border-b sm:-mx-6 sm:-mt-10 lg:-mx-8 lg:-mt-12"
+      aria-labelledby="home-hero-title"
+    >
+      <div className="site-grid pointer-events-none absolute inset-0 opacity-55" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent" />
 
-      <div className="pointer-events-none absolute left-[12%] top-16 hidden items-center gap-2 font-mono text-[10px] text-muted-foreground lg:flex">
-        <span className="h-px w-12 bg-border" />
-        64 × 64
-      </div>
-      <div className="pointer-events-none absolute right-[12%] top-32 hidden items-center gap-2 font-mono text-[10px] text-muted-foreground lg:flex">
-        1200 GRID
-        <span className="h-px w-12 bg-border" />
-      </div>
+      <div className="relative mx-auto max-w-5xl px-5 py-11 text-center sm:px-8 sm:py-20 lg:py-24">
+        <p className="inline-flex min-h-8 items-center gap-2 rounded-full border bg-background/90 px-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground shadow-geist">
+          <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
+          Browser-first · {HOME_CATALOG_COUNTS.available} available tools
+        </p>
 
-      <div className="relative flex min-h-[680px] items-center justify-center px-5 py-24 sm:min-h-[720px] sm:px-8 lg:py-32">
-        <div className="mx-auto max-w-4xl text-center">
-          <div>
-            <span className="inline-flex min-h-8 items-center gap-2 rounded-full border bg-background/80 px-3 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground shadow-geist backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-success" />
-              Browser-native utility suite
-            </span>
-          </div>
+        <h1
+          id="home-hero-title"
+          className="mx-auto mt-5 max-w-4xl text-[clamp(2.65rem,11.5vw,5.25rem)] leading-[0.96] tracking-[-0.06em]"
+        >
+          Format JSON. Resize images. Keep moving.
+        </h1>
 
-          <h1 className="mt-7 text-[clamp(3rem,8vw,6.5rem)] font-semibold leading-[0.92] tracking-[-0.065em]">
-            Tools for the work
-            <span className="block text-muted-foreground">between the work.</span>
-          </h1>
+        <p className="mx-auto mt-5 min-h-[168px] max-w-2xl text-base leading-7 text-muted-foreground min-[360px]:min-h-[140px] sm:min-h-[112px] sm:text-lg">
+          Test regexes, convert values, edit Markdown, and finish everyday developer and creator
+          tasks. Most work stays in your browser; provider-backed steps are labelled before use.
+        </p>
 
-          <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Astraa brings precise developer and creator utilities into one fast,
-            private workspace—ready whenever the small task becomes the blocker.
-          </p>
-
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button size="lg" asChild>
-              <Link href="/explore" className="group w-full gap-2 sm:w-auto">
-                Explore tools
-                <ArrowRight
-                  className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link
-                href="https://github.com/puri-adityakumar/astraa"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full gap-2 sm:w-auto"
-              >
-                <Github className="h-4 w-4" aria-hidden="true" />
-                View source
-              </Link>
-            </Button>
-          </div>
-
-          <div className="mt-7 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <span>Quick access</span>
-            <kbd className="rounded border bg-background px-1.5 py-0.5 font-mono text-[10px] shadow-geist">
-              ⌘ / Ctrl
-            </kbd>
-            <span>+</span>
-            <kbd className="rounded border bg-background px-1.5 py-0.5 font-mono text-[10px] shadow-geist">
-              K
-            </kbd>
-          </div>
-        </div>
-      </div>
-
-      <div className="relative grid border-t bg-background/90 sm:grid-cols-3">
-        {FEATURE_ITEMS.map((item, index) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.title}
-              className={
-                "flex gap-4 border-b p-6 last:border-b-0 sm:border-b-0 sm:p-8 " +
-                (index > 0 ? "sm:border-l" : "")
-              }
+        <div className="mx-auto mt-7 grid max-w-sm grid-cols-2 gap-3 sm:flex sm:max-w-none sm:justify-center">
+          <Button size="lg" asChild>
+            <Link href="/tools" className="group gap-2 px-4" data-home-primary="hero">
+              Browse tools
+              <ArrowRight
+                className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Link>
+          </Button>
+          <Button size="lg" variant="outline" asChild>
+            <Link
+              href="https://github.com/puri-adityakumar/astraa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="gap-2 px-4"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted/40">
-                <Icon className="h-4 w-4" aria-hidden="true" />
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold tracking-normal">{item.title}</h2>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+              <Github className="h-4 w-4" aria-hidden="true" />
+              View source
+              <span className="sr-only"> (opens in a new tab)</span>
+            </Link>
+          </Button>
+        </div>
+
+        <nav className="mt-7" aria-label="Start with a tool">
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            Start with a real tool
+          </p>
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-1">
+            {HOME_FEATURED_TOOLS.map((tool) => (
+              <Link
+                key={tool.id}
+                href={tool.path}
+                prefetch={false}
+                className="inline-flex min-h-touch items-center justify-center rounded-md px-3 text-center text-sm text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground focus-visible:text-foreground"
+              >
+                {tool.name}
+              </Link>
+            ))}
+          </div>
+        </nav>
       </div>
     </section>
   );

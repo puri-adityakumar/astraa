@@ -1,0 +1,67 @@
+{
+  "documents": [
+    {
+      "slug": "",
+      "route": "/docs",
+      "sourceKey": "overview",
+      "source": "docs/README.md",
+      "order": 0,
+      "title": "Technical documentation",
+      "description": "Read Astraa's technical overview, setup requirements, architecture, interfaces, component model, performance evidence, and SEO baseline."
+    },
+    {
+      "slug": "architecture",
+      "route": "/docs/architecture",
+      "sourceKey": "architecture",
+      "source": "docs/ARCHITECTURE.md",
+      "order": 1,
+      "title": "Architecture",
+      "description": "Understand Astraa's rendering, registry, state, remote-data, privacy, observability, accessibility, and quality boundaries."
+    },
+    {
+      "slug": "components",
+      "route": "/docs/components",
+      "sourceKey": "components",
+      "source": "docs/COMPONENTS.md",
+      "order": 2,
+      "title": "Component guide",
+      "description": "Review Astraa's component topology, focused editor patterns, shared primitives, motion rules, feedback, and accessibility conventions."
+    },
+    {
+      "slug": "server-interfaces",
+      "route": "/docs/server-interfaces",
+      "sourceKey": "serverInterfaces",
+      "source": "docs/API.md",
+      "order": 3,
+      "title": "Server interfaces",
+      "description": "Explore Astraa's server-owned rate endpoints, text generation action, contributor cache, and browser resource contracts."
+    },
+    {
+      "slug": "development",
+      "route": "/docs/development",
+      "sourceKey": "development",
+      "source": "docs/DEVELOPMENT.md",
+      "order": 4,
+      "title": "Development guide",
+      "description": "Set up Astraa locally and understand its project layout, state choices, remote-data safeguards, test strategy, and environment variables."
+    },
+    {
+      "slug": "performance",
+      "route": "/docs/performance",
+      "sourceKey": "performance",
+      "source": "docs/PERFORMANCE.md",
+      "order": 5,
+      "title": "Performance baseline",
+      "description": "Inspect Astraa's dated local performance profile, measured route medians, methodology, limitations, and evidence-based follow-ups."
+    },
+    {
+      "slug": "seo",
+      "route": "/docs/seo",
+      "sourceKey": "seo",
+      "source": "docs/SEO.md",
+      "order": 6,
+      "title": "SEO baseline and release checks",
+      "description": "Review Astraa's dated technical SEO baseline, known data limitations, indexability contract, and post-deployment operator checks."
+    }
+  ]
+}

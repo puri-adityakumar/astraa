@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "Astraa's privacy policy. Learn how we handle your data. All tool processing happens locally in your browser with no data transmitted to servers.",
+    "How Astraa handles local tool data, provider-backed features, diagnostics, analytics, and browser storage.",
   openGraph: {
     title: "Privacy Policy",
     description: "Astraa's privacy policy and data handling practices.",

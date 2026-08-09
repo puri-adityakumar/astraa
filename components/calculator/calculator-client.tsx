@@ -5,21 +5,27 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CalculatorDisplay } from "@/components/calculator/calculator-display";
 import { CalculatorButton } from "@/components/calculator/calculator-button";
-import {
-  evaluateExpression,
-  scientificFunctions,
-} from "@/lib/calculator/calculator-utils";
+import { evaluateExpression, scientificFunctions } from "@/lib/calculator/calculator-utils";
+
+function formatExpressionForAnnouncement(expression: string): string {
+  return expression
+    .replace(/([+\-*/^%])/g, " $1 ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 export function CalculatorClient() {
   const [display, setDisplay] = useState("0");
   const [expression, setExpression] = useState("");
   const [isNewNumber, setIsNewNumber] = useState(true);
   const [angleMode, setAngleMode] = useState<"RAD" | "DEG">("RAD");
+  const [committedCalculation, setCommittedCalculation] = useState("");
 
   const clear = useCallback(() => {
     setDisplay("0");
     setExpression("");
     setIsNewNumber(true);
+    setCommittedCalculation("");
   }, []);
 
   const appendNumber = useCallback(
@@ -70,10 +76,14 @@ export function CalculatorClient() {
       setDisplay(result.toString());
       setExpression("");
       setIsNewNumber(true);
+      setCommittedCalculation(
+        `${formatExpressionForAnnouncement(fullExpression)} = ${result.toString()}`,
+      );
     } catch {
       setDisplay("Error");
       setExpression("");
       setIsNewNumber(true);
+      setCommittedCalculation("Calculation error");
     }
   }, [expression, display, isNewNumber]);
 
@@ -114,9 +124,11 @@ export function CalculatorClient() {
 
         setDisplay(result.toString());
         setIsNewNumber(true);
+        setCommittedCalculation(`${fn}(${display}) = ${result.toString()}`);
       } catch {
         setDisplay("Error");
         setIsNewNumber(true);
+        setCommittedCalculation("Calculation error");
       }
     },
     [display, angleMode],
@@ -160,11 +172,10 @@ export function CalculatorClient() {
           Scientific Calculator
         </h1>
         <p className="text-muted-foreground text-lg max-w-2xl">
-          Perform complex math calculations with our Google-style scientific
-          calculator.
+          Calculate arithmetic, powers, trigonometric functions, logarithms, roots, and factorials.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-          All processing happens locally in your browser
+          Processed in this browser
         </p>
       </div>
 
@@ -202,6 +213,14 @@ export function CalculatorClient() {
           <span className="text-xl font-semibold text-muted-foreground ml-auto">
             Ans = {display}
           </span>
+          <output
+            aria-label="Calculator result"
+            aria-live="polite"
+            aria-atomic="true"
+            className="sr-only"
+          >
+            {committedCalculation}
+          </output>
         </div>
 
         <div className="grid md:grid-cols-[1.2fr_1fr] bg-muted/10">
@@ -232,21 +251,9 @@ export function CalculatorClient() {
               className="text-sm"
             />
 
-            <CalculatorButton
-              value="("
-              onClick={() => appendOperator("(")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value=")"
-              onClick={() => appendOperator(")")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="%"
-              onClick={() => appendOperator("%")}
-              variant="secondary"
-            />
+            <CalculatorButton value="(" onClick={() => appendOperator("(")} variant="secondary" />
+            <CalculatorButton value=")" onClick={() => appendOperator(")")} variant="secondary" />
+            <CalculatorButton value="%" onClick={() => appendOperator("%")} variant="secondary" />
 
             <CalculatorButton
               value="sin"
@@ -264,21 +271,13 @@ export function CalculatorClient() {
               variant="secondary"
             />
 
-            <CalculatorButton
-              value="ln"
-              onClick={() => applyFunction("ln")}
-              variant="secondary"
-            />
+            <CalculatorButton value="ln" onClick={() => applyFunction("ln")} variant="secondary" />
             <CalculatorButton
               value="log"
               onClick={() => applyFunction("log")}
               variant="secondary"
             />
-            <CalculatorButton
-              value="√"
-              onClick={() => applyFunction("sqrt")}
-              variant="secondary"
-            />
+            <CalculatorButton value="√" onClick={() => applyFunction("sqrt")} variant="secondary" />
 
             <CalculatorButton
               value="π"
@@ -290,11 +289,7 @@ export function CalculatorClient() {
               onClick={() => appendNumber("2.71828")}
               variant="secondary"
             />
-            <CalculatorButton
-              value="^"
-              onClick={() => appendOperator("^")}
-              variant="secondary"
-            />
+            <CalculatorButton value="^" onClick={() => appendOperator("^")} variant="secondary" />
           </div>
 
           {/* Numeric Keypad (Right) */}

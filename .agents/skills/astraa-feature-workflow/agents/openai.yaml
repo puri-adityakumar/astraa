@@ -1,0 +1,4 @@
+interface:
+  display_name: "Astraa Feature Workflow"
+  short_description: "Plan and complete Astraa feature changes"
+  default_prompt: "Use $astraa-feature-workflow to plan and complete this Astraa feature."

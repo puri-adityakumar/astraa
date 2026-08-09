@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
-import { DinoClient } from "@/components/games/dino-client";
+import { WorkInProgress } from "@/components/wip";
+import { getGameByPath } from "@/lib/games";
+
+const game = getGameByPath("/games/dino")!;
 
 export const metadata: Metadata = {
-  title: "Chrome Dino Game",
-  description:
-    "Play the Chrome Dinosaur runner game online. Jump over cacti and dodge obstacles to beat your high score. Inspired by the classic Chrome offline game.",
+  title: "Dino Jump",
+  description: "A browser dinosaur runner is planned for Astraa but is not playable yet.",
   robots: { index: false, follow: true },
   openGraph: {
-    title: "Chrome Dino Game",
-    description: "Play the dinosaur runner game online.",
+    title: "Dino Jump",
+    description: "A planned browser dinosaur runner that is not playable yet.",
     url: "/games/dino",
   },
   alternates: { canonical: "/games/dino" },
 };
 
 export default function DinoPage() {
-  return <DinoClient />;
+  return <WorkInProgress name={game.name} kind="game" />;
 }

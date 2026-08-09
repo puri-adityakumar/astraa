@@ -31,6 +31,7 @@ export function TextView() {
         lintGutter(),
         autocompletion(),
         keymap.of([...defaultKeymap, ...historyKeymap]),
+        EditorView.contentAttributes.of({ "aria-label": "JSON editor" }),
         EditorView.lineWrapping,
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
@@ -54,5 +55,13 @@ export function TextView() {
     }
   }, [text]);
 
-  return <div ref={containerRef} className="h-[60vh] border rounded-md overflow-auto" />;
+  return (
+    <div
+      ref={containerRef}
+      role="region"
+      aria-label="JSON text editor scroll area"
+      tabIndex={0}
+      className="h-[60vh] overflow-auto rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    />
+  );
 }

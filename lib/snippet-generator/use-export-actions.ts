@@ -23,10 +23,7 @@ export function useExportActions(getNode: () => HTMLElement | null) {
   const { toast } = useToast();
 
   useEffect(() => {
-    const supportTimer = window.setTimeout(
-      () => setClipboardSupported(isClipboardSupported()),
-      0,
-    );
+    const supportTimer = window.setTimeout(() => setClipboardSupported(isClipboardSupported()), 0);
     return () => window.clearTimeout(supportTimer);
   }, []);
 
@@ -35,13 +32,10 @@ export function useExportActions(getNode: () => HTMLElement | null) {
     if (!node) return;
     setPending(scale === 1 ? "1x" : "2x");
     try {
-      await Sentry.startSpan(
-        { op: "snippet.export", name: `PNG ${scale}x` },
-        async () => {
-          const blob = await exportSnippet(node, scale);
-          downloadBlob(blob, buildExportFilename(filename, Date.now()));
-        },
-      );
+      await Sentry.startSpan({ op: "snippet.export", name: `PNG ${scale}x` }, async () => {
+        const blob = await exportSnippet(node, scale);
+        downloadBlob(blob, buildExportFilename(filename, Date.now()));
+      });
       toast({ title: "Downloaded", description: `PNG ${scale}× saved.` });
     } catch (e) {
       const details = getUserFriendlyError(e);
@@ -50,7 +44,7 @@ export function useExportActions(getNode: () => HTMLElement | null) {
         description: details.message,
         variant: "destructive",
       });
-      logError(e, { context: "snippet-generator/export-download" });
+      logError(e, { operation: "snippet-generator/export-download" });
     } finally {
       setPending(null);
     }
@@ -61,13 +55,10 @@ export function useExportActions(getNode: () => HTMLElement | null) {
     if (!node) return;
     setPending("copy");
     try {
-      await Sentry.startSpan(
-        { op: "snippet.export", name: "Copy clipboard" },
-        async () => {
-          const blob = await exportSnippet(node, 2);
-          await copyBlobToClipboard(blob);
-        },
-      );
+      await Sentry.startSpan({ op: "snippet.export", name: "Copy clipboard" }, async () => {
+        const blob = await exportSnippet(node, 2);
+        await copyBlobToClipboard(blob);
+      });
       toast({ title: "Copied", description: "PNG copied to clipboard." });
     } catch (e) {
       const details = getUserFriendlyError(e);
@@ -76,7 +67,7 @@ export function useExportActions(getNode: () => HTMLElement | null) {
         description: details.message,
         variant: "destructive",
       });
-      logError(e, { context: "snippet-generator/export-clipboard" });
+      logError(e, { operation: "snippet-generator/export-clipboard" });
     } finally {
       setPending(null);
     }

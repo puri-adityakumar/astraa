@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
-import { SnakeClient } from "@/components/games/snake-client";
+import { WorkInProgress } from "@/components/wip";
+import { getGameByPath } from "@/lib/games";
+
+const game = getGameByPath("/games/snake")!;
 
 export const metadata: Metadata = {
-  title: "Snake Game",
-  description:
-    "Play the classic Snake game online in your browser. Control the snake, eat food, grow longer, and beat your high score. Free, no download required.",
+  title: "Snake",
+  description: "A browser version of the classic Snake game is planned but not playable yet.",
   robots: { index: false, follow: true },
   openGraph: {
-    title: "Snake Game",
-    description: "Play classic Snake online. Free browser game.",
+    title: "Snake",
+    description: "A planned browser Snake game that is not playable yet.",
     url: "/games/snake",
   },
   alternates: { canonical: "/games/snake" },
 };
 
 export default function SnakePage() {
-  return <SnakeClient />;
+  return <WorkInProgress name={game.name} kind="game" />;
 }

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+
+import { RelatedTools } from "@/components/related-tools";
+import { ToolGuide } from "@/components/tool-guide";
 import { UnitConverterClient } from "@/components/units/unit-converter";
 
 export const metadata: Metadata = {
   title: "Unit Converter",
   description:
-    "Convert between different units of measurement including length, weight, temperature, and more. Free online unit conversion tool with metric and imperial support.",
+    "Convert values across angle, length, mass, temperature, time, volume, and other measurement categories. Calculations run in your browser.",
   keywords: [
     "unit converter",
     "measurement converter",
@@ -19,16 +22,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Unit Converter",
-    description:
-      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
+    description: "Convert common metric, imperial, temperature, and data units in your browser.",
     url: "/tools/units",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "Unit Converter",
-    description:
-      "Convert length, weight, temperature, and more. Free online unit conversion tool.",
+    description: "Convert common metric, imperial, temperature, and data units in your browser.",
   },
   alternates: {
     canonical: "/tools/units",
@@ -36,17 +37,11 @@ export const metadata: Metadata = {
 };
 
 export default function UnitConverterPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <UnitConverterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="units" />
+      <RelatedTools toolId="units" />
     </>
   );
 }

@@ -52,12 +52,7 @@ export function flatten(value: JsonValue, expanded: Set<string>): TreeRow[] {
         });
       } else {
         for (const k of Object.keys(v as Record<string, JsonValue>)) {
-          visit(
-            (v as Record<string, JsonValue>)[k] as JsonValue,
-            joinPath(path, k),
-            k,
-            depth + 1,
-          );
+          visit((v as Record<string, JsonValue>)[k] as JsonValue, joinPath(path, k), k, depth + 1);
         }
       }
     }

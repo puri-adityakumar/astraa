@@ -92,7 +92,9 @@
     overflow-x: hidden;
     font-size: 1rem;
     line-height: 1.5;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -210,6 +212,22 @@
   .site-dots {
     background-image: radial-gradient(hsl(var(--foreground) / 16%) 0.75px, transparent 0.75px);
     background-size: 16px 16px;
+  }
+
+  .home-workflow-step {
+    opacity: 0;
+    transform: translateY(8px);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: home-workflow-enter 420ms ease-out forwards;
+  }
+
+  .home-workflow-step-two {
+    animation-delay: 90ms;
+  }
+
+  .home-workflow-step-three {
+    animation-delay: 180ms;
   }
 
   .content-center {
@@ -366,4 +384,19 @@
 
 [aria-live] {
   position: relative;
+}
+
+@keyframes home-workflow-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-workflow-step {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }

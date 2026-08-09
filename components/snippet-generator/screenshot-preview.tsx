@@ -34,9 +34,9 @@ export function ScreenshotPreview({ dataUrl, onChange, padding }: Props) {
       const url = await readFileAsDataUrl(file);
       onChange(url);
     } catch (e) {
-      logError(e, { context: "snippet-generator/screenshot-upload" });
+      logError(e, { operation: "snippet-generator/screenshot-upload" });
       toast({
-        title: "Upload failed",
+        title: "Could not open image",
         description: "Please try a different file.",
         variant: "destructive",
       });
@@ -47,7 +47,7 @@ export function ScreenshotPreview({ dataUrl, onChange, padding }: Props) {
     return (
       <div style={{ padding }} className="flex flex-col items-center gap-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={dataUrl} alt="Uploaded screenshot" className="max-w-full h-auto" />
+        <img src={dataUrl} alt="Screenshot preview" className="max-w-full h-auto" />
         <Button variant="secondary" size="sm" onClick={() => onChange(null)}>
           Replace image
         </Button>
@@ -66,7 +66,7 @@ export function ScreenshotPreview({ dataUrl, onChange, padding }: Props) {
           "focus:ring-2 focus:ring-white/40"
         }
       >
-        Click to upload screenshot (PNG / JPG / WebP, max 5 MB)
+        Choose a screenshot (PNG / JPG / WebP, max 5 MB)
       </button>
       <input
         ref={fileInput}

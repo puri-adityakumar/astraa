@@ -1,36 +1,32 @@
 import type { Metadata } from "next";
+
+import { RelatedTools } from "@/components/related-tools";
 import { SqlFormatterClient } from "@/components/sql/sql-formatter-client";
+import { ToolGuide } from "@/components/tool-guide";
 
 export const metadata: Metadata = {
   title: "SQL Formatter",
   description:
-    "Format and beautify SQL queries instantly in your browser. Supports SELECT, JOIN, WHERE, and more. Free online SQL formatting tool for developers.",
+    "Format the layout and keyword case of Basic SQL, PostgreSQL, MySQL/MariaDB, SQLite, SQL Server, and BigQuery locally in your browser.",
   keywords: [
     "SQL formatter",
     "SQL beautifier",
     "format SQL",
-    "SQL pretty print",
-    "SQL query formatter",
-    "online SQL formatter",
-    "SQL tool",
-    "developer tools",
+    "PostgreSQL formatter",
+    "MySQL formatter",
+    "SQL Server formatter",
+    "BigQuery formatter",
   ],
-  robots: {
-    index: false,
-    follow: true,
-  },
   openGraph: {
     title: "SQL Formatter",
-    description:
-      "Format and beautify SQL queries instantly. Free browser-based developer tool.",
+    description: "Format six supported SQL dialects locally in your browser.",
     url: "/tools/sql",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
     title: "SQL Formatter",
-    description:
-      "Format and beautify SQL queries instantly. Free browser-based developer tool.",
+    description: "Format six supported SQL dialects locally in your browser.",
   },
   alternates: {
     canonical: "/tools/sql",
@@ -38,17 +34,11 @@ export const metadata: Metadata = {
 };
 
 export default function SqlFormatterPage() {
-  const lastUpdated = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   return (
     <>
       <SqlFormatterClient />
-      <p className="text-xs text-muted-foreground text-center mt-4">
-        Last updated: {lastUpdated}
-      </p>
+      <ToolGuide toolId="sql" />
+      <RelatedTools toolId="sql" />
     </>
   );
 }

@@ -63,12 +63,7 @@ export function tokenize(pattern: string): TokenizeResult {
       // immediately before "]").
       const next = pattern[i + 1];
       const after = pattern[i + 2];
-      if (
-        next === "-" &&
-        after !== undefined &&
-        after !== "]" &&
-        ch !== "-"
-      ) {
+      if (next === "-" && after !== undefined && after !== "]" && ch !== "-") {
         push("range", `${ch}-${after}`, i, i + 3, classDepth + 1);
         i += 3;
         continue;

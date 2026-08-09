@@ -1,21 +1,30 @@
 import type { Metadata } from "next";
-import { HeroSection } from "@/components/home";
+
+import { CatalogProof } from "@/components/home/catalog-proof";
+import { HeroSection } from "@/components/home/hero-section";
+import { FinalToolsAction, OpenSourceSection } from "@/components/home/open-source-section";
+import { PopularTools } from "@/components/home/popular-tools";
+import { ToolWorkflow } from "@/components/home/tool-workflow";
+import { SITE_NAME } from "@/lib/seo/site";
+import { availableTools } from "@/lib/tools";
 
 export const metadata: Metadata = {
-  title: "Free Online Utility Tools for Developers & Creators",
+  title: `Free Online Tools for Developers and Creators | ${SITE_NAME}`,
   description:
-    "Astraa is a free utility toolkit with 15+ tools: scientific calculator, currency converter, password generator, hash generator, unit converter, markdown viewer, image resizer, and browser games. All processing happens locally in your browser.",
+    `Use ${availableTools.length} browser-first tools for JSON, images, writing, calculations, ` +
+    "and conversions, with provider-backed boundaries labelled before use.",
   openGraph: {
-    title: "Astraa - Free Online Utility Tools",
+    title: "Astraa browser-first utility tools",
     description:
-      "15+ free browser-based utility tools for developers and creators.",
+      `${availableTools.length} focused tools for developer and creator work, with clear ` +
+      "processing boundaries.",
     url: "/",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Astraa - Free Online Utility Tools",
-    description: "15+ free browser-based tools. No signup required.",
+    title: "Astraa browser-first utility tools",
+    description: `${availableTools.length} focused tools with no account or installation required.`,
   },
   alternates: {
     canonical: "/",
@@ -23,5 +32,14 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <HeroSection />;
+  return (
+    <>
+      <HeroSection />
+      <ToolWorkflow />
+      <PopularTools />
+      <CatalogProof />
+      <OpenSourceSection />
+      <FinalToolsAction />
+    </>
+  );
 }

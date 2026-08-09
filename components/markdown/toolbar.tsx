@@ -42,9 +42,7 @@ export function Toolbar({
   fullscreen,
   onToggleFullscreen,
 }: ToolbarProps) {
-  const file = useMarkdownEditor((s) =>
-    s.files.find((f) => f.id === s.currentId),
-  );
+  const file = useMarkdownEditor((s) => s.files.find((f) => f.id === s.currentId));
   const mode = useMarkdownEditor((s) => s.mode);
   const draft = useMarkdownEditor((s) => s.draft);
   const toggleSidebar = useMarkdownEditor((s) => s.toggleSidebar);
@@ -128,7 +126,7 @@ export function Toolbar({
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Upload markdown file"
+          aria-label="Choose a markdown file"
           onClick={onPickFile}
           className="h-9 w-9"
         >

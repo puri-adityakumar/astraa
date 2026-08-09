@@ -1,34 +1,29 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { HelpCircle } from "lucide-react"
-import { hashAlgorithms } from "@/lib/hash"
+} from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
+import { hashAlgorithms } from "@/lib/hash";
 
 interface HashSelectorProps {
-  selectedHash: string
-  onHashChange: (value: string) => void
+  selectedHash: string;
+  onHashChange: (value: string) => void;
 }
 
 export function HashSelector({ selectedHash, onHashChange }: HashSelectorProps) {
-  const selectedAlgorithm = hashAlgorithms.find(algo => algo.id === selectedHash)
+  const selectedAlgorithm = hashAlgorithms.find((algo) => algo.id === selectedHash);
 
   return (
     <div className="flex items-center gap-2">
       <Select value={selectedHash} onValueChange={onHashChange}>
-        <SelectTrigger className="w-full sm:w-[200px]">
+        <SelectTrigger aria-label="Hash algorithm" className="w-full sm:w-[200px]">
           <SelectValue placeholder="Select hash type" />
         </SelectTrigger>
         <SelectContent>
@@ -44,8 +39,8 @@ export function HashSelector({ selectedHash, onHashChange }: HashSelectorProps) 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <HelpCircle className="h-4 w-4" />
+              <Button variant="ghost" size="icon" aria-label={`About ${selectedAlgorithm.name}`}>
+                <HelpCircle className="h-4 w-4" aria-hidden="true" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -55,5 +50,5 @@ export function HashSelector({ selectedHash, onHashChange }: HashSelectorProps) 
         </TooltipProvider>
       )}
     </div>
-  )
+  );
 }

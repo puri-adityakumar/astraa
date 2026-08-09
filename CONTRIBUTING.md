@@ -26,18 +26,18 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear an
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | A new feature |
-| `fix` | A bug fix |
-| `docs` | Documentation only changes |
-| `style` | Code style changes (formatting, semicolons, etc.) |
+| Type       | Description                                             |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | A new feature                                           |
+| `fix`      | A bug fix                                               |
+| `docs`     | Documentation only changes                              |
+| `style`    | Code style changes (formatting, semicolons, etc.)       |
 | `refactor` | Code change that neither fixes a bug nor adds a feature |
-| `perf` | Performance improvements |
-| `test` | Adding or updating tests |
-| `chore` | Maintenance tasks, dependency updates, etc. |
-| `ci` | CI/CD configuration changes |
-| `build` | Build system or external dependency changes |
+| `perf`     | Performance improvements                                |
+| `test`     | Adding or updating tests                                |
+| `chore`    | Maintenance tasks, dependency updates, etc.             |
+| `ci`       | CI/CD configuration changes                             |
+| `build`    | Build system or external dependency changes             |
 
 ### Examples
 
@@ -77,8 +77,11 @@ chore: update dependencies
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or pnpm
+- Node.js 22+
+- npm
+
+Use npm because `package-lock.json` and CI define the supported dependency graph. Do not use
+pnpm unless the repository adds a pnpm lockfile and equivalent CI coverage.
 
 ### Setup
 
@@ -88,7 +91,7 @@ git clone https://github.com/puri-adityakumar/astraa.git
 cd astraa
 
 # Install dependencies
-npm install
+npm ci
 
 # Copy environment variables
 cp .env.sample .env.local
@@ -99,90 +102,49 @@ npm run dev
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_ENV` | Yes | `dev` shows WIP features for testing, `prod` shows "Coming Soon" cards |
-| `OPENROUTER_API_KEY` | Optional | API key for AI text generation ([get one here](https://openrouter.ai/keys)) |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry error tracking token |
+Use `.env.sample` as the source of truth. Provider credentials remain server-only;
+never add a secret with a `NEXT_PUBLIC_` prefix.
 
 ### Available Commands
 
 ```bash
 npm run dev        # Start dev server (http://localhost:3000)
 npm run build      # Production build
+npm run build:e2e  # Build the production browser-test artifact
 npm start          # Start production server
-npm run lint       # Run ESLint
+npm run check      # Run the repository quality gates
 npm test           # Run unit tests (Vitest)
+npm run test:e2e   # Run production browser and accessibility tests
 npm run test:watch # Run tests in watch mode
 ```
 
 ### Testing
 
-Unit tests cover pure utility functions in `lib/` (calculator, hash, password, unit conversions, error handler).
+Unit tests cover pure logic and boundary behavior in `lib/`.
 
 **Before submitting a PR:**
-1. Run `npm test` and ensure all tests pass
-2. Run `npm run build` to verify the production build succeeds
-3. If you modify a function in `lib/`, add or update its tests in the corresponding `.test.ts` file
-4. Manually verify your changes across mobile/desktop and dark/light themes
 
-Test files are co-located with source files (e.g., `lib/calculator/calculator-utils.test.ts`). CI runs tests and build automatically on every PR.
+1. Run `npm run check` and ensure every repository quality gate passes
+2. Run `npm run build:e2e -- --webpack`
+3. Run `npm run test:e2e`
+4. Add or update relevant unit tests and run them locally
+5. Manually verify UI changes across mobile and desktop plus dark and light themes
 
-## Using AI Agents (Claude Code)
+Test files are co-located with source files (for example,
+`lib/calculator/calculator-utils.test.ts`). CI runs the same canonical quality,
+production-build, and browser gates on every PR.
 
-This project includes a `CLAUDE.md` file that provides context to AI coding agents like [Claude Code](https://claude.ai/code).
+## Repository Guidance for Coding Agents
 
-**If you use Claude Code or similar AI agents to contribute:**
+Repository-owned agent procedures live in the tracked skills under `.agents/skills/astraa-*`.
+Their identical registry appears in both [AGENTS.md](AGENTS.md) and
+[CLAUDE.md](CLAUDE.md), so contributors can use either supported coding-agent host without
+maintaining separate instructions.
 
-1. Run `/init` at the start of your session so the agent reads `CLAUDE.md` and understands the project conventions (code style, architecture patterns, naming, etc.)
-2. The agent will follow the project's double-quote, semicolon, 2-space indent formatting automatically
-3. Verify AI-generated code still follows the server page → client component pattern described below
-4. Always review AI output before committing — don't blindly trust generated code
-
-## Project Structure
-
-```
-astraa/
-├── app/                 # Next.js App Router pages
-│   ├── tools/          # Tool pages (server components)
-│   ├── games/          # Game pages
-│   └── api/            # API routes
-├── components/         # React components (client components)
-│   └── ui/             # Shadcn/UI primitives
-├── lib/                # Utilities, logic, stores
-│   ├── stores/         # Zustand stores (IndexedDB-persisted)
-│   ├── animations/     # Framer Motion variants and hooks
-│   └── games/          # Game logic hooks
-├── hooks/              # Custom React hooks
-├── types/              # TypeScript type definitions
-└── middleware.ts        # Edge middleware (visitor counting)
-```
-
-### Core Architecture Pattern
-
-Server component pages render client components — this is the standard for all tools and games:
-
-```
-app/tools/[tool]/page.tsx          → Server component (metadata + renders client)
-components/[tool]/[tool]-client.tsx → Client component ("use client", UI logic)
-lib/[tool]/                        → Pure logic, no React
-```
-
-## Adding a New Tool
-
-1. Register in `lib/tools.ts` — add to appropriate `ToolCategory` with `name`, `description`, `path`, `icon`
-2. Create `app/tools/[tool-name]/page.tsx` with metadata
-3. Create `components/[tool-name]/[tool-name]-client.tsx` with `"use client"`
-4. Add tool logic to `lib/[tool-name]/` if needed
-
-## Development Tips
-
-- **State persistence** uses IndexedDB (primary) with localStorage fallback — not plain localStorage
-- **WIP features** are controlled by `NEXT_PUBLIC_ENV` in `.env.local` — set to `dev` to see them
-- **Animations** must respect `useReducedMotion()` from `lib/animations/hooks.ts`
-- **Error handling** — use `getUserFriendlyError()` and `logError()` from `lib/error-handler.ts`, not raw try/catch with console.error
-- **Styling** — use `cn()` from `lib/utils` for conditional Tailwind classes, not string concatenation
-- **No `any`** — TypeScript strict mode is on, prefer `unknown` and narrow types
+Load every matching repository skill before planning, implementing, or reviewing a change.
+Public architecture and interface facts remain in `docs/`; this file remains the authority for
+human issue, assignment, commit, pull-request, review, and release policy. Always review
+agent-generated work before submitting it.
 
 ## Review Process
 
@@ -197,26 +159,32 @@ lib/[tool]/                        → Pure logic, no React
 When merging the `development` branch to `main`, follow this convention:
 
 **PR Title Format:**
+
 ```
 release(v<VERSION>): merge development to main
 ```
 
 **Examples:**
+
 - `release(v0.1.0): merge development to main`
 - `release(v0.2.0): merge development to main`
 - `release(v1.0.0): merge development to main`
 
 **PR Description Template:**
+
 ```markdown
 ## Version: v<VERSION>
 
 ### Summary
+
 Merging development branch to main for release v<VERSION>
 
 ### Key Changes
+
 - List major changes (features, fixes, improvements)
 
 ### Checklist
+
 - [ ] All CI checks passing
 - [ ] Tested on mobile and desktop
 - [ ] Build successful
@@ -224,6 +192,7 @@ Merging development branch to main for release v<VERSION>
 ```
 
 **Versioning:**
+
 - Use [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`
 - `v0.x.x` = Pre-release (alpha/beta)
 - `v1.0.0` = First stable production release

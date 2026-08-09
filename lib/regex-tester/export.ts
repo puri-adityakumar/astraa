@@ -12,10 +12,7 @@ function csvEscape(value: string): string {
 
 export function matchesToCsv(matches: MatchResult[]): string {
   // Stable schema across all rows: every numbered group + every named group key.
-  const maxGroups = matches.reduce(
-    (max, m) => Math.max(max, m.groups.length),
-    0,
-  );
+  const maxGroups = matches.reduce((max, m) => Math.max(max, m.groups.length), 0);
   const namedKeys = Array.from(
     matches.reduce((acc, m) => {
       for (const key of Object.keys(m.namedGroups)) acc.add(key);
@@ -33,11 +30,7 @@ export function matchesToCsv(matches: MatchResult[]): string {
 
   const lines = [header.map(csvEscape).join(",")];
   for (const m of matches) {
-    const row: string[] = [
-      String(m.index),
-      String(m.length),
-      m.full,
-    ];
+    const row: string[] = [String(m.index), String(m.length), m.full];
     for (let i = 0; i < maxGroups; i++) {
       row.push(m.groups[i] ?? "");
     }

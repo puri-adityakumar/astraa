@@ -50,7 +50,7 @@ export function GenerateView() {
       } catch (e) {
         if (!cancelled) {
           setError(e instanceof Error ? e.message : String(e));
-          logError(e, { context: "json-editor/generate" });
+          logError(e, { operation: "json-editor/generate" });
         }
       } finally {
         if (!cancelled) setPending(false);
@@ -126,28 +126,15 @@ export function GenerateView() {
           value={output}
           spellCheck={false}
           placeholder="Output will appear here…"
-          className={cn(
-            "w-full h-[50vh] p-3 rounded-md border bg-muted/30",
-            "font-mono text-xs",
-          )}
+          className={cn("w-full h-[50vh] p-3 rounded-md border bg-muted/30", "font-mono text-xs")}
         />
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onCopy}
-          disabled={!output || pending}
-        >
+        <Button variant="outline" size="sm" onClick={onCopy} disabled={!output || pending}>
           <Copy className="h-4 w-4 mr-2" aria-hidden /> Copy
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onDownload}
-          disabled={!output || pending}
-        >
+        <Button variant="outline" size="sm" onClick={onDownload} disabled={!output || pending}>
           <Download className="h-4 w-4 mr-2" aria-hidden /> Download
         </Button>
       </div>

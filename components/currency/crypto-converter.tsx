@@ -1,127 +1,124 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowDownUp } from "lucide-react"
-import { CurrencySelect } from "./currency-select"
-import { CryptoSelect } from "./crypto-select"
-import type { CurrencyCode } from "@/lib/currency-data"
-import type { CryptoId } from "@/lib/crypto-data"
-import { getCryptoPrice } from "@/lib/api"
-import { useToast } from "@/components/ui/use-toast"
+import { useState } from "react";
+import { ArrowDown, RefreshCw } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useExchangeRate } from "@/hooks/use-exchange-rate";
+import type { CryptoId } from "@/lib/crypto-data";
+import type { CurrencyCode } from "@/lib/currency-data";
+import { formatConvertedAmount, parseConversionAmount } from "@/lib/rates/conversion";
+import { CryptoSelect } from "./crypto-select";
+import { CurrencySelect } from "./currency-select";
+
 interface CryptoConverterProps {
-  amount: string
-  onAmountChange: (value: string) => void
-  onResult: (value: string) => void
-  result: string
+  amount: string;
+  onAmountChange: (value: string) => void;
 }
 
-export function CryptoConverter({
-  amount,
-  onAmountChange,
-  onResult,
-  result
-}: CryptoConverterProps) {
-  const { toast } = useToast()
-  const [cryptoCurrency, setCryptoCurrency] = useState<CryptoId>("bitcoin")
-  const [fiatCurrency, setFiatCurrency] = useState<CurrencyCode>("USD")
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    const calculate = async () => {
-      if (!amount || isNaN(Number(amount))) {
-        onResult("")
-        return
-      }
-
-      setIsLoading(true)
-      try {
-        const price = await getCryptoPrice(cryptoCurrency, fiatCurrency)
-        
-        if (price === null) {
-          onResult("Error fetching price");
-          toast({
-            title: "Error",
-            description: "Failed to fetch exchange rates. Please try again.",
-            variant: "destructive",
-          })
-          return
-        }
-
-        const converted = (Number(amount) * price).toFixed(6) // More precision for crypto
-        // Store numeric result string
-        onResult(converted)
-      } catch (error) {
-        console.error(error)
-        onResult("Error")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    const timer = setTimeout(() => {
-      calculate()
-    }, 500) // Debounce
-
-    return () => clearTimeout(timer)
-  }, [amount, cryptoCurrency, fiatCurrency, onResult])
+export function CryptoConverter({ amount, onAmountChange }: CryptoConverterProps) {
+  const [cryptoCurrency, setCryptoCurrency] = useState<CryptoId>("bitcoin");
+  const [fiatCurrency, setFiatCurrency] = useState<CurrencyCode>("USD");
+  const { rate, status, refresh } = useExchangeRate("crypto", cryptoCurrency, fiatCurrency);
+  const parsedAmount = parseConversionAmount(amount);
+  const result = formatConvertedAmount(amount, rate, 6);
+  const hasInvalidAmount = amount.trim() !== "" && parsedAmount === null;
+  const statusMessage = getStatusMessage(status, hasInvalidAmount, rate !== null);
 
   return (
     <div className="space-y-6">
-      <div className="space-y-6">
-        {/* From Section */}
-        <div className="space-y-2">
-          <Label className="text-base font-semibold">From</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <Input
-                id="crypto-amount"
-                type="number"
-                value={amount}
-                onChange={(e) => onAmountChange(e.target.value)}
-                placeholder="Enter amount"
-                className="h-11 font-mono text-lg"
-              />
-            </div>
-            <div className="w-full sm:w-[280px]">
-              <CryptoSelect
-                value={cryptoCurrency}
-                onValueChange={(value) => setCryptoCurrency(value as CryptoId)}
-              />
-            </div>
+      <div className="space-y-2">
+        <Label htmlFor="crypto-amount" className="text-base font-semibold">
+          From
+        </Label>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex-1">
+            <Input
+              id="crypto-amount"
+              type="number"
+              min="0"
+              inputMode="decimal"
+              value={amount}
+              onChange={(event) => onAmountChange(event.target.value)}
+              placeholder="Enter amount"
+              className="h-11 font-mono text-lg"
+              aria-invalid={hasInvalidAmount}
+              aria-describedby="crypto-rate-status"
+            />
           </div>
-        </div>
-
-        {/* Direction Indicator (Static for now as API is directional) */}
-        <div className="flex justify-center">
-          <div className="bg-muted p-2 rounded-full">
-            <ArrowDownUp className="h-4 w-4 text-muted-foreground" />
-          </div>
-        </div>
-
-        {/* To Section */}
-        <div className="space-y-2">
-          <Label className="text-base font-semibold">To</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Input
-                readOnly
-                placeholder="Result"
-                value={isLoading ? "Converting..." : result}
-                className="h-11 font-mono text-lg bg-muted/50"
-              />
-            </div>
-            <div className="w-full sm:w-[280px]">
-              <CurrencySelect
-                value={fiatCurrency}
-                onValueChange={(value) => setFiatCurrency(value as CurrencyCode)}
-                label="currency"
-              />
-            </div>
+          <div className="w-full sm:w-[280px]">
+            <CryptoSelect
+              value={cryptoCurrency}
+              onValueChange={(value) => setCryptoCurrency(value as CryptoId)}
+              label="Cryptocurrency"
+            />
           </div>
         </div>
       </div>
+
+      <div className="flex justify-center" aria-hidden="true">
+        <div className="rounded-full bg-muted p-2">
+          <ArrowDown className="h-4 w-4 text-muted-foreground" />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="crypto-result" className="text-base font-semibold">
+          To
+        </Label>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="relative flex-1">
+            <Input
+              id="crypto-result"
+              readOnly
+              value={result}
+              placeholder={status === "loading" ? "Loading rate..." : "Result"}
+              className="h-11 bg-muted/50 font-mono text-lg"
+              aria-label={`Converted amount in ${fiatCurrency}`}
+            />
+          </div>
+          <div className="w-full sm:w-[280px]">
+            <CurrencySelect
+              value={fiatCurrency}
+              onValueChange={(value) => setFiatCurrency(value as CurrencyCode)}
+              label="Fiat currency"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="crypto-rate-status"
+        className="flex min-h-touch items-center justify-between gap-3 text-sm text-muted-foreground"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span>
+          {result ? `${amount} ${cryptoCurrency} = ${result} ${fiatCurrency}` : statusMessage}
+        </span>
+        {status === "error" && (
+          <Button type="button" variant="outline" size="sm" onClick={refresh}>
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Retry
+          </Button>
+        )}
+      </div>
     </div>
-  )
+  );
+}
+
+function getStatusMessage(
+  status: "error" | "loading" | "ready" | "refreshing",
+  hasInvalidAmount: boolean,
+  hasRate: boolean,
+): string {
+  if (hasInvalidAmount) return "Enter a non-negative finite amount.";
+  if (status === "loading") return "Loading the crypto rate…";
+  if (status === "refreshing") return "Updating the crypto rate…";
+  if (status === "error" && hasRate) return "Showing the last rate; refresh failed.";
+  if (status === "error") return "The crypto rate is unavailable.";
+  return "Enter an amount to convert.";
 }

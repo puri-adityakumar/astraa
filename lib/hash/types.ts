@@ -1,42 +1,41 @@
-export type HashAlgorithm = {
-  id: string
-  name: string
-  description: string
-}
-
-export interface HashOutputs {
-  [key: string]: string
-}
+type HashAlgorithm = {
+  id: string;
+  name: string;
+  description: string;
+};
 
 export const hashAlgorithms: HashAlgorithm[] = [
   {
     id: "md5",
     name: "MD5",
-    description: "A widely used hash function producing a 128-bit hash value. Not cryptographically secure."
+    description: "Legacy 128-bit digest. Collision attacks make it unsuitable for security use.",
   },
   {
     id: "sha1",
     name: "SHA-1",
-    description: "Produces a 160-bit hash value. Legacy algorithm, not recommended for security-critical applications."
+    description:
+      "Legacy 160-bit digest. Practical collision attacks make it unsuitable for security use.",
   },
   {
     id: "sha256",
     name: "SHA-256",
-    description: "Part of SHA-2 family, produces a 256-bit hash value. Widely used in security applications and blockchain."
+    description:
+      "SHA-2 family digest with 256-bit output, commonly used for checksums and integrity comparisons.",
   },
   {
     id: "sha512",
     name: "SHA-512",
-    description: "Produces a 512-bit hash value. Provides stronger security than SHA-256, ideal for critical applications."
+    description:
+      "SHA-2 family digest with 512-bit output, commonly used for checksums and integrity comparisons.",
   },
   {
     id: "sha3-256",
     name: "SHA3-256",
-    description: "Part of SHA-3 family, produces a 256-bit hash value. Modern and highly secure."
+    description: "SHA-3 family digest with 256-bit output for checksum and integrity comparisons.",
   },
   {
     id: "sha3-512",
     name: "SHA3-512",
-    description: "Produces a 512-bit hash value. Strongest variant of SHA-3 family."
-  }
-]
+    description: "SHA-3 family digest with 512-bit output for checksum and integrity comparisons.",
+  },
+];

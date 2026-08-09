@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { WorkInProgress } from "@/components/wip";
+import { getGameByPath } from "@/lib/games";
+
+const game = getGameByPath("/games/sudoku")!;
 
 export const metadata: Metadata = {
   title: "Sudoku",
-  description:
-    "Solve Sudoku puzzles online with multiple difficulty levels. Fill the 9x9 grid using logic and number placement. Free browser-based Sudoku game.",
+  description: "A browser Sudoku puzzle is planned for Astraa but is not playable yet.",
   robots: { index: false, follow: true },
   openGraph: {
     title: "Sudoku",
-    description: "Solve Sudoku puzzles online.",
+    description: "A planned browser Sudoku puzzle that is not playable yet.",
     url: "/games/sudoku",
   },
   alternates: { canonical: "/games/sudoku" },
 };
 
 export default function SudokuPage() {
-  return <WorkInProgress />;
+  return <WorkInProgress name={game.name} kind="game" />;
 }

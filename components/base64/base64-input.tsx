@@ -1,11 +1,15 @@
 "use client";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { Base64InputType } from "@/lib/base64";
 import { Base64FileDrop } from "./base64-file-drop";
+
+const INPUT_TYPE_LABELS: Record<Base64InputType, string> = {
+  text: "Text",
+  file: "File",
+};
 
 export interface Base64InputProps {
   inputType: Base64InputType;
@@ -28,16 +32,26 @@ export function Base64Input({
 }: Base64InputProps) {
   return (
     <div className="space-y-3">
-      <Tabs
-        value={inputType}
-        onValueChange={(v) => onInputTypeChange(v as Base64InputType)}
-        className="w-full"
+      <div
+        role="group"
+        aria-label="Base64 input type"
+        className="grid min-h-touch w-full grid-cols-2 items-center justify-center rounded-lg border bg-muted/50 p-0.5 text-muted-foreground"
       >
-        <TabsList className="grid grid-cols-2 w-full">
-          <TabsTrigger value="text">Text</TabsTrigger>
-          <TabsTrigger value="file">File</TabsTrigger>
-        </TabsList>
-      </Tabs>
+        {(["text", "file"] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={inputType === value}
+            onClick={() => onInputTypeChange(value)}
+            className={cn(
+              "inline-flex min-h-touch items-center justify-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              inputType === value && "border-border bg-background text-foreground shadow-geist",
+            )}
+          >
+            {INPUT_TYPE_LABELS[value]}
+          </button>
+        ))}
+      </div>
 
       {inputType === "text" ? (
         <div className="space-y-1.5">
@@ -52,9 +66,7 @@ export function Base64Input({
             spellCheck={false}
             autoCorrect="off"
             autoCapitalize="off"
-            className={cn(
-              "font-mono text-sm leading-relaxed min-h-[8rem] resize-y",
-            )}
+            className={cn("font-mono text-sm leading-relaxed min-h-[8rem] resize-y")}
           />
         </div>
       ) : (

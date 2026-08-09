@@ -1,26 +1,13 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type DragEvent,
-} from "react";
+import { useCallback, useEffect, useRef, useState, type DragEvent } from "react";
 import { Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 
 export const MAX_DROP_BYTES = 100 * 1024;
 
-export const DROP_ACCEPT = [
-  ".txt",
-  ".log",
-  ".csv",
-  ".json",
-  ".md",
-  ".html",
-] as const;
+const DROP_ACCEPT = [".txt", ".log", ".csv", ".json", ".md", ".html"] as const;
 
 export interface FileDropZoneProps {
   onText: (text: string) => void;

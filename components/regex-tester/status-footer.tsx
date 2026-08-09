@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, ShieldAlert } from "lucide-react";
+import { AlertTriangle, Loader2, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface StatusFooterProps {
@@ -10,6 +10,8 @@ export interface StatusFooterProps {
   cap: number;
   timedOut: boolean;
   hardTimeout: boolean;
+  unavailable: boolean;
+  running: boolean;
 }
 
 function formatKb(bytes: number): string {
@@ -23,6 +25,8 @@ export function StatusFooter({
   cap,
   timedOut,
   hardTimeout,
+  unavailable,
+  running,
 }: StatusFooterProps) {
   return (
     <div
@@ -50,7 +54,17 @@ export function StatusFooter({
         </span>
       </div>
       <div className="flex items-center gap-2">
-        {hardTimeout ? (
+        {running ? (
+          <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5">
+            <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+            Checking safely
+          </span>
+        ) : unavailable ? (
+          <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-2 py-0.5 text-destructive">
+            <ShieldAlert className="h-3 w-3" aria-hidden="true" />
+            Safe worker unavailable
+          </span>
+        ) : hardTimeout ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-2 py-0.5 text-destructive">
             <ShieldAlert className="h-3 w-3" aria-hidden="true" />
             Pattern hangs &mdash; simplify

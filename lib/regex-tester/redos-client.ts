@@ -1,114 +1,122 @@
-import { runMatches } from "./match";
 import type { MatchResult } from "./types";
 
-export type SafeMatchResult = {
+export type SafeMatchStatus = "idle" | "success" | "timed-out" | "unavailable" | "cancelled";
+
+export interface SafeMatchResult {
+  status: SafeMatchStatus;
   results: MatchResult[];
   elapsedMs: number;
   timedOut: boolean;
   hardTimeout: boolean;
   capped: boolean;
-};
-
-export const DEFAULT_HARD_TIMEOUT_MS = 1500;
-
-function fallbackSync(
-  pattern: string,
-  flags: string,
-  input: string,
-): SafeMatchResult {
-  try {
-    const regex = new RegExp(pattern, flags);
-    const r = runMatches(regex, input);
-    return {
-      results: r.results,
-      elapsedMs: r.elapsedMs,
-      timedOut: r.timedOut,
-      hardTimeout: false,
-      capped: r.capped,
-    };
-  } catch {
-    return {
-      results: [],
-      elapsedMs: 0,
-      timedOut: false,
-      hardTimeout: false,
-      capped: false,
-    };
-  }
+  replacementResult: string;
+  replacementError: string | null;
 }
 
-export async function runMatchesSafe(
+export interface SafeMatchOptions {
+  replacement?: string;
+  hardTimeoutMs?: number;
+  signal?: AbortSignal;
+}
+
+const DEFAULT_HARD_TIMEOUT_MS = 1_500;
+
+export function runMatchesSafe(
   pattern: string,
   flags: string,
   input: string,
-  hardTimeoutMs: number = DEFAULT_HARD_TIMEOUT_MS,
+  options: SafeMatchOptions = {},
 ): Promise<SafeMatchResult> {
+  const hardTimeoutMs = options.hardTimeoutMs ?? DEFAULT_HARD_TIMEOUT_MS;
+  const replacement = options.replacement ?? "";
+
+  if (options.signal?.aborted) {
+    return Promise.resolve(createEmptyResult("cancelled"));
+  }
+
   if (typeof Worker === "undefined") {
-    return fallbackSync(pattern, flags, input);
+    return Promise.resolve(createEmptyResult("unavailable"));
   }
 
   return new Promise((resolve) => {
+    let settled = false;
     let worker: Worker;
+
+    const finish = (result: SafeMatchResult): void => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      options.signal?.removeEventListener("abort", handleAbort);
+      worker.terminate();
+      resolve(result);
+    };
+
+    const handleAbort = (): void => finish(createEmptyResult("cancelled"));
+
     try {
       worker = new Worker(new URL("./redos-worker.ts", import.meta.url), {
         type: "module",
       });
     } catch {
-      resolve(fallbackSync(pattern, flags, input));
+      resolve(createEmptyResult("unavailable"));
       return;
     }
 
     const timer = window.setTimeout(() => {
-      worker.terminate();
-      resolve({
-        results: [],
+      finish({
+        ...createEmptyResult("timed-out"),
         elapsedMs: hardTimeoutMs,
         timedOut: true,
         hardTimeout: true,
-        capped: false,
       });
     }, hardTimeoutMs);
 
+    options.signal?.addEventListener("abort", handleAbort, { once: true });
+
     worker.onmessage = (event: MessageEvent) => {
-      window.clearTimeout(timer);
-      worker.terminate();
       const data = event.data as
         | {
             type: "done";
             results: MatchResult[];
             elapsedMs: number;
             capped: boolean;
+            replacementResult: string;
           }
-        | { type: "error"; error: string }
+        | { type: "error" }
         | { type: "timeout" };
 
       if (data.type === "done") {
-        resolve({
+        finish({
+          status: "success",
           results: data.results,
           elapsedMs: data.elapsedMs,
           timedOut: false,
           hardTimeout: false,
           capped: data.capped,
+          replacementResult: data.replacementResult,
+          replacementError: null,
         });
-      } else if (data.type === "timeout") {
-        resolve({
-          results: [],
-          elapsedMs: hardTimeoutMs,
-          timedOut: true,
-          hardTimeout: true,
-          capped: false,
-        });
-      } else {
-        resolve(fallbackSync(pattern, flags, input));
+        return;
       }
+
+      finish(createEmptyResult(data.type === "timeout" ? "timed-out" : "unavailable"));
     };
 
-    worker.onerror = () => {
-      window.clearTimeout(timer);
-      worker.terminate();
-      resolve(fallbackSync(pattern, flags, input));
-    };
-
-    worker.postMessage({ type: "run", pattern, flags, input });
+    worker.onerror = () => finish(createEmptyResult("unavailable"));
+    worker.postMessage({ type: "run", pattern, flags, input, replacement });
   });
+}
+
+export function createEmptyResult(status: SafeMatchStatus): SafeMatchResult {
+  const timedOut = status === "timed-out";
+  return {
+    status,
+    results: [],
+    elapsedMs: 0,
+    timedOut,
+    hardTimeout: timedOut,
+    capped: false,
+    replacementResult: "",
+    replacementError: null,
+  };
 }
