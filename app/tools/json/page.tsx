@@ -1,39 +1,39 @@
+// app/tools/json/page.tsx
 import type { Metadata } from "next";
-import { JsonValidatorClient } from "@/components/json/json-validator-client";
+import { JsonEditorClient } from "@/components/json/json-editor-client";
 
 export const metadata: Metadata = {
-  title: "JSON Validator & Formatter",
+  title: "JSON Editor",
   description:
-    "Validate and format JSON data instantly in your browser. Paste raw JSON to check syntax, prettify output, and copy formatted results. Free developer tool.",
+    "Edit, format, validate, repair and convert JSON in your browser. Tree view, YAML/CSV/Markdown converters, TypeScript and Zod generators. Handles up to 50 MB. 100% local.",
   keywords: [
-    "JSON validator",
-    "JSON formatter",
-    "JSON prettifier",
-    "validate JSON",
-    "format JSON",
-    "JSON parser",
-    "JSON syntax checker",
+    "json editor",
+    "json formatter",
+    "json validator",
+    "json to yaml",
+    "json to csv",
+    "json to typescript",
+    "json to zod",
+    "json schema",
     "developer tools",
   ],
   openGraph: {
-    title: "JSON Validator & Formatter",
-    description:
-      "Validate and format JSON data instantly. Free browser-based developer tool.",
+    title: "JSON Editor",
+    description: "Edit, format, convert and generate types from JSON. 100% local, up to 50 MB.",
     url: "/tools/json",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
-    title: "JSON Validator & Formatter",
-    description:
-      "Validate and format JSON data instantly. Free browser-based developer tool.",
+    title: "JSON Editor",
+    description: "Edit, format, convert and generate types from JSON. 100% local, up to 50 MB.",
   },
   alternates: {
     canonical: "/tools/json",
   },
 };
 
-export default function JsonValidatorPage() {
+export default function JsonEditorPage() {
   const lastUpdated = new Date().toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
@@ -41,7 +41,7 @@ export default function JsonValidatorPage() {
 
   return (
     <>
-      <JsonValidatorClient />
+      <JsonEditorClient />
       <p className="text-xs text-muted-foreground text-center mt-4">
         Last updated: {lastUpdated}
       </p>
