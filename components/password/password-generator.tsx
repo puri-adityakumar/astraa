@@ -227,8 +227,7 @@ export function PasswordGeneratorClient() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button
               size="lg"
-              variant="default"
-              className="w-full font-semibold text-base h-12"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base h-12"
               onClick={handleCopyToClipboard}
             >
               Copy password
@@ -236,7 +235,7 @@ export function PasswordGeneratorClient() {
             <Button
               size="lg"
               variant="outline"
-              className="w-full font-semibold text-base h-12 hover:bg-muted/50 hover:text-foreground"
+              className="w-full font-semibold text-base h-12 border-2 hover:bg-muted/50"
               onClick={generate}
             >
               Refresh password

@@ -83,19 +83,22 @@ export const toolCategories: ToolCategory[] = [
         name: 'Base64 Encoder/Decoder',
         description: 'Encode and decode Base64 strings',
         path: '/tools/base64',
-        icon: Binary
+        icon: Binary,
+        comingSoon: true
       },
       {
         name: 'Code Snippet Generator',
-        description: 'Generate beautiful code and screenshot images',
+        description: 'Generate beautiful code snippets',
         path: '/tools/snippet-generator',
         icon: Code,
+        comingSoon: true
       },
       {
-        name: 'JSON Editor',
-        description: 'Edit, format, convert and generate types — up to 50 MB',
+        name: 'JSON Validator',
+        description: 'Validate and format JSON data',
         path: '/tools/json',
         icon: FileJson,
+        comingSoon: true
       },
       {
         name: 'SQL Formatter',
@@ -108,7 +111,8 @@ export const toolCategories: ToolCategory[] = [
         name: 'Regex Tester',
         description: 'Test and validate regular expressions',
         path: '/tools/regex',
-        icon: Terminal
+        icon: Terminal,
+        comingSoon: true
       }
     ]
   }
