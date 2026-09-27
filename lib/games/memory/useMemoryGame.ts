@@ -8,11 +8,13 @@ const EMOJIS = ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🃏', '🎰']
 export function buildShuffledDeck(): Card[] {
   const pairs = [...EMOJIS, ...EMOJIS]
   // Fisher-Yates shuffle for unbiased randomization
-  for (let i = pairs.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[pairs[i], pairs[j]] = [pairs[j], pairs[i]]
+  const shuffled: string[] = []
+  while (pairs.length > 0) {
+    const j = Math.floor(Math.random() * pairs.length)
+    const [picked] = pairs.splice(j, 1)
+    if (picked !== undefined) shuffled.push(picked)
   }
-  return pairs.map((value, id) => ({ id, value, isFlipped: false, isMatched: false }))
+  return shuffled.map((value, id) => ({ id, value, isFlipped: false, isMatched: false }))
 }
 
 export function useMemoryGame() {
