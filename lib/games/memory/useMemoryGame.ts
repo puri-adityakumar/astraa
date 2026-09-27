@@ -3,19 +3,7 @@
 import { useState, useEffect } from 'react'
 import type { Card, GameState } from './types'
 
-const EMOJIS = ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🃏', '🎰']
-
-export function buildShuffledDeck(): Card[] {
-  const pairs = [...EMOJIS, ...EMOJIS]
-  // Fisher-Yates shuffle for unbiased randomization
-  const shuffled: string[] = []
-  while (pairs.length > 0) {
-    const j = Math.floor(Math.random() * pairs.length)
-    const [picked] = pairs.splice(j, 1)
-    if (picked !== undefined) shuffled.push(picked)
-  }
-  return shuffled.map((value, id) => ({ id, value, isFlipped: false, isMatched: false }))
-}
+const EMOJIS = ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🎪', '🎯']
 
 export function useMemoryGame() {
   const [gameState, setGameState] = useState<GameState>(() => ({

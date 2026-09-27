@@ -61,7 +61,7 @@ chore: update dependencies
 
 ### Must Have
 
-- **Target branch** - All PRs must be made to the `main` branch
+- **Target branch** - All PRs must be made to the `development` branch
 - **Linked issue** - Reference the issue in your PR (e.g., "Closes #123")
 - **Valid title** - Use Conventional Commits format (see above)
 - **Passing checks** - All CI checks must pass
@@ -194,7 +194,7 @@ lib/[tool]/                        → Pure logic, no React
 
 ### Merging Development to Main
 
-When merging the `main` branch to `main`, follow this convention:
+When merging the `development` branch to `main`, follow this convention:
 
 **PR Title Format:**
 ```
@@ -211,7 +211,7 @@ release(v<VERSION>): merge development to main
 ## Version: v<VERSION>
 
 ### Summary
-Merging main branch to main for release v<VERSION>
+Merging development branch to main for release v<VERSION>
 
 ### Key Changes
 - List major changes (features, fixes, improvements)

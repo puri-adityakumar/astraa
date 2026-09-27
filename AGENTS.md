@@ -222,10 +222,10 @@ Before turning a design/spec into an implementation plan, walk through these che
 ### Out-of-scope clarity
 - What's NOT being built is explicit, so deferred work is distinguishable from forgotten work
 
-## Git Workflow (single-branch, inspired by Nano-Collective/nanocoder)
+## Git Workflow
 
-- **`main` is the only branch.** All PRs target `main`; CI + Vercel preview deploys verify each PR before merge. No `development` branch.
+- PRs must target `development` branch
 - Must be assigned to an issue before submitting PR
 - Use Conventional Commits: `feat(scope): description`, `fix(scope): description`
 - Commit types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`
-- **Releasing:** bump `version` in `package.json` in a PR (Conventional Commit `chore(release): vX.Y.Z`). After merge to main, the release workflow tags `vX.Y.Z` and creates a GitHub Release with notes. Production Vercel deploy follows main; releases are cut by tag, not by branch merges.
+- Release format: `release(vX.Y.Z): merge development to main`
