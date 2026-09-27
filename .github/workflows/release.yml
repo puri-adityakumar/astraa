@@ -1,0 +1,62 @@
+name: Release
+
+# Single-branch release flow (nanocoder-style):
+# - main is the only long-lived branch; every PR targets main and is verified
+#   by CI + Vercel preview deploy before merge.
+# - Production deploys ride Vercel's main-branch integration.
+# - A release is cut by bumping `version` in package.json on main. This
+#   workflow detects the bump, tags vX.Y.Z, and creates a GitHub Release
+#   with generated notes. No development branch, no release merges.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+    outputs:
+      should-tag: ${{ steps.check.outputs.should-tag }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check version change vs last tag
+        id: check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "ℹ️ v$VERSION already tagged — no release"
+            echo "should-tag=false" >> $GITHUB_OUTPUT
+          else
+            echo "✅ New version detected: v$VERSION"
+            echo "should-tag=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Tag vX.Y.Z
+        if: steps.check.outputs.should-tag == 'true'
+        run: |
+          VERSION="${{ steps.check.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "release v$VERSION"
+          git push origin "v$VERSION"
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.should-tag == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.check.outputs.version }}"
+          PREV=$(git describe --tags --abbrev=0 "v$VERSION^" 2>/dev/null || git rev-list --max-parents=0 HEAD)
+          {
+            echo "## What changed"
+            echo ""
+            git log --format='- %s (%h)' "${PREV}..HEAD" | grep -vE '^- (chore\(release\)|release\()' || true
+          } > notes.md
+          gh release create "v$VERSION" --title "v$VERSION" --notes-file notes.md
