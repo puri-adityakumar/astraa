@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
+import type { TermTheme } from "@/lib/terminal/cookies";
+import { outputToLiveText } from "@/lib/terminal/live-text";
+import { runInput } from "@/lib/terminal/registry";
+import type { OutputBlock } from "@/lib/terminal/types";
 import { HomeView } from "./home-view";
 import { PromptBar } from "./prompt-bar";
+import { Scrollback, type ScrollbackEntry } from "./scrollback";
 import { Sidebar } from "./sidebar";
 import { ToolPlaceholder } from "./tool-placeholder";
 
@@ -13,12 +18,76 @@ interface TerminalShellProps {
 }
 
 /**
- * The terminal shell: desktop sidebar rail (or mobile top bar + drawer),
- * scrolling main column, and the prompt pinned to the bottom of the
- * viewport. The main column scrolls; the prompt never does.
+ * The terminal shell: desktop sidebar rail (or mobile top bar + drawer), a
+ * scrolling main column with the home view or the scrollback, and the
+ * interactive prompt pinned to the bottom. Submitted lines run through the
+ * command registry; everything stays in memory — nothing here persists.
  */
 export function TerminalShell({ initialTool }: TerminalShellProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [entries, setEntries] = useState<ScrollbackEntry[]>([]);
+  const [liveText, setLiveText] = useState("");
+  const [theme, setTheme] = useState<TermTheme>("auto");
+  const mainRef = useRef<HTMLElement>(null);
+  const nextIdRef = useRef(0);
+
+  const clearScreen = useCallback(() => {
+    setEntries([]);
+    setLiveText("Screen cleared.");
+  }, []);
+
+  // Keep the newest entry in view: the prompt is a flex sibling of the
+  // scrolling column, so scrolling the column to its end never hides output
+  // behind it.
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: mainRef.current.scrollHeight });
+  }, [entries]);
+
+  // Ctrl+L clears the screen like /clear, wherever the focus is.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey &&
+        event.key.toLowerCase() === "l"
+      ) {
+        event.preventDefault();
+        clearScreen();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [clearScreen]);
+
+  const handleSubmit = useCallback(
+    async (input: string) => {
+      const result = await runInput(input, theme);
+      if (result === null) return;
+      if (result.type === "builtin") {
+        const { action } = result;
+        if (action.kind === "clear") {
+          clearScreen();
+          return;
+        }
+        // /theme updates the in-memory scheme (the cookie and CSS mapping
+        // arrive with the colour-scheme feature); /legacy waits for flavour
+        // switching. Both answers still echo to the scrollback.
+        if (action.kind === "theme") setTheme(action.theme);
+      }
+      const output: OutputBlock[] =
+        result.type === "fallback"
+          ? [{ type: "error", text: result.message }]
+          : (result.output ?? []);
+      nextIdRef.current += 1;
+      setEntries((previous) => [
+        ...previous,
+        { id: nextIdRef.current, input, output },
+      ]);
+      setLiveText(outputToLiveText(output));
+    },
+    [clearScreen, theme],
+  );
 
   return (
     <div className="flex h-dvh overflow-hidden bg-term-bg text-term-fg">
@@ -39,10 +108,23 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
             <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
         </header>
-        <main className="min-h-0 flex-1 overflow-y-auto">
-          {initialTool === undefined ? <HomeView /> : <ToolPlaceholder tool={initialTool} />}
+        <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
+          {entries.length === 0 ? (
+            initialTool === undefined ? (
+              <HomeView />
+            ) : (
+              <ToolPlaceholder tool={initialTool} />
+            )
+          ) : (
+            <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+              <Scrollback entries={entries} />
+            </div>
+          )}
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            {liveText}
+          </div>
         </main>
-        <PromptBar />
+        <PromptBar onSubmit={handleSubmit} />
       </div>
     </div>
   );
