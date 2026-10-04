@@ -1,0 +1,25 @@
+/*
+ * Terminal flavour styles — imported only by app/terminal/layout.tsx, so
+ * legacy pages never receive them. Colours come from the --term-* variables
+ * injected by the layout (lib/terminal/theme-css.ts) until the colour-scheme
+ * feature maps every scheme under [data-term-theme].
+ */
+
+[data-flavour="terminal"] {
+  background-color: var(--term-bg);
+  color: var(--term-fg);
+}
+
+/* Reduced motion inside the terminal: exact zeros, stronger than the global
+   0.01ms fallback in globals.css. */
+@media (prefers-reduced-motion: reduce) {
+  [data-flavour="terminal"],
+  [data-flavour="terminal"] *,
+  [data-flavour="terminal"] *::before,
+  [data-flavour="terminal"] *::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}

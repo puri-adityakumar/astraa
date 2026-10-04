@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { TERMINAL_TOOL_SLUGS, isTerminalToolSlug } from "@/lib/terminal/slugs";
+import { TerminalShell } from "@/components/terminal/terminal-shell";
+import { isTerminalToolSlug, TERMINAL_TOOL_SLUGS } from "@/lib/terminal/slugs";
 import { toolMetadataBySlug } from "@/lib/site-metadata";
 
 interface TerminalToolPageProps {
@@ -27,10 +28,5 @@ export default async function TerminalToolPage({ params }: TerminalToolPageProps
     notFound();
   }
 
-  return (
-    <main>
-      <h1>Astraa</h1>
-      <p data-term-panel-placeholder={tool}>{`Terminal panel: ${tool}`}</p>
-    </main>
-  );
+  return <TerminalShell initialTool={tool} />;
 }
