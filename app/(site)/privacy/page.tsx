@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   // Read the markdown file
-  const filePath = path.join(process.cwd(), "app/privacy/privacy-policy.md");
+  const filePath = path.join(process.cwd(), "app/(site)/privacy/privacy-policy.md");
   const content = fs.readFileSync(filePath, "utf8");
 
   return (

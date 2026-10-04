@@ -10,14 +10,9 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
   display: 'swap',
 });
-import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/theme-provider";
 import { ToolsProvider } from '@/lib/tools-context';
 import { ActivityProvider } from '@/lib/activity-tracker';
-import { PageTransition } from '@/components/ui/page-transition';
-import { LandingBackground } from '@/components/landing-background';
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -143,38 +138,20 @@ export default function RootLayout({
             ]),
           }}
         />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TooltipProvider>
-            <ToolsProvider>
-              <ActivityProvider>
-                <LandingBackground />
-                <div className="min-h-screen flex flex-col">
-                  <Navigation />
-                  <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
-                    <PageTransition type="fade">
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-                        {children}
-                      </div>
-                    </PageTransition>
-                  </main>
-                  <Footer />
-                </div>
-                <Toaster />
-                {process.env.NODE_ENV === "production" && (
-                  <>
-                    <Analytics />
-                    <SpeedInsights />
-                  </>
-                )}
-              </ActivityProvider>
-            </ToolsProvider>
-          </TooltipProvider>
-        </ThemeProvider>
+        <TooltipProvider>
+          <ToolsProvider>
+            <ActivityProvider>
+              {children}
+              <Toaster />
+              {process.env.NODE_ENV === "production" && (
+                <>
+                  <Analytics />
+                  <SpeedInsights />
+                </>
+              )}
+            </ActivityProvider>
+          </ToolsProvider>
+        </TooltipProvider>
       </body>
     </html>
   );
