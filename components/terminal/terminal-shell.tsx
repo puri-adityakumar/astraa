@@ -4,29 +4,32 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { outputToLiveText } from "@/lib/terminal/live-text";
 import { runInput } from "@/lib/terminal/registry";
-import type { OutputBlock } from "@/lib/terminal/types";
+import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
 import { HomeView } from "./home-view";
+import { PanelHost } from "./panel-host";
 import { PromptBar } from "./prompt-bar";
 import { Scrollback, type ScrollbackEntry } from "./scrollback";
 import { Sidebar } from "./sidebar";
-import { ToolPlaceholder } from "./tool-placeholder";
+import { usePanelUrl } from "./use-panel-url";
 import { useTerminalTheme } from "./terminal-theme";
 
 interface TerminalShellProps {
-  /** Slug for direct /tools/<slug> loads; renders the tool stand-in. */
-  initialTool?: string;
+  /** Slug for direct /tools/<slug> loads; renders with that panel open. */
+  initialTool?: ToolSlug;
 }
 
 /**
  * The terminal shell: desktop sidebar rail (or mobile top bar + drawer), a
- * scrolling main column with the home view or the scrollback, and the
- * interactive prompt pinned to the bottom. Submitted lines run through the
- * command registry; everything stays in memory — nothing here persists.
+ * scrolling main column with the home view, scrollback and the open tool
+ * panel, and the interactive prompt pinned to the bottom. Submitted lines
+ * run through the command registry; everything stays in memory — nothing
+ * here persists.
  */
 export function TerminalShell({ initialTool }: TerminalShellProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [entries, setEntries] = useState<ScrollbackEntry[]>([]);
   const [liveText, setLiveText] = useState("");
+  const { panel, open, close } = usePanelUrl(initialTool);
   const { theme, setTheme } = useTerminalTheme();
   const mainRef = useRef<HTMLElement>(null);
   const nextIdRef = useRef(0);
@@ -34,7 +37,8 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const clearScreen = useCallback(() => {
     setEntries([]);
     setLiveText("Screen cleared.");
-  }, []);
+    close();
+  }, [close]);
 
   // Keep the newest entry in view: the prompt is a flex sibling of the
   // scrolling column, so scrolling the column to its end never hides output
@@ -60,6 +64,8 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [clearScreen]);
 
+  // Runs a submitted line (typed or clicked from a row) through the
+  // registry: echoes it in the scrollback and executes its result.
   const handleSubmit = useCallback(
     async (input: string) => {
       const result = await runInput(input, theme);
@@ -74,6 +80,8 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
         // html class via the theme provider; /legacy waits for flavour
         // switching. Both answers still echo to the scrollback.
         if (action.kind === "theme") setTheme(action.theme);
+      } else if (result.type === "open" || result.type === "fallback") {
+        open(result.slug);
       }
       const output: OutputBlock[] =
         result.type === "fallback"
@@ -86,12 +94,16 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
       ]);
       setLiveText(outputToLiveText(output));
     },
-    [clearScreen, theme, setTheme],
+    [clearScreen, theme, setTheme, open],
   );
 
   return (
     <div className="flex h-dvh overflow-hidden bg-term-bg text-term-fg">
-      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <Sidebar
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onRun={handleSubmit}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-term-surface2 px-4 md:hidden">
           <span aria-hidden="true" className="select-none font-pixel text-base text-term-fg">
@@ -109,22 +121,21 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
           </button>
         </header>
         <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
-          {entries.length === 0 ? (
-            initialTool === undefined ? (
-              <HomeView />
-            ) : (
-              <ToolPlaceholder tool={initialTool} />
-            )
-          ) : (
+          {entries.length > 0 && (
             <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
               <Scrollback entries={entries} />
             </div>
           )}
+          {panel !== null ? (
+            <PanelHost slug={panel} onClose={close} />
+          ) : entries.length === 0 ? (
+            <HomeView onRun={handleSubmit} />
+          ) : null}
           <div aria-live="polite" aria-atomic="true" className="sr-only">
             {liveText}
           </div>
         </main>
-        <PromptBar onSubmit={handleSubmit} />
+        <PromptBar onSubmit={handleSubmit} autoFocus={panel === null} />
       </div>
     </div>
   );

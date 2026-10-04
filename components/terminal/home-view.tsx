@@ -7,13 +7,18 @@ import { getCommands } from "@/lib/terminal/registry";
 import { CategoryTabs, categoryId } from "./category-tabs";
 import { ToolRow } from "./tool-row";
 
+interface HomeViewProps {
+  /** Runs a bare tool command (row click) through the shell. */
+  onRun?: (input: string) => void;
+}
+
 /**
  * The terminal home view, shown while the scrollback is empty: pixel ASTRAA
  * banner, intro, registry-driven category tabs and rows, and the /help tip
  * card. Rows are empty-safe — tool categories stay visible before any tool
  * command is registered.
  */
-export function HomeView() {
+export function HomeView({ onRun }: HomeViewProps = {}) {
   const categories = toolCategories.map((category) => category.name);
   const [active, setActive] = useState(categories[0] ?? "");
   const activeCommands = commandsInCategory(getCommands(), active);
@@ -53,7 +58,7 @@ export function HomeView() {
           </p>
         ) : (
           activeCommands.map((command) => (
-            <ToolRow key={command.name} command={command} showSummary />
+            <ToolRow key={command.name} command={command} showSummary onRun={onRun} />
           ))
         )}
       </div>

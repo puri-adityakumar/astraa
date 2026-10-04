@@ -17,6 +17,8 @@ const SITE_LINKS = [
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
+  /** Runs a bare tool command (row click) through the shell. */
+  onRun?: (input: string) => void;
 }
 
 /**
@@ -24,7 +26,7 @@ interface SidebarProps {
  * slide-over drawer opened by the top bar's menu button. A single content
  * instance keeps heading and panel ids unique across both presentations.
  */
-export function Sidebar({ open, onClose }: SidebarProps) {
+export function Sidebar({ open, onClose, onRun }: SidebarProps) {
   const commands = toolCommands(getCommands());
 
   useEffect(() => {
@@ -69,7 +71,13 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             <ul className="space-y-1">
               {commands.map((command) => (
                 <li key={command.name}>
-                  <ToolRow command={command} />
+                  <ToolRow
+                    command={command}
+                    onRun={(input) => {
+                      onRun?.(input);
+                      onClose();
+                    }}
+                  />
                 </li>
               ))}
             </ul>

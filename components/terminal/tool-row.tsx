@@ -5,17 +5,24 @@ import { toolDisplayName } from "./tool-names";
 interface ToolRowProps {
   command: ToolCommand;
   showSummary?: boolean;
+  /** Runs the bare command in place; the href stays for no-JS/crawlers. */
+  onRun?: ((input: string) => void) | undefined;
 }
 
 /**
- * One registry-driven tool row: key chip + display name as a real link to
- * the tool's public URL (crawlable, works without JS). Panel behaviour later
- * intercepts the click to run the bare command in place.
+ * One registry-driven tool row: key chip + display name. With `onRun` the
+ * click (or Enter on the focused link) runs the bare command — the same
+ * path as typing it — instead of navigating.
  */
-export function ToolRow({ command, showSummary = false }: ToolRowProps) {
+export function ToolRow({ command, showSummary = false, onRun }: ToolRowProps) {
   return (
     <a
       href={`/tools/${command.slug}`}
+      onClick={(event) => {
+        if (!onRun) return;
+        event.preventDefault();
+        onRun(`/${command.name}`);
+      }}
       className={cn(
         "flex min-h-touch items-center gap-3 rounded-md px-3 py-2",
         "font-sans text-sm text-term-fg no-underline",

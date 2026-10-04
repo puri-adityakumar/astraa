@@ -10,7 +10,14 @@ import {
   scientificFunctions,
 } from "@/lib/calculator/calculator-utils";
 
-export function CalculatorClient() {
+export type CalculatorVariant = "page" | "panel";
+
+interface CalculatorClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: CalculatorVariant;
+}
+
+export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
   const [display, setDisplay] = useState("0");
   const [expression, setExpression] = useState("");
   const [isNewNumber, setIsNewNumber] = useState(true);
@@ -126,6 +133,18 @@ export function CalculatorClient() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
 
+      // Ignore keystrokes aimed at editable elements (the terminal prompt,
+      // other inputs) — the keypad shortcuts would otherwise swallow them.
+      const target = e.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
       const key = e.key;
 
       if (key >= "0" && key <= "9") {
@@ -153,6 +172,249 @@ export function CalculatorClient() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [appendNumber, appendOperator, calculate, handleBackspace, clear]);
 
+  const keypad = (
+    <Card className="max-w-3xl border-border/50 shadow-sm overflow-hidden bg-background">
+      <CalculatorDisplay value={display} expression={expression} />
+
+      {/* Toolbar */}
+      <div className="bg-muted/30 p-2 flex items-center gap-2 border-b border-border/50 min-h-[50px]">
+        <div className="flex bg-muted/50 rounded-md p-1">
+          <button
+            onClick={() => setAngleMode("RAD")}
+            className={cn(
+              "px-3 py-1 text-xs font-medium rounded-sm transition-all",
+              angleMode === "RAD"
+                ? "bg-background shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            RAD
+          </button>
+          <button
+            onClick={() => setAngleMode("DEG")}
+            className={cn(
+              "px-3 py-1 text-xs font-medium rounded-sm transition-all",
+              angleMode === "DEG"
+                ? "bg-background shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            DEG
+          </button>
+        </div>
+        <div className="h-4 w-[1px] bg-border mx-1" />
+
+        <span className="text-xl font-semibold text-muted-foreground ml-auto">
+          Ans = {display}
+        </span>
+      </div>
+
+      <div className="grid md:grid-cols-[1.2fr_1fr] bg-muted/10">
+        {/* Scientific Keypad (Left) */}
+        <div className="p-2 grid grid-cols-3 gap-1 content-start border-r border-border/50">
+          <CalculatorButton
+            value="rad"
+            onClick={() => setAngleMode("RAD")}
+            variant="secondary"
+            className={cn(
+              "text-sm",
+              angleMode === "RAD" && "bg-muted text-foreground font-semibold",
+            )}
+          />
+          <CalculatorButton
+            value="deg"
+            onClick={() => setAngleMode("DEG")}
+            variant="secondary"
+            className={cn(
+              "text-sm",
+              angleMode === "DEG" && "bg-muted text-foreground font-semibold",
+            )}
+          />
+          <CalculatorButton
+            value="x!"
+            onClick={() => applyFunction("fact")}
+            variant="secondary"
+            className="text-sm"
+          />
+
+          <CalculatorButton
+            value="("
+            onClick={() => appendOperator("(")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value=")"
+            onClick={() => appendOperator(")")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value="%"
+            onClick={() => appendOperator("%")}
+            variant="secondary"
+          />
+
+          <CalculatorButton
+            value="sin"
+            onClick={() => applyFunction("sin")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value="cos"
+            onClick={() => applyFunction("cos")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value="tan"
+            onClick={() => applyFunction("tan")}
+            variant="secondary"
+          />
+
+          <CalculatorButton
+            value="ln"
+            onClick={() => applyFunction("ln")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value="log"
+            onClick={() => applyFunction("log")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value="√"
+            onClick={() => applyFunction("sqrt")}
+            variant="secondary"
+          />
+
+          <CalculatorButton
+            value="π"
+            onClick={() => appendNumber("3.14159")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value="e"
+            onClick={() => appendNumber("2.71828")}
+            variant="secondary"
+          />
+          <CalculatorButton
+            value="^"
+            onClick={() => appendOperator("^")}
+            variant="secondary"
+          />
+        </div>
+
+        {/* Numeric Keypad (Right) */}
+        <div className="p-2 grid grid-cols-4 gap-1">
+          <CalculatorButton
+            value="C"
+            onClick={clear}
+            variant="secondary"
+            className="text-destructive font-bold"
+          />
+          <CalculatorButton
+            value="÷"
+            onClick={() => appendOperator("/")}
+            variant="secondary"
+            className="text-primary font-bold bg-muted/50"
+          />
+          <CalculatorButton
+            value="×"
+            onClick={() => appendOperator("*")}
+            variant="secondary"
+            className="text-primary font-bold bg-muted/50"
+          />
+          <CalculatorButton
+            value="⌫"
+            onClick={handleBackspace}
+            variant="secondary"
+            className="text-primary font-bold bg-muted/50"
+          />
+
+          <CalculatorButton
+            value="7"
+            onClick={() => appendNumber("7")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="8"
+            onClick={() => appendNumber("8")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="9"
+            onClick={() => appendNumber("9")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="-"
+            onClick={() => appendOperator("-")}
+            variant="secondary"
+            className="text-primary font-bold bg-muted/50"
+          />
+
+          <CalculatorButton
+            value="4"
+            onClick={() => appendNumber("4")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="5"
+            onClick={() => appendNumber("5")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="6"
+            onClick={() => appendNumber("6")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="+"
+            onClick={() => appendOperator("+")}
+            variant="secondary"
+            className="text-primary font-bold bg-muted/50"
+          />
+
+          <CalculatorButton
+            value="1"
+            onClick={() => appendNumber("1")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="2"
+            onClick={() => appendNumber("2")}
+            className="bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="3"
+            onClick={() => appendNumber("3")}
+            className="bg-background hover:bg-muted/50"
+          />
+
+          <CalculatorButton
+            value="="
+            onClick={calculate}
+            variant="default"
+            className="row-span-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl"
+          />
+
+          <CalculatorButton
+            value="0"
+            onClick={() => appendNumber("0")}
+            className="col-span-2 bg-background hover:bg-muted/50"
+          />
+          <CalculatorButton
+            value="."
+            onClick={() => appendNumber(".")}
+            className="bg-background hover:bg-muted/50"
+          />
+        </div>
+      </div>
+    </Card>
+  );
+
+  if (variant === "panel") {
+    return <div className="w-full">{keypad}</div>;
+  }
+
   return (
     <div className="container max-w-5xl pt-24 pb-12 space-y-8">
       <div className="space-y-4 text-center sm:text-left">
@@ -167,243 +429,7 @@ export function CalculatorClient() {
           All processing happens locally in your browser
         </p>
       </div>
-
-      <Card className="max-w-3xl border-border/50 shadow-sm overflow-hidden bg-background">
-        <CalculatorDisplay value={display} expression={expression} />
-
-        {/* Toolbar */}
-        <div className="bg-muted/30 p-2 flex items-center gap-2 border-b border-border/50 min-h-[50px]">
-          <div className="flex bg-muted/50 rounded-md p-1">
-            <button
-              onClick={() => setAngleMode("RAD")}
-              className={cn(
-                "px-3 py-1 text-xs font-medium rounded-sm transition-all",
-                angleMode === "RAD"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              RAD
-            </button>
-            <button
-              onClick={() => setAngleMode("DEG")}
-              className={cn(
-                "px-3 py-1 text-xs font-medium rounded-sm transition-all",
-                angleMode === "DEG"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              DEG
-            </button>
-          </div>
-          <div className="h-4 w-[1px] bg-border mx-1" />
-
-          <span className="text-xl font-semibold text-muted-foreground ml-auto">
-            Ans = {display}
-          </span>
-        </div>
-
-        <div className="grid md:grid-cols-[1.2fr_1fr] bg-muted/10">
-          {/* Scientific Keypad (Left) */}
-          <div className="p-2 grid grid-cols-3 gap-1 content-start border-r border-border/50">
-            <CalculatorButton
-              value="rad"
-              onClick={() => setAngleMode("RAD")}
-              variant="secondary"
-              className={cn(
-                "text-sm",
-                angleMode === "RAD" && "bg-muted text-foreground font-semibold",
-              )}
-            />
-            <CalculatorButton
-              value="deg"
-              onClick={() => setAngleMode("DEG")}
-              variant="secondary"
-              className={cn(
-                "text-sm",
-                angleMode === "DEG" && "bg-muted text-foreground font-semibold",
-              )}
-            />
-            <CalculatorButton
-              value="x!"
-              onClick={() => applyFunction("fact")}
-              variant="secondary"
-              className="text-sm"
-            />
-
-            <CalculatorButton
-              value="("
-              onClick={() => appendOperator("(")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value=")"
-              onClick={() => appendOperator(")")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="%"
-              onClick={() => appendOperator("%")}
-              variant="secondary"
-            />
-
-            <CalculatorButton
-              value="sin"
-              onClick={() => applyFunction("sin")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="cos"
-              onClick={() => applyFunction("cos")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="tan"
-              onClick={() => applyFunction("tan")}
-              variant="secondary"
-            />
-
-            <CalculatorButton
-              value="ln"
-              onClick={() => applyFunction("ln")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="log"
-              onClick={() => applyFunction("log")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="√"
-              onClick={() => applyFunction("sqrt")}
-              variant="secondary"
-            />
-
-            <CalculatorButton
-              value="π"
-              onClick={() => appendNumber("3.14159")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="e"
-              onClick={() => appendNumber("2.71828")}
-              variant="secondary"
-            />
-            <CalculatorButton
-              value="^"
-              onClick={() => appendOperator("^")}
-              variant="secondary"
-            />
-          </div>
-
-          {/* Numeric Keypad (Right) */}
-          <div className="p-2 grid grid-cols-4 gap-1">
-            <CalculatorButton
-              value="C"
-              onClick={clear}
-              variant="secondary"
-              className="text-destructive font-bold"
-            />
-            <CalculatorButton
-              value="÷"
-              onClick={() => appendOperator("/")}
-              variant="secondary"
-              className="text-primary font-bold bg-muted/50"
-            />
-            <CalculatorButton
-              value="×"
-              onClick={() => appendOperator("*")}
-              variant="secondary"
-              className="text-primary font-bold bg-muted/50"
-            />
-            <CalculatorButton
-              value="⌫"
-              onClick={handleBackspace}
-              variant="secondary"
-              className="text-primary font-bold bg-muted/50"
-            />
-
-            <CalculatorButton
-              value="7"
-              onClick={() => appendNumber("7")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="8"
-              onClick={() => appendNumber("8")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="9"
-              onClick={() => appendNumber("9")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="-"
-              onClick={() => appendOperator("-")}
-              variant="secondary"
-              className="text-primary font-bold bg-muted/50"
-            />
-
-            <CalculatorButton
-              value="4"
-              onClick={() => appendNumber("4")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="5"
-              onClick={() => appendNumber("5")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="6"
-              onClick={() => appendNumber("6")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="+"
-              onClick={() => appendOperator("+")}
-              variant="secondary"
-              className="text-primary font-bold bg-muted/50"
-            />
-
-            <CalculatorButton
-              value="1"
-              onClick={() => appendNumber("1")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="2"
-              onClick={() => appendNumber("2")}
-              className="bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="3"
-              onClick={() => appendNumber("3")}
-              className="bg-background hover:bg-muted/50"
-            />
-
-            <CalculatorButton
-              value="="
-              onClick={calculate}
-              variant="default"
-              className="row-span-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl"
-            />
-
-            <CalculatorButton
-              value="0"
-              onClick={() => appendNumber("0")}
-              className="col-span-2 bg-background hover:bg-muted/50"
-            />
-            <CalculatorButton
-              value="."
-              onClick={() => appendNumber(".")}
-              className="bg-background hover:bg-muted/50"
-            />
-          </div>
-        </div>
-      </Card>
+      {keypad}
     </div>
   );
 }

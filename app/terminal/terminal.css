@@ -10,6 +10,13 @@
   color: var(--term-fg);
 }
 
+/* Visible keyboard focus for every control in the terminal (rows, tabs,
+   picker, close buttons, prompt). */
+[data-flavour="terminal"] :focus-visible {
+  outline: 2px solid var(--term-accent);
+  outline-offset: 2px;
+}
+
 /* Reduced motion inside the terminal: exact zeros, stronger than the global
    0.01ms fallback in globals.css. */
 @media (prefers-reduced-motion: reduce) {

@@ -14,6 +14,11 @@ import { cn } from "@/lib/utils";
 interface PromptBarProps {
   /** Runs a submitted input line through the command registry. */
   onSubmit: (input: string) => void;
+  /**
+   * Focus the input when it becomes true — on mount (home loads) and every
+   * time a panel closes. Panels focus themselves while open.
+   */
+  autoFocus?: boolean;
 }
 
 /**
@@ -23,7 +28,7 @@ interface PromptBarProps {
  * list, and empty-input no-op. State is component-local — nothing here
  * persists across reloads.
  */
-export function PromptBar({ onSubmit }: PromptBarProps) {
+export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
   const [history, setHistory] = useState<string[]>([]);
@@ -32,8 +37,8 @@ export function PromptBar({ onSubmit }: PromptBarProps) {
   const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
 
   // Keep the highlighted suggestion visible inside a long list.
   useEffect(() => {
