@@ -36,9 +36,9 @@ describe("site-metadata", () => {
   );
 
   it("keeps the home title and canonical", () => {
-    expect(homeMetadata.title).toBe(
-      "Free Online Utility Tools for Developers & Creators",
-    );
+    expect(homeMetadata.title).toEqual({
+      absolute: "Free Online Utility Tools for Developers & Creators",
+    });
     expect(homeMetadata.alternates?.canonical).toBe("/");
     expect(homeMetadata.openGraph?.url).toBe("/");
   });

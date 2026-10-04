@@ -7,7 +7,9 @@ import type { Metadata } from "next";
  */
 
 export const homeMetadata: Metadata = {
-  title: "Free Online Utility Tools for Developers & Creators",
+  // absolute: the home page sits below the root layout, whose "%s | Astraa"
+  // title template would otherwise add a suffix the old home page never had.
+  title: { absolute: "Free Online Utility Tools for Developers & Creators" },
   description:
     "Astraa is a free utility toolkit with 15+ tools: scientific calculator, currency converter, password generator, hash generator, unit converter, markdown viewer, image resizer, and browser games. All processing happens locally in your browser.",
   openGraph: {
