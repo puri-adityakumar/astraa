@@ -91,7 +91,28 @@ describe("schemeCss", () => {
     for (const variable of Object.values(TERM_CSS_VARS)) {
       // Colon-terminated so "--term-surface" does not count "--term-surface2".
       const occurrences = css.split(`${variable}:`).length - 1;
-      expect(occurrences, variable).toBe(SCHEME_IDS.length + 2);
+      expect(occurrences, variable).toBe(2 * (SCHEME_IDS.length + 2));
+    }
+  });
+
+  it("also scopes every scheme at :root via :has for portalled overlays", () => {
+    for (const id of SCHEME_IDS) {
+      expect(css).toContain(
+        `:root:has([data-flavour="terminal"][data-term-theme="${id}"])`,
+      );
+    }
+    const media = css.slice(css.indexOf("@media"));
+    expect(media).toContain(
+      ':root:has([data-flavour="terminal"][data-term-theme="auto"])',
+    );
+  });
+
+  it("keeps the :root:has blocks outside media queries for explicit schemes", () => {
+    const base = css.slice(0, css.indexOf("@media"));
+    for (const id of SCHEME_IDS) {
+      expect(base, id).toContain(
+        `:root:has([data-flavour="terminal"][data-term-theme="${id}"])`,
+      );
     }
   });
 });

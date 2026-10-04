@@ -44,8 +44,19 @@ function declarations(id: SchemeId): string {
   return css;
 }
 
-function block(id: SchemeId): string {
-  return `[data-term-theme="${id}"]{${declarations(id)}}`;
+/**
+ * One scheme's declarations scoped twice: to the terminal root attribute
+ * and, via :root:has, to the document root — portalled overlays (Radix
+ * Select/Popover/Dialog/Tooltip, Toaster) render into document.body outside
+ * the terminal root, so the vars must also resolve there (architecture §6
+ * Portals). Legacy pages never contain the terminal marker, so their :root
+ * tokens are untouched. `attr` is the attribute value to target ("auto"
+ * differs from the scheme id providing the colours).
+ */
+function block(id: SchemeId, attr: string = id): string {
+  const decls = declarations(id);
+  return `[data-term-theme="${attr}"]{${decls}}` +
+    `:root:has([data-flavour="terminal"][data-term-theme="${attr}"]){${decls}}`;
 }
 
 /**
@@ -55,9 +66,7 @@ function block(id: SchemeId): string {
  */
 export function schemeCss(): string {
   const explicit = SCHEMES.map((scheme) => block(scheme.id)).join("");
-  const autoBase = `[data-term-theme="auto"]{${declarations(AUTO.dark)}}`;
-  const autoLight = `${LIGHT_MEDIA_QUERY}{[data-term-theme="auto"]{${declarations(
-    AUTO.light,
-  )}}}`;
+  const autoBase = block(AUTO.dark, "auto");
+  const autoLight = `${LIGHT_MEDIA_QUERY}{${block(AUTO.light, "auto")}}`;
   return explicit + autoBase + autoLight;
 }

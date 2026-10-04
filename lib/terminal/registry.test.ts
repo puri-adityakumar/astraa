@@ -14,31 +14,37 @@ import type { CommandContext, TerminalCommand } from "@/lib/terminal/types";
 
 function fixtureCommand(overrides: Partial<TerminalCommand> = {}): TerminalCommand {
   return {
-    name: "calculator",
-    aliases: ["calc"],
-    summary: "Evaluate arithmetic expressions",
-    usage: ["/calculator 2+2"],
+    name: "fixture",
+    aliases: ["fix"],
+    summary: "Fixture command",
+    usage: ["/fixture 1"],
     category: "Utilities",
     slug: "calculator",
     status: "live",
-    run: () => ({ type: "answer", output: [{ type: "text", text: "= 4" }] }),
+    run: () => ({ type: "answer", output: [{ type: "text", text: "fixture" }] }),
     ...overrides,
   };
 }
 
 describe("registry list", () => {
-  it("starts with the four built-ins in a stable order", () => {
-    expect(getCommands().map((c) => c.name)).toEqual(["help", "clear", "theme", "legacy"]);
+  it("starts with the built-ins plus registered tool commands in a stable order", () => {
+    expect(getCommands().map((c) => c.name)).toEqual([
+      "help",
+      "clear",
+      "theme",
+      "legacy",
+      "calculator",
+    ]);
   });
 
   it("register() adds a command and the disposer removes it", () => {
     const undo = register(fixtureCommand());
     try {
-      expect(getCommands().map((c) => c.name)).toContain("calculator");
+      expect(getCommands().map((c) => c.name)).toContain("fixture");
     } finally {
       undo();
     }
-    expect(getCommands().map((c) => c.name)).not.toContain("calculator");
+    expect(getCommands().map((c) => c.name)).not.toContain("fixture");
   });
 });
 
@@ -53,12 +59,16 @@ describe("resolveCommand", () => {
     expect(resolveCommand("Help")?.name).toBe("help");
   });
 
-  it("resolves aliases case-insensitively once registered", () => {
+  it("resolves the registered calculator command and alias case-insensitively", () => {
+    expect(resolveCommand("CALC")?.name).toBe("calculator");
+    expect(resolveCommand("Calculator")?.name).toBe("calculator");
+  });
+
+  it("resolves fixture aliases case-insensitively once registered", () => {
     const undo = register(fixtureCommand());
     try {
-      expect(resolveCommand("calc")?.name).toBe("calculator");
-      expect(resolveCommand("CALC")?.name).toBe("calculator");
-      expect(resolveCommand("Calculator")?.name).toBe("calculator");
+      expect(resolveCommand("FIXTURE")?.name).toBe("fixture");
+      expect(resolveCommand("Fix")?.name).toBe("fixture");
     } finally {
       undo();
     }
@@ -71,7 +81,7 @@ describe("resolveCommand", () => {
 
   it("resolveCommandIn works on a provided list", () => {
     const list = [fixtureCommand()];
-    expect(resolveCommandIn(list, "CALC")?.name).toBe("calculator");
+    expect(resolveCommandIn(list, "FIXTURE")?.name).toBe("fixture");
     expect(resolveCommandIn([], "help")).toBeUndefined();
   });
 });
@@ -105,15 +115,9 @@ describe("suggest", () => {
 });
 
 describe("closestCommand", () => {
-  it("suggests calculator for the typo 'calculater' once registered", () => {
-    const undo = register(fixtureCommand());
-    try {
-      expect(closestCommand("calculater")?.name).toBe("calculator");
-      expect(closestCommand("CALCULATER")?.name).toBe("calculator");
-    } finally {
-      undo();
-    }
-    expect(closestCommand("calculater")).toBeUndefined();
+  it("suggests the registered calculator for the typo 'calculater'", () => {
+    expect(closestCommand("calculater")?.name).toBe("calculator");
+    expect(closestCommand("CALCULATER")?.name).toBe("calculator");
   });
 
   it("suggests built-ins for close typos", () => {
@@ -128,8 +132,8 @@ describe("closestCommand", () => {
 
   it("closestCommandIn works on a provided list", () => {
     const list = [fixtureCommand()];
-    expect(closestCommandIn(list, "calculater")?.name).toBe("calculator");
-    expect(closestCommandIn([], "calculater")).toBeUndefined();
+    expect(closestCommandIn(list, "fixure")?.name).toBe("fixture");
+    expect(closestCommandIn([], "fixure")).toBeUndefined();
   });
 });
 
@@ -160,20 +164,15 @@ describe("runInput", () => {
   });
 
   it("adds a did-you-mean when a registered command is close", async () => {
-    const undo = register(fixtureCommand());
-    try {
-      const result = await runInput("/calculater", "mocha");
-      expect(result).toEqual({
-        type: "answer",
-        output: [
-          { type: "error", text: 'Unknown command "/calculater".' },
-          { type: "text", text: "Did you mean /calculator?" },
-          { type: "text", text: "Type /help to see all commands." },
-        ],
-      });
-    } finally {
-      undo();
-    }
+    const result = await runInput("/calculater", "mocha");
+    expect(result).toEqual({
+      type: "answer",
+      output: [
+        { type: "error", text: 'Unknown command "/calculater".' },
+        { type: "text", text: "Did you mean /calculator?" },
+        { type: "text", text: "Type /help to see all commands." },
+      ],
+    });
   });
 
   it("runs a resolved command with trimmed args and the context", async () => {
@@ -189,7 +188,7 @@ describe("runInput", () => {
       }),
     );
     try {
-      const result = await runInput("/calculator   2 + 2", "dracula");
+      const result = await runInput("/fixture   2 + 2", "dracula");
       expect(result).toEqual({ type: "answer", output: [] });
       expect(seenArgs).toBe("2 + 2");
       expect(seenCtx?.theme).toBe("dracula");
