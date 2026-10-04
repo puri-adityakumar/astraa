@@ -1,37 +1,9 @@
-// app/tools/json/page.tsx
+// app/(site)/tools/json/page.tsx
 import type { Metadata } from "next";
+import { jsonMetadata } from "@/lib/site-metadata";
 import { JsonEditorClient } from "@/components/json/json-editor-client";
 
-export const metadata: Metadata = {
-  title: "JSON Editor",
-  description:
-    "Edit, format, validate, repair and convert JSON in your browser. Tree view, YAML/CSV/Markdown converters, TypeScript and Zod generators. Handles up to 50 MB. 100% local.",
-  keywords: [
-    "json editor",
-    "json formatter",
-    "json validator",
-    "json to yaml",
-    "json to csv",
-    "json to typescript",
-    "json to zod",
-    "json schema",
-    "developer tools",
-  ],
-  openGraph: {
-    title: "JSON Editor",
-    description: "Edit, format, convert and generate types from JSON. 100% local, up to 50 MB.",
-    url: "/tools/json",
-    images: ["/assets/astraa_banner.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "JSON Editor",
-    description: "Edit, format, convert and generate types from JSON. 100% local, up to 50 MB.",
-  },
-  alternates: {
-    canonical: "/tools/json",
-  },
-};
+export const metadata: Metadata = jsonMetadata;
 
 export default function JsonEditorPage() {
   const lastUpdated = new Date().toLocaleDateString("en-US", {

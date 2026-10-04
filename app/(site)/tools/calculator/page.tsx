@@ -1,37 +1,8 @@
 import type { Metadata } from "next";
+import { calculatorMetadata } from "@/lib/site-metadata";
 import { CalculatorClient } from "@/components/calculator/calculator-client";
 
-export const metadata: Metadata = {
-  title: "Scientific Calculator",
-  description:
-    "Perform complex math calculations with our free Google-style scientific calculator. Supports trigonometry, logarithms, and advanced operations in your browser.",
-  keywords: [
-    "scientific calculator",
-    "online calculator",
-    "math calculator",
-    "trigonometry calculator",
-    "logarithm calculator",
-    "advanced calculator",
-    "free calculator",
-    "browser calculator",
-  ],
-  openGraph: {
-    title: "Scientific Calculator",
-    description:
-      "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
-    url: "/tools/calculator",
-    images: ["/assets/astraa_banner.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "Scientific Calculator",
-    description:
-      "Free online scientific calculator with trigonometry, logarithms, and advanced math operations.",
-  },
-  alternates: {
-    canonical: "/tools/calculator",
-  },
-};
+export const metadata: Metadata = calculatorMetadata;
 
 export default function CalculatorPage() {
   const lastUpdated = new Date().toLocaleDateString("en-US", {
