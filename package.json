@@ -71,7 +71,7 @@
     "eslint-config-next": "^16.1.0",
     "focus-trap-react": "^11.0.4",
     "framer-motion": "^11.15.0",
-    "geist": "^1.5.1",
+    "geist": "^1.7.2",
     "input-otp": "^1.4.2",
     "js-yaml": "^4.1.1",
     "jsonrepair": "^3.14.0",
