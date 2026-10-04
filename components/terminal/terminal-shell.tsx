@@ -5,6 +5,7 @@ import { Menu } from "lucide-react";
 import { outputToLiveText } from "@/lib/terminal/live-text";
 import { runInput } from "@/lib/terminal/registry";
 import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
+import { switchToLegacyFlavour } from "./flavour-switch";
 import { HomeView } from "./home-view";
 import { PanelHost } from "./panel-host";
 import { PromptBar } from "./prompt-bar";
@@ -77,9 +78,11 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
           return;
         }
         // /theme persists the cookie, flips the attribute and re-forces the
-        // html class via the theme provider; /legacy waits for flavour
-        // switching. Both answers still echo to the scrollback.
+        // html class via the theme provider; /legacy persists the flavour
+        // cookie and reloads into the legacy routes. Both answers still
+        // echo to the scrollback first.
         if (action.kind === "theme") setTheme(action.theme);
+        if (action.kind === "legacy") switchToLegacyFlavour();
       } else if (result.type === "open" || result.type === "fallback") {
         open(result.slug);
       }

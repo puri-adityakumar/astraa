@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { Monitor } from "lucide-react";
 import { toolCommands } from "@/lib/terminal/rows";
 import { getCommands } from "@/lib/terminal/registry";
 import { cn } from "@/lib/utils";
+import { switchToLegacyFlavour } from "./flavour-switch";
 import { SchemePicker } from "./scheme-picker";
 import { ToolRow } from "./tool-row";
 
@@ -86,9 +88,15 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
 
         <div className="space-y-1 border-t border-term-surface2 px-2 py-3">
           <SchemePicker />
-          <div className="flex min-h-touch items-center justify-between px-3 font-sans text-sm text-term-muted">
-            <span>Legacy UI</span>
-            <span className="font-mono text-xs">soon</span>
+          <div className="px-2 py-1">
+            <button
+              type="button"
+              onClick={switchToLegacyFlavour}
+              className="flex min-h-touch w-full items-center justify-between rounded-md px-3 font-sans text-sm text-term-fg hover:bg-term-surface2"
+            >
+              <span>Legacy UI</span>
+              <Monitor className="h-4 w-4 shrink-0 text-term-muted" aria-hidden="true" />
+            </button>
           </div>
         </div>
 
