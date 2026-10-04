@@ -6,6 +6,7 @@ import { AlertTriangle, RefreshCw, Home, ArrowLeft, Copy, Check } from "lucide-r
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { SiteChrome } from "@/components/site-chrome"
 
 export default function Error({
   error,
@@ -34,7 +35,8 @@ export default function Error({
   }
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-4">
+    <SiteChrome>
+      <div className="min-h-[70vh] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -170,6 +172,7 @@ export default function Error({
           </div>
         </Card>
       </motion.div>
-    </div>
+      </div>
+    </SiteChrome>
   )
 }
