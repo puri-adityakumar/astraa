@@ -170,6 +170,14 @@ export function resolveScheme(theme: TermTheme, prefersDark: boolean): TerminalS
   return getScheme(theme === "auto" ? (prefersDark ? AUTO.dark : AUTO.light) : theme);
 }
 
+/**
+ * What next-themes must force on <html>: the scheme's kind for explicit
+ * schemes, undefined for auto so the system preference decides.
+ */
+export function forcedThemeOf(theme: TermTheme): SchemeKind | undefined {
+  return theme === "auto" ? undefined : getScheme(theme).kind;
+}
+
 /** WCAG relative luminance of a #rrggbb colour. */
 export function relativeLuminance(hex: string): number {
   const [r, g, b] = hexToChannels(hex);

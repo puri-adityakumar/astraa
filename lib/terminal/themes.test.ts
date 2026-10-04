@@ -4,6 +4,7 @@ import {
   SCHEMES,
   SCHEME_IDS,
   contrastRatio,
+  forcedThemeOf,
   getScheme,
   isSchemeId,
   relativeLuminance,
@@ -264,5 +265,20 @@ describe("shadcn token mapping", () => {
         expect(ratio, `${scheme.id} ${fgToken} vs ${bgToken}`).toBeGreaterThanOrEqual(4.5);
       }
     }
+  });
+});
+
+describe("forcedThemeOf", () => {
+  it("forces the scheme kind for every explicit scheme", () => {
+    expect(forcedThemeOf("mocha")).toBe("dark");
+    expect(forcedThemeOf("dracula")).toBe("dark");
+    expect(forcedThemeOf("tokyo-night")).toBe("dark");
+    expect(forcedThemeOf("latte")).toBe("light");
+    expect(forcedThemeOf("solarized-light")).toBe("light");
+    expect(forcedThemeOf("rose-pine-dawn")).toBe("light");
+  });
+
+  it("leaves auto unforced so the system preference decides", () => {
+    expect(forcedThemeOf("auto")).toBeUndefined();
   });
 });

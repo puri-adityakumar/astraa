@@ -1,11 +1,19 @@
 /**
- * Temporary theme variables for the terminal shell: the default scheme's
- * colours as CSS custom properties on the terminal root, with `auto`
- * behaviour via a light-system-preference media query. Values come from
- * themes.ts (never copied) — replaced by [data-term-theme] blocks when the
- * colour-scheme feature wires the cookie.
+ * CSS custom properties for the terminal colour schemes, generated from
+ * themes.ts (never copied). Each scheme maps to a `[data-term-theme="<id>"]`
+ * block on the terminal root holding both the terminal `--term-*` variables
+ * and the shadcn HSL tokens, so tool clients inside panels adopt the scheme.
+ * `auto` (the default) renders mocha and switches to latte under the light
+ * system preference.
  */
-import { getScheme, type SchemeColors, type SchemeId } from "./themes";
+import {
+  AUTO,
+  SCHEMES,
+  getScheme,
+  shadcnTokens,
+  type SchemeColors,
+  type SchemeId,
+} from "./themes";
 
 /** Terminal CSS custom property for each SchemeColors key. */
 export const TERM_CSS_VARS: Record<keyof SchemeColors, string> = {
@@ -21,24 +29,35 @@ export const TERM_CSS_VARS: Record<keyof SchemeColors, string> = {
   cyan: "--term-cyan",
 };
 
-const TERM_ROOT_SELECTOR = '[data-flavour="terminal"]';
 const LIGHT_MEDIA_QUERY = "@media (prefers-color-scheme: light)";
 
 function declarations(id: SchemeId): string {
-  const colors = getScheme(id).colors;
-  return (Object.keys(TERM_CSS_VARS) as Array<keyof SchemeColors>)
-    .map((key) => `${TERM_CSS_VARS[key]}: ${colors[key]};`)
-    .join("");
+  const scheme = getScheme(id);
+  let css = "";
+  for (const key of Object.keys(TERM_CSS_VARS) as Array<keyof SchemeColors>) {
+    css += `${TERM_CSS_VARS[key]}: ${scheme.colors[key]};`;
+  }
+  const tokens = shadcnTokens(id);
+  for (const token of Object.keys(tokens) as Array<keyof typeof tokens>) {
+    css += `--${token}: ${tokens[token]};`;
+  }
+  return css;
 }
 
-function block(selector: string, id: SchemeId): string {
-  return `${selector}{${declarations(id)}}`;
+function block(id: SchemeId): string {
+  return `[data-term-theme="${id}"]{${declarations(id)}}`;
 }
 
-/** Mocha by default; latte when the system prefers light colours. */
-export function autoThemeCss(): string {
-  return (
-    block(TERM_ROOT_SELECTOR, "mocha") +
-    `${LIGHT_MEDIA_QUERY}{${block(TERM_ROOT_SELECTOR, "latte")}}`
-  );
+/**
+ * All seven theme states: one block per explicit scheme (so switching the
+ * attribute switches the colours instantly) plus auto — mocha by default,
+ * latte inside the light system-preference media query.
+ */
+export function schemeCss(): string {
+  const explicit = SCHEMES.map((scheme) => block(scheme.id)).join("");
+  const autoBase = `[data-term-theme="auto"]{${declarations(AUTO.dark)}}`;
+  const autoLight = `${LIGHT_MEDIA_QUERY}{[data-term-theme="auto"]{${declarations(
+    AUTO.light,
+  )}}}`;
+  return explicit + autoBase + autoLight;
 }

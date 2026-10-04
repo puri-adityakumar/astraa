@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toolCommands } from "@/lib/terminal/rows";
 import { getCommands } from "@/lib/terminal/registry";
 import { cn } from "@/lib/utils";
+import { SchemePicker } from "./scheme-picker";
 import { ToolRow } from "./tool-row";
 
 const SITE_LINKS = [
@@ -76,10 +77,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </nav>
 
         <div className="space-y-1 border-t border-term-surface2 px-2 py-3">
-          <div className="flex min-h-touch items-center justify-between px-3 font-sans text-sm text-term-muted">
-            <span>Colour scheme</span>
-            <span className="font-mono text-xs">auto</span>
-          </div>
+          <SchemePicker />
           <div className="flex min-h-touch items-center justify-between px-3 font-sans text-sm text-term-muted">
             <span>Legacy UI</span>
             <span className="font-mono text-xs">soon</span>

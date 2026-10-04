@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
-import type { TermTheme } from "@/lib/terminal/cookies";
 import { outputToLiveText } from "@/lib/terminal/live-text";
 import { runInput } from "@/lib/terminal/registry";
 import type { OutputBlock } from "@/lib/terminal/types";
@@ -11,6 +10,7 @@ import { PromptBar } from "./prompt-bar";
 import { Scrollback, type ScrollbackEntry } from "./scrollback";
 import { Sidebar } from "./sidebar";
 import { ToolPlaceholder } from "./tool-placeholder";
+import { useTerminalTheme } from "./terminal-theme";
 
 interface TerminalShellProps {
   /** Slug for direct /tools/<slug> loads; renders the tool stand-in. */
@@ -27,7 +27,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [entries, setEntries] = useState<ScrollbackEntry[]>([]);
   const [liveText, setLiveText] = useState("");
-  const [theme, setTheme] = useState<TermTheme>("auto");
+  const { theme, setTheme } = useTerminalTheme();
   const mainRef = useRef<HTMLElement>(null);
   const nextIdRef = useRef(0);
 
@@ -70,8 +70,8 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
           clearScreen();
           return;
         }
-        // /theme updates the in-memory scheme (the cookie and CSS mapping
-        // arrive with the colour-scheme feature); /legacy waits for flavour
+        // /theme persists the cookie, flips the attribute and re-forces the
+        // html class via the theme provider; /legacy waits for flavour
         // switching. Both answers still echo to the scrollback.
         if (action.kind === "theme") setTheme(action.theme);
       }
@@ -86,7 +86,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
       ]);
       setLiveText(outputToLiveText(output));
     },
-    [clearScreen, theme],
+    [clearScreen, theme, setTheme],
   );
 
   return (

@@ -1,8 +1,8 @@
 /*
  * Terminal flavour styles — imported only by app/terminal/layout.tsx, so
  * legacy pages never receive them. Colours come from the --term-* variables
- * injected by the layout (lib/terminal/theme-css.ts) until the colour-scheme
- * feature maps every scheme under [data-term-theme].
+ * injected by the layout (lib/terminal/theme-css.ts) per data-term-theme
+ * scheme attribute.
  */
 
 [data-flavour="terminal"] {
