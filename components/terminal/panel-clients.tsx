@@ -30,6 +30,14 @@ const CalculatorClient = dynamic(
   { ssr: false, loading: PanelLoading },
 );
 
+const UnitsClient = dynamic(
+  () =>
+    import("@/components/units/unit-converter").then(
+      (m) => m.UnitConverterClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
 /**
  * ToolSlug → dynamically imported tool client (one entry per registered
  * tool). Heavy clients only load when their panel opens; the Record type
@@ -37,4 +45,5 @@ const CalculatorClient = dynamic(
  */
 export const PANEL_CLIENTS: Record<ToolSlug, ComponentType<PanelClientProps>> = {
   calculator: CalculatorClient,
+  units: UnitsClient,
 };
