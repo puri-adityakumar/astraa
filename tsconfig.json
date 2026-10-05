@@ -73,6 +73,8 @@
     "node_modules",
     "out",
     ".next",
-    "tests"
+    "tests",
+    "tempo",
+    "components/design-preview"
   ]
 }
