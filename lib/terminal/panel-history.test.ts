@@ -31,6 +31,20 @@ describe("openPanelTransition", () => {
       title: "Unit Converter | Astraa",
       panel: "units",
     });
+    expect(openPanelTransition("units", "base64")).toEqual({
+      kind: "replace",
+      url: "/tools/base64",
+      state: { [PANEL_STATE_KEY]: "base64" },
+      title: "Base64 Encoder & Decoder | Astraa",
+      panel: "base64",
+    });
+    expect(openPanelTransition("base64", "hash")).toEqual({
+      kind: "replace",
+      url: "/tools/hash",
+      state: { [PANEL_STATE_KEY]: "hash" },
+      title: "Hash Generator | Astraa",
+      panel: "hash",
+    });
   });
 });
 

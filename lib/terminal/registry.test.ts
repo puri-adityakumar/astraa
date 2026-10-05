@@ -35,6 +35,8 @@ describe("registry list", () => {
       "legacy",
       "calculator",
       "units",
+      "base64",
+      "hash",
     ]);
   });
 

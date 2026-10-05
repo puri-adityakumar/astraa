@@ -45,7 +45,14 @@ function byteLength(value: string): number {
   return value.length;
 }
 
-export function Base64Client() {
+type Base64ClientVariant = "page" | "panel";
+
+interface Base64ClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: Base64ClientVariant;
+}
+
+export function Base64Client({ variant = "page" }: Base64ClientProps) {
   const [mode, setMode] = useState<Base64Mode>("encode");
   const [inputType, setInputType] = useState<Base64InputType>("text");
   const [textInput, setTextInput] = useState("");
@@ -291,6 +298,53 @@ export function Base64Client() {
   const itemVariants = reduceMotion ? {} : staggerItem;
   const headerVariants = reduceMotion ? {} : fadeInUp;
 
+  const card = (
+    <Card className="p-4 sm:p-6 space-y-6">
+      <Base64ModeTabs mode={mode} onChange={handleModeChange} />
+      <Base64Input
+        inputType={inputType}
+        onInputTypeChange={handleInputTypeChange}
+        textValue={textInput}
+        onTextChange={setTextInput}
+        file={fileInput}
+        onFileChange={setFileInput}
+        placeholder={
+          mode === "encode"
+            ? "Paste text to encode…"
+            : "Paste base64 to decode…"
+        }
+      />
+      <Base64OptionsRow
+        mode={mode}
+        options={options}
+        onChange={setOptions}
+      />
+      <Base64Output
+        mode={mode}
+        output={output}
+        status={status}
+        onCopy={handleCopy}
+        onDownload={handleDownload}
+        onSwap={handleSwap}
+        onClear={handleClear}
+      />
+      {mode === "decode" && decodedBytes && imageMime && (
+        <Base64ImagePreview bytes={decodedBytes} mime={imageMime} />
+      )}
+      {mode === "decode" && decodedBytes && (
+        <Base64HexPanel bytes={decodedBytes} />
+      )}
+      <Base64StatusFooter
+        inputBytes={inputBytes}
+        outputBytes={outputBytes}
+      />
+    </Card>
+  );
+
+  if (variant === "panel") {
+    return <div className="w-full">{card}</div>;
+  }
+
   return (
     <motion.div
       className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8"
@@ -312,48 +366,7 @@ export function Base64Client() {
           All processing happens locally in your browser
         </p>
       </motion.div>
-      <motion.div variants={itemVariants}>
-        <Card className="p-4 sm:p-6 space-y-6">
-        <Base64ModeTabs mode={mode} onChange={handleModeChange} />
-        <Base64Input
-          inputType={inputType}
-          onInputTypeChange={handleInputTypeChange}
-          textValue={textInput}
-          onTextChange={setTextInput}
-          file={fileInput}
-          onFileChange={setFileInput}
-          placeholder={
-            mode === "encode"
-              ? "Paste text to encode…"
-              : "Paste base64 to decode…"
-          }
-        />
-        <Base64OptionsRow
-          mode={mode}
-          options={options}
-          onChange={setOptions}
-        />
-        <Base64Output
-          mode={mode}
-          output={output}
-          status={status}
-          onCopy={handleCopy}
-          onDownload={handleDownload}
-          onSwap={handleSwap}
-          onClear={handleClear}
-        />
-        {mode === "decode" && decodedBytes && imageMime && (
-          <Base64ImagePreview bytes={decodedBytes} mime={imageMime} />
-        )}
-        {mode === "decode" && decodedBytes && (
-          <Base64HexPanel bytes={decodedBytes} />
-        )}
-        <Base64StatusFooter
-          inputBytes={inputBytes}
-          outputBytes={outputBytes}
-        />
-        </Card>
-      </motion.div>
+      <motion.div variants={itemVariants}>{card}</motion.div>
     </motion.div>
   );
 }

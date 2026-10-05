@@ -8,7 +8,14 @@ import { HashOutput } from "./hash-output"
 import { generateHash } from "@/lib/hash"
 import { hashAlgorithms } from "@/lib/hash"
 
-export function HashGeneratorClient() {
+type HashGeneratorVariant = "page" | "panel"
+
+interface HashGeneratorClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: HashGeneratorVariant
+}
+
+export function HashGeneratorClient({ variant = "page" }: HashGeneratorClientProps) {
   const { toast } = useToast()
   const [input, setInput] = useState("")
   const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0]?.id ?? "sha256")
@@ -28,6 +35,32 @@ export function HashGeneratorClient() {
     setHash(newHash)
   }
 
+  const generator = (
+    <Card className="p-4 sm:p-6 space-y-6">
+      <HashInput
+        value={input}
+        selectedHash={selectedHash}
+        onChange={setInput}
+        onHashChange={setSelectedHash}
+        onGenerate={handleGenerateHash}
+      />
+      {hash && (
+        <HashOutput
+          type={selectedHash}
+          hash={hash}
+        />
+      )}
+    </Card>
+  )
+
+  if (variant === "panel") {
+    return (
+      <div className="w-full">
+        {generator}
+      </div>
+    )
+  }
+
   return (
     <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
       <div className="space-y-4 text-center sm:text-left">
@@ -41,22 +74,7 @@ export function HashGeneratorClient() {
           All processing happens locally in your browser
         </p>
       </div>
-
-      <Card className="p-4 sm:p-6 space-y-6">
-        <HashInput
-          value={input}
-          selectedHash={selectedHash}
-          onChange={setInput}
-          onHashChange={setSelectedHash}
-          onGenerate={handleGenerateHash}
-        />
-        {hash && (
-          <HashOutput
-            type={selectedHash}
-            hash={hash}
-          />
-        )}
-      </Card>
+      {generator}
     </div>
   )
 }

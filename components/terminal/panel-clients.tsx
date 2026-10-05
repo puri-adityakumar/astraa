@@ -38,6 +38,20 @@ const UnitsClient = dynamic(
   { ssr: false, loading: PanelLoading },
 );
 
+const Base64ClientPanel = dynamic(
+  () =>
+    import("@/components/base64/base64-client").then((m) => m.Base64Client),
+  { ssr: false, loading: PanelLoading },
+);
+
+const HashClient = dynamic(
+  () =>
+    import("@/components/hash/hash-generator").then(
+      (m) => m.HashGeneratorClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
 /**
  * ToolSlug → dynamically imported tool client (one entry per registered
  * tool). Heavy clients only load when their panel opens; the Record type
@@ -46,4 +60,6 @@ const UnitsClient = dynamic(
 export const PANEL_CLIENTS: Record<ToolSlug, ComponentType<PanelClientProps>> = {
   calculator: CalculatorClient,
   units: UnitsClient,
+  base64: Base64ClientPanel,
+  hash: HashClient,
 };
