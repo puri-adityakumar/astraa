@@ -14,13 +14,14 @@ import { oneDark } from "@codemirror/theme-one-dark";
 export function TextView() {
   const text = useJsonEditor((s) => s.text);
   const setText = useJsonEditor((s) => s.setText);
-  const { resolvedTheme } = useTheme();
+  const { forcedTheme, resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const isDark = resolvedTheme === "dark";
+    // Terminal panels force the scheme's kind; legacy pages resolve it.
+    const isDark = (forcedTheme ?? resolvedTheme) === "dark";
     const state = EditorState.create({
       doc: text,
       extensions: [
@@ -44,7 +45,7 @@ export function TextView() {
     viewRef.current = view;
     return () => view.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedTheme]);
+  }, [forcedTheme, resolvedTheme]);
 
   useEffect(() => {
     const v = viewRef.current;

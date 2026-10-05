@@ -37,7 +37,14 @@ import { copyToClipboard } from "@/lib/clipboard";
 const TEST_BYTE_CAP = 100 * 1024;
 const DEBOUNCE_MS = 150;
 
-export function RegexTesterClient() {
+type RegexTesterVariant = "page" | "panel";
+
+interface RegexTesterClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: RegexTesterVariant;
+}
+
+export function RegexTesterClient({ variant = "page" }: RegexTesterClientProps) {
   const pattern = useRegexTester((s) => s.pattern);
   const flags = useRegexTester((s) => s.flags);
   const testString = useRegexTester((s) => s.testString);
@@ -94,7 +101,9 @@ export function RegexTesterClient() {
       });
       const next = `#${hash}`;
       if (window.location.hash !== next) {
-        window.history.replaceState(null, "", next);
+        // Keep the current history state — in terminal panels it carries the
+        // open panel for Back/Forward.
+        window.history.replaceState(window.history.state, "", next);
       }
     }, DEBOUNCE_MS);
     sync();
@@ -266,6 +275,56 @@ export function RegexTesterClient() {
   const itemVariants = reduceMotion ? {} : staggerItem;
   const headerVariants = reduceMotion ? {} : fadeInUp;
 
+  const testerCard = (
+    <Card className="p-4 sm:p-6 space-y-6">
+      <PatternRow
+        ref={patternInputRef}
+        error={patternError}
+        onShare={handleShare}
+        exportSlot={
+          <SnippetCardExport
+            pattern={pattern}
+            flags={flags}
+            matches={matches}
+          />
+        }
+      />
+      <TestStringArea
+        ref={testStringRef}
+        matches={matches}
+        hoveredMatchId={hoveredMatchId}
+        onHoverMatch={setHoveredMatchId}
+      />
+      <MatchesPanel
+        matches={matches}
+        hoveredMatchId={hoveredMatchId}
+        onHoverMatch={setHoveredMatchId}
+        onJumpToMatch={handleJumpToMatch}
+      />
+      <ReplacePanel />
+      <div className="hidden sm:block">
+        <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
+      </div>
+      <StatusFooter
+        matchCount={matches.length}
+        elapsedMs={matchResult.elapsedMs}
+        bytes={testBytes}
+        cap={TEST_BYTE_CAP}
+        timedOut={matchResult.timedOut}
+        hardTimeout={hardTimeout}
+      />
+    </Card>
+  );
+
+  if (variant === "panel") {
+    return (
+      <div className="w-full space-y-6">
+        {testerCard}
+        <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} />
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8"
@@ -288,46 +347,7 @@ export function RegexTesterClient() {
         </p>
       </motion.div>
 
-      <motion.div variants={itemVariants}>
-        <Card className="p-4 sm:p-6 space-y-6">
-          <PatternRow
-            ref={patternInputRef}
-            error={patternError}
-            onShare={handleShare}
-            exportSlot={
-              <SnippetCardExport
-                pattern={pattern}
-                flags={flags}
-                matches={matches}
-              />
-            }
-          />
-          <TestStringArea
-            ref={testStringRef}
-            matches={matches}
-            hoveredMatchId={hoveredMatchId}
-            onHoverMatch={setHoveredMatchId}
-          />
-          <MatchesPanel
-            matches={matches}
-            hoveredMatchId={hoveredMatchId}
-            onHoverMatch={setHoveredMatchId}
-            onJumpToMatch={handleJumpToMatch}
-          />
-          <ReplacePanel />
-          <div className="hidden sm:block">
-            <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
-          </div>
-          <StatusFooter
-            matchCount={matches.length}
-            elapsedMs={matchResult.elapsedMs}
-            bytes={testBytes}
-            cap={TEST_BYTE_CAP}
-            timedOut={matchResult.timedOut}
-            hardTimeout={hardTimeout}
-          />
-        </Card>
-      </motion.div>
+      <motion.div variants={itemVariants}>{testerCard}</motion.div>
 
       <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} />
     </motion.div>

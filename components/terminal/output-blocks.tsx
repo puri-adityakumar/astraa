@@ -13,8 +13,8 @@ function SingleBlock({ block }: { block: OutputBlock }) {
     case "kv":
       return (
         <div className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-4 gap-y-1 font-mono text-sm">
-          {block.entries.map((entry) => (
-            <div key={`${entry.key} ${entry.value}`} className="contents">
+          {block.entries.map((entry, index) => (
+            <div key={index} className="contents">
               <span className="whitespace-nowrap text-term-accent">{entry.key}</span>
               <span className="min-w-0 break-words text-term-muted">{entry.value}</span>
             </div>
@@ -30,8 +30,8 @@ function SingleBlock({ block }: { block: OutputBlock }) {
     case "list":
       return (
         <ul className="list-disc space-y-1 pl-5 font-mono text-sm text-term-fg marker:text-term-muted">
-          {block.items.map((item) => (
-            <li key={item}>{item}</li>
+          {block.items.map((item, index) => (
+            <li key={index}>{item}</li>
           ))}
         </ul>
       );

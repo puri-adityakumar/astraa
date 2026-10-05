@@ -8,6 +8,8 @@ describe("terminal tool slugs", () => {
       "units",
       "base64",
       "hash",
+      "regex",
+      "json",
     ]);
   });
 
@@ -16,11 +18,13 @@ describe("terminal tool slugs", () => {
     expect(isTerminalToolSlug("units")).toBe(true);
     expect(isTerminalToolSlug("base64")).toBe(true);
     expect(isTerminalToolSlug("hash")).toBe(true);
+    expect(isTerminalToolSlug("regex")).toBe(true);
+    expect(isTerminalToolSlug("json")).toBe(true);
   });
 
   it("rejects slugs that are not terminal yet", () => {
-    expect(isTerminalToolSlug("regex")).toBe(false);
-    expect(isTerminalToolSlug("json")).toBe(false);
+    expect(isTerminalToolSlug("password")).toBe(false);
+    expect(isTerminalToolSlug("currency")).toBe(false);
   });
 
   it("rejects unknown, empty and casing-drifted slugs", () => {

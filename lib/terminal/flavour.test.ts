@@ -20,6 +20,8 @@ describe("terminalRewritePath", () => {
     expect(terminalRewritePath("/tools/units")).toBe("/terminal/tools/units");
     expect(terminalRewritePath("/tools/base64")).toBe("/terminal/tools/base64");
     expect(terminalRewritePath("/tools/hash")).toBe("/terminal/tools/hash");
+    expect(terminalRewritePath("/tools/regex")).toBe("/terminal/tools/regex");
+    expect(terminalRewritePath("/tools/json")).toBe("/terminal/tools/json");
   });
 
   it("maps a registered tool slug with a trailing slash", () => {
@@ -29,7 +31,7 @@ describe("terminalRewritePath", () => {
   });
 
   it("returns null for an unregistered or unknown slug", () => {
-    expect(terminalRewritePath("/tools/regex")).toBeNull();
+    expect(terminalRewritePath("/tools/password")).toBeNull();
     expect(terminalRewritePath("/tools/nope")).toBeNull();
   });
 
@@ -81,7 +83,7 @@ describe("isTerminalCapablePath", () => {
   });
 
   it("rejects an unregistered tool slug", () => {
-    expect(isTerminalCapablePath("/tools/regex")).toBe(false);
+    expect(isTerminalCapablePath("/tools/password")).toBe(false);
   });
 
   it("rejects an unknown tool slug", () => {

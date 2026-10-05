@@ -10,6 +10,8 @@ import { calculatorCommand } from "./commands/calculator";
 import { unitsCommand } from "./commands/units";
 import { base64Command } from "./commands/base64";
 import { hashCommand } from "./commands/hash";
+import { regexCommand } from "./commands/regex";
+import { jsonCommand } from "./commands/json";
 import type { CommandContext, CommandResult, OutputBlock, TerminalCommand } from "./types";
 
 const commands: TerminalCommand[] = [
@@ -18,6 +20,8 @@ const commands: TerminalCommand[] = [
   unitsCommand,
   base64Command,
   hashCommand,
+  regexCommand,
+  jsonCommand,
 ];
 
 /** All registered commands, built-ins first, in registration order. */

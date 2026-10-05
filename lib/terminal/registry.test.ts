@@ -37,6 +37,8 @@ describe("registry list", () => {
       "units",
       "base64",
       "hash",
+      "regex",
+      "json",
     ]);
   });
 
@@ -257,10 +259,12 @@ describe("runInput", () => {
     const weird = "/ / / /";
     const result = await runInput(weird, "mocha");
     expect(result?.type).toBe("answer");
+    // The empty name sits at edit distance 2 from the shortest alias (/re).
     expect(await runInput("/", "mocha")).toEqual({
       type: "answer",
       output: [
         { type: "error", text: 'Unknown command "/".' },
+        { type: "text", text: "Did you mean /regex?" },
         { type: "text", text: "Type /help to see all commands." },
       ],
     });

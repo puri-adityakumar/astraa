@@ -45,6 +45,20 @@ describe("openPanelTransition", () => {
       title: "Hash Generator | Astraa",
       panel: "hash",
     });
+    expect(openPanelTransition("hash", "regex")).toEqual({
+      kind: "replace",
+      url: "/tools/regex",
+      state: { [PANEL_STATE_KEY]: "regex" },
+      title: "Regex Tester | astraa | Astraa",
+      panel: "regex",
+    });
+    expect(openPanelTransition("regex", "json")).toEqual({
+      kind: "replace",
+      url: "/tools/json",
+      state: { [PANEL_STATE_KEY]: "json" },
+      title: "JSON Editor | Astraa",
+      panel: "json",
+    });
   });
 });
 

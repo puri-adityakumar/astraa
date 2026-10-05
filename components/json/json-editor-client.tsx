@@ -15,7 +15,14 @@ import { useToolSettings } from "@/lib/stores/tool-settings";
 import { createParseClient, type ParseClient } from "@/lib/json/parse-client";
 import { logError } from "@/lib/error-handler";
 
-export function JsonEditorClient() {
+type JsonEditorVariant = "page" | "panel";
+
+interface JsonEditorClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: JsonEditorVariant;
+}
+
+export function JsonEditorClient({ variant = "page" }: JsonEditorClientProps) {
   const text = useJsonEditor((s) => s.text);
   const view = useJsonEditor((s) => s.view);
   const setParseResult = useJsonEditor((s) => s.setParseResult);
@@ -65,6 +72,29 @@ export function JsonEditorClient() {
     return () => window.clearTimeout(debounceRef.current);
   }, [text, setParseResult]);
 
+  const editorCard = (
+    <Card className="p-4 sm:p-6 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <ViewTabs />
+      </div>
+      <Toolbar />
+      {view === "text" && <TextView />}
+      {view === "tree" && <TreeView />}
+      {view === "convert" && <ConvertView />}
+      {view === "generate" && <GenerateView />}
+      <StatusBar />
+    </Card>
+  );
+
+  if (variant === "panel") {
+    return (
+      <div className="w-full space-y-4">
+        {editorCard}
+        <DropzoneOverlay />
+      </div>
+    );
+  }
+
   return (
     <div className="container px-4 sm:px-6 max-w-[1400px] pt-24 pb-12 space-y-8">
       <div className="space-y-4 text-center sm:text-left">
@@ -81,17 +111,7 @@ export function JsonEditorClient() {
         </p>
       </div>
 
-      <Card className="p-4 sm:p-6 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <ViewTabs />
-        </div>
-        <Toolbar />
-        {view === "text" && <TextView />}
-        {view === "tree" && <TreeView />}
-        {view === "convert" && <ConvertView />}
-        {view === "generate" && <GenerateView />}
-        <StatusBar />
-      </Card>
+      {editorCard}
 
       <DropzoneOverlay />
     </div>

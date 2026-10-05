@@ -52,6 +52,22 @@ const HashClient = dynamic(
   { ssr: false, loading: PanelLoading },
 );
 
+const RegexTesterPanel = dynamic(
+  () =>
+    import("@/components/regex-tester/regex-tester-client").then(
+      (m) => m.RegexTesterClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
+const JsonEditorPanel = dynamic(
+  () =>
+    import("@/components/json/json-editor-client").then(
+      (m) => m.JsonEditorClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
 /**
  * ToolSlug → dynamically imported tool client (one entry per registered
  * tool). Heavy clients only load when their panel opens; the Record type
@@ -62,4 +78,6 @@ export const PANEL_CLIENTS: Record<ToolSlug, ComponentType<PanelClientProps>> = 
   units: UnitsClient,
   base64: Base64ClientPanel,
   hash: HashClient,
+  regex: RegexTesterPanel,
+  json: JsonEditorPanel,
 };
