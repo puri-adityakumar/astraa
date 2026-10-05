@@ -77,7 +77,7 @@ function MermaidBlock({ source }: { source: string }) {
 }
 
 function CodeBlock({ className, children }: ComponentProps<"code">) {
-  const { resolvedTheme } = useTheme();
+  const { forcedTheme, resolvedTheme } = useTheme();
   const [html, setHtml] = useState<string | null>(null);
   const code = String(children ?? "");
   const match = className?.match(/language-(\w+)/);
@@ -87,11 +87,13 @@ function CodeBlock({ className, children }: ComponentProps<"code">) {
   useEffect(() => {
     if (inline) return;
     let cancelled = false;
+    // Terminal panels force the scheme's kind; legacy pages resolve it.
+    const isDark = (forcedTheme ?? resolvedTheme) === "dark";
     getHighlighter()
       .then((hl) =>
         hl.codeToHtml(code, {
           lang: PRELOADED_LANGS.includes(lang) ? lang : "text",
-          theme: resolvedTheme === "dark" ? "github-dark" : "github-light",
+          theme: isDark ? "github-dark" : "github-light",
         }),
       )
       .then((out) => {
@@ -103,7 +105,7 @@ function CodeBlock({ className, children }: ComponentProps<"code">) {
     return () => {
       cancelled = true;
     };
-  }, [code, lang, resolvedTheme, inline]);
+  }, [code, lang, forcedTheme, resolvedTheme, inline]);
 
   if (!inline && lang === "mermaid") {
     return <MermaidBlock source={code} />;
