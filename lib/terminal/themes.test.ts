@@ -44,9 +44,9 @@ const UNADJUSTED: Record<string, string[]> = {
   mocha: ["fg", "muted", "accent", "green", "red", "yellow", "cyan"],
   dracula: ["fg", "accent", "green", "red", "yellow", "cyan"],
   "tokyo-night": ["fg", "accent", "green", "red", "yellow", "cyan"],
-  latte: ["fg", "accent", "red", "cyan"],
-  "solarized-light": ["accent", "red"],
-  "rose-pine-dawn": ["fg", "accent", "green", "red", "cyan"],
+  latte: ["fg", "cyan"],
+  "solarized-light": [],
+  "rose-pine-dawn": ["fg", "green", "cyan"],
 };
 
 const BASE_TEXT: Record<string, Record<string, string>> = {
@@ -104,9 +104,9 @@ describe("scheme table", () => {
     const adjusted: Record<string, string[]> = {
       dracula: ["muted"],
       "tokyo-night": ["muted"],
-      latte: ["muted", "green", "yellow"],
-      "solarized-light": ["fg", "muted", "green", "yellow", "cyan"],
-      "rose-pine-dawn": ["muted", "yellow"],
+      latte: ["muted", "accent", "green", "red", "yellow"],
+      "solarized-light": ["fg", "muted", "accent", "green", "red", "yellow", "cyan"],
+      "rose-pine-dawn": ["muted", "accent", "red", "yellow"],
     };
     for (const scheme of SCHEMES) {
       const c = colors(scheme);
@@ -136,6 +136,25 @@ describe("WCAG contrast (VAL-THEME-009)", () => {
         const hex = scheme.colors[role];
         expect(contrastRatio(hex, scheme.colors.bg)).toBeGreaterThanOrEqual(3);
         expect(contrastRatio(hex, scheme.colors.surface)).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
+  it("gives every body-size text colour at least 4.5:1 vs bg and surface", () => {
+    // Error lines render in red, the prompt label/echo in green, kv keys and
+    // suggestion names in accent — all at body size, so AA (4.5:1) applies.
+    // yellow and cyan never render as text (rings/surfaces only) and keep 3:1.
+    for (const scheme of SCHEMES) {
+      for (const role of ["fg", "muted", "accent", "green", "red"] as const) {
+        const hex = scheme.colors[role];
+        expect(
+          contrastRatio(hex, scheme.colors.bg),
+          `${scheme.id} ${role} vs bg`,
+        ).toBeGreaterThanOrEqual(4.5);
+        expect(
+          contrastRatio(hex, scheme.colors.surface),
+          `${scheme.id} ${role} vs surface`,
+        ).toBeGreaterThanOrEqual(4.5);
       }
     }
   });

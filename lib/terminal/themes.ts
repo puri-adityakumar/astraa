@@ -7,8 +7,10 @@
  * minimal, hue-preserving adjustment (marked ADJUSTED below): the faint muted
  * greys of dracula, tokyo-night, solarized-light and rose-pine-dawn, the
  * latte muted green/yellow, solarized-light fg/green/yellow/cyan and the
- * rose-pine-dawn yellow. The unit test enforces fg & muted >= 4.5:1 vs bg and
- * surface, and accent/status colours >= 3:1, for every scheme.
+ * rose-pine-dawn yellow, plus the light schemes' accent/green/red wherever
+ * they render as body-size text (error lines, prompt echo, kv keys). The unit
+ * test enforces fg/muted/accent/green/red >= 4.5:1 vs bg and surface (body
+ * text) and every colour >= 3:1 (large text/UI), for every scheme.
  */
 import type { TermTheme } from "./cookies";
 
@@ -100,10 +102,12 @@ export const SCHEMES: readonly TerminalScheme[] = [
       fg: "#4c4f69",
       // ADJUSTED: #6c6f85 darkened (kept hue) for AA vs bg and surface.
       muted: "#64667b",
-      accent: "#8839ef",
-      // ADJUSTED: #40a02b darkened for 3:1 vs bg and surface.
-      green: "#3c9528",
-      red: "#d20f39",
+      // ADJUSTED: #8839ef darkened (kept hue) for AA body text vs bg and surface.
+      accent: "#8636ef",
+      // ADJUSTED: #40a02b darkened for AA body text vs bg and surface.
+      green: "#307720",
+      // ADJUSTED: #d20f39 darkened for AA body text vs surface.
+      red: "#cf0f38",
       // ADJUSTED: #df8e1d darkened for 3:1 vs bg and surface.
       yellow: "#b77418",
       cyan: "#1e66f5",
@@ -120,10 +124,12 @@ export const SCHEMES: readonly TerminalScheme[] = [
       fg: "#556a71",
       // ADJUSTED: #93a1a1 darkened (kept hue) for AA vs bg and surface.
       muted: "#5c6a6a",
-      accent: "#268bd2",
-      // ADJUSTED: #859900 darkened for 3:1 vs bg and surface.
-      green: "#788b00",
-      red: "#dc322f",
+      // ADJUSTED: #268bd2 darkened (kept hue) for AA body text vs bg and surface.
+      accent: "#1e6ca3",
+      // ADJUSTED: #859900 darkened for AA body text vs bg and surface.
+      green: "#5f6e00",
+      // ADJUSTED: #dc322f darkened for AA body text vs bg and surface.
+      red: "#c82422",
       // ADJUSTED: #b58900 darkened for 3:1 vs bg and surface.
       yellow: "#a47c00",
       // ADJUSTED: #2aa198 darkened for 3:1 vs bg and surface.
@@ -140,9 +146,11 @@ export const SCHEMES: readonly TerminalScheme[] = [
       fg: "#575279",
       // ADJUSTED: #9893a5 darkened (kept hue) for AA vs bg and surface.
       muted: "#726c81",
-      accent: "#907aa9",
+      // ADJUSTED: #907aa9 darkened (kept hue) for AA body text vs bg and surface.
+      accent: "#7e659b",
       green: "#286983",
-      red: "#b4637a",
+      // ADJUSTED: #b4637a darkened for AA body text vs bg and surface.
+      red: "#ac536c",
       // ADJUSTED: #ea9d34 darkened for 3:1 vs bg and surface.
       yellow: "#c47a14",
       cyan: "#56949f",
