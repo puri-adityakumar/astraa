@@ -33,6 +33,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const { panel, open, close } = usePanelUrl(initialTool);
   const { theme, setTheme } = useTerminalTheme();
   const mainRef = useRef<HTMLElement>(null);
+  const previousPanelRef = useRef<ToolSlug | null>(initialTool ?? null);
   const nextIdRef = useRef(0);
 
   const clearScreen = useCallback(() => {
@@ -41,12 +42,25 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
     close();
   }, [close]);
 
-  // Keep the newest entry in view: the prompt is a flex sibling of the
-  // scrolling column, so scrolling the column to its end never hides output
-  // behind it.
+  // Keep the newest output in view without pushing a freshly opened panel's
+  // header (and its Esc hint) off the top: when a panel opens or switches,
+  // scroll the panel section to the top of the column; with no panel, chase
+  // the scrollback bottom (the prompt is a flex sibling, so nothing hides
+  // behind it). Entries added while a panel stays open never scroll-jack.
   useEffect(() => {
-    mainRef.current?.scrollTo({ top: mainRef.current.scrollHeight });
-  }, [entries]);
+    const main = mainRef.current;
+    if (!main) return;
+    if (panel !== null) {
+      if (previousPanelRef.current !== panel) {
+        main
+          .querySelector<HTMLElement>("[data-term-panel]")
+          ?.scrollIntoView({ block: "start" });
+      }
+    } else {
+      main.scrollTo({ top: main.scrollHeight });
+    }
+    previousPanelRef.current = panel;
+  }, [entries, panel]);
 
   // Ctrl+L clears the screen like /clear, wherever the focus is.
   useEffect(() => {

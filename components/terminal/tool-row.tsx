@@ -11,8 +11,10 @@ interface ToolRowProps {
 
 /**
  * One registry-driven tool row: key chip + display name. With `onRun` the
- * click (or Enter on the focused link) runs the bare command — the same
- * path as typing it — instead of navigating.
+ * plain left click (or Enter on the focused link) runs the bare command —
+ * the same path as typing it — instead of navigating. Modified clicks
+ * (Cmd/Ctrl/Shift/Alt) and middle clicks fall through so the browser opens
+ * /tools/<slug> in a new tab as usual.
  */
 export function ToolRow({ command, showSummary = false, onRun }: ToolRowProps) {
   return (
@@ -20,6 +22,15 @@ export function ToolRow({ command, showSummary = false, onRun }: ToolRowProps) {
       href={`/tools/${command.slug}`}
       onClick={(event) => {
         if (!onRun) return;
+        if (
+          event.button !== 0 ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey
+        ) {
+          return;
+        }
         event.preventDefault();
         onRun(`/${command.name}`);
       }}

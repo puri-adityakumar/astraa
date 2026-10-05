@@ -12,11 +12,26 @@ interface PanelHostProps {
 }
 
 /**
+ * Whether a portalled Radix overlay (Select/Popover/DropdownMenu content
+ * wrapper, or a Dialog) is currently open. Escape inside one must dismiss
+ * the overlay itself, not the whole panel.
+ */
+function hasOpenRadixOverlay(): boolean {
+  return (
+    document.querySelector(
+      "[data-radix-popper-content-wrapper] [data-state='open'], [role='dialog'][data-state='open']",
+    ) !== null
+  );
+}
+
+/**
  * The panel host: mounts the tool client for `slug` in the main column
  * above the prompt with a header (tool name, Esc hint, labelled close
  * button). Focus moves into the panel on open and back to the prompt on
  * close (via the prompt's autoFocus flip). Escape closes the panel from a
- * capture listener so the tool client's own Escape handling never fights it.
+ * capture listener so the tool client's own Escape handling never fights
+ * it — except when a Radix overlay is open inside the panel, which
+ * consumes that Escape first.
  */
 export function PanelHost({ slug, onClose }: PanelHostProps) {
   const panelRef = useRef<HTMLElement>(null);
@@ -30,6 +45,7 @@ export function PanelHost({ slug, onClose }: PanelHostProps) {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
+      if (hasOpenRadixOverlay()) return;
       event.preventDefault();
       event.stopPropagation();
       onClose();
