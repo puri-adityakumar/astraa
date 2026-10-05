@@ -166,7 +166,10 @@ The following tools run entirely in your browser. No input data is sent to any s
 
 ### Tools Using External APIs
 *   **Currency Converter** — Fetches exchange rates from CoinGecko (cryptocurrency) and exchangerate-api (fiat currencies). Only currency pair identifiers are sent; no personal data is transmitted.
-*   **AI Text Generator** — Sends your topic prompt to OpenRouter API (Meta Llama 3.3 70B model) for text generation. No personal data or conversation history is stored.
+*   **Lorem Ipsum Generator** — Generates classic lorem ipsum placeholder text locally in your browser. Nothing is sent to a server and nothing is stored.
+
+### Terminal Interface
+The terminal-style interface stores only two cookies: `astraa_flavour` remembers which interface (terminal or legacy) you chose, and `astraa_term_theme` remembers your terminal colour scheme. Both are functional cookies that never leave your device. Your terminal command history is kept in memory only for the current session and is cleared when you close the tab; it is never written to storage or transmitted to any server.
 
 ### Data Storage
 Astraa uses browser-local storage (IndexedDB with localStorage fallback) for user preferences, tool settings, and usage statistics. This data never leaves your device and can be cleared through your browser settings at any time.
