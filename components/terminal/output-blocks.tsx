@@ -1,4 +1,69 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { copyToClipboard } from "@/lib/clipboard";
+import { cn } from "@/lib/utils";
 import type { OutputBlock } from "@/lib/terminal/types";
+
+/** How long the Copy button shows "Copied" after a successful copy. */
+const COPIED_RESET_MS = 2000;
+
+/**
+ * The secret block — the only way a password renders in the terminal. The
+ * value is length-matched bullets until Reveal; the element carrying the
+ * text (dots or plaintext) is Sentry-masked so replays capture neither
+ * state.
+ */
+function SecretBlock({ secret }: { secret: string }) {
+  const [revealed, setRevealed] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const copiedResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copiedResetRef.current) clearTimeout(copiedResetRef.current);
+    };
+  }, []);
+
+  const handleCopy = async () => {
+    const result = await copyToClipboard(secret);
+    if (!result.success) return;
+    setCopied(true);
+    if (copiedResetRef.current) clearTimeout(copiedResetRef.current);
+    copiedResetRef.current = setTimeout(() => setCopied(false), COPIED_RESET_MS);
+  };
+
+  return (
+    <div className="space-y-2">
+      <span
+        data-sentry-mask
+        className="sentry-mask block whitespace-pre-wrap break-all font-mono text-sm tracking-widest text-term-fg"
+      >
+        {revealed ? secret : "•".repeat(secret.length)}
+      </span>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          aria-pressed={revealed}
+          onClick={() => setRevealed((previous) => !previous)}
+          className="flex min-h-touch items-center rounded-md border border-term-surface2 px-3 font-mono text-sm text-term-muted hover:bg-term-surface2 hover:text-term-fg"
+        >
+          {revealed ? "Hide" : "Reveal"}
+        </button>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className={cn(
+            "flex min-h-touch items-center rounded-md border border-term-surface2 px-3 font-mono text-sm hover:bg-term-surface2",
+            copied ? "text-term-green" : "text-term-muted hover:text-term-fg",
+          )}
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function SingleBlock({ block }: { block: OutputBlock }) {
   switch (block.type) {
@@ -36,12 +101,7 @@ function SingleBlock({ block }: { block: OutputBlock }) {
         </ul>
       );
     case "secret":
-      // Reveal/Copy controls arrive with the password feature; dots-only stub.
-      return (
-        <span className="font-mono text-sm tracking-widest text-term-fg">
-          {"•".repeat(block.secret.length)}
-        </span>
-      );
+      return <SecretBlock secret={block.secret} />;
   }
 }
 

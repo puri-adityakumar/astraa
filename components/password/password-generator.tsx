@@ -14,7 +14,12 @@ import { Shuffle, Lightbulb, Hash } from "lucide-react"
 
 type GenMode = "random" | "memorable" | "pin"
 
-export function PasswordGeneratorClient() {
+interface PasswordGeneratorClientProps {
+  /** "panel" drops the page container and heading; default rendering unchanged. */
+  variant?: "page" | "panel"
+}
+
+export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorClientProps) {
   const { toast } = useToast()
 
   // -- State --
@@ -78,9 +83,16 @@ export function PasswordGeneratorClient() {
     }
   }
 
+  // Panel variant drops the page container and the big page heading; the
+  // card below is identical in both variants.
+  const outerClass = variant === "panel"
+    ? "w-full"
+    : "container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8"
+
   return (
-    <div className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8">
+    <div className={outerClass}>
       {/* Header */}
+      {variant === "page" && (
       <div className="space-y-4 text-center sm:text-left">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Password Generator
@@ -92,6 +104,7 @@ export function PasswordGeneratorClient() {
           All processing happens locally in your browser
         </p>
       </div>
+      )}
 
       <div className="bg-card border border-border/50 rounded-xl shadow-sm p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
 

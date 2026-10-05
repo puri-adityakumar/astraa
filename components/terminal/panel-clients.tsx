@@ -68,6 +68,14 @@ const JsonEditorPanel = dynamic(
   { ssr: false, loading: PanelLoading },
 );
 
+const PasswordGeneratorPanel = dynamic(
+  () =>
+    import("@/components/password/password-generator").then(
+      (m) => m.PasswordGeneratorClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
 /**
  * ToolSlug → dynamically imported tool client (one entry per registered
  * tool). Heavy clients only load when their panel opens; the Record type
@@ -80,4 +88,5 @@ export const PANEL_CLIENTS: Record<ToolSlug, ComponentType<PanelClientProps>> = 
   hash: HashClient,
   regex: RegexTesterPanel,
   json: JsonEditorPanel,
+  password: PasswordGeneratorPanel,
 };
