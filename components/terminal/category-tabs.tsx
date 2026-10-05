@@ -59,7 +59,9 @@ export function CategoryTabs({ categories, active, idPrefix, onChange }: Categor
             role="tab"
             id={categoryId(idPrefix, category)}
             aria-selected={selected}
-            aria-controls={`${categoryId(idPrefix, category)}-panel`}
+            // Only the selected tab owns a panel — the single tabpanel below
+            // re-labels itself — so inactive tabs must not reference one.
+            aria-controls={selected ? `${categoryId(idPrefix, category)}-panel` : undefined}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(category)}
             className={cn(

@@ -109,9 +109,11 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-term-surface2 px-4 md:hidden">
-          <span aria-hidden="true" className="select-none font-pixel text-base text-term-fg">
+          {/* Carries the page's accessible name while the sidebar (the desktop
+              h1) is hidden below 768px. */}
+          <h1 aria-label="Astraa" className="select-none font-pixel text-base text-term-fg">
             ASTRAA
-          </span>
+          </h1>
           <button
             type="button"
             aria-label="Menu"
