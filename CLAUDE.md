@@ -36,6 +36,20 @@ This same pattern applies to games (`app/games/[game]/page.tsx` → `components/
 
 Tools are registered in `lib/tools.ts` as `ToolCategory` objects with items containing `name`, `description`, `path`, `icon` (LucideIcon), and optional `wip`/`comingSoon` flags. Games are registered in `lib/games.ts` with optional `comingSoon` flag. The `ToolsContext` (`lib/tools-context.tsx`) provides the catalog to the app.
 
+### Terminal Flavour
+
+The site has two flavours: a terminal-style interface (the default for `/` and `/tools/*`) and the classic UI ("Legacy"); `/explore`, `/contribute`, `/privacy` and `/games` are always legacy. `proxy.ts` at the repo root (Node runtime — replaces the deleted `middleware.ts`) routes on the `astraa_flavour` cookie: with the cookie absent or not `legacy`, `/`, `/tools` and registered `/tools/<slug>` slugs are rewritten to the terminal routes while the address bar keeps the public URL; `legacy` serves `app/(site)/`. It also 308-redirects direct `/terminal*` hits to the public URL and runs the visitor counter.
+
+- `app/(site)/` holds the legacy pages; `app/terminal/` the terminal shell and `[tool]` panel route (never visible in the URL). Both flavours share metadata from `lib/site-metadata.ts`, so titles/descriptions/canonicals are identical.
+- `lib/terminal/` is the pure, unit-tested command layer: `registry.ts` (command list, resolution, autocomplete, `runInput`), `parse.ts`, `commands/<name>.ts` (one file per command), `themes.ts`/`theme-css.ts` (six colour schemes + auto), `cookies.ts` (`astraa_flavour`, `astraa_term_theme`). Panels mount existing tool clients with `variant="panel"`; command history stays in memory.
+
+To expose a tool as a terminal command:
+
+1. Create `lib/terminal/commands/<name>.ts` (plus a test) — a pure `run(args)` returning an `answer` (inline output), `open` (panel) or `fallback` ("I don't understand" + panel) result
+2. Register it in `lib/terminal/registry.ts`
+3. Add the slug to `TERMINAL_TOOL_SLUGS` in `lib/terminal/slugs.ts`
+4. Map the slug to the tool client in `components/terminal/panel-clients.tsx` (`PANEL_CLIENTS`) and add `variant?: "page" | "panel"` to the client (default rendering unchanged)
+
 ### State Management
 
 Three Zustand stores in `lib/stores/`, all persisted:
@@ -50,10 +64,9 @@ Three Zustand stores in `lib/stores/`, all persisted:
 
 ### External APIs
 
-- **OpenRouter** (`lib/openrouter.ts`): Server action for AI text generation (meta-llama/llama-3.3-70b-instruct:free)
 - **CoinGecko** (`lib/crypto-data.ts`): Cryptocurrency prices
 - **Currency APIs** (`lib/api.ts`): Exchange rates (FawazAhmed0 primary, exchangerate-api fallback)
-- **Upstash Redis** (`middleware.ts`): Visitor counting on home page with 24-hour dedup cookie. Runs in the Edge runtime — it instantiates `Redis` directly and **cannot import from `lib/`**. Uses `next/server`'s `after()` to increment non-blocking after the response is sent.
+- **Upstash Redis** (`proxy.ts`): Visitor counting on home page with 24-hour dedup cookie. Runs in the Node runtime — it instantiates `Redis` behind a guarded factory (missing env means "skip counting", never an error) and **may import from `lib/`**. Uses `next/server`'s `after()` to increment non-blocking after the response is sent.
 
 ### Error Handling
 
