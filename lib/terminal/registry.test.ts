@@ -34,6 +34,7 @@ describe("registry list", () => {
       "theme",
       "legacy",
       "calculator",
+      "units",
     ]);
   });
 
@@ -99,11 +100,12 @@ describe("suggest", () => {
   });
 
   it("matches alias prefixes once registered", () => {
-    const units = fixtureCommand({ name: "units", aliases: ["convert"], slug: "calculator" });
-    const undo = register(units);
+    const fixture = fixtureCommand({ name: "unitron", aliases: ["convfix"], slug: "calculator" });
+    const undo = register(fixture);
     try {
-      expect(suggest("con").map((c) => c.name)).toEqual(["units"]);
-      expect(suggest("u").map((c) => c.name)).toEqual(["units"]);
+      expect(suggest("convf").map((c) => c.name)).toEqual(["unitron"]);
+      expect(suggest("unitr").map((c) => c.name)).toEqual(["unitron"]);
+      expect(suggest("con").map((c) => c.name)).toContain("units");
     } finally {
       undo();
     }

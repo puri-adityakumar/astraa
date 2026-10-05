@@ -4,7 +4,7 @@
  * listed here; the terminal [tool] route uses the same list. Dependency-free
  * so the proxy bundle stays small.
  */
-export const TERMINAL_TOOL_SLUGS = ["calculator"] as const;
+export const TERMINAL_TOOL_SLUGS = ["calculator", "units"] as const;
 
 export type TerminalToolSlug = (typeof TERMINAL_TOOL_SLUGS)[number];
 

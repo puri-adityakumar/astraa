@@ -7,9 +7,14 @@
 import { parseInput } from "./parse";
 import { BUILTIN_COMMANDS } from "./builtins";
 import { calculatorCommand } from "./commands/calculator";
+import { unitsCommand } from "./commands/units";
 import type { CommandContext, CommandResult, OutputBlock, TerminalCommand } from "./types";
 
-const commands: TerminalCommand[] = [...BUILTIN_COMMANDS, calculatorCommand];
+const commands: TerminalCommand[] = [
+  ...BUILTIN_COMMANDS,
+  calculatorCommand,
+  unitsCommand,
+];
 
 /** All registered commands, built-ins first, in registration order. */
 export function getCommands(): readonly TerminalCommand[] {

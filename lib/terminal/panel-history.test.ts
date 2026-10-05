@@ -22,6 +22,16 @@ describe("openPanelTransition", () => {
   it("does nothing when the same panel is already open", () => {
     expect(openPanelTransition("calculator", "calculator").kind).toBe("none");
   });
+
+  it("replaces when switching from one panel to another", () => {
+    expect(openPanelTransition("calculator", "units")).toEqual({
+      kind: "replace",
+      url: "/tools/units",
+      state: { [PANEL_STATE_KEY]: "units" },
+      title: "Unit Converter | Astraa",
+      panel: "units",
+    });
+  });
 });
 
 describe("closePanelTransition", () => {
