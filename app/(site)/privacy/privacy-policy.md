@@ -169,7 +169,7 @@ The following tools run entirely in your browser. No input data is sent to any s
 *   **Lorem Ipsum Generator** — Generates classic lorem ipsum placeholder text locally in your browser. Nothing is sent to a server and nothing is stored.
 
 ### Terminal Interface
-The terminal-style interface stores only two cookies: `astraa_flavour` remembers which interface (terminal or legacy) you chose, and `astraa_term_theme` remembers your terminal colour scheme. Both are functional cookies that never leave your device. Your terminal command history is kept in memory only for the current session and is cleared when you close the tab; it is never written to storage or transmitted to any server.
+The terminal-style interface stores only two cookies: `astraa_flavour` remembers which interface (terminal or legacy) you chose, and `astraa_term_theme` remembers your terminal colour scheme. Both are functional preference cookies that are sent to Astraa only to choose the interface and colour scheme for you; Astraa never uses them for tracking or analytics. Your terminal command history is kept in memory only for the current session and is cleared when you close the tab; it is never written to storage or transmitted to any server.
 
 ### Data Storage
 Astraa uses browser-local storage (IndexedDB with localStorage fallback) for user preferences, tool settings, and usage statistics. This data never leaves your device and can be cleared through your browser settings at any time.
