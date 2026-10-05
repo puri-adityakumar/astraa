@@ -66,6 +66,13 @@ describe("openPanelTransition", () => {
       title: "Password Generator | Astraa",
       panel: "password",
     });
+    expect(openPanelTransition("password", "currency")).toEqual({
+      kind: "replace",
+      url: "/tools/currency",
+      state: { [PANEL_STATE_KEY]: "currency" },
+      title: "Currency Converter | Astraa",
+      panel: "currency",
+    });
   });
 });
 

@@ -76,6 +76,14 @@ const PasswordGeneratorPanel = dynamic(
   { ssr: false, loading: PanelLoading },
 );
 
+const CurrencyConverterPanel = dynamic(
+  () =>
+    import("@/components/currency/currency-converter").then(
+      (m) => m.CurrencyConverterClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
 /**
  * ToolSlug → dynamically imported tool client (one entry per registered
  * tool). Heavy clients only load when their panel opens; the Record type
@@ -89,4 +97,5 @@ export const PANEL_CLIENTS: Record<ToolSlug, ComponentType<PanelClientProps>> = 
   regex: RegexTesterPanel,
   json: JsonEditorPanel,
   password: PasswordGeneratorPanel,
+  currency: CurrencyConverterPanel,
 };
