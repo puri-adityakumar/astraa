@@ -12,6 +12,7 @@ import { base64Command } from "./commands/base64";
 import { hashCommand } from "./commands/hash";
 import { regexCommand } from "./commands/regex";
 import { jsonCommand } from "./commands/json";
+import { passwordCommand } from "./commands/password";
 import type { CommandContext, CommandResult, OutputBlock, TerminalCommand } from "./types";
 
 const commands: TerminalCommand[] = [
@@ -22,6 +23,7 @@ const commands: TerminalCommand[] = [
   hashCommand,
   regexCommand,
   jsonCommand,
+  passwordCommand,
 ];
 
 /** All registered commands, built-ins first, in registration order. */

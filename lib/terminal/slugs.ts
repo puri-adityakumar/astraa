@@ -11,6 +11,7 @@ export const TERMINAL_TOOL_SLUGS = [
   "hash",
   "regex",
   "json",
+  "password",
 ] as const;
 
 export type TerminalToolSlug = (typeof TERMINAL_TOOL_SLUGS)[number];

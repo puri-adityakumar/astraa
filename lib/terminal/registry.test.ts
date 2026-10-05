@@ -39,6 +39,7 @@ describe("registry list", () => {
       "hash",
       "regex",
       "json",
+      "password",
     ]);
   });
 

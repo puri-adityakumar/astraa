@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import {
+  historyEntryFor,
   initialHistoryNav,
   recallNext,
   recallPrevious,
@@ -71,7 +72,7 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
     if (input === "") return;
     onSubmit(input);
     setValue("");
-    setHistory((previous) => [...previous, input]);
+    setHistory((previous) => [...previous, historyEntryFor(input)]);
     setNav(initialHistoryNav);
     setListDismissed(false);
     setActiveIndex(-1);

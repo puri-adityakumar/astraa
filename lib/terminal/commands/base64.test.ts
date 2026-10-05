@@ -59,6 +59,28 @@ describe("base64 command", () => {
     expect(await answerCode("decode aMOpbGxv")).toBe("héllo");
   });
 
+  it("accepts the decode keyword in any case", async () => {
+    expect(await answerCode("Decode aGVsbG8=")).toBe("hello");
+    expect(await answerCode("DECODE aGVsbG8=")).toBe("hello");
+  });
+
+  it("accepts the -d keyword in any case", async () => {
+    expect(await answerCode("-D aGVsbG8=")).toBe("hello");
+  });
+
+  it("accepts the encode keyword in any case", async () => {
+    expect(await answerCode("ENCODE hello")).toBe("aGVsbG8=");
+  });
+
+  it("keeps the payload case-sensitive after a keyword", async () => {
+    expect(await answerCode("encode HeLLo")).toBe("SGVMTG8=");
+  });
+
+  it("treats a lone keyword token as the keyword in any case", async () => {
+    const result = await base64Command.run("dEcOdE", ctx);
+    expect(result.type).toBe("fallback");
+  });
+
   it("falls back on invalid base64 characters when decoding", async () => {
     expect(await base64Command.run("decode a!!!", ctx)).toEqual({
       type: "fallback",

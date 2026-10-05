@@ -40,14 +40,16 @@ export const base64Command: TerminalCommand = {
     const keyword = firstSpace === -1 ? input : input.slice(0, firstSpace);
     const rest =
       firstSpace === -1 ? "" : input.slice(firstSpace + 1).trimStart();
+    // Keywords are case-insensitive; the payload after them keeps its case.
+    const keywordLower = keyword.toLowerCase();
 
-    if (keyword === "encode") {
+    if (keywordLower === "encode") {
       if (rest === "") {
         return { type: "fallback", slug: "base64", message: fallbackMessage(input) };
       }
       return encoding(rest);
     }
-    if (keyword === "decode" || keyword === "-d") {
+    if (keywordLower === "decode" || keywordLower === "-d") {
       if (rest === "" || !validateBase64(rest, { urlSafe: false }).ok) {
         return { type: "fallback", slug: "base64", message: fallbackMessage(input) };
       }

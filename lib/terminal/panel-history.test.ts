@@ -59,6 +59,13 @@ describe("openPanelTransition", () => {
       title: "JSON Editor | Astraa",
       panel: "json",
     });
+    expect(openPanelTransition("json", "password")).toEqual({
+      kind: "replace",
+      url: "/tools/password",
+      state: { [PANEL_STATE_KEY]: "password" },
+      title: "Password Generator | Astraa",
+      panel: "password",
+    });
   });
 });
 

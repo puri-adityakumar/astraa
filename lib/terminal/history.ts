@@ -4,6 +4,8 @@
  * line; `draft` preserves the in-progress input from the moment recall
  * started so ArrowDown can restore it at the end of the walk.
  */
+import { parseInput } from "./parse";
+
 export interface HistoryNav {
   /** Position in the history array being viewed; null = editing freely. */
   readonly index: number | null;
@@ -29,4 +31,24 @@ export function recallNext(nav: HistoryNav, history: readonly string[]): History
   if (nav.index === null) return nav;
   if (nav.index < history.length - 1) return { ...nav, index: nav.index + 1 };
   return { index: null, draft: nav.draft };
+}
+
+/**
+ * The password command (any alias, any case): its arguments name a length,
+ * and recall must re-run the bare command, so history stores "/password"
+ * without args and a generated secret can never ride along.
+ */
+const BARE_HISTORY_COMMANDS = new Set(["password", "pw", "pass"]);
+
+/** The history entry for a submitted line: /password is stored without args. */
+export function historyEntryFor(input: string): string {
+  const trimmed = input.trim();
+  const parsed = parseInput(trimmed);
+  if (
+    parsed.kind === "command" &&
+    BARE_HISTORY_COMMANDS.has(parsed.name.toLowerCase())
+  ) {
+    return "/password";
+  }
+  return trimmed;
 }

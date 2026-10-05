@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { initialHistoryNav, recallNext, recallPrevious } from "./history";
+import { historyEntryFor, initialHistoryNav, recallNext, recallPrevious } from "./history";
 
 const HISTORY = ["/theme", "/help"];
 
@@ -41,5 +41,23 @@ describe("recallNext", () => {
 
   it("does nothing when not recalling", () => {
     expect(recallNext(initialHistoryNav, HISTORY)).toBe(initialHistoryNav);
+  });
+});
+
+describe("historyEntryFor", () => {
+  it("stores password commands without their arguments", () => {
+    expect(historyEntryFor("/password 24")).toBe("/password");
+    expect(historyEntryFor("/pw 12")).toBe("/password");
+    expect(historyEntryFor("/pass")).toBe("/password");
+  });
+
+  it("normalises the password command name and case", () => {
+    expect(historyEntryFor("/Password 99")).toBe("/password");
+  });
+
+  it("stores other commands verbatim", () => {
+    expect(historyEntryFor("/hash md5 hello")).toBe("/hash md5 hello");
+    expect(historyEntryFor("/calculator 2+2")).toBe("/calculator 2+2");
+    expect(historyEntryFor("/theme")).toBe("/theme");
   });
 });
