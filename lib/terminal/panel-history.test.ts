@@ -73,6 +73,13 @@ describe("openPanelTransition", () => {
       title: "Currency Converter | Astraa",
       panel: "currency",
     });
+    expect(openPanelTransition("currency", "text")).toEqual({
+      kind: "replace",
+      url: "/tools/text",
+      state: { [PANEL_STATE_KEY]: "text" },
+      title: "Lorem Ipsum Generator | Astraa",
+      panel: "text",
+    });
   });
 });
 

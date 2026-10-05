@@ -416,31 +416,30 @@ export const sqlMetadata: Metadata = {
 };
 
 export const textMetadata: Metadata = {
-  title: "AI Text Generator",
+  title: "Lorem Ipsum Generator",
   description:
-    "Generate meaningful, context-aware placeholder text tailored to your topic. The modern alternative to Lorem Ipsum powered by AI. Free online text generator.",
+    "Generate classic lorem ipsum placeholder text by words, sentences, or paragraphs. Free local lorem ipsum generator — nothing leaves your browser.",
   keywords: [
-    "AI text generator",
+    "lorem ipsum generator",
     "placeholder text",
-    "Lorem Ipsum alternative",
-    "content generator",
-    "text generator",
-    "AI writing tool",
     "dummy text generator",
+    "filler text",
+    "lorem generator",
     "sample text",
+    "lorem ipsum",
   ],
   openGraph: {
-    title: "AI Text Generator",
+    title: "Lorem Ipsum Generator",
     description:
-      "Generate context-aware placeholder text with AI. The modern Lorem Ipsum alternative.",
+      "Generate classic lorem ipsum placeholder text by words, sentences, or paragraphs.",
     url: "/tools/text",
     images: ["/assets/astraa_banner.jpg"],
   },
   twitter: {
     card: "summary",
-    title: "AI Text Generator",
+    title: "Lorem Ipsum Generator",
     description:
-      "Generate context-aware placeholder text with AI. The modern Lorem Ipsum alternative.",
+      "Generate classic lorem ipsum placeholder text by words, sentences, or paragraphs.",
   },
   alternates: {
     canonical: "/tools/text",

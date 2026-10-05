@@ -12,6 +12,7 @@ describe("terminal tool slugs", () => {
       "json",
       "password",
       "currency",
+      "text",
     ]);
   });
 
@@ -24,6 +25,7 @@ describe("terminal tool slugs", () => {
     expect(isTerminalToolSlug("json")).toBe(true);
     expect(isTerminalToolSlug("password")).toBe(true);
     expect(isTerminalToolSlug("currency")).toBe(true);
+    expect(isTerminalToolSlug("text")).toBe(true);
   });
 
   it("rejects slugs that are not terminal yet", () => {

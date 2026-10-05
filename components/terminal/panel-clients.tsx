@@ -84,6 +84,14 @@ const CurrencyConverterPanel = dynamic(
   { ssr: false, loading: PanelLoading },
 );
 
+const LoremGeneratorPanel = dynamic(
+  () =>
+    import("@/components/text/text-generator-client").then(
+      (m) => m.TextGeneratorClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
 /**
  * ToolSlug → dynamically imported tool client (one entry per registered
  * tool). Heavy clients only load when their panel opens; the Record type
@@ -98,4 +106,5 @@ export const PANEL_CLIENTS: Record<ToolSlug, ComponentType<PanelClientProps>> = 
   json: JsonEditorPanel,
   password: PasswordGeneratorPanel,
   currency: CurrencyConverterPanel,
+  text: LoremGeneratorPanel,
 };

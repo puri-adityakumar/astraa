@@ -14,6 +14,7 @@ import { regexCommand } from "./commands/regex";
 import { jsonCommand } from "./commands/json";
 import { passwordCommand } from "./commands/password";
 import { currencyCommand } from "./commands/currency";
+import { textCommand } from "./commands/text";
 import type { CommandContext, CommandResult, OutputBlock, TerminalCommand } from "./types";
 
 const commands: TerminalCommand[] = [
@@ -26,6 +27,7 @@ const commands: TerminalCommand[] = [
   jsonCommand,
   passwordCommand,
   currencyCommand,
+  textCommand,
 ];
 
 /** All registered commands, built-ins first, in registration order. */

@@ -41,6 +41,7 @@ describe("registry list", () => {
       "json",
       "password",
       "currency",
+      "text",
     ]);
   });
 

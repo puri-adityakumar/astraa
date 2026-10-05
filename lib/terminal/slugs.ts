@@ -13,6 +13,7 @@ export const TERMINAL_TOOL_SLUGS = [
   "json",
   "password",
   "currency",
+  "text",
 ] as const;
 
 export type TerminalToolSlug = (typeof TERMINAL_TOOL_SLUGS)[number];
