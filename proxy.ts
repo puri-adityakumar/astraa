@@ -9,7 +9,7 @@ import {
   VISITED_COOKIE_NAME,
   parseFlavour,
 } from "@/lib/terminal/cookies";
-import { isTerminalToolSlug } from "@/lib/terminal/slugs";
+import { terminalRewritePath } from "@/lib/terminal/flavour";
 
 const VISITOR_COUNT_KEY = "astraa:visitor_count";
 
@@ -24,19 +24,6 @@ function createVisitorRedis(): Redis | null {
 }
 
 const visitorRedis = createVisitorRedis();
-
-function getTerminalRewritePath(pathname: string): string | null {
-  if (pathname === "/" || pathname === "/tools") {
-    return "/terminal";
-  }
-  if (pathname.startsWith("/tools/")) {
-    const slug = pathname.slice("/tools/".length);
-    if (isTerminalToolSlug(slug)) {
-      return `/terminal/tools/${slug}`;
-    }
-  }
-  return null;
-}
 
 // Counts a visit to the public home page in either flavour: sets the 24h
 // dedup cookie on the response actually returned (rewrite or next) and
@@ -85,7 +72,7 @@ export async function proxy(request: NextRequest) {
   // Flavour routing: without the legacy cookie, /, /tools and registered
   // /tools/<slug> pages render the terminal routes while the address bar
   // keeps the public URL. Everything else falls through unchanged.
-  const rewritePath = getTerminalRewritePath(pathname);
+  const rewritePath = terminalRewritePath(pathname);
   const flavour = parseFlavour(
     request.cookies.get(FLAVOUR_COOKIE_NAME)?.value,
   );
