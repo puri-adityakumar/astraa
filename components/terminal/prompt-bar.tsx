@@ -11,6 +11,7 @@ import {
 } from "@/lib/terminal/history";
 import { suggest } from "@/lib/terminal/registry";
 import { cn } from "@/lib/utils";
+import { TERM_COLUMN } from "./column";
 
 interface PromptBarProps {
   /** Runs a submitted input line through the command registry. */
@@ -139,69 +140,71 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
   };
 
   return (
-    <div className="shrink-0 border-t border-term-surface2 bg-term-surface px-4 py-3">
-      <div className="relative mx-auto flex w-full max-w-3xl items-center gap-2 font-mono text-sm">
-        <label htmlFor="term-prompt" className="sr-only">
-          Terminal command
-        </label>
-        <span
-          aria-hidden="true"
-          className="select-none whitespace-nowrap text-term-green"
-        >
-          guest@astraa &gt;
-        </span>
-        <input
-          ref={inputRef}
-          id="term-prompt"
-          type="text"
-          role="combobox"
-          aria-expanded={listOpen}
-          aria-controls={listOpen ? "term-suggestions" : undefined}
-          aria-autocomplete="list"
-          aria-activedescendant={
-            listOpen && activeIndex >= 0 ? `term-suggestion-${activeIndex}` : undefined
-          }
-          autoComplete="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          placeholder="/help"
-          value={value}
-          onChange={(event) => {
-            setValue(event.target.value);
-            setListDismissed(false);
-            setActiveIndex(-1);
-          }}
-          onKeyDown={handleKeyDown}
-          className="min-h-touch w-full min-w-0 bg-transparent text-term-fg outline-none placeholder:text-term-muted"
-        />
-        {listOpen && (
-          <ul
-            id="term-suggestions"
-            role="listbox"
-            aria-label="Command suggestions"
-            className="absolute bottom-full left-0 right-0 z-10 mb-2 max-h-64 overflow-y-auto rounded-md border border-term-surface2 bg-term-surface py-1 shadow-lg"
+    <div className="shrink-0 border-t border-term-surface2 bg-term-surface py-3">
+      <div className={TERM_COLUMN}>
+        <div className="relative flex items-center gap-2 font-mono text-sm">
+          <label htmlFor="term-prompt" className="sr-only">
+            Terminal command
+          </label>
+          <span
+            aria-hidden="true"
+            className="select-none whitespace-nowrap text-term-green"
           >
-            {suggestions.map((command, index) => (
-              <li
-                key={command.name}
-                id={`term-suggestion-${index}`}
-                role="option"
-                aria-selected={index === activeIndex}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => acceptSuggestion(command.name)}
-                className={cn(
-                  "flex min-h-touch cursor-default items-center gap-3 px-3 py-2 font-mono text-sm",
-                  index === activeIndex
-                    ? "bg-term-surface2 text-term-fg"
-                    : "text-term-muted hover:bg-term-surface2",
-                )}
-              >
-                <span className="shrink-0 text-term-accent">/{command.name}</span>
-                <span className="min-w-0 truncate">{command.summary}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+            guest@astraa &gt;
+          </span>
+          <input
+            ref={inputRef}
+            id="term-prompt"
+            type="text"
+            role="combobox"
+            aria-expanded={listOpen}
+            aria-controls={listOpen ? "term-suggestions" : undefined}
+            aria-autocomplete="list"
+            aria-activedescendant={
+              listOpen && activeIndex >= 0 ? `term-suggestion-${activeIndex}` : undefined
+            }
+            autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            placeholder="/help"
+            value={value}
+            onChange={(event) => {
+              setValue(event.target.value);
+              setListDismissed(false);
+              setActiveIndex(-1);
+            }}
+            onKeyDown={handleKeyDown}
+            className="min-h-touch w-full min-w-0 bg-transparent text-term-fg outline-none placeholder:text-term-muted"
+          />
+          {listOpen && (
+            <ul
+              id="term-suggestions"
+              role="listbox"
+              aria-label="Command suggestions"
+              className="absolute bottom-full left-0 right-0 z-10 mb-2 max-h-64 overflow-y-auto rounded-md border border-term-surface2 bg-term-surface py-1 shadow-lg"
+            >
+              {suggestions.map((command, index) => (
+                <li
+                  key={command.name}
+                  id={`term-suggestion-${index}`}
+                  role="option"
+                  aria-selected={index === activeIndex}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => acceptSuggestion(command.name)}
+                  className={cn(
+                    "flex min-h-touch cursor-default items-center gap-3 px-3 py-2 font-mono text-sm",
+                    index === activeIndex
+                      ? "bg-term-surface2 text-term-fg"
+                      : "text-term-muted hover:bg-term-surface2",
+                  )}
+                >
+                  <span className="shrink-0 text-term-accent">/{command.name}</span>
+                  <span className="min-w-0 truncate">{command.summary}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

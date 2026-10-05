@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import type { ToolSlug } from "@/lib/terminal/types";
+import { cn } from "@/lib/utils";
+import { TERM_COLUMN } from "./column";
 import { PANEL_CLIENTS } from "./panel-clients";
 import { toolDisplayName } from "./tool-names";
 
@@ -55,7 +57,7 @@ export function PanelHost({ slug, onClose }: PanelHostProps) {
   }, [onClose]);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-8 sm:px-6">
+    <div className={cn(TERM_COLUMN, "pb-8")}>
       <section
         ref={panelRef}
         tabIndex={-1}

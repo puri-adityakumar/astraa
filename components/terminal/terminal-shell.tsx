@@ -4,7 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { outputToLiveText } from "@/lib/terminal/live-text";
 import { commandForSlug, runInput } from "@/lib/terminal/registry";
+import { scrollAction } from "@/lib/terminal/scroll-policy";
 import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
+import { cn } from "@/lib/utils";
+import { TERM_COLUMN } from "./column";
 import { switchToLegacyFlavour } from "./flavour-switch";
 import { HomeView } from "./home-view";
 import { PanelHost } from "./panel-host";
@@ -73,23 +76,29 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   }, [close]);
 
   // Keep the newest output in view without pushing a freshly opened panel's
-  // header (and its Esc hint) off the top: when a panel opens or switches,
-  // scroll the panel section to the top of the column; with no panel, chase
-  // the scrollback bottom (the prompt is a flex sibling, so nothing hides
-  // behind it). Entries added while a panel stays open never scroll-jack.
+  // header (and its Esc hint) off the top: an opening or switching panel
+  // scrolls to the top of the column, nonempty scrollback chases its newest
+  // entry, and an empty history (the home view, fresh or after /clear) stays
+  // at the top. Entries added while a panel stays open never scroll-jack.
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
-    if (panel !== null) {
-      if (previousPanelRef.current !== panel) {
-        main
-          .querySelector<HTMLElement>("[data-term-panel]")
-          ?.scrollIntoView({ block: "start" });
-      }
-    } else {
-      main.scrollTo({ top: main.scrollHeight });
-    }
+    const panelChanged = previousPanelRef.current !== panel;
     previousPanelRef.current = panel;
+    const action = scrollAction({
+      panelOpen: panel !== null,
+      panelChanged,
+      hasEntries: entries.length > 0,
+    });
+    if (action === "panel") {
+      main
+        .querySelector<HTMLElement>("[data-term-panel]")
+        ?.scrollIntoView({ block: "start" });
+    } else if (action === "bottom") {
+      main.scrollTo({ top: main.scrollHeight });
+    } else if (action === "top") {
+      main.scrollTo({ top: 0 });
+    }
   }, [entries, panel]);
 
   // Ctrl+L clears the screen like /clear, wherever the focus is.
@@ -171,7 +180,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
         </header>
         <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
           {entries.length > 0 && (
-            <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+            <div className={cn(TERM_COLUMN, "py-8")}>
               <Scrollback entries={entries} />
             </div>
           )}

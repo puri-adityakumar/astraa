@@ -4,6 +4,8 @@ import { useState } from "react";
 import { toolCategories } from "@/lib/tools";
 import { commandsInCategory } from "@/lib/terminal/rows";
 import { getCommands } from "@/lib/terminal/registry";
+import { cn } from "@/lib/utils";
+import { TERM_COLUMN } from "./column";
 import { CategoryTabs, categoryId } from "./category-tabs";
 import { ToolRow } from "./tool-row";
 
@@ -25,7 +27,7 @@ export function HomeView({ onRun }: HomeViewProps = {}) {
   const tabId = categoryId("term", active);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+    <div className={cn(TERM_COLUMN, "py-8")}>
       <div
         aria-hidden="true"
         className="select-none font-pixel text-4xl leading-none text-term-fg sm:text-5xl"
