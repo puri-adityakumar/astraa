@@ -14,6 +14,11 @@ export const TERMINAL_TOOL_SLUGS = [
   "password",
   "currency",
   "text",
+  "image",
+  "markdown",
+  "snippet-generator",
+  "music",
+  "sql",
 ] as const;
 
 export type TerminalToolSlug = (typeof TERMINAL_TOOL_SLUGS)[number];

@@ -25,6 +25,15 @@ describe("terminalRewritePath", () => {
     expect(terminalRewritePath("/tools/password")).toBe(
       "/terminal/tools/password",
     );
+    expect(terminalRewritePath("/tools/image")).toBe("/terminal/tools/image");
+    expect(terminalRewritePath("/tools/markdown")).toBe(
+      "/terminal/tools/markdown",
+    );
+    expect(terminalRewritePath("/tools/snippet-generator")).toBe(
+      "/terminal/tools/snippet-generator",
+    );
+    expect(terminalRewritePath("/tools/music")).toBe("/terminal/tools/music");
+    expect(terminalRewritePath("/tools/sql")).toBe("/terminal/tools/sql");
   });
 
   it("maps a registered tool slug with a trailing slash", () => {
@@ -34,7 +43,6 @@ describe("terminalRewritePath", () => {
   });
 
   it("returns null for an unregistered or unknown slug", () => {
-    expect(terminalRewritePath("/tools/image")).toBeNull();
     expect(terminalRewritePath("/tools/nope")).toBeNull();
   });
 
@@ -85,8 +93,11 @@ describe("isTerminalCapablePath", () => {
     expect(isTerminalCapablePath("/tools/calculator/")).toBe(true);
   });
 
-  it("rejects an unregistered tool slug", () => {
-    expect(isTerminalCapablePath("/tools/image")).toBe(false);
+  it("accepts the milestone-4 tool slugs", () => {
+    expect(isTerminalCapablePath("/tools/image")).toBe(true);
+    expect(isTerminalCapablePath("/tools/snippet-generator")).toBe(true);
+    expect(isTerminalCapablePath("/tools/music")).toBe(true);
+    expect(isTerminalCapablePath("/tools/sql")).toBe(true);
   });
 
   it("rejects an unknown tool slug", () => {

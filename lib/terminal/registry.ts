@@ -15,7 +15,12 @@ import { jsonCommand } from "./commands/json";
 import { passwordCommand } from "./commands/password";
 import { currencyCommand } from "./commands/currency";
 import { textCommand } from "./commands/text";
-import type { CommandContext, CommandResult, OutputBlock, TerminalCommand } from "./types";
+import { imageCommand } from "./commands/image";
+import { markdownCommand } from "./commands/markdown";
+import { snippetCommand } from "./commands/snippet";
+import { musicCommand } from "./commands/music";
+import { sqlCommand } from "./commands/sql";
+import type { CommandContext, CommandResult, OutputBlock, TerminalCommand, ToolSlug } from "./types";
 
 const commands: TerminalCommand[] = [
   ...BUILTIN_COMMANDS,
@@ -28,6 +33,11 @@ const commands: TerminalCommand[] = [
   passwordCommand,
   currencyCommand,
   textCommand,
+  imageCommand,
+  markdownCommand,
+  snippetCommand,
+  musicCommand,
+  sqlCommand,
 ];
 
 /** All registered commands, built-ins first, in registration order. */
@@ -62,6 +72,11 @@ export function resolveCommandIn(
 /** Resolve by name or alias, case-insensitively. */
 export function resolveCommand(name: string): TerminalCommand | undefined {
   return resolveCommandIn(commands, name);
+}
+
+/** The registered command for a tool slug, if any (built-ins have none). */
+export function commandForSlug(slug: ToolSlug): TerminalCommand | undefined {
+  return commands.find((c) => c.slug === slug);
 }
 
 export function suggestIn(

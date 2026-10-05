@@ -13,6 +13,11 @@ describe("terminal tool slugs", () => {
       "password",
       "currency",
       "text",
+      "image",
+      "markdown",
+      "snippet-generator",
+      "music",
+      "sql",
     ]);
   });
 
@@ -26,10 +31,11 @@ describe("terminal tool slugs", () => {
     expect(isTerminalToolSlug("password")).toBe(true);
     expect(isTerminalToolSlug("currency")).toBe(true);
     expect(isTerminalToolSlug("text")).toBe(true);
-  });
-
-  it("rejects slugs that are not terminal yet", () => {
-    expect(isTerminalToolSlug("image")).toBe(false);
+    expect(isTerminalToolSlug("image")).toBe(true);
+    expect(isTerminalToolSlug("markdown")).toBe(true);
+    expect(isTerminalToolSlug("snippet-generator")).toBe(true);
+    expect(isTerminalToolSlug("music")).toBe(true);
+    expect(isTerminalToolSlug("sql")).toBe(true);
   });
 
   it("rejects unknown, empty and casing-drifted slugs", () => {

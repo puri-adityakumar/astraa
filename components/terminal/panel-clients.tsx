@@ -92,6 +92,39 @@ const LoremGeneratorPanel = dynamic(
   { ssr: false, loading: PanelLoading },
 );
 
+const ImageResizerPanel = dynamic(
+  () =>
+    import("@/components/image/image-resizer").then(
+      (m) => m.ImageResizerClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
+const MarkdownEditorPanel = dynamic(
+  () =>
+    import("@/components/markdown/markdown-editor-client").then(
+      (m) => m.MarkdownEditorClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
+const SnippetGeneratorPanel = dynamic(
+  () =>
+    import("@/components/snippet-generator/snippet-generator-client").then(
+      (m) => m.SnippetGeneratorClient,
+    ),
+  { ssr: false, loading: PanelLoading },
+);
+
+/**
+ * Defensive stub for coming-soon slugs: their commands answer instead of
+ * opening, so this should never mount — it is mapped only so the Record
+ * stays exhaustive over ToolSlug.
+ */
+function ComingSoonStub() {
+  return <p className="py-6 font-mono text-sm text-term-muted">coming soon</p>;
+}
+
 /**
  * ToolSlug → dynamically imported tool client (one entry per registered
  * tool). Heavy clients only load when their panel opens; the Record type
@@ -107,4 +140,9 @@ export const PANEL_CLIENTS: Record<ToolSlug, ComponentType<PanelClientProps>> = 
   password: PasswordGeneratorPanel,
   currency: CurrencyConverterPanel,
   text: LoremGeneratorPanel,
+  image: ImageResizerPanel,
+  markdown: MarkdownEditorPanel,
+  "snippet-generator": SnippetGeneratorPanel,
+  music: ComingSoonStub,
+  sql: ComingSoonStub,
 };

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { outputToLiveText } from "@/lib/terminal/live-text";
-import { runInput } from "@/lib/terminal/registry";
+import { commandForSlug, runInput } from "@/lib/terminal/registry";
 import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
 import { switchToLegacyFlavour } from "./flavour-switch";
 import { HomeView } from "./home-view";
@@ -30,11 +30,41 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [entries, setEntries] = useState<ScrollbackEntry[]>([]);
   const [liveText, setLiveText] = useState("");
-  const { panel, open, close } = usePanelUrl(initialTool);
+  // Coming-soon tools (music, sql) never open a panel: a direct load of
+  // their URL prints the coming-soon line in the scrollback instead
+  // (architecture §5 rule 5).
+  const initialCommand =
+    initialTool !== undefined ? commandForSlug(initialTool) : undefined;
+  const initialComingSoon = initialCommand?.status === "coming-soon";
+  const { panel, open, close } = usePanelUrl(
+    initialComingSoon ? undefined : initialTool,
+  );
   const { theme, setTheme } = useTerminalTheme();
   const mainRef = useRef<HTMLElement>(null);
-  const previousPanelRef = useRef<ToolSlug | null>(initialTool ?? null);
+  const previousPanelRef = useRef<ToolSlug | null>(
+    initialComingSoon ? null : (initialTool ?? null),
+  );
+  const seededToolRef = useRef<string | null>(null);
   const nextIdRef = useRef(0);
+
+  // Direct loads of /tools/music and /tools/sql seed the scrollback with
+  // the command's coming-soon answer, exactly as if it had been typed.
+  useEffect(() => {
+    const command = initialCommand;
+    if (!command || command.status !== "coming-soon") return;
+    if (seededToolRef.current !== null) return;
+    seededToolRef.current = command.name;
+    void runInput(`/${command.name}`, theme).then((result) => {
+      if (!result || result.type !== "answer") return;
+      nextIdRef.current += 1;
+      const id = nextIdRef.current;
+      setEntries((previous) => [
+        ...previous,
+        { id, input: `/${command.name}`, output: result.output },
+      ]);
+      setLiveText(outputToLiveText(result.output));
+    });
+  }, [initialCommand, theme]);
 
   const clearScreen = useCallback(() => {
     setEntries([]);

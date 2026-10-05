@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   closestCommand,
   closestCommandIn,
+  commandForSlug,
   getCommands,
   register,
   resolveCommand,
@@ -42,6 +43,11 @@ describe("registry list", () => {
       "password",
       "currency",
       "text",
+      "image",
+      "markdown",
+      "snippet",
+      "music",
+      "sql",
     ]);
   });
 
@@ -91,6 +97,23 @@ describe("resolveCommand", () => {
     const list = [fixtureCommand()];
     expect(resolveCommandIn(list, "FIXTURE")?.name).toBe("fixture");
     expect(resolveCommandIn([], "help")).toBeUndefined();
+  });
+});
+
+describe("commandForSlug", () => {
+  it("finds live commands by their tool slug", () => {
+    expect(commandForSlug("calculator")?.name).toBe("calculator");
+    expect(commandForSlug("image")?.name).toBe("image");
+    expect(commandForSlug("snippet-generator")?.name).toBe("snippet");
+  });
+
+  it("finds coming-soon commands so the shell can detect them", () => {
+    expect(commandForSlug("music")?.status).toBe("coming-soon");
+    expect(commandForSlug("sql")?.status).toBe("coming-soon");
+  });
+
+  it("returns undefined for slugs without a command", () => {
+    expect(commandForSlug("nope" as never)).toBeUndefined();
   });
 });
 

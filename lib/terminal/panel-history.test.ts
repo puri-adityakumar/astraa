@@ -80,6 +80,13 @@ describe("openPanelTransition", () => {
       title: "Lorem Ipsum Generator | Astraa",
       panel: "text",
     });
+    expect(openPanelTransition("text", "image")).toEqual({
+      kind: "replace",
+      url: "/tools/image",
+      state: { [PANEL_STATE_KEY]: "image" },
+      title: "Image Resizer | Astraa",
+      panel: "image",
+    });
   });
 });
 

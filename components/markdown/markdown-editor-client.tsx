@@ -31,7 +31,13 @@ type PendingAction =
   | { kind: "view-toggle" }
   | { kind: "delete"; id: string };
 
-export function MarkdownEditorClient() {
+export type MarkdownEditorVariant = "page" | "panel";
+
+interface MarkdownEditorClientProps {
+  variant?: MarkdownEditorVariant;
+}
+
+export function MarkdownEditorClient({ variant = "page" }: MarkdownEditorClientProps) {
   const file = useMarkdownEditor((s) =>
     s.files.find((f) => f.id === s.currentId),
   );
@@ -224,20 +230,8 @@ export function MarkdownEditorClient() {
     return "";
   })();
 
-  return (
-    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
-      <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Markdown
-        </h1>
-        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
-          Drop a markdown file to view it. Toggle to edit, then export as .md, .html, or PDF.
-        </p>
-        <p className="text-xs text-muted-foreground/70">
-          All processing happens locally in your browser
-        </p>
-      </div>
-
+  const content = (
+    <>
       {!file ? (
         <div className="space-y-8 py-8">
           <div className="flex justify-center">
@@ -348,6 +342,28 @@ export function MarkdownEditorClient() {
         onConfirm={confirmReplace}
         onCancel={() => setPendingReplace(null)}
       />
+    </>
+  );
+
+  if (variant === "panel") {
+    return <div className="w-full space-y-8">{content}</div>;
+  }
+
+  return (
+    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
+      <div className="space-y-4 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Markdown
+        </h1>
+        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
+          Drop a markdown file to view it. Toggle to edit, then export as .md, .html, or PDF.
+        </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
+      </div>
+
+      {content}
     </div>
   );
 }
