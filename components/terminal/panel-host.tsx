@@ -15,13 +15,13 @@ interface PanelHostProps {
 
 /**
  * Whether a portalled Radix overlay (Select/Popover/DropdownMenu content
- * wrapper, or a Dialog) is currently open. Escape inside one must dismiss
- * the overlay itself, not the whole panel.
+ * wrapper, a Dialog or an AlertDialog) is currently open. Escape inside one
+ * must dismiss the overlay itself, not the whole panel.
  */
 function hasOpenRadixOverlay(): boolean {
   return (
     document.querySelector(
-      "[data-radix-popper-content-wrapper] [data-state='open'], [role='dialog'][data-state='open']",
+      "[data-radix-popper-content-wrapper] [data-state='open'], [role='dialog'][data-state='open'], [role='alertdialog'][data-state='open']",
     ) !== null
   );
 }
