@@ -99,9 +99,10 @@ the panel itself closes.
 ### Snippet exports
 
 In the terminal, the snippet generator previews fitted to the panel and exports PNGs at the
-selected raster size (the chosen dimensions at 1× and 2×). The legacy interface keeps its
-original export behaviour — dimensions derived from the on-screen preview — and its pages
-are otherwise unchanged.
+selected raster size (the chosen dimensions at 1× and 2×). For example, selecting 1200×675
+exports at 1200×675 for 1× and 2400×1350 for 2×, independent of the viewport width. The legacy
+interface keeps its original export behaviour — dimensions derived from the on-screen preview —
+and its pages are otherwise unchanged.
 
 ### Colour schemes
 
