@@ -15,18 +15,32 @@ interface CryptoConverterProps {
   onAmountChange: (value: string) => void
   onResult: (value: string) => void
   result: string
+  variant?: "page" | "panel"
 }
 
 export function CryptoConverter({
   amount,
   onAmountChange,
   onResult,
-  result
+  result,
+  variant = "page"
 }: CryptoConverterProps) {
   const { toast } = useToast()
   const [cryptoCurrency, setCryptoCurrency] = useState<CryptoId>("bitcoin")
   const [fiatCurrency, setFiatCurrency] = useState<CurrencyCode>("USD")
   const [isLoading, setIsLoading] = useState(false)
+
+  // Layout-only mirror of FiatConverter: panels wrap the amount/selector row
+  // on available host width; the page keeps its viewport breakpoints.
+  const rowClass = variant === "panel"
+    ? "flex flex-wrap gap-4"
+    : "flex flex-col sm:flex-row gap-4"
+  const amountWrapClass = variant === "panel"
+    ? "flex-1 basis-[220px]"
+    : "flex-1"
+  const selectorWrapClass = variant === "panel"
+    ? "w-[280px] max-w-full"
+    : "w-full sm:w-[280px]"
 
   useEffect(() => {
     const calculate = async () => {
@@ -73,8 +87,8 @@ export function CryptoConverter({
         {/* From Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">From</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+          <div className={rowClass}>
+            <div className={amountWrapClass}>
               <Input
                 id="crypto-amount"
                 type="number"
@@ -84,7 +98,7 @@ export function CryptoConverter({
                 className="h-11 font-mono text-lg"
               />
             </div>
-            <div className="w-full sm:w-[280px]">
+            <div className={selectorWrapClass}>
               <CryptoSelect
                 value={cryptoCurrency}
                 onValueChange={(value) => setCryptoCurrency(value as CryptoId)}
@@ -103,8 +117,8 @@ export function CryptoConverter({
         {/* To Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">To</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
+          <div className={rowClass}>
+            <div className={amountWrapClass}>
               <Input
                 readOnly
                 placeholder="Result"
@@ -112,7 +126,7 @@ export function CryptoConverter({
                 className="h-11 font-mono text-lg bg-muted/50"
               />
             </div>
-            <div className="w-full sm:w-[280px]">
+            <div className={selectorWrapClass}>
               <CurrencySelect
                 value={fiatCurrency}
                 onValueChange={(value) => setFiatCurrency(value as CurrencyCode)}

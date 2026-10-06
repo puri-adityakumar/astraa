@@ -15,18 +15,33 @@ interface FiatConverterProps {
   onAmountChange: (value: string) => void
   onResult: (value: string) => void
   result: string
+  variant?: "page" | "panel"
 }
 
 export function FiatConverter({
   amount,
   onAmountChange,
   onResult,
-  result
+  result,
+  variant = "page"
 }: FiatConverterProps) {
   const { toast } = useToast()
   const [fromCurrency, setFromCurrency] = useState<CurrencyCode>("USD")
   const [toCurrency, setToCurrency] = useState<CurrencyCode>("EUR")
   const [isLoading, setIsLoading] = useState(false)
+
+  // Terminal panels adapt the amount/selector row to the measured host width
+  // (wrap when 220px of amount + 280px selector + gap no longer fit); the page
+  // keeps its viewport breakpoints.
+  const rowClass = variant === "panel"
+    ? "flex flex-wrap gap-4"
+    : "flex flex-col sm:flex-row gap-4"
+  const amountWrapClass = variant === "panel"
+    ? "flex-1 basis-[220px]"
+    : "flex-1"
+  const selectorWrapClass = variant === "panel"
+    ? "w-[280px] max-w-full"
+    : "w-full sm:w-[280px]"
 
   const handleSwap = () => {
     setFromCurrency(toCurrency)
@@ -94,8 +109,8 @@ export function FiatConverter({
         {/* From Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">From</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+          <div className={rowClass}>
+            <div className={amountWrapClass}>
               <Input
                 id="fiat-amount"
                 type="number"
@@ -105,7 +120,7 @@ export function FiatConverter({
                 className="h-11 font-mono text-lg"
               />
             </div>
-            <div className="w-full sm:w-[280px]">
+            <div className={selectorWrapClass}>
               <CurrencySelect
                 value={fromCurrency}
                 onValueChange={(value) => setFromCurrency(value as CurrencyCode)}
@@ -131,40 +146,16 @@ export function FiatConverter({
         {/* To Section */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">To</Label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Result Display directly in 'To' section if possible, or keep separate.
-                 Since onResult is passed up, we might display it here as a read-only input or
-                 just pass the props. But wait, the parent handles result display.
-                 Actually, looking at UnitConverter, we merged the result into the "To" input.
-                 Let's do that here too for consistency. We need to pass 'result' down or assume parent handles it.
-                 The prop 'onResult' implies parent state.
-                 However, the current FiatConverter implementation calculates it on button click.
-                 Let's switch to automatic effect-based calculation like UnitConverter.
-             */}
-            {/*
-                We need to change how this component works to be automatic.
-                First, let's keep the layout simple, and maybe we can render the result *here*
-                if we lift the calculation state or pass it down.
-                Currently `onResult` sets a string in parent.
-                Let's simplify: Display a readonly Input here that shows the loading state or result.
-             */}
-            <div className="flex-1 relative">
+          <div className={rowClass}>
+            <div className={amountWrapClass}>
               <Input
                 readOnly
                 placeholder="Result"
                 value={isLoading ? "Converting..." : result}
                 className="h-11 font-mono text-lg bg-muted/50"
               />
-              {/*
-                  Wait, the parent `CurrencyConverterClient` displays the result in a separate box below.
-                  We should probably follow the UnitConverter pattern completely and hide that box,
-                  instead showing it in this input. But `amount` is state in parent?
-                  Yes, `onAmountChange` updates parent.
-                  Let's make this component handle the calculation automatically internally or via effect?
-                  The parent passes `amount`.
-              */}
             </div>
-            <div className="w-full sm:w-[280px]">
+            <div className={selectorWrapClass}>
               <CurrencySelect
                 value={toCurrency}
                 onValueChange={(value) => setToCurrency(value as CurrencyCode)}

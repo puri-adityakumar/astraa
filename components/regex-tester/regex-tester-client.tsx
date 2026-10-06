@@ -320,7 +320,7 @@ export function RegexTesterClient({ variant = "page" }: RegexTesterClientProps) 
     return (
       <div className="w-full space-y-6">
         {testerCard}
-        <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} />
+        <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} variant={variant} />
       </div>
     );
   }

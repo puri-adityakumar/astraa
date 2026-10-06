@@ -110,7 +110,16 @@ export function TextGeneratorClient({ variant = "page" }: TextGeneratorClientPro
         <div className="space-y-6">
           <Label className="text-base font-semibold">Generate placeholder text</Label>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 sm:gap-6">
+          {/* Panels top-align the side-by-side rows so the Count range hint
+              cannot push Unit's input down; the page keeps its bottom-aligned
+              row. */}
+          <div
+            className={
+              variant === "panel"
+                ? "flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6"
+                : "flex flex-col sm:flex-row items-stretch sm:items-end gap-4 sm:gap-6"
+            }
+          >
             <div className="space-y-2">
               <Label htmlFor="lorem-unit" className="font-normal text-muted-foreground text-sm">
                 Unit

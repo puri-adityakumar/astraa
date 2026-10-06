@@ -15,29 +15,43 @@ import { ReferencePanel } from "./reference-panel";
 
 export interface ReferenceSheetProps {
   onInsertAtCaret: (text: string) => void;
+  /** "panel" keeps the trigger in the terminal panel flow; the page keeps its floating action. */
+  variant?: "page" | "panel";
 }
 
-export function ReferenceSheet({ onInsertAtCaret }: ReferenceSheetProps) {
+export function ReferenceSheet({ onInsertAtCaret, variant = "page" }: ReferenceSheetProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label="Open regex reference"
-          className={cn(
-            "fixed right-4 z-40 h-12 w-12 rounded-full shadow-lg",
-            "bg-background hover:bg-accent",
-            "sm:hidden",
-            // honor iOS safe-area inset so the FAB clears the Home indicator
-            "bottom-[max(1rem,env(safe-area-inset-bottom))]",
-          )}
-        >
-          <BookOpen className="h-5 w-5" aria-hidden="true" />
-        </Button>
+        {variant === "panel" ? (
+          <Button
+            type="button"
+            variant="outline"
+            aria-label="Open regex reference"
+            className="h-12 w-full rounded-md bg-background hover:bg-accent sm:hidden"
+          >
+            <BookOpen className="h-5 w-5" aria-hidden="true" />
+            Reference
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Open regex reference"
+            className={cn(
+              "fixed right-4 z-40 h-12 w-12 rounded-full shadow-lg",
+              "bg-background hover:bg-accent",
+              "sm:hidden",
+              // honor iOS safe-area inset so the FAB clears the Home indicator
+              "bottom-[max(1rem,env(safe-area-inset-bottom))]",
+            )}
+          >
+            <BookOpen className="h-5 w-5" aria-hidden="true" />
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent
         side="bottom"

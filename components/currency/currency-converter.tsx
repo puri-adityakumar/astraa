@@ -17,8 +17,17 @@ export function CurrencyConverterClient({ variant = "page" }: { variant?: "page"
     setResult("")
   }
 
+  // The terminal panel column (max 720px) is narrower than the viewport
+  // breakpoint where a 240px navigation rail leaves the converter card enough
+  // room, so panels stack the navigation above the card; the page keeps its
+  // md: two-column grid.
+  const bodyClass =
+    variant === "panel"
+      ? "grid grid-cols-1 gap-8"
+      : "grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8";
+
   const body = (
-    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
+    <div className={bodyClass}>
         {/* Sidebar Navigation */}
         <div className="space-y-1">
           <nav className="space-y-1">
@@ -63,6 +72,7 @@ export function CurrencyConverterClient({ variant = "page" }: { variant?: "page"
                   onAmountChange={setAmount}
                   onResult={setResult}
                   result={result}
+                  variant={variant}
                 />
               ) : (
                 <CryptoConverter
@@ -70,6 +80,7 @@ export function CurrencyConverterClient({ variant = "page" }: { variant?: "page"
                   onAmountChange={setAmount}
                   onResult={setResult}
                   result={result}
+                  variant={variant}
                 />
               )}
             </div>
