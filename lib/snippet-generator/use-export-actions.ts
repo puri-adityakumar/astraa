@@ -12,11 +12,23 @@ import {
   isClipboardSupported,
   type ExportScale,
 } from "@/lib/snippet-generator/export";
+import type { ExportSize } from "@/lib/snippet-generator/capture";
 import { useSnippetGenerator } from "@/lib/stores/snippet-generator";
 
 export type ExportPending = "1x" | "2x" | "copy" | null;
 
-export function useExportActions(getNode: () => HTMLElement | null) {
+/**
+ * When provided (terminal panel), it returns the canonical composition size
+ * the node should render at for capture; the exporter multiplies by the
+ * requested scale. When omitted (legacy page), the exporter falls back to
+ * the measured display bounds times the scale.
+ */
+export type ExportSizeProvider = () => ExportSize | undefined;
+
+export function useExportActions(
+  getNode: () => HTMLElement | null,
+  getExportSize?: ExportSizeProvider | undefined,
+) {
   const [pending, setPending] = useState<ExportPending>(null);
   const [clipboardSupported, setClipboardSupported] = useState(false);
   const filename = useSnippetGenerator((s) => s.filename);
@@ -34,7 +46,7 @@ export function useExportActions(getNode: () => HTMLElement | null) {
       await Sentry.startSpan(
         { op: "snippet.export", name: `PNG ${scale}x` },
         async () => {
-          const blob = await exportSnippet(node, scale);
+          const blob = await exportSnippet(node, scale, getExportSize?.());
           downloadBlob(blob, buildExportFilename(filename, Date.now()));
         },
       );
@@ -60,7 +72,7 @@ export function useExportActions(getNode: () => HTMLElement | null) {
       await Sentry.startSpan(
         { op: "snippet.export", name: "Copy clipboard" },
         async () => {
-          const blob = await exportSnippet(node, 2);
+          const blob = await exportSnippet(node, 2, getExportSize?.());
           await copyBlobToClipboard(blob);
         },
       );

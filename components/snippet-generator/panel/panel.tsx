@@ -19,9 +19,11 @@ import { FontSection } from "./font-section";
 import { LayoutSection } from "./layout-section";
 import { ExportSection } from "./export-section";
 import { useSnippetGenerator } from "@/lib/stores/snippet-generator";
+import type { ExportSizeProvider } from "@/lib/snippet-generator/use-export-actions";
 
 type Props = {
   getCanvasNode: () => HTMLElement | null;
+  getExportSize?: ExportSizeProvider | undefined;
 };
 
 type GroupProps = {
@@ -44,7 +46,7 @@ function Group({ icon, title, children }: GroupProps) {
   );
 }
 
-function PanelBody({ getCanvasNode }: Props) {
+function PanelBody({ getCanvasNode, getExportSize }: Props) {
   const mode = useSnippetGenerator((s) => s.mode);
 
   return (
@@ -69,9 +71,20 @@ function PanelBody({ getCanvasNode }: Props) {
         <LayoutSection />
       </Group>
       <Group icon={<Share2 className="h-3.5 w-3.5" />} title="Export">
-        <ExportSection getNode={getCanvasNode} />
+        <ExportSection getNode={getCanvasNode} getExportSize={getExportSize} />
       </Group>
     </div>
+  );
+}
+
+function SheetBody(props: Props) {
+  return (
+    <SheetContent side="bottom" className="max-h-[70vh] overflow-y-auto p-0">
+      <SheetHeader className="px-4 py-4 border-b">
+        <SheetTitle>Customize</SheetTitle>
+      </SheetHeader>
+      <PanelBody {...props} />
+    </SheetContent>
   );
 }
 
@@ -95,12 +108,25 @@ export function MobilePanelTrigger(props: Props) {
           Customize
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-[70vh] overflow-y-auto p-0">
-        <SheetHeader className="px-4 py-4 border-b">
-          <SheetTitle>Customize</SheetTitle>
-        </SheetHeader>
-        <PanelBody {...props} />
-      </SheetContent>
+      <SheetBody {...props} />
+    </Sheet>
+  );
+}
+
+/**
+ * Panel-variant customization sheet: the trigger stays in the panel flow at
+ * every host width instead of floating over the terminal prompt.
+ */
+export function CustomizeSheet(props: Props) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="outline" className="w-full min-h-touch">
+          Customize
+        </Button>
+      </SheetTrigger>
+      <SheetBody {...props} />
     </Sheet>
   );
 }

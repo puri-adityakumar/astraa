@@ -4,13 +4,18 @@
 import { Download, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useExportActions } from "@/lib/snippet-generator/use-export-actions";
+import type { ExportSizeProvider } from "@/lib/snippet-generator/use-export-actions";
 
 type Props = {
   getNode: () => HTMLElement | null;
+  getExportSize?: ExportSizeProvider | undefined;
 };
 
-export function ExportSection({ getNode }: Props) {
-  const { pending, doDownload, doCopy, clipboardSupported } = useExportActions(getNode);
+export function ExportSection({ getNode, getExportSize }: Props) {
+  const { pending, doDownload, doCopy, clipboardSupported } = useExportActions(
+    getNode,
+    getExportSize,
+  );
 
   return (
     <div className="space-y-2">
