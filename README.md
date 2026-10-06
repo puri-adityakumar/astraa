@@ -88,6 +88,21 @@ the scrollback or opened in a panel.
 Arguments that do not parse print an `I don't understand "…" . Opening <Tool>…` line and open
 the tool's panel, so there is always a way in.
 
+### Responsive layout
+
+The terminal adapts to small screens: at phone widths the sidebar collapses and every tool
+panel lays out for a 375px viewport — controls stay reachable, the prompt never overlaps
+other content, and nested overlays (select menus, the regex reference sheet, the snippet
+customisation sheet, the markdown discard confirmation) each take one `Escape` press before
+the panel itself closes.
+
+### Snippet exports
+
+In the terminal, the snippet generator previews fitted to the panel and exports PNGs at the
+selected raster size (the chosen dimensions at 1× and 2×). The legacy interface keeps its
+original export behaviour — dimensions derived from the on-screen preview — and its pages
+are otherwise unchanged.
+
 ### Colour schemes
 
 Six terminal colour schemes plus an automatic mode — switch with `/theme <name>` or the
