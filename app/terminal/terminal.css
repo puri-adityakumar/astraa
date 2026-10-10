@@ -30,3 +30,19 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Reserve the scrollbar gutter on the shared scroll region so the column
+   never shifts when history appears, and keep scrollbars quiet against the
+   dark schemes. The prompt is sticky inside main, so every surface shares
+   this width. */
+[data-flavour="terminal"] main {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--term-surface2) transparent;
+}
+
+[data-flavour="terminal"] aside nav {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--term-surface2) transparent;
+}

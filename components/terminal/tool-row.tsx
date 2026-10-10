@@ -29,7 +29,9 @@ export function ToolRow({ command, showSummary = false, displayName, onRun }: To
   );
   const content = (
     <>
-      <span className="shrink-0 rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent">
+      {/* Fixed key column (claude.dev/terminal discipline): every label on
+          every list starts at the same x regardless of chip text length. */}
+      <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent">
         {`/${command.name}`}
       </span>
       <span className="truncate">{label}</span>

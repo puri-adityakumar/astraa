@@ -65,7 +65,12 @@ export function SnippetGeneratorClient({
   if (variant === "panel") {
     return (
       <div className="w-full">
-        <div className="mb-4 flex justify-end">{controls}</div>
+        {/* View switcher left, export action right — the placement rule the
+            JSON panel already follows. */}
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <ModeToggle />
+          <TopExport getNode={getCanvasNode} getExportSize={getExportSize} />
+        </div>
         <FittedCanvas captureRef={canvasRef} />
         <CanvasStatus />
         <div className="mt-4">

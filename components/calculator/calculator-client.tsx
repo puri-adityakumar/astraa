@@ -202,7 +202,7 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
             DEG
           </button>
         </div>
-        <div className="h-4 w-[1px] bg-border mx-1" />
+        <div className="h-5 w-px shrink-0 self-center bg-border" />
 
         <span className="text-xl font-semibold text-muted-foreground ml-auto">
           Ans = {display}

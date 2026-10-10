@@ -55,7 +55,7 @@ export function PanelFrame({ title, panelKey, focusKey, onClose, children }: Pan
   }, [onClose]);
 
   return (
-    <div className={cn(TERM_COLUMN, "pb-8")}>
+    <div className={cn(TERM_COLUMN, "min-h-dvh pb-8")}>
       <section
         ref={frameRef}
         tabIndex={-1}

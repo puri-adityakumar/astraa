@@ -130,6 +130,11 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   // scrolls to the top of the column, nonempty scrollback chases its newest
   // entry, and an empty history (the home view, fresh or after /clear) stays
   // at the top. Entries added while a panel stays open never scroll-jack.
+  // Panel alignment re-applies while the panel settles: the tool client is
+  // dynamically imported, so the panel grows after the first paint (chunk
+  // compile on cold opens) and a one-shot scroll would strand it mid-view —
+  // a scroll container also clamps, so the panel column carries min-h-dvh
+  // (PanelFrame) to keep top-alignment reachable for short panels.
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
@@ -142,9 +147,18 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
       hasEntries: entries.length > 0,
     });
     if (action === "panel") {
-      main
-        .querySelector<HTMLElement>("[data-term-panel]")
-        ?.scrollIntoView({ block: "start" });
+      const el = main.querySelector<HTMLElement>("[data-term-panel]");
+      if (el) {
+        const align = () => {
+          if (!el.isConnected) return;
+          main.scrollTop +=
+            el.getBoundingClientRect().top - main.getBoundingClientRect().top;
+        };
+        align();
+        const observer = new ResizeObserver(align);
+        observer.observe(el);
+        window.setTimeout(() => observer.disconnect(), 2000);
+      }
     } else if (action === "bottom") {
       main.scrollTo({ top: main.scrollHeight });
     } else if (action === "top") {
@@ -232,32 +246,40 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
             <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
         </header>
-        <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
-          {entries.length > 0 && (
-            <div className={cn(TERM_COLUMN, "py-8")}>
-              <Scrollback entries={entries} />
+        {/* One scroll region for scrollback, panels and the prompt: the
+            prompt is sticky inside it so every surface shares the same
+            width — a scrollbar on main can never pull the column out of
+            line with the prompt gutter. */}
+        <main ref={mainRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="min-h-0 flex-1">
+            {entries.length > 0 && (
+              <div className={cn(TERM_COLUMN, "py-8")}>
+                <Scrollback entries={entries} />
+              </div>
+            )}
+            {browser !== null ? (
+              <BrowserPanel
+                url={browser.url}
+                canBack={browser.past.length > 0}
+                canForward={browser.future.length > 0}
+                onBack={browserBack}
+                onForward={browserForward}
+                onNavigate={openBrowser}
+                onClose={closeBrowser}
+              />
+            ) : panel !== null ? (
+              <PanelHost slug={panel} onClose={close} />
+            ) : entries.length === 0 ? (
+              <HomeView onRun={handleSubmit} />
+            ) : null}
+            <div aria-live="polite" aria-atomic="true" className="sr-only">
+              {liveText}
             </div>
-          )}
-          {browser !== null ? (
-            <BrowserPanel
-              url={browser.url}
-              canBack={browser.past.length > 0}
-              canForward={browser.future.length > 0}
-              onBack={browserBack}
-              onForward={browserForward}
-              onNavigate={openBrowser}
-              onClose={closeBrowser}
-            />
-          ) : panel !== null ? (
-            <PanelHost slug={panel} onClose={close} />
-          ) : entries.length === 0 ? (
-            <HomeView onRun={handleSubmit} />
-          ) : null}
-          <div aria-live="polite" aria-atomic="true" className="sr-only">
-            {liveText}
+          </div>
+          <div className="sticky bottom-0 z-20 shrink-0">
+            <PromptBar onSubmit={handleSubmit} autoFocus={panel === null && browser === null} />
           </div>
         </main>
-        <PromptBar onSubmit={handleSubmit} autoFocus={panel === null && browser === null} />
       </div>
     </div>
   );
