@@ -48,6 +48,7 @@ describe("registry list", () => {
       "snippet",
       "music",
       "sql",
+      "browser",
     ]);
   });
 

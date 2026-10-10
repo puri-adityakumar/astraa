@@ -1,24 +1,27 @@
-import type { ToolCommand } from "@/lib/terminal/rows";
+import type { TerminalCommand } from "@/lib/terminal/types";
 import { cn } from "@/lib/utils";
 import { toolDisplayName } from "./tool-names";
 
 interface ToolRowProps {
-  command: ToolCommand;
+  command: TerminalCommand;
   showSummary?: boolean;
+  /** Overrides the derived label — used by rows without a tool slug. */
+  displayName?: string;
   /** Runs the bare command in place; the href stays for no-JS/crawlers. */
   onRun?: ((input: string) => void) | undefined;
 }
 
 /**
- * One registry-driven tool row: key chip + display name. Live commands
- * render an <a href="/tools/<slug>>; with `onRun` the plain left click (or
- * Enter on the focused link) runs the bare command — the same path as
+ * One registry-driven row: key chip + display name. Commands with a tool
+ * page render an <a href="/tools/<slug>>; with `onRun` the plain left click
+ * (or Enter on the focused link) runs the bare command — the same path as
  * typing it — instead of navigating. Modified clicks (Cmd/Ctrl/Shift/Alt)
  * and middle clicks fall through so the browser opens /tools/<slug> in a
- * new tab as usual. Coming-soon commands render a button (no anchor —
- * there is no tool page to link to) that runs the bare command.
+ * new tab as usual. Commands without a tool page (coming-soon tools, the
+ * slug-less browser) render a button that runs the bare command.
  */
-export function ToolRow({ command, showSummary = false, onRun }: ToolRowProps) {
+export function ToolRow({ command, showSummary = false, displayName, onRun }: ToolRowProps) {
+  const label = displayName ?? (command.slug !== null ? toolDisplayName(command.slug) : command.name);
   const className = cn(
     "flex min-h-touch items-center gap-3 rounded-md px-3 py-2",
     "font-sans text-sm text-term-fg no-underline",
@@ -29,7 +32,7 @@ export function ToolRow({ command, showSummary = false, onRun }: ToolRowProps) {
       <span className="shrink-0 rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent">
         {`/${command.name}`}
       </span>
-      <span className="truncate">{toolDisplayName(command.slug)}</span>
+      <span className="truncate">{label}</span>
       {command.status === "coming-soon" && (
         <span className="ml-auto shrink-0 font-mono text-xs text-term-muted">soon</span>
       )}
@@ -41,7 +44,7 @@ export function ToolRow({ command, showSummary = false, onRun }: ToolRowProps) {
     </>
   );
 
-  if (command.status === "coming-soon") {
+  if (command.status === "coming-soon" || command.slug === null) {
     return (
       <button
         type="button"

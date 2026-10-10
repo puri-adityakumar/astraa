@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { Monitor } from "lucide-react";
+import { browserCommand } from "@/lib/terminal/commands/browser";
 import { toolCommands } from "@/lib/terminal/rows";
 import { getCommands } from "@/lib/terminal/registry";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,13 @@ interface SidebarProps {
  */
 export function Sidebar({ open, onClose, onRun }: SidebarProps) {
   const commands = toolCommands(getCommands());
+
+  // Every row funnels through the shell — the browser row included, since it
+  // has no tool slug to link to.
+  const runRow = (input: string) => {
+    onRun?.(input);
+    onClose();
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -71,15 +79,12 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
             </p>
           ) : (
             <ul className="space-y-1">
+              <li>
+                <ToolRow command={browserCommand} displayName="Browser" onRun={runRow} />
+              </li>
               {commands.map((command) => (
                 <li key={command.name}>
-                  <ToolRow
-                    command={command}
-                    onRun={(input) => {
-                      onRun?.(input);
-                      onClose();
-                    }}
-                  />
+                  <ToolRow command={command} onRun={runRow} />
                 </li>
               ))}
             </ul>

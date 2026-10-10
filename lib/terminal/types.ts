@@ -40,6 +40,7 @@ export type CommandResult =
   | { type: "answer"; output: OutputBlock[] } // render inline in the scrollback
   | { type: "open"; slug: ToolSlug; output?: OutputBlock[] } // open the tool panel
   | { type: "fallback"; slug: ToolSlug; message: string } // "I don't understand" + panel
+  | { type: "browser"; url: string | null; output?: OutputBlock[] } // open the browser panel (null = start page)
   | { type: "builtin"; action: BuiltinAction; output?: OutputBlock[] };
 
 export interface TerminalCommand {

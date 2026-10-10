@@ -20,6 +20,7 @@ import { markdownCommand } from "./commands/markdown";
 import { snippetCommand } from "./commands/snippet";
 import { musicCommand } from "./commands/music";
 import { sqlCommand } from "./commands/sql";
+import { browserCommand } from "./commands/browser";
 import type { CommandContext, CommandResult, OutputBlock, TerminalCommand, ToolSlug } from "./types";
 
 const commands: TerminalCommand[] = [
@@ -38,6 +39,7 @@ const commands: TerminalCommand[] = [
   snippetCommand,
   musicCommand,
   sqlCommand,
+  browserCommand,
 ];
 
 /** All registered commands, built-ins first, in registration order. */

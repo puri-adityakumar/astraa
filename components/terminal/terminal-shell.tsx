@@ -8,6 +8,7 @@ import { scrollAction } from "@/lib/terminal/scroll-policy";
 import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
 import { cn } from "@/lib/utils";
 import { TERM_COLUMN } from "./column";
+import { BrowserPanel } from "./browser-panel";
 import { switchToLegacyFlavour } from "./flavour-switch";
 import { HomeView } from "./home-view";
 import { PanelHost } from "./panel-host";
@@ -33,6 +34,15 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [entries, setEntries] = useState<ScrollbackEntry[]>([]);
   const [liveText, setLiveText] = useState("");
+  // The browser panel is session state like the scrollback: no URL sync, no
+  // persistence. The object (not just the url) is the open flag so the start
+  // page (url null) still keeps the panel open, and it carries the panel's
+  // back/forward stacks (cross-origin frame history is not inspectable).
+  const [browser, setBrowser] = useState<{
+    url: string | null;
+    past: (string | null)[];
+    future: (string | null)[];
+  } | null>(null);
   // Coming-soon tools (music, sql) never open a panel: a direct load of
   // their URL prints the coming-soon line in the scrollback instead
   // (architecture §5 rule 5).
@@ -44,11 +54,50 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   );
   const { theme, setTheme } = useTerminalTheme();
   const mainRef = useRef<HTMLElement>(null);
-  const previousPanelRef = useRef<ToolSlug | null>(
+  const previousPanelRef = useRef<ToolSlug | "browser" | null>(
     initialComingSoon ? null : (initialTool ?? null),
   );
   const seededToolRef = useRef<string | null>(null);
   const nextIdRef = useRef(0);
+
+  // The browser and tool panels are mutually exclusive: opening one closes
+  // the other. close() also rewinds a pushed /tools/<slug> history entry.
+  // openBrowser is a fresh visit: drop the forward stack. Back and forward
+  // move between the stacks without touching it.
+  const openBrowser = useCallback(
+    (url: string | null) => {
+      close();
+      setBrowser((current) =>
+        current === null
+          ? { url, past: [], future: [] }
+          : { url, past: [...current.past, current.url], future: [] },
+      );
+    },
+    [close],
+  );
+  const closeBrowser = useCallback(() => setBrowser(null), []);
+  const browserBack = useCallback(() => {
+    setBrowser((current) => {
+      if (current === null || current.past.length === 0) return current;
+      const url = current.past[current.past.length - 1] ?? null;
+      return {
+        url,
+        past: current.past.slice(0, -1),
+        future: [current.url, ...current.future],
+      };
+    });
+  }, []);
+  const browserForward = useCallback(() => {
+    setBrowser((current) => {
+      if (current === null || current.future.length === 0) return current;
+      const url = current.future[0] ?? null;
+      return {
+        url,
+        past: [...current.past, current.url],
+        future: current.future.slice(1),
+      };
+    });
+  }, []);
 
   // Direct loads of /tools/music and /tools/sql seed the scrollback with
   // the command's coming-soon answer, exactly as if it had been typed.
@@ -73,6 +122,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
     setEntries([]);
     setLiveText("Screen cleared.");
     close();
+    setBrowser(null);
   }, [close]);
 
   // Keep the newest output in view without pushing a freshly opened panel's
@@ -83,10 +133,11 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
-    const panelChanged = previousPanelRef.current !== panel;
-    previousPanelRef.current = panel;
+    const panelKey: ToolSlug | "browser" | null = browser !== null ? "browser" : panel;
+    const panelChanged = previousPanelRef.current !== panelKey;
+    previousPanelRef.current = panelKey;
     const action = scrollAction({
-      panelOpen: panel !== null,
+      panelOpen: panelKey !== null,
       panelChanged,
       hasEntries: entries.length > 0,
     });
@@ -99,7 +150,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
     } else if (action === "top") {
       main.scrollTo({ top: 0 });
     }
-  }, [entries, panel]);
+  }, [entries, panel, browser]);
 
   // Ctrl+L clears the screen like /clear, wherever the focus is.
   useEffect(() => {
@@ -136,7 +187,10 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
         // echo to the scrollback first.
         if (action.kind === "theme") setTheme(action.theme);
         if (action.kind === "legacy") switchToLegacyFlavour();
+      } else if (result.type === "browser") {
+        openBrowser(result.url);
       } else if (result.type === "open" || result.type === "fallback") {
+        setBrowser(null);
         open(result.slug);
       }
       const output: OutputBlock[] =
@@ -150,7 +204,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
       ]);
       setLiveText(outputToLiveText(output));
     },
-    [clearScreen, theme, setTheme, open],
+    [clearScreen, theme, setTheme, open, openBrowser],
   );
 
   return (
@@ -184,7 +238,17 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
               <Scrollback entries={entries} />
             </div>
           )}
-          {panel !== null ? (
+          {browser !== null ? (
+            <BrowserPanel
+              url={browser.url}
+              canBack={browser.past.length > 0}
+              canForward={browser.future.length > 0}
+              onBack={browserBack}
+              onForward={browserForward}
+              onNavigate={openBrowser}
+              onClose={closeBrowser}
+            />
+          ) : panel !== null ? (
             <PanelHost slug={panel} onClose={close} />
           ) : entries.length === 0 ? (
             <HomeView onRun={handleSubmit} />
@@ -193,7 +257,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
             {liveText}
           </div>
         </main>
-        <PromptBar onSubmit={handleSubmit} autoFocus={panel === null} />
+        <PromptBar onSubmit={handleSubmit} autoFocus={panel === null && browser === null} />
       </div>
     </div>
   );

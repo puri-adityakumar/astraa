@@ -80,6 +80,7 @@ the scrollback or opened in a panel.
 | `/markdown` | `/md` | `/markdown` | Opens the markdown editor panel |
 | `/snippet` | `/snippets` | `/snippet` | Opens the code snippet generator panel |
 | `/music`, `/sql` | — | `/music` | Coming soon |
+| `/browser` | `/web` | `/browser` · `/browser example.com` | Opens a web page in the side browser panel; bare hosts get `https://` |
 | `/help` | — | `/help` · `/help calculator` | Lists every command with usage |
 | `/clear` | — | `/clear` | Clears the screen (also `Ctrl+L`) |
 | `/theme` | — | `/theme dracula` | Lists or switches the colour scheme |
