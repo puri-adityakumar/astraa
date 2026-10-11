@@ -32,6 +32,17 @@ export function TextView() {
         lintGutter(),
         autocompletion(),
         keymap.of([...defaultKeymap, ...historyKeymap]),
+        EditorView.theme({
+          "&": { fontSize: "13px" },
+          ".cm-content": {
+            fontFamily:
+              "var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
+          },
+          ".cm-scroller": {
+            scrollbarWidth: "thin",
+            scrollbarColor: "rgba(255,255,255,0.2) transparent",
+          },
+        }),
         EditorView.lineWrapping,
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {

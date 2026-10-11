@@ -19,6 +19,7 @@ const MESH_ARCTIC_CSS =
   "radial-gradient(at 50% 100%, #c2e9fb 0%, transparent 60%), #e0f2fe";
 
 export const BG_PRESETS: BgPreset[] = [
+  { id: "muted",       name: "Surface",  css: "linear-gradient(135deg, #2a2733 0%, #1d1c26 100%)" },
   { id: "violet",      name: "Violet",   css: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
   { id: "sunset",      name: "Sunset",   css: "linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)" },
   { id: "ocean",       name: "Ocean",    css: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
@@ -94,7 +95,7 @@ export const DEFAULT_STATE: SnippetState = {
   lineNumbers: false,
   dropShadow: true,
   aspect: { w: 1200, h: 675 },
-  background: { kind: "preset", id: "violet" },
+  background: { kind: "preset", id: "muted" },
   screenshotDataUrl: null,
 };
 

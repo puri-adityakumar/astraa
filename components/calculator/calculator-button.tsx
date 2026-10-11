@@ -21,7 +21,7 @@ export const CalculatorButton = memo(function CalculatorButton({
     <Button
       variant={variant}
       onClick={onClick}
-      className={cn("h-14 text-lg font-mono", className)}
+      className={cn("h-full min-h-14 text-lg font-mono", className)}
     >
       {value}
     </Button>

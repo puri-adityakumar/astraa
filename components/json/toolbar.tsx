@@ -127,10 +127,10 @@ export function Toolbar() {
       <Button size="sm" variant="outline" onClick={sortKeysAction}>
         <ArrowDownAZ className="h-4 w-4 mr-2" aria-hidden /> Sort keys
       </Button>
-      <span className="mx-1 h-5 w-px bg-border" aria-hidden />
       <Button size="sm" variant="ghost" onClick={onCopy}>
         <Copy className="h-4 w-4 mr-2" aria-hidden /> Copy
       </Button>
+      <span className="mx-1 h-5 w-px bg-border" aria-hidden />
       <Button size="sm" variant="ghost" onClick={onDownload}>
         <Download className="h-4 w-4 mr-2" aria-hidden /> Download
       </Button>

@@ -129,6 +129,24 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
     [display, angleMode],
   );
 
+  // Reciprocal evaluates immediately on the display, mirroring the unary
+  // keys (sin, √, …) which run through applyFunction. "1/x" has no entry in
+  // scientificFunctions, so it gets the same shape inline.
+  const applyReciprocal = useCallback(() => {
+    if (display === "Error") return;
+
+    try {
+      const num = parseFloat(display);
+      const result = 1 / num;
+      if (!Number.isFinite(result)) throw new Error("non-finite result");
+      setDisplay(result.toString());
+      setIsNewNumber(true);
+    } catch {
+      setDisplay("Error");
+      setIsNewNumber(true);
+    }
+  }, [display]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -213,22 +231,16 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
         {/* Scientific Keypad (Left) */}
         <div className="p-2 grid grid-cols-3 gap-1 content-start border-r border-border/50">
           <CalculatorButton
-            value="rad"
-            onClick={() => setAngleMode("RAD")}
+            value="1/x"
+            onClick={applyReciprocal}
             variant="secondary"
-            className={cn(
-              "text-sm",
-              angleMode === "RAD" && "bg-muted text-foreground font-semibold",
-            )}
+            className="text-sm"
           />
           <CalculatorButton
-            value="deg"
-            onClick={() => setAngleMode("DEG")}
+            value="abs"
+            onClick={() => applyFunction("abs")}
             variant="secondary"
-            className={cn(
-              "text-sm",
-              angleMode === "DEG" && "bg-muted text-foreground font-semibold",
-            )}
+            className="text-sm"
           />
           <CalculatorButton
             value="x!"
