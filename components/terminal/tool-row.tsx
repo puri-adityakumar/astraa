@@ -24,7 +24,7 @@ export function ToolRow({ command, showSummary = false, displayName, onRun }: To
   const label = displayName ?? (command.slug !== null ? toolDisplayName(command.slug) : command.name);
   const className = cn(
     "group flex min-h-touch items-center gap-3 rounded-md px-3 py-2",
-    "font-sans text-sm text-term-fg no-underline",
+    "font-mono text-sm text-term-fg no-underline",
     "hover:bg-term-surface2 focus-visible:bg-term-surface2",
   );
   const content = (
@@ -34,14 +34,14 @@ export function ToolRow({ command, showSummary = false, displayName, onRun }: To
       <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent transition-colors duration-200 group-hover:text-term-fg">
         {`/${command.name}`}
       </span>
-      <span className="truncate transition-transform duration-200 ease-out group-hover:translate-x-1">
+      <span className="min-w-0 truncate transition-transform duration-200 ease-out group-hover:translate-x-1">
         {label}
       </span>
       {command.status === "coming-soon" && (
         <span className="ml-auto shrink-0 font-mono text-xs text-term-muted">soon</span>
       )}
       {showSummary && command.status === "live" && (
-        <span className="ml-auto hidden truncate text-xs text-term-muted sm:block">
+        <span className="ml-auto hidden truncate font-mono text-xs text-term-muted md:block">
           {command.summary}
         </span>
       )}

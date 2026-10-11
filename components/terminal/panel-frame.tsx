@@ -64,7 +64,7 @@ export function PanelFrame({ title, panelKey, focusKey, onClose, children }: Pan
         className="outline-none"
       >
         <header className="mb-4 flex min-h-touch items-center gap-3">
-          <h2 className="font-sans text-base font-semibold text-term-fg sm:text-lg">
+          <h2 className="font-mono text-base font-semibold text-term-fg">
             {title}
           </h2>
           <span className="font-mono text-xs text-term-muted">Esc to close</span>

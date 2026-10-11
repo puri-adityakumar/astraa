@@ -197,7 +197,7 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
                       : "text-term-muted hover:bg-term-surface2",
                   )}
                 >
-                  <span className="inline-flex w-24 shrink-0 items-center justify-center text-term-accent">
+                  <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 text-term-accent">
                     /{command.name}
                   </span>
                   <span className="min-w-0 truncate">{command.summary}</span>

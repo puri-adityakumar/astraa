@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { copyToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
 import type { OutputBlock } from "@/lib/terminal/types";
@@ -46,7 +46,7 @@ function SecretBlock({ secret }: { secret: string }) {
           type="button"
           aria-pressed={revealed}
           onClick={() => setRevealed((previous) => !previous)}
-          className="flex min-h-touch items-center rounded-md border border-term-surface2 px-3 font-mono text-sm text-term-muted hover:bg-term-surface2 hover:text-term-fg"
+          className="flex min-h-touch min-w-[7.5ch] items-center justify-center rounded-md border border-term-surface2 px-3 font-mono text-sm text-term-muted hover:bg-term-surface2 hover:text-term-fg"
         >
           {revealed ? "Hide" : "Reveal"}
         </button>
@@ -54,7 +54,7 @@ function SecretBlock({ secret }: { secret: string }) {
           type="button"
           onClick={handleCopy}
           className={cn(
-            "flex min-h-touch items-center rounded-md border border-term-surface2 px-3 font-mono text-sm hover:bg-term-surface2",
+            "flex min-h-touch min-w-[7.5ch] items-center justify-center rounded-md border border-term-surface2 px-3 font-mono text-sm hover:bg-term-surface2",
             copied ? "text-term-green" : "text-term-muted hover:text-term-fg",
           )}
         >
@@ -62,6 +62,26 @@ function SecretBlock({ secret }: { secret: string }) {
         </button>
       </div>
     </div>
+  );
+}
+
+/**
+ * Splits a kv value's trailing status (" · live" / " · coming soon") into a
+ * no-wrap span so the status never wraps alone, orphaned from the summary it
+ * qualifies. Values without the suffix render unchanged.
+ */
+function renderValue(value: string): ReactNode {
+  if (!value.endsWith(" · live") && !value.endsWith(" · coming soon")) {
+    return value;
+  }
+  const separator = value.lastIndexOf(" · ");
+  const summary = value.slice(0, separator);
+  const status = value.slice(separator + " · ".length);
+  return (
+    <>
+      {summary}
+      <span className="whitespace-nowrap">{" · " + status}</span>
+    </>
   );
 }
 
@@ -83,7 +103,7 @@ function SingleBlock({ block }: { block: OutputBlock }) {
           {block.entries.map((entry, index) => (
             <div key={index} className="contents">
               <span className="whitespace-nowrap text-term-accent sm:whitespace-normal">{entry.key}</span>
-              <span className="min-w-0 break-words text-term-muted">{entry.value}</span>
+              <span className="min-w-0 break-words text-term-muted">{renderValue(entry.value)}</span>
             </div>
           ))}
         </div>

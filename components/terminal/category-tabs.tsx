@@ -65,10 +65,10 @@ export function CategoryTabs({ categories, active, idPrefix, onChange }: Categor
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(category)}
             className={cn(
-              "min-h-touch rounded-md border px-3 font-sans text-sm",
+              "min-h-touch rounded-md border px-3 font-mono text-sm",
               selected
                 ? "border-term-surface2 bg-term-surface2 text-term-fg"
-                : "border-transparent text-term-muted hover:text-term-fg",
+                : "border-transparent text-term-muted hover:bg-term-surface2 hover:text-term-fg focus-visible:bg-term-surface2",
             )}
           >
             {category}

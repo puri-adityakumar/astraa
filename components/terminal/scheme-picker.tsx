@@ -15,7 +15,7 @@ export function SchemePicker() {
     <div className="px-2 py-1">
       <label
         htmlFor="term-theme-picker"
-        className="block px-1 pb-1 font-sans text-sm text-term-muted"
+        className="block px-1 pb-1 font-mono text-sm text-term-muted"
       >
         Colour scheme
       </label>
@@ -26,7 +26,7 @@ export function SchemePicker() {
           const next = event.target.value;
           if (isTermTheme(next)) setTheme(next);
         }}
-        className="min-h-touch w-full rounded-md border border-term-surface2 bg-term-surface px-3 font-sans text-sm text-term-fg focus-visible:bg-term-surface2"
+        className="min-h-touch w-full rounded-md border border-term-surface2 bg-term-surface px-3 font-mono text-sm text-term-fg focus-visible:bg-term-surface2"
       >
         {TERM_THEMES.map((option) => (
           <option key={option} value={option}>

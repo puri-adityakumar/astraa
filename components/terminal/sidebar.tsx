@@ -78,7 +78,7 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
 
         <nav aria-label="Tools" className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
           {commands.length === 0 ? (
-            <p className="px-3 py-2 font-sans text-sm text-term-muted">
+            <p className="px-3 py-2 font-mono text-sm text-term-muted">
               No tools registered yet.
             </p>
           ) : (
@@ -105,7 +105,7 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
             <button
               type="button"
               onClick={switchToLegacyFlavour}
-              className="flex min-h-touch w-full items-center justify-between rounded-md px-3 font-sans text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
+              className="flex min-h-touch w-full items-center justify-between rounded-md px-3 font-mono text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
             >
               <span>Legacy UI</span>
               <Monitor className="h-4 w-4 shrink-0 text-term-muted" aria-hidden="true" />
@@ -120,7 +120,7 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
                 <Link
                   href={link.href}
                   onClick={onClose}
-                  className="flex min-h-touch items-center rounded-md px-3 font-sans text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
+                  className="flex min-h-touch items-center rounded-md px-3 font-mono text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
                 >
                   {link.label}
                 </Link>
