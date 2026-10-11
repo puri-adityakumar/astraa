@@ -68,7 +68,8 @@ export const SCHEMES: readonly TerminalScheme[] = [
       fg: "#f8f8f2",
       // ADJUSTED: #6272a4 lightened (kept hue) for AA vs bg and surface.
       muted: "#8592b8",
-      accent: "#bd93f9",
+      // ADJUSTED: dracula's identity is the pink — #bd93f9 read as mocha's lavender.
+      accent: "#ff79c6",
       green: "#50fa7b",
       red: "#ff5555",
       yellow: "#f1fa8c",

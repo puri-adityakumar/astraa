@@ -11,6 +11,7 @@ import {
 } from "@/lib/terminal/history";
 import { suggest } from "@/lib/terminal/registry";
 import { cn } from "@/lib/utils";
+import { TERM_COLUMN } from "./column";
 
 interface PromptBarProps {
   /** Runs a submitted input line through the command registry. */
@@ -139,8 +140,8 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
   };
 
   return (
-    <div className="shrink-0 bg-term-bg">
-      <div className="mx-auto w-full max-w-3xl border-t border-term-surface2 px-4 py-3 sm:px-6">
+    <div className="shrink-0 bg-term-bg [padding-bottom:env(safe-area-inset-bottom)]">
+      <div className={cn(TERM_COLUMN, "border-t border-term-surface2 py-3")}>
         <div className="relative flex items-center gap-2 font-mono text-sm">
           <label htmlFor="term-prompt" className="sr-only">
             Terminal command
@@ -173,7 +174,7 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
               setActiveIndex(-1);
             }}
             onKeyDown={handleKeyDown}
-            className="min-h-touch w-full min-w-0 bg-transparent text-term-fg outline-none placeholder:text-term-muted"
+            className="min-h-touch w-full min-w-0 bg-transparent text-term-fg outline-none [caret-color:var(--term-accent)] placeholder:text-term-muted"
           />
           {listOpen && (
             <ul

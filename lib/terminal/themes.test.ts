@@ -42,7 +42,7 @@ const BASE_SURFACE2: Record<string, string> = {
 
 const UNADJUSTED: Record<string, string[]> = {
   mocha: ["fg", "muted", "accent", "green", "red", "yellow", "cyan"],
-  dracula: ["fg", "accent", "green", "red", "yellow", "cyan"],
+  dracula: ["fg", "green", "red", "yellow", "cyan"],
   "tokyo-night": ["fg", "accent", "green", "red", "yellow", "cyan"],
   latte: ["fg", "cyan"],
   "solarized-light": [],
@@ -102,7 +102,7 @@ describe("scheme table", () => {
 
   it("adjusts only the colours that need it, keeping their hue", () => {
     const adjusted: Record<string, string[]> = {
-      dracula: ["muted"],
+      dracula: ["muted", "accent"],
       "tokyo-night": ["muted"],
       latte: ["muted", "accent", "green", "red", "yellow"],
       "solarized-light": ["fg", "muted", "accent", "green", "red", "yellow", "cyan"],

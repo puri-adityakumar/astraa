@@ -12,7 +12,7 @@ function Entry({ entry }: { entry: ScrollbackEntry }) {
     <li className="space-y-2">
       <p className="font-mono text-sm">
         <span className="text-term-green">guest@astraa &gt;</span>{" "}
-        <span className="break-all text-term-fg">{entry.input}</span>
+        <span className="break-all [overflow-wrap:anywhere] text-term-fg">{entry.input}</span>
       </p>
       {entry.output.length > 0 && <OutputBlocks blocks={entry.output} />}
     </li>
