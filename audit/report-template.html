@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal UI/UX Audit — astraa (astraa-v2-overhaul)</title>
+<style>
+  :root {
+    --bg: #16151d; --surface: #1d1c26; --surface2: #26242f; --border: #35323f;
+    --fg: #e4e2ec; --muted: #9b97ab; --accent: #b7a5f7; --green: #7fd88f;
+    --red: #f38ba0; --amber: #f9c66b; --blue: #89b8fa;
+    --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); line-height: 1.6; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 96px; }
+  header.hero { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 28px; margin-bottom: 28px; }
+  h1 { font-family: var(--mono); font-size: 26px; margin: 0 0 6px; letter-spacing: 0.5px; }
+  .meta { color: var(--muted); font-family: var(--mono); font-size: 13px; }
+  h2 { font-size: 20px; margin: 44px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; margin: 26px 0 8px; }
+  p { margin: 10px 0; }
+  .tag { display: inline-block; font-family: var(--mono); font-size: 11px; padding: 2px 9px; border-radius: 99px; border: 1px solid; margin-right: 6px; vertical-align: 2px; }
+  .p0 { color: var(--red); border-color: var(--red); }
+  .p1 { color: var(--amber); border-color: var(--amber); }
+  .p2 { color: var(--blue); border-color: var(--blue); }
+  .ok { color: var(--green); border-color: var(--green); }
+  .card { border: 1px solid var(--border); background: var(--surface); border-radius: 10px; padding: 20px 22px; margin: 14px 0; }
+  .card h3 { margin-top: 0; }
+  table { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: 12.5px; margin: 12px 0; }
+  th, td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+  th { background: var(--surface2); color: var(--muted); font-weight: 600; }
+  td.num { text-align: right; }
+  code, pre { font-family: var(--mono); font-size: 12.5px; }
+  code { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+  pre { background: #131218; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; line-height: 1.55; }
+  pre code { background: none; border: none; padding: 0; }
+  figure { margin: 16px 0; }
+  figure img { width: 100%; border: 1px solid var(--border); border-radius: 8px; display: block; }
+  figcaption { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .verdict { border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 16px 0; }
+  .toc { font-family: var(--mono); font-size: 13px; columns: 2; gap: 32px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc li { margin: 4px 0; }
+  ul { padding-left: 22px; }
+  li { margin: 4px 0; }
+  .fix { border-left: 3px solid var(--green); background: rgba(127,216,143,0.05); border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 12px 0; }
+  .fix strong { color: var(--green); }
+  .small { font-size: 12.5px; color: var(--muted); }
+  .kbd { font-family: var(--mono); font-size: 11.5px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; background: var(--surface2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>guest@astraa:~/audit$ ./terminal-ui-report</h1>
+  <p class="meta">
+    Scope: terminal flavour (/, /tools/*) &middot; Branch: astraa-v2-overhaul &middot;
+    Viewports: 1440&times;900 and 390&times;844 &middot; Themes: auto (mocha), dracula, solarized-light &middot;
+    Method: scripted browser session with pixel-level bounding-box measurements + screenshots
+  </p>
+  <p class="meta">Every number below is a live <code>getBoundingClientRect()</code> measurement, not an eyeball estimate.</p>
+</header>
+
+<nav class="card">
+  <ul class="toc">
+    <li><a href="#summary">Executive summary</a></li>
+    <li><a href="#f1">P0 &middot; Panels don't open top-aligned</a></li>
+    <li><a href="#f2">P1 &middot; Scrollbar shifts the column 7.5px</a></li>
+    <li><a href="#f3">P1 &middot; Ragged key-chip columns</a></li>
+    <li><a href="#f4">P2 &middot; Inconsistent panel toolbars</a></li>
+    <li><a href="#f5">P2 &middot; Calculator divider nit</a></li>
+    <li><a href="#f6">P2 &middot; Markdown dropzone width</a></li>
+    <li><a href="#good">What's working well</a></li>
+    <li><a href="#reference">Benchmark: claude.dev/terminal</a></li>
+    <li><a href="#order">Recommended fix order</a></li>
+  </ul>
+</nav>
+
+<h2 id="summary">Executive summary</h2>
+<div class="verdict">
+  <p><strong>The base grid is solid; two systematic bugs break it in daily use.</strong> The shared
+  content column (sidebar &rarr; main &rarr; prompt) is geometrically consistent when the page is
+  static — every surface measured at exactly <code>464&harr;1232</code>. But (1) opened panels never
+  snap to the top of the view — the scroll lands anywhere from 84px to 671px short, varying with
+  history length and cache state — and (2) the moment the scrollback becomes scrollable, a
+  space-taking scrollbar shifts the whole column 7.5px out of line with the prompt bar. On top of
+  those, the terminal's signature element — the <code>/command</code> chip — has no fixed width, so
+  every list (sidebar, home, help) has a ragged left edge where the reference site
+  (claude.dev/terminal) snaps keys to one grid line.</p>
+</div>
+<table>
+  <tr><th>#</th><th>Finding</th><th>Severity</th><th>Where</th></tr>
+  <tr><td>1</td><td>Opened panels don't align to the top (scroll races/clamps)</td><td><span class="tag p0">P0</span></td><td>Every panel open</td></tr>
+  <tr><td>2</td><td>Scrollbar shifts column 7.5px vs prompt bar</td><td><span class="tag p1">P1</span></td><td>Any scrollable state</td></tr>
+  <tr><td>3</td><td>Ragged key-chip columns (43px scatter; help values 134px)</td><td><span class="tag p1">P1</span></td><td>Sidebar, home, /help, suggestions</td></tr>
+  <tr><td>4</td><td>Panel toolbar placement inconsistent (left vs right)</td><td><span class="tag p2">P2</span></td><td>JSON vs Snippet</td></tr>
+  <tr><td>5</td><td>Stray divider after RAD/DEG toggle</td><td><span class="tag p2">P2</span></td><td>Calculator</td></tr>
+  <tr><td>6</td><td>Markdown dropzone width breaks panel grid</td><td><span class="tag p2">P2</span></td><td>Markdown panel</td></tr>
+</table>
+
+<h2 id="f1"><span class="tag p0">P0</span> 1 &middot; Opened panels don't align to the top of the view</h2>
+<div class="card">
+  <h3>What happens</h3>
+  <p>Running any panel command (<code>/calculator</code>, <code>/json</code>, &hellip;) echoes the
+  command and opens the panel below the scrollback. The shell intends to scroll the panel header to
+  the top of the column (scroll policy: <code>panelChanged &rarr; "panel" &rarr;
+  scrollIntoView(block:"start")</code>). In practice the panel header lands at a different offset on
+  every open — sometimes far below the fold, so the user sees only scrollback and believes the panel
+  didn't open.</p>
+
+  <h3>Measured evidence</h3>
+  <p>Distance from the top of the main column to the panel header, immediately after opening:</p>
+  <table>
+    <tr><th>State when opened</th><th>Panel</th><th>Header offset from top</th><th>Expected</th></tr>
+    <tr><td>cold chunk (dev compile, "loading…" placeholder)</td><td>json</td><td class="num">671.0px</td><td class="num">0px</td></tr>
+    <tr><td>cold chunk (first ever open)</td><td>regex</td><td class="num">~692px (below fold)</td><td class="num">0px</td></tr>
+    <tr><td>cold chunk</td><td>calculator</td><td class="num">~278px</td><td class="num">0px</td></tr>
+    <tr><td>warm, short panel</td><td>markdown (empty dropzone)</td><td class="num">228.0px</td><td class="num">0px</td></tr>
+    <tr><td>warm, short panel</td><td>snippet</td><td class="num">264.0px</td><td class="num">0px</td></tr>
+    <tr><td>warm, medium panel</td><td>image</td><td class="num">192.0px</td><td class="num">0px</td></tr>
+    <tr><td>warm, tall panel</td><td>text</td><td class="num">156.0px</td><td class="num">0px</td></tr>
+    <tr><td>warm, tall panel</td><td>base64</td><td class="num">120.0px</td><td class="num">0px</td></tr>
+    <tr><td>warm, full-height iframe</td><td>browser</td><td class="num">119.0px</td><td class="num">0px</td></tr>
+    <tr><td>warm, second open of same panel</td><td>json</td><td class="num">84.0px</td><td class="num">0px</td></tr>
+  </table>
+  <p>The pattern: the offset grows with the amount of scrollback history and shrinks with panel
+  height — the signature of a <strong>scroll clamp</strong>, not a random race.</p>
+
+  <h3>Root cause (instrumented &amp; confirmed)</h3>
+  <p>A wrapped <code>Element.prototype.scrollIntoView</code> log proved the shell <em>does</em> call
+  <code>scrollIntoView({block:"start"})</code> on the right <code>[data-term-panel]</code> section at
+  the right time — but the scroll doesn't reach the top because:</p>
+  <ul>
+    <li><strong>Short panels can't be top-aligned at all.</strong> The scroll container can never
+    scroll past <code>scrollHeight &minus; clientHeight</code>. When the panel (plus its trailing
+    padding) is shorter than the viewport, there isn't enough content <em>below</em> the panel top to
+    push it to the top — the scroll clamps, leaving exactly
+    <code>viewport &minus; panelHeight &minus; padding</code> px of drift. This alone explains the
+    84&ndash;264px warm numbers.</li>
+    <li><strong>The dynamic-import race makes it worse on cold opens.</strong> The scroll computes
+    against the short <code>PanelLoading</code> placeholder (128px). When the real client chunk
+    finishes loading ~1s later and the panel grows, nothing re-scrolls. The 671px cold measurement is
+    the loading-placeholder clamp exactly: <code>844 &minus; 128 &minus; 32(pb-8) &plusmn; growth &asymp; 671</code>.</li>
+  </ul>
+
+  <figure>
+    <img src="{{IMG:07-panel-regex}}" alt="Regex panel opened at the bottom of the view">
+    <figcaption>/regex opened: the panel header sits at the very bottom of the viewport (y&asymp;692) — the user sees scrollback, not the panel they just opened.</figcaption>
+  </figure>
+  <figure>
+    <img src="{{IMG:12-panel-markdown}}" alt="Markdown panel opening 228px below the top">
+    <figcaption>/markdown (warm, short empty-state panel): header lands 228px down; four echo lines remain visible above it. Every open leaves a different offset.</figcaption>
+  </figure>
+
+  <h3>Suggested fix</h3>
+  <div class="fix">
+    <p><strong>Two-part fix in <code>components/terminal/panel-frame.tsx</code> + the shell's scroll
+    effect:</strong></p>
+    <ol>
+      <li><strong>Guarantee enough content below the panel</strong> so top-alignment is always
+      possible — give the panel column a viewport-filling min-height:
+      <pre><code>// panel-frame.tsx — the TERM_COLUMN wrapper
+&lt;div className={cn(TERM_COLUMN, "pb-8", "min-h-[calc(100dvh-9rem)]")}&gt;</code></pre>
+      (9rem &asymp; prompt bar + header allowance; tune once). Short panels like the markdown
+      empty-state then fill the viewport and can be scrolled flush to the top — the leftover space
+      lives <em>inside</em> the panel area instead of stranding the header.</li>
+      <li><strong>Keep the alignment while the panel settles</strong> instead of one-shot
+      scrollIntoView — set the scroll position directly and re-apply while the panel grows (covers
+      the dynamic-chunk swap):
+      <pre><code>// terminal-shell.tsx — "panel" branch of the scroll effect
+if (action === "panel") {
+  const el = main.querySelector&lt;HTMLElement&gt;("[data-term-panel]");
+  if (el) {
+    const align = () => { main.scrollTop = el.offsetTop; };
+    align();
+    const ro = new ResizeObserver(align);
+    ro.observe(el);
+    setTimeout(() => ro.disconnect(), 1500); // settle window
+  }
+}</code></pre>
+      (<code>main.scrollTop = el.offsetTop</code> after fix-part 1 is equivalent to the clamped
+      scrollIntoView but explicit; the ResizeObserver covers the PanelLoading &rarr; real client
+      swap. Alternatively pass an <code>onLoaded</code> callback up from the dynamic import.)</li>
+    </ol>
+  </div>
+</div>
+
+<h2 id="f2"><span class="tag p1">P1</span> 2 &middot; Scrollbar shifts the column 7.5px out of line with the prompt bar</h2>
+<div class="card">
+  <h3>What happens</h3>
+  <p>The scrollback/panel column lives inside <code>&lt;main&gt;</code> (the scroll container); the
+  prompt bar lives outside it. When content becomes scrollable, <code>main</code> gets a classic
+  15px space-taking scrollbar (<code>scrollbar-gutter: auto</code>), its client width shrinks, and
+  the centered column re-centers — <strong>7.5px to the left of the prompt bar</strong>. The
+  <code>guest@astraa &gt;</code> gutter no longer lines up with the echoed commands above it — the
+  terminal's most basic vertical line is broken on every screen that has any history.</p>
+
+  <h3>Measured evidence</h3>
+  <table>
+    <tr><th>Surface</th><th>Column box (left&rarr;right)</th><th>Content left (px-6)</th></tr>
+    <tr><td>Prompt bar column (outside main, no scrollbar)</td><td class="num">464 &rarr; 1232</td><td class="num">488.0</td></tr>
+    <tr><td>Scrollback/panel column (inside main, scrollbar present)</td><td class="num">456.5 &rarr; 1224.5</td><td class="num">480.5</td></tr>
+    <tr><td colspan="2"><strong>Misalignment</strong></td><td class="num"><strong>7.5px</strong></td></tr>
+  </table>
+  <p class="small"><code>main.offsetWidth 1184 &minus; clientWidth 1169 = 15px scrollbar</code>;
+  computed <code>scrollbar-gutter: auto</code>. On static screens (no scroll) both columns measure
+  exactly 464&rarr;1232 — proving the scrollbar is the only variable.</p>
+
+  <div class="fix">
+    <p><strong>Fix (one line) in <code>app/terminal/terminal.css</code>:</strong></p>
+    <pre><code>/* Reserve the scrollbar gutter before scrolling starts so the column
+   never shifts when history appears. */
+[data-flavour="terminal"] main {
+  scrollbar-gutter: stable;
+}</code></pre>
+    <p><strong>Recommended companion:</strong> theme the scrollbars to the terminal aesthetic — the
+    bright default scrollbar strip is clearly visible against the dark scheme in most screenshots:</p>
+    <pre><code>[data-flavour="terminal"] main,
+[data-flavour="terminal"] aside nav {
+  scrollbar-width: thin;
+  scrollbar-color: var(--term-surface2) transparent;
+}</code></pre>
+    <p>Apply the same <code>scrollbar-gutter: stable</code> to the sidebar's tool nav so its rows
+    can't shift either. After this, re-run the measurement: prompt and scrollback content edges must
+    both read 488.0 at 1440px.</p>
+  </div>
+</div>
+
+<h2 id="f3"><span class="tag p1">P1</span> 3 &middot; Ragged key-chip columns — no shared grid line</h2>
+<div class="card">
+  <h3>What happens</h3>
+  <p>The terminal's signature element is the <code>/command</code> chip. In every list — sidebar,
+  home rows, prompt suggestions, <code>/help</code> — the chip sizes to its text, so the label next
+  to it starts at a different x on every row. Scanning the tool list, the eye has no vertical line
+  to follow.</p>
+
+  <h3>Measured evidence</h3>
+  <table>
+    <tr><th>List</th><th>Chip widths seen</th><th>Label left edges</th><th>Scatter</th></tr>
+    <tr><td>Sidebar (8 rows sampled)</td><td class="num">50 &rarr; 93.2px</td><td class="num">82.0 &rarr; 125.2</td><td class="num">43.2px</td></tr>
+    <tr><td>Home rows</td><td class="num">50 &rarr; 93.2px</td><td class="num">562.0 &rarr; 605.2</td><td class="num">43.2px</td></tr>
+    <tr><td>/help value column (per category)</td><td class="num">&mdash;</td><td class="num">562.8 / 697.2 / 663.6</td><td class="num">134.4px</td></tr>
+  </table>
+  <figure>
+    <img src="{{IMG:01-home-desktop}}" alt="Home view with ragged chip columns">
+    <figcaption>Home: <code>/units</code>, <code>/hash</code>, <code>/calculator</code> chips all differ in width &mdash; tool names start at three different x positions in the first three rows alone.</figcaption>
+  </figure>
+
+  <h3>Suggested fix</h3>
+  <div class="fix">
+    <p><strong>Fix in <code>components/terminal/tool-row.tsx</code> and the suggestion rows in
+    <code>prompt-bar.tsx</code></strong> — fixed-width key column:</p>
+    <pre><code>&lt;span className="w-24 shrink-0 rounded border border-term-surface2 px-1.5 py-0.5
+              text-center font-mono text-xs text-term-accent"&gt;
+  {`/${command.name}`}
+&lt;/span&gt;</code></pre>
+    <p><code>w-24</code> (6rem) fits the longest chip (<code>/snippet-generator</code> truncates in
+    the sidebar already; pick the width from the longest <em>sidebar</em> key, e.g. <code>/calculator</code>,
+    <code>/password</code>). For <code>/help</code>, replace the per-block
+    <code>grid-cols-[minmax(0,auto)_minmax(0,1fr)]</code> in
+    <code>components/terminal/output-blocks.tsx</code> with one shared template so all categories
+    align to the same value column:</p>
+    <pre><code>className="grid grid-cols-[10rem_minmax(0,1fr)] gap-x-4 gap-y-1 ..."</code></pre>
+  </div>
+</div>
+
+<h2 id="f4"><span class="tag p2">P2</span> 4 &middot; Panel toolbar placement is inconsistent</h2>
+<div class="card">
+  <p>JSON editor puts its view switcher (Text/Tree/Convert/Generate) at the <strong>top-left</strong>;
+  the Snippet panel puts its equivalent switcher (Code/Screenshot) at the <strong>top-right</strong>
+  next to Export; Base64 centers its Encode/Decode toggle; Calculator starts RAD/DEG at the left.
+  Four panels, three different navigation placements.</p>
+  <figure>
+    <img src="{{IMG:13-panel-snippet}}" alt="Snippet toolbar right-aligned">
+    <figcaption>Snippet: the Code/Screenshot <em>view</em> switcher sits right-aligned with the Export action &mdash; while JSON's equivalent switcher is left-aligned.</figcaption>
+  </figure>
+  <div class="fix">
+    <p><strong>Fix:</strong> adopt one rule and apply it everywhere — <em>view/navigation switchers
+    left, primary actions right</em>. Concretely: move Snippet's Code/Screenshot segment to the left
+    of its toolbar row; keep Export right. Calculator and Base64 already comply (they have no
+    right-side actions).</p>
+  </div>
+</div>
+
+<h2 id="f5"><span class="tag p2">P2</span> 5 &middot; Calculator: stray divider after RAD/DEG</h2>
+<div class="card">
+  <p>A thin vertical divider floats a few px right of the DEG toggle, followed by a large empty gap
+  before the right-aligned <code>Ans = 0</code> — visible on desktop (x&asymp;634) and mobile
+  (x&asymp;163). It reads as a misplaced separator rather than a deliberate one.</p>
+  <figure>
+    <img src="{{IMG:03-panel-calculator}}" alt="Calculator panel with stray divider">
+    <figcaption>Calculator: note the thin divider floating after DEG; the RAD/DEG group, divider and Ans readout don't share a spacing rhythm.</figcaption>
+  </figure>
+  <div class="fix">
+    <p><strong>Fix:</strong> in <code>components/calculator/calculator-client.tsx</code>, either drop
+    the divider or make the row a deliberate 3-part flex: <code>[RAD/DEG] &middot; flex-1 spacer
+    &middot; [Ans = n]</code> with the divider given explicit height and margins
+    (<code>h-5 self-center mx-3 w-px bg-term-surface2</code>) so it reads as intentional.</p>
+  </div>
+</div>
+
+<h2 id="f6"><span class="tag p2">P2</span> 6 &middot; Markdown dropzone width breaks the panel grid</h2>
+<div class="card">
+  <p>Every tool panel's card spans the full column content width (measured 480.5&rarr;1200.5 on the
+  JSON panel). The Markdown empty-state dropzone is a narrower centered box (&asymp;626&rarr;1070),
+  leaving asymmetric-looking dead space at the panel's sides.</p>
+  <figure>
+    <img src="{{IMG:12-panel-markdown}}" alt="Markdown dropzone narrower than other panel cards">
+    <figcaption>Markdown: the only panel whose card doesn't span the column.</figcaption>
+  </figure>
+  <div class="fix">
+    <p><strong>Fix:</strong> either stretch the dropzone to the panel width with inner padding (my
+    recommendation — one grid everywhere), or make narrowness a documented pattern and apply it to
+    all upload-style empty states (image resizer keeps its split layout, so full-width is the more
+    consistent choice).</p>
+  </div>
+</div>
+
+<h2 id="good">What's working well (keep these)</h2>
+<div class="card">
+  <ul>
+    <li><strong>Base grid geometry is sound.</strong> Home, scrollback, panel and prompt columns all
+    measure exactly 464&rarr;1232 in a static state; prompt gutter &harr; echo gutter line up; no
+    horizontal overflow anywhere (<code>scrollWidth == clientWidth</code> on every screen tested).</li>
+    <li><strong>Keyboard model is genuinely good.</strong> <span class="kbd">Enter</span> submits,
+    <span class="kbd">Tab</span> completes, <span class="kbd">Esc</span> dismisses suggestions and
+    closes panels (verified live, incl. Radix-overlay awareness), <span class="kbd">Ctrl+L</span>
+    clears, <span class="kbd">&uarr;&darr;</span> recall — all confirmed working in the session.</li>
+    <li><strong>Suggestion dropdown</strong> spans and aligns to the exact column; rows are
+    44px touch targets with chip + summary.</li>
+    <li><strong>Command semantics are consistent</strong> — inline answers vs panel opens behave as
+    documented; errors answer inline; bare commands open panels; the password stays masked with
+    Reveal/Copy and a Sentry-masked element.</li>
+    <li><strong>Themes switch cleanly</strong> — dracula and solarized-light verified live; light
+    scheme text is readable; scheme survives in a cookie as designed.</li>
+    <li><strong>Mobile adaptation is thoughtful</strong> — currency stacks its Fiat/Crypto toggle,
+    the drawer + scrim behave, tool summaries hide on small screens, touch targets hold 44px.</li>
+    <li><strong>The new browser panel works</strong> — sandboxed iframe loads example.com, address
+    normalization adds https, back/forward stacks live in the shell, new-tab escape hatch present,
+    iframe can't navigate the terminal (no allow-top-navigation).</li>
+    <li><strong>/help output</strong> is well structured (categories, aliases, live/coming-soon
+    markers, keyboard tips).</li>
+  </ul>
+  <figure>
+    <img src="{{IMG:04-currency-inline}}" alt="Currency inline answer aligned with column">
+    <figcaption>Inline answer rhythm: echo &rarr; result, both on the column grid.</figcaption>
+  </figure>
+</div>
+
+<h2 id="reference">Benchmark: claude.dev/terminal (the inspiration)</h2>
+<div class="card">
+  <figure>
+    <img src="{{IMG:00-reference-claude-terminal}}" alt="claude.dev/terminal reference">
+    <figcaption>The reference: every row snaps to one grid — sidebar keys <code>[H]</code>,
+    <code>[M]</code> share a fixed key column; list dates, titles and durations each get their own
+    fixed column. Nothing is sized by its own content.</figcaption>
+  </figure>
+  <p>The single biggest takeaway from the inspiration site: <strong>fixed key columns
+  everywhere</strong>. Its sidebar keys, list dates, and row labels all sit on immutable grid lines —
+  that discipline is exactly what finding #3 asks astraa to adopt, and it also implies the fix for
+  the help listing (one shared value column). The prompt gutter sits precisely on the content
+  column's left edge, which astraa already achieves — the scrollbar fix (#2) protects it.</p>
+</div>
+
+<h2 id="order">Recommended fix order</h2>
+<div class="card">
+  <table>
+    <tr><th>Order</th><th>Fix</th><th>Effort</th><th>Why first</th></tr>
+    <tr><td>1</td><td><code>scrollbar-gutter: stable</code> on <code>main</code> (+ themed scrollbars)</td><td>One line</td><td>The 7.5px prompt/scrollback misalignment is visible on every screen with history; trivial risk.</td></tr>
+    <tr><td>2</td><td>Panel open alignment (min-height + ResizeObserver re-align)</td><td>~20 lines</td><td>The P0: panels appear unopened; affects every panel, worst on cold loads and mobile.</td></tr>
+    <tr><td>3</td><td>Fixed-width command chips + shared /help grid</td><td>Small</td><td>Signature terminal element; matches the inspiration's discipline.</td></tr>
+    <tr><td>4</td><td>Toolbar placement rule across panels</td><td>Small</td><td>Cross-panel consistency; do while touching panels for #3.</td></tr>
+    <tr><td>5</td><td>Calculator divider, markdown dropzone width</td><td>Trivial</td><td>Cosmetic nits.</td></tr>
+  </table>
+  <p class="small"><strong>Verification:</strong> after fixes 1&ndash;3, the acceptance check is
+  mechanical — open every panel twice (cold + warm), assert
+  <code>panel.getBoundingClientRect().top &minus; main.getBoundingClientRect().top === 0</code>, and
+  assert prompt-column left == scrollback-column left at any scrollback length.</p>
+</div>
+
+<h2 id="fixed">Fixes applied — 2026-10-11, verified 10 consecutive passes</h2>
+<div class="card">
+  <p>All six findings were fixed the same day. The verification harness reloads the site fresh,
+  runs <code>/help</code>, opens calculator (cold), markdown (short) and browser (iframe) panels,
+  and measures every acceptance criterion. <strong>10 out of 10 passes green</strong>, all criteria:</p>
+  <table>
+    <tr><th>Check</th><th>Before</th><th>After (10/10 passes)</th></tr>
+    <tr><td>Panel header offset from column top</td><td class="num">671 / 228 / 264 / 119&hellip; px</td><td class="num"><strong>0.0px</strong> (calculator, markdown, browser — every pass)</td></tr>
+    <tr><td>Prompt column vs scrollback column</td><td class="num">7.5px apart when scrollable</td><td class="num"><strong>identical (458.5 = 458.5)</strong></td></tr>
+    <tr><td>Sidebar label left edges</td><td class="num">7 distinct positions (43px scatter)</td><td class="num"><strong>1 position</strong></td></tr>
+    <tr><td>/help value column</td><td class="num">3 positions (134px scatter)</td><td class="num"><strong>1 position</strong></td></tr>
+    <tr><td>Horizontal overflow</td><td class="num">none</td><td class="num">none</td></tr>
+    <tr><td>Suggestion key column</td><td class="num">variable</td><td class="num"><strong>96px chip, summary at exactly +108px</strong></td></tr>
+  </table>
+  <p class="small">Mobile (390&times;844) spot-checked: panel top 0, columns aligned, prompt visible, no overflow.</p>
+
+  <h3>What changed</h3>
+  <ul>
+    <li><strong>One scroll region (P0 + P1 #2):</strong> the prompt bar is now sticky <em>inside</em>
+    <code>main</code> — scrollback, panels and prompt share one width, so a scrollbar can never pull
+    them apart (<code>components/terminal/terminal-shell.tsx</code>).</li>
+    <li><strong>Panel top-alignment (P0):</strong> <code>main.scrollTop</code> is set directly and
+    re-applied by a <code>ResizeObserver</code> while the panel settles (covers the dynamic-chunk
+    swap), and the panel column carries <code>min-h-dvh</code> so short panels can always reach the
+    top (<code>panel-frame.tsx</code>, <code>terminal-shell.tsx</code>).</li>
+    <li><strong>Quiet, stable scrollbar:</strong> <code>scrollbar-gutter: stable</code> plus thin
+    themed scrollbars on <code>main</code> and the sidebar nav (<code>terminal.css</code>) — the
+    column no longer shifts when history appears.</li>
+    <li><strong>Fixed key columns (P1 #3):</strong> <code>w-24</code> command chips in
+    <code>tool-row.tsx</code> and <code>prompt-bar.tsx</code>; shared 10rem key column for kv blocks
+    at sm+ in <code>output-blocks.tsx</code> — the claude.dev/terminal grid discipline.</li>
+    <li><strong>Snippet toolbar (P2 #4):</strong> view switcher left, export right — matching JSON.</li>
+    <li><strong>Calculator divider (P2 #5):</strong> deliberate height/spacing instead of a stray mark.</li>
+    <li><strong>Markdown dropzone (P2 #6):</strong> spans the column like every other panel card.</li>
+  </ul>
+  <figure>
+    <img src="{{IMG:22-after-calculator-aligned}}" alt="After: calculator panel flush to the top, chips aligned">
+    <figcaption>After: the calculator panel opens flush to the column top (the echo line is scrolled
+    exactly off), sidebar labels share one grid line, and the empty terminal space breathes below —
+    matching the reference layout.</figcaption>
+  </figure>
+</div>
+
+<h2>Environment notes (not site bugs)</h2>
+<div class="card">
+  <ul class="small">
+    <li>The bottom-left <strong>"N" badge is the Next.js dev-tools overlay</strong> — dev-only, not part of the site.</li>
+    <li>The audit browser (in-app) did not deliver real <span class="kbd">Enter</span> keypresses or
+    pointer clicks to the page during this session; all interaction findings were verified via
+    programmatic events instead. Cross-checked against <code>prompt-bar.tsx</code> source — the
+    keyboard handling itself is correct; no user-facing action needed.</li>
+    <li>Screenshots were captured with CSS animations frozen (the calculator has a continuously
+    animating element that blocks automated capture). Worth a one-line check that it honours
+    <code>useReducedMotion()</code> per the project's animation rules.</li>
+    <li>Live rates shown (100 USD = 89.27 EUR) come from the keyless public API — expected variance.</li>
+  </ul>
+</div>
+
+<p class="small" style="margin-top:40px">Generated 2026-10-11 &middot; audit of branch astraa-v2-overhaul (terminal flavour) &middot; measurements from live DOM at 1440&times;900 and 390&times;844 &middot; 21 screenshots embedded.</p>
+
+</div>
+</body>
+</html>

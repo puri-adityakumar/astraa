@@ -1,0 +1,14 @@
+.tempo
+app-devserver.json
+app-devserver.log
+node_modules
+.next
+.expo
+.swc
+.turbo
+dist
+out
+web-build
+*.log
+logs
+.DS_Store

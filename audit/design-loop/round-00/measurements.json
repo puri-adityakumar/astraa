@@ -1,0 +1,13 @@
+{
+  "round": 0,
+  "date": "2026-10-11",
+  "commit": "5f7fe0d",
+  "viewportChecks": {
+    "1440x900": { "columnLeft": 464, "columnRight": 1232, "promptPinnedBottom": 900, "scrollbarSpace": 0, "overflowX": 0 },
+    "390x844": { "columnLeft": 0, "columnRight": 390, "promptPinnedBottom": 844, "scrollbarSpace": 0, "overflowX": 0 }
+  },
+  "panelTopAlignment": { "calculator": 0, "markdown": 0, "browser": 0, "text": 0, "snippet": 0, "json": 0 },
+  "chipColumn": { "sidebarLabelLefts": [128], "suggestionKeyToSummary": 108 },
+  "helpGrid": { "valueLeftsUnique": 1, "valueLeft": 658.5 },
+  "priorFixesIntact": ["panel-top-0", "prompt-pinned", "zero-scrollbar-space", "chip-grid", "kv-grid", "frame-borders", "prompt-continuity"]
+}
