@@ -26,7 +26,7 @@ export function SchemePicker() {
           const next = event.target.value;
           if (isTermTheme(next)) setTheme(next);
         }}
-        className="min-h-touch w-full rounded-md border border-term-surface2 bg-term-surface px-3 font-sans text-sm text-term-fg outline-none focus-visible:ring-2 focus-visible:ring-term-accent"
+        className="min-h-touch w-full rounded-md border border-term-surface2 bg-term-surface px-3 font-sans text-sm text-term-fg focus-visible:bg-term-surface2"
       >
         {TERM_THEMES.map((option) => (
           <option key={option} value={option}>

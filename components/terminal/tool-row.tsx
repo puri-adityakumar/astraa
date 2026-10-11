@@ -23,7 +23,7 @@ interface ToolRowProps {
 export function ToolRow({ command, showSummary = false, displayName, onRun }: ToolRowProps) {
   const label = displayName ?? (command.slug !== null ? toolDisplayName(command.slug) : command.name);
   const className = cn(
-    "flex min-h-touch items-center gap-3 rounded-md px-3 py-2",
+    "group flex min-h-touch items-center gap-3 rounded-md px-3 py-2",
     "font-sans text-sm text-term-fg no-underline",
     "hover:bg-term-surface2 focus-visible:bg-term-surface2",
   );
@@ -31,10 +31,12 @@ export function ToolRow({ command, showSummary = false, displayName, onRun }: To
     <>
       {/* Fixed key column (claude.dev/terminal discipline): every label on
           every list starts at the same x regardless of chip text length. */}
-      <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent">
+      <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent transition-colors duration-200 group-hover:text-term-fg">
         {`/${command.name}`}
       </span>
-      <span className="truncate">{label}</span>
+      <span className="truncate transition-transform duration-200 ease-out group-hover:translate-x-1">
+        {label}
+      </span>
       {command.status === "coming-soon" && (
         <span className="ml-auto shrink-0 font-mono text-xs text-term-muted">soon</span>
       )}

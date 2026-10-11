@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { switchToLegacyFlavour } from "./flavour-switch";
 import { SchemePicker } from "./scheme-picker";
 import { ToolRow } from "./tool-row";
+import { toolShortName } from "./tool-names";
 
 const SITE_LINKS = [
   { href: "/explore", label: "Explore" },
@@ -54,7 +55,7 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
         <div
           aria-hidden="true"
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          className="fixed inset-0 z-40 bg-term-fg/50 md:hidden"
         />
       )}
       <aside
@@ -66,8 +67,11 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
             : "hidden md:static md:flex md:w-64",
         )}
       >
-        <div className="px-4 pb-2 pt-5">
-          <h1 aria-label="Astraa" className="select-none font-pixel text-xl text-term-fg">
+        <div className="px-4 pb-3 pt-5">
+          <h1
+            aria-label="Astraa"
+            className="select-none font-pixel text-lg tracking-wide text-term-fg"
+          >
             ASTRAA
           </h1>
         </div>
@@ -84,7 +88,11 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
               </li>
               {commands.map((command) => (
                 <li key={command.name}>
-                  <ToolRow command={command} onRun={runRow} />
+                  <ToolRow
+                    command={command}
+                    displayName={toolShortName(command.slug)}
+                    onRun={runRow}
+                  />
                 </li>
               ))}
             </ul>
@@ -97,7 +105,7 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
             <button
               type="button"
               onClick={switchToLegacyFlavour}
-              className="flex min-h-touch w-full items-center justify-between rounded-md px-3 font-sans text-sm text-term-fg hover:bg-term-surface2"
+              className="flex min-h-touch w-full items-center justify-between rounded-md px-3 font-sans text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
             >
               <span>Legacy UI</span>
               <Monitor className="h-4 w-4 shrink-0 text-term-muted" aria-hidden="true" />
@@ -112,7 +120,7 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
                 <Link
                   href={link.href}
                   onClick={onClose}
-                  className="flex min-h-touch items-center rounded-md px-3 font-sans text-sm text-term-fg hover:bg-term-surface2"
+                  className="flex min-h-touch items-center rounded-md px-3 font-sans text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
                 >
                   {link.label}
                 </Link>
