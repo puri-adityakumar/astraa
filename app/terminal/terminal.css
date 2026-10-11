@@ -31,14 +31,12 @@
   }
 }
 
-/* Reserve the scrollbar gutter on the shared scroll region so the column
-   never shifts when history appears, and keep scrollbars quiet against the
-   dark schemes. The prompt is sticky inside main, so every surface shares
-   this width. */
+/* The prompt sits below main as a flex sibling, so the column stays on one
+   grid only if main's scrollbar never takes layout space — hide it entirely
+   (wheel, touch and keyboard scrolling are unaffected; the terminal reads
+   as one continuous surface, like the reference terminal). */
 [data-flavour="terminal"] main {
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  scrollbar-color: var(--term-surface2) transparent;
+  scrollbar-width: none;
 }
 
 [data-flavour="terminal"] aside nav {

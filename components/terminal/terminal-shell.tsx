@@ -246,11 +246,17 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
             <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
         </header>
-        {/* One scroll region for scrollback, panels and the prompt: the
-            prompt is sticky inside it so every surface shares the same
-            width — a scrollbar on main can never pull the column out of
-            line with the prompt gutter. */}
-        <main ref={mainRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+        {/* One content column: scrollback, panels and the frame overlay live
+            in the scroll region; the prompt sits below it as a flex sibling
+            so it is always pinned to the bottom. main hides its scrollbar
+            (terminal.css) — a zero-space scrollbar means the column can
+            never shift under the prompt, which is what keeps every surface
+            on one grid. */}
+        <main ref={mainRef} className="relative flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-1/2 w-full max-w-3xl -translate-x-1/2 border-x border-term-surface2"
+          />
           <div className="min-h-0 flex-1">
             {entries.length > 0 && (
               <div className={cn(TERM_COLUMN, "py-8")}>
@@ -276,10 +282,8 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
               {liveText}
             </div>
           </div>
-          <div className="sticky bottom-0 z-20 shrink-0">
-            <PromptBar onSubmit={handleSubmit} autoFocus={panel === null && browser === null} />
-          </div>
         </main>
+        <PromptBar onSubmit={handleSubmit} autoFocus={panel === null && browser === null} />
       </div>
     </div>
   );
