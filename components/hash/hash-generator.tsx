@@ -7,6 +7,7 @@ import { HashInput } from "./hash-input"
 import { HashOutput } from "./hash-output"
 import { generateHash } from "@/lib/hash"
 import { hashAlgorithms } from "@/lib/hash"
+import { getUserFriendlyError, logError } from "@/lib/error-handler"
 
 type HashGeneratorVariant = "page" | "panel"
 
@@ -31,8 +32,18 @@ export function HashGeneratorClient({ variant = "page" }: HashGeneratorClientPro
       return
     }
 
-    const newHash = generateHash(input, selectedHash)
-    setHash(newHash)
+    try {
+      setHash(generateHash(input, selectedHash));
+    } catch (error) {
+      setHash("");
+      const details = getUserFriendlyError(error);
+      toast({
+        title: details.title,
+        description: details.message,
+        variant: "destructive",
+      });
+      logError(error, { context: "hash generation" });
+    }
   }
 
   const generator = (

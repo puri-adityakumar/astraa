@@ -32,4 +32,19 @@ describe("generateHash", () => {
     const hash = generateHash("", "sha256");
     expect(hash).toBe("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
   });
+  it("generates SHA3-256 using the standard abc test vector", () => {
+    expect(generateHash("abc", "sha3-256")).toBe(
+      "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532",
+    );
+  });
+  it("generates SHA3-512 using the standard abc test vector", () => {
+    expect(generateHash("abc", "sha3-512")).toBe(
+      "b751850b1a57168a5693cd924b6b096e08f621827444f70d884f5d0240d2712e" +
+      "10e116e9192af3c91a7ec57647e3934057340b4cf408d5a56592f8274eec53f0",
+    );
+  });
+  it("rejects unsupported algorithms", () => {
+    expect(() => generateHash("abc", "unsupported")).toThrow("Unsupported hash algorithm");
+    expect(() => generateHash("abc", "constructor")).toThrow("Unsupported hash algorithm");
+  });
 });
