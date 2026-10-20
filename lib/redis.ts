@@ -1,13 +1,18 @@
-import { Redis } from '@upstash/redis'
+import { Redis } from "@upstash/redis";
 
-// Singleton Redis client (using Vercel KV env vars)
-export const redis = new Redis({
-    url: process.env.KV_REST_API_URL!,
-    token: process.env.KV_REST_API_TOKEN!,
-})
-
-// Keys used in the application
 export const REDIS_KEYS = {
-    VISITOR_COUNT: 'astraa:visitor_count',
-} as const
+  VISITOR_COUNT: "astraa:visitor_count",
+} as const;
 
+let client: Redis | null | undefined;
+
+// Missing Upstash env (local dev) means "skip counting", never an error.
+export function getRedis(): Redis | null {
+  if (client !== undefined) {
+    return client;
+  }
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  client = url && token ? new Redis({ url, token }) : null;
+  return client;
+}

@@ -1,7 +1,7 @@
 import { NextResponse, after } from "next/server";
 import type { NextRequest } from "next/server";
-import { Redis } from "@upstash/redis";
 
+import { getRedis, REDIS_KEYS } from "@/lib/redis";
 import {
   FLAVOUR_COOKIE_NAME,
   FLAVOUR_LEGACY,
@@ -10,20 +10,6 @@ import {
   parseFlavour,
 } from "@/lib/terminal/cookies";
 import { terminalRewritePath } from "@/lib/terminal/flavour";
-
-const VISITOR_COUNT_KEY = "astraa:visitor_count";
-
-// Missing Upstash env (local dev) means "skip counting", never an error.
-function createVisitorRedis(): Redis | null {
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
-  if (!url || !token) {
-    return null;
-  }
-  return new Redis({ url, token });
-}
-
-const visitorRedis = createVisitorRedis();
 
 // Counts a visit to the public home page in either flavour: sets the 24h
 // dedup cookie on the response actually returned (rewrite or next) and
@@ -44,11 +30,12 @@ function withVisitorCount(
     sameSite: "lax",
   });
   after(async () => {
-    if (!visitorRedis) {
+    const redis = getRedis();
+    if (!redis) {
       return;
     }
     try {
-      await visitorRedis.incr(VISITOR_COUNT_KEY);
+      await redis.incr(REDIS_KEYS.VISITOR_COUNT);
     } catch (error) {
       console.error("Failed to increment visitor count:", error);
     }
