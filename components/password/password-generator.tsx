@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { PasswordDisplay } from "./password-display"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
@@ -46,25 +46,43 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
   const [pinLength, setPinLength] = useState([4])
 
   // -- Generation Logic --
-  const generate = useCallback(() => {
+  const generate = useCallback((next: {
+    mode?: GenMode;
+    length?: number[];
+    options?: typeof options;
+    wordCount?: number[];
+    memOptions?: typeof memOptions;
+    pinLength?: number[];
+  } = {}) => {
     let result
-    if (mode === "random") {
-      result = generatePassword(length[0] ?? 20, options)
-    } else if (mode === "memorable") {
-      result = generateMemorablePassword(wordCount[0] ?? 5, memOptions.capitalize)
+    const nextMode = next.mode ?? mode;
+    if (nextMode === "random") {
+      result = generatePassword((next.length ?? length)[0] ?? 20, next.options ?? options)
+    } else if (nextMode === "memorable") {
+      result = generateMemorablePassword(
+        (next.wordCount ?? wordCount)[0] ?? 5,
+        (next.memOptions ?? memOptions).capitalize,
+      );
     } else {
-      result = generatePin(pinLength[0] ?? 4)
+      result = generatePin((next.pinLength ?? pinLength)[0] ?? 4)
     }
 
     if (result.success) {
       setPassword(result.password)
     }
-  }, [mode, length, options, wordCount, memOptions.capitalize, pinLength])
+  }, [mode, length, options, wordCount, memOptions, pinLength])
 
-  // Auto-generate on option changes
+  // Random output can't be produced during SSR without a hydration mismatch, so the first
+  // password is generated once after mount.
   useEffect(() => {
     generate()
-  }, [generate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleModeChange = (nextMode: GenMode) => {
+    setMode(nextMode);
+    generate({ mode: nextMode });
+  };
 
   const handleCopyToClipboard = async () => {
     if (!password) return
@@ -113,7 +131,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
           <Label className="text-base font-semibold">Choose password type</Label>
           <div className="grid grid-cols-1 xs:grid-cols-3 p-1 bg-muted/50 rounded-lg">
             <button
-              onClick={() => setMode("random")}
+              onClick={() => handleModeChange("random")}
               className={cn(
                 "flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-md transition-all duration-200",
                 mode === "random"
@@ -125,7 +143,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
               Random
             </button>
             <button
-              onClick={() => setMode("memorable")}
+              onClick={() => handleModeChange("memorable")}
               className={cn(
                 "flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-md transition-all duration-200",
                 mode === "memorable"
@@ -137,7 +155,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
               Memorable
             </button>
             <button
-              onClick={() => setMode("pin")}
+              onClick={() => handleModeChange("pin")}
               className={cn(
                 "flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-md transition-all duration-200",
                 mode === "pin"
@@ -164,9 +182,16 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
               <Slider
                 value={mode === "random" ? length : mode === "memorable" ? wordCount : pinLength}
                 onValueChange={(val) => {
-                  if (mode === "random") setLength(val)
-                  else if (mode === "memorable") setWordCount(val)
-                  else setPinLength(val)
+                  if (mode === "random") {
+                    setLength(val);
+                    generate({ length: val });
+                  } else if (mode === "memorable") {
+                    setWordCount(val);
+                    generate({ wordCount: val });
+                  } else {
+                    setPinLength(val);
+                    generate({ pinLength: val });
+                  }
                 }}
                 min={mode === "random" ? 6 : mode === "memorable" ? 3 : 3}
                 max={mode === "random" ? 64 : mode === "memorable" ? 15 : 12}
@@ -188,7 +213,11 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
                   <Switch
                     id="numbers"
                     checked={options.numbers}
-                    onCheckedChange={(c) => setOptions(prev => ({ ...prev, numbers: c }))}
+                    onCheckedChange={(numbers) => {
+                      const nextOptions = { ...options, numbers };
+                      setOptions(nextOptions);
+                      generate({ options: nextOptions });
+                    }}
                   />
                 </div>
                 <div className="flex items-center gap-3">
@@ -196,7 +225,11 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
                   <Switch
                     id="symbols"
                     checked={options.symbols}
-                    onCheckedChange={(c) => setOptions(prev => ({ ...prev, symbols: c }))}
+                    onCheckedChange={(symbols) => {
+                      const nextOptions = { ...options, symbols };
+                      setOptions(nextOptions);
+                      generate({ options: nextOptions });
+                    }}
                   />
                 </div>
               </div>
@@ -209,7 +242,11 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
                   <Switch
                     id="capitalize"
                     checked={memOptions.capitalize}
-                    onCheckedChange={(c) => setMemOptions(prev => ({ ...prev, capitalize: c }))}
+                    onCheckedChange={(capitalize) => {
+                      const nextOptions = { ...memOptions, capitalize };
+                      setMemOptions(nextOptions);
+                      generate({ memOptions: nextOptions });
+                    }}
                   />
                 </div>
                 <div className="flex items-center gap-3">
@@ -217,7 +254,11 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
                   <Switch
                     id="fullwords"
                     checked={memOptions.fullWords}
-                    onCheckedChange={(c) => setMemOptions(prev => ({ ...prev, fullWords: c }))}
+                    onCheckedChange={(fullWords) => {
+                      const nextOptions = { ...memOptions, fullWords };
+                      setMemOptions(nextOptions);
+                      generate({ memOptions: nextOptions });
+                    }}
                   />
                 </div>
               </div>
@@ -243,6 +284,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
               variant="default"
               className="w-full font-semibold text-base h-12"
               onClick={handleCopyToClipboard}
+              disabled={!password}
             >
               Copy password
             </Button>
@@ -250,9 +292,9 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
               size="lg"
               variant="outline"
               className="w-full font-semibold text-base h-12 hover:bg-muted/50 hover:text-foreground"
-              onClick={generate}
+              onClick={() => generate()}
             >
-              Refresh password
+              {password ? "Refresh password" : "Generate password"}
             </Button>
           </div>
         </div>

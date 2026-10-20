@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp } from "lucide-react"
@@ -21,13 +21,11 @@ export function UnitConverterClient({ variant = "page" }: UnitConverterClientPro
   const [value, setValue] = useState("1")
   const [fromUnit, setFromUnit] = useState<Unit>(unitCategories[0]?.units[0] ?? {} as Unit)
   const [toUnit, setToUnit] = useState<Unit>(unitCategories[0]?.units[1] ?? {} as Unit)
-  const [result, setResult] = useState<string>("")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  useEffect(() => {
+  const result = useMemo(() => {
     if (!value || isNaN(Number(value))) {
-      setResult("")
-      return
+      return "";
     }
 
     const converted = convertUnit(
@@ -37,11 +35,9 @@ export function UnitConverterClient({ variant = "page" }: UnitConverterClientPro
       category
     )
 
-    setResult(
-      converted.toLocaleString(undefined, {
-        maximumFractionDigits: 6,
-      })
-    )
+    return converted.toLocaleString(undefined, {
+      maximumFractionDigits: 6,
+    });
   }, [value, fromUnit, toUnit, category])
 
   const handleCategoryChange = (newCategory: string) => {

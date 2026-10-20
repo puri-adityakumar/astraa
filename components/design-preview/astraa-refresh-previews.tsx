@@ -296,21 +296,21 @@ export function AstraaToolWorkspaceRefreshPreview() {
             <div className="border-b p-5 font-mono text-sm leading-7 lg:border-b-0 lg:border-r sm:p-7">
               <p className="text-muted-foreground">{"{"}</p>
               <p className="pl-5">
-                <span className="text-info">"name"</span>:{" "}
-                <span className="text-success">"astraa"</span>,
+                <span className="text-info">&quot;name&quot;</span>:{" "}
+                <span className="text-success">&quot;astraa&quot;</span>,
               </p>
               <p className="pl-5">
-                <span className="text-info">"private"</span>:{" "}
+                <span className="text-info">&quot;private&quot;</span>:{" "}
                 <span className="text-warning">false</span>,
               </p>
               <p className="pl-5">
-                <span className="text-info">"tools"</span>:{" "}
+                <span className="text-info">&quot;tools&quot;</span>:{" "}
                 <span className="text-muted-foreground">[</span>
               </p>
               <p className="pl-10">
-                <span className="text-success">"json"</span>,{" "}
-                <span className="text-success">"regex"</span>,{" "}
-                <span className="text-success">"markdown"</span>
+                <span className="text-success">&quot;json&quot;</span>,{" "}
+                <span className="text-success">&quot;regex&quot;</span>,{" "}
+                <span className="text-success">&quot;markdown&quot;</span>
               </p>
               <p className="pl-5 text-muted-foreground">]</p>
               <p className="text-muted-foreground">{"}"}</p>
