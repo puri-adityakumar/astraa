@@ -3,10 +3,16 @@ import { parseRegexArgs, regexCommand } from "./regex";
 import { runMatchesSafe } from "@/lib/regex-tester/redos-client";
 import type { CommandContext, CommandResult, OutputBlock } from "../types";
 
-vi.mock("@/lib/regex-tester/redos-client", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("@/lib/regex-tester/redos-client")>();
-  return { ...actual, runMatchesSafe: vi.fn(actual.runMatchesSafe) };
+vi.mock("@/lib/regex-tester/redos-client", async () => {
+  const { runMatches } = await import("@/lib/regex-tester/match");
+  return {
+    runMatchesSafe: vi.fn((pattern: string, flags: string, input: string) =>
+      Promise.resolve({
+        ...runMatches(new RegExp(pattern, flags), input),
+        hardTimeout: false,
+      }),
+    ),
+  };
 });
 
 const runMatchesSafeMock = vi.mocked(runMatchesSafe);

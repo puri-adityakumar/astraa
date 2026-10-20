@@ -10,6 +10,8 @@ export interface StatusFooterProps {
   cap: number;
   timedOut: boolean;
   hardTimeout: boolean;
+  pending: boolean;
+  error: string | null;
 }
 
 function formatKb(bytes: number): string {
@@ -23,6 +25,8 @@ export function StatusFooter({
   cap,
   timedOut,
   hardTimeout,
+  pending,
+  error,
 }: StatusFooterProps) {
   return (
     <div
@@ -50,7 +54,11 @@ export function StatusFooter({
         </span>
       </div>
       <div className="flex items-center gap-2">
-        {hardTimeout ? (
+        {pending ? (
+          <span>Matching…</span>
+        ) : error ? (
+          <span className="text-destructive">{error}</span>
+        ) : hardTimeout ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-2 py-0.5 text-destructive">
             <ShieldAlert className="h-3 w-3" aria-hidden="true" />
             Pattern hangs &mdash; simplify

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback } from "react";
 import { Check, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRegexTester } from "@/lib/stores/regex-tester";
-import { compileRegex } from "@/lib/regex-tester/compile";
-import { runMiniTests } from "@/lib/regex-tester/tests-runner";
+import { runMiniTestsSafe } from "@/lib/regex-tester/redos-client";
+import type { MiniTestResult } from "@/lib/regex-tester/tests-runner";
 import type { MiniTest } from "@/lib/regex-tester/types";
 import { cn } from "@/lib/utils";
+import { useRegexWorker } from "./use-regex-worker";
+
+const EMPTY_RESULTS: MiniTestResult[] = [];
 
 const newId = (): string =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -28,10 +31,10 @@ export function MiniTestsPanel() {
   const miniTests = useRegexTester((s) => s.miniTests);
   const setMiniTests = useRegexTester((s) => s.setMiniTests);
 
-  const results = useMemo(() => {
-    const compiled = compileRegex(pattern, flags);
-    return runMiniTests(compiled.ok ? compiled.regex : null, miniTests);
+  const testsTask = useCallback((signal: AbortSignal) => {
+    return runMiniTestsSafe(pattern, flags, miniTests, signal);
   }, [pattern, flags, miniTests]);
+  const { value: results, error, pending } = useRegexWorker(testsTask, EMPTY_RESULTS);
 
   const handleAdd = () => {
     const next: MiniTest = {
@@ -53,17 +56,19 @@ export function MiniTestsPanel() {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" aria-busy={pending}>
       <p className="text-xs text-muted-foreground">
         Pin sample inputs to verify the pattern keeps matching what it should
         — or stays away from what it shouldn&rsquo;t.
       </p>
+      {pending && <p role="status" className="text-xs text-muted-foreground">Testing…</p>}
+      {error && <p role="alert" className="text-xs text-destructive">{error}</p>}
 
       <ul className="space-y-2">
         {miniTests.map((test) => {
           const result = results.find((r) => r.id === test.id);
-          const passed = result?.passed === true;
-          const reason = result?.reason ?? "";
+          const passed = !pending && !error && result?.passed === true;
+          const reason = pending ? "Testing…" : error ?? result?.reason ?? "";
           return (
             <li
               key={test.id}
