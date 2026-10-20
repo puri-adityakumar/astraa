@@ -46,20 +46,25 @@ export function JsonEditorClient({ variant = "page" }: JsonEditorClientProps) {
     }
     return () => {
       clientRef.current?.destroy();
+      clientRef.current = null;
     };
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    const isCurrent = () => !cancelled && useJsonEditor.getState().text === text;
     window.clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(async () => {
-      if (clientRef.current) {
-        const result = await clientRef.current.parse(text);
-        setParseResult(result.value, result.diagnostics);
-      } else {
-        try {
+      try {
+        if (clientRef.current) {
+          const result = await clientRef.current.parse(text);
+          if (result && isCurrent()) setParseResult(result.value, result.diagnostics);
+        } else {
           const value = text.trim() === "" ? null : JSON.parse(text);
-          setParseResult(value, []);
-        } catch (e) {
+          if (isCurrent()) setParseResult(value, []);
+        }
+      } catch (e) {
+        if (isCurrent()) {
           setParseResult(null, [
             {
               severity: "error",
@@ -69,7 +74,10 @@ export function JsonEditorClient({ variant = "page" }: JsonEditorClientProps) {
         }
       }
     }, 200);
-    return () => window.clearTimeout(debounceRef.current);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(debounceRef.current);
+    };
   }, [text, setParseResult]);
 
   const editorCard = (
@@ -88,7 +96,7 @@ export function JsonEditorClient({ variant = "page" }: JsonEditorClientProps) {
 
   if (variant === "panel") {
     return (
-      <div className="w-full space-y-4">
+      <div data-json-tool className="w-full space-y-4">
         {editorCard}
         <DropzoneOverlay />
       </div>
@@ -96,7 +104,10 @@ export function JsonEditorClient({ variant = "page" }: JsonEditorClientProps) {
   }
 
   return (
-    <div className="container px-4 sm:px-6 max-w-[1400px] pt-24 pb-12 space-y-8">
+    <div
+      data-json-tool
+      className="container px-4 sm:px-6 max-w-[1400px] pt-24 pb-12 space-y-8"
+    >
       <div className="space-y-4 text-center sm:text-left">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           JSON Editor

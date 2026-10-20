@@ -31,6 +31,18 @@ describe("parsePath", () => {
   it("parses quoted bracket key", () => {
     expect(parsePath('a["b.c"]')).toEqual(["a", "b.c"]);
   });
+
+  it.each(["a]b", "[nested]", "a\"b]c", "a\\]b", "a\\\"b]c", "", "\n]"])(
+    "round-trips quoted key %j",
+    (key) => {
+      const segments = ["root", key, 0, "child"];
+      expect(parsePath(formatPath(segments))).toEqual(segments);
+    },
+  );
+
+  it("rejects an unterminated quoted key", () => {
+    expect(() => parsePath("[\"a]b]")).toThrow(SyntaxError);
+  });
 });
 
 describe("formatPath", () => {

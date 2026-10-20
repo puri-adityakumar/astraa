@@ -95,22 +95,33 @@ export const useJsonEditor = create<JsonEditorStore>()(
       setConvertFormat: (convertFormat) => set({ convertFormat }),
       setGenerateFormat: (generateFormat) => set({ generateFormat }),
       format: () => {
-        const { parsedValue, indent, sortKeys } = get();
-        if (parsedValue === null) return;
-        set({ text: serialize(parsedValue, { indent, sortKeys }) });
+        const { text, indent, sortKeys } = get();
+        try {
+          const value: JsonValue = JSON.parse(text);
+          set({ text: serialize(value, { indent, sortKeys }) });
+        } catch {
+          return;
+        }
       },
       minify: () => {
-        const { parsedValue } = get();
-        if (parsedValue === null) return;
-        set({ text: JSON.stringify(parsedValue) });
+        try {
+          const value: JsonValue = JSON.parse(get().text);
+          set({ text: JSON.stringify(value) });
+        } catch {
+          return;
+        }
       },
       sortKeysAction: () => {
-        const { parsedValue, indent } = get();
-        if (parsedValue === null) return;
-        set({
-          text: serialize(parsedValue, { indent, sortKeys: true }),
-          sortKeys: true,
-        });
+        const { text, indent } = get();
+        try {
+          const value: JsonValue = JSON.parse(text);
+          set({
+            text: serialize(value, { indent, sortKeys: true }),
+            sortKeys: true,
+          });
+        } catch {
+          return;
+        }
       },
       applyPatchAt: (path, op, value) => {
         const { parsedValue, indent, sortKeys } = get();

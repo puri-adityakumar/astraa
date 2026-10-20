@@ -20,6 +20,7 @@ import {
   MAX_DOCUMENT_BYTES,
 } from "@/lib/json/validators";
 import { logError } from "@/lib/error-handler";
+import { copyToClipboard } from "@/lib/clipboard";
 
 export function Toolbar() {
   const text = useJsonEditor((s) => s.text);
@@ -30,6 +31,7 @@ export function Toolbar() {
   const setText = useJsonEditor((s) => s.setText);
   const { toast } = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const onRepair = async () => {
     const r = await repair(text);
@@ -46,8 +48,12 @@ export function Toolbar() {
   };
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    toast({ title: "Copied" });
+    const result = await copyToClipboard(text);
+    toast(
+      result.success
+        ? { title: "Copied" }
+        : { title: "Copy failed", description: result.error, variant: "destructive" },
+    );
   };
 
   const onDownload = () => {
@@ -87,6 +93,8 @@ export function Toolbar() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const root = toolbarRef.current?.closest("[data-json-tool]");
+      if (!(e.target instanceof Node) || !root?.contains(e.target)) return;
       const mod = e.metaKey || e.ctrlKey;
       if (!mod || e.shiftKey || e.altKey) return;
       const key = e.key.toLowerCase();
@@ -96,9 +104,6 @@ export function Toolbar() {
       } else if (key === "m") {
         e.preventDefault();
         minify();
-      } else if (key === "r") {
-        e.preventDefault();
-        void onRepair();
       } else if (key === "k") {
         e.preventDefault();
         sortKeysAction();
@@ -106,11 +111,11 @@ export function Toolbar() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [format, minify, sortKeysAction, text]);
+  }, [format, minify, sortKeysAction]);
 
   return (
     <div
+      ref={toolbarRef}
       role="toolbar"
       aria-label="JSON Editor actions"
       className="flex flex-wrap items-center gap-2"

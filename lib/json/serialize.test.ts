@@ -31,4 +31,12 @@ describe("serialize", () => {
     const out = serialize({ b: 2, a: { z: 1, y: 2 } }, { indent: 2, sortKeys: true });
     expect(out).toContain('"a": {\n    "y": 2,\n    "z": 1\n  }');
   });
+
+  it("preserves __proto__ keys while sorting at every depth", () => {
+    const value = JSON.parse("{\"z\":1,\"__proto__\":{\"z\":2,\"__proto__\":3,\"a\":4}}");
+    const output = serialize(value, { indent: 2, sortKeys: true });
+    expect(JSON.parse(output)).toEqual(value);
+    expect(output).toContain("\"__proto__\": 3");
+    expect(output.indexOf("\"__proto__\"")).toBeLessThan(output.indexOf("\"z\""));
+  });
 });

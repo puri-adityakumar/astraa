@@ -21,7 +21,23 @@ export function parsePath(path: string): PathSegment[] {
       continue;
     }
     if (path[i] === "[") {
-      const end = path.indexOf("]", i);
+      let end = i + 1;
+      if (path[end] === "\"") {
+        end++;
+        while (end < path.length) {
+          if (path[end] === "\\") {
+            end += 2;
+          } else if (path[end] === "\"") {
+            end++;
+            break;
+          } else {
+            end++;
+          }
+        }
+        if (path[end] !== "]") throw new SyntaxError("Invalid quoted path key");
+      } else {
+        end = path.indexOf("]", end);
+      }
       if (end === -1) break;
       const inner = path.slice(i + 1, end);
       if (/^\d+$/.test(inner)) {
