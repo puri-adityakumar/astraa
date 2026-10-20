@@ -1,14 +1,17 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback } from "react";
 import { ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRegexTester } from "@/lib/stores/regex-tester";
-import { compileRegex } from "@/lib/regex-tester/compile";
-import { applyReplace } from "@/lib/regex-tester/replace";
+import { runReplaceSafe } from "@/lib/regex-tester/redos-client";
+import type { ReplaceResult } from "@/lib/regex-tester/replace";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
+import { useRegexWorker } from "./use-regex-worker";
+
+const EMPTY_PREVIEW: ReplaceResult = { ok: true, result: "" };
 
 export function ReplacePanel() {
   const pattern = useRegexTester((s) => s.pattern);
@@ -19,24 +22,16 @@ export function ReplacePanel() {
   const replaceOpen = useRegexTester((s) => s.replaceOpen);
   const setReplaceOpen = useRegexTester((s) => s.setReplaceOpen);
 
-  const previewState = useMemo(() => {
-    if (pattern.length === 0) {
-      return { result: "", error: null, delta: 0 };
-    }
-    const compiled = compileRegex(pattern, flags);
-    if (!compiled.ok) {
-      return { result: "", error: compiled.error, delta: 0 };
-    }
-    const r = applyReplace(compiled.regex, testString, replacement);
-    if (!r.ok) {
-      return { result: "", error: r.error, delta: 0 };
-    }
-    return {
-      result: r.result,
-      error: null,
-      delta: r.result.length - testString.length,
-    };
-  }, [pattern, flags, testString, replacement]);
+  const previewTask = useCallback(async (signal: AbortSignal) => {
+    if (!replaceOpen || pattern.length === 0) return EMPTY_PREVIEW;
+    return runReplaceSafe(pattern, flags, testString, replacement, signal);
+  }, [pattern, flags, testString, replacement, replaceOpen]);
+  const { value, error, pending } = useRegexWorker(previewTask, EMPTY_PREVIEW);
+  const previewState = {
+    result: value.ok ? value.result : "",
+    error: error ?? (value.ok ? null : value.error),
+    delta: value.ok ? value.result.length - testString.length : 0,
+  };
 
   return (
     <div className="space-y-2">
@@ -65,7 +60,8 @@ export function ReplacePanel() {
       </button>
 
       {replaceOpen && (
-        <div id="regex-replace-body" className="space-y-3">
+        <div id="regex-replace-body" className="space-y-3" aria-busy={pending}>
+          {pending && <p role="status" className="text-xs text-muted-foreground">Replacing…</p>}
           <div className="space-y-1.5">
             <label
               htmlFor="regex-replacement"
@@ -98,6 +94,8 @@ export function ReplacePanel() {
                 label="replacement result"
                 size="icon"
                 disabled={
+                  pending ||
+                  previewState.error !== null ||
                   pattern.length === 0 ||
                   previewState.result.length === 0
                 }

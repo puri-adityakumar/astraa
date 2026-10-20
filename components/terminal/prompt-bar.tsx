@@ -1,0 +1,279 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import {
+  appendHistoryEntry,
+  initialHistoryNav,
+  recallNext,
+  recallPrevious,
+  type HistoryNav,
+} from "@/lib/terminal/history";
+import { suggest } from "@/lib/terminal/registry";
+import { TERMINAL_SHORTCUTS } from "@/lib/terminal/shortcuts";
+import { cn } from "@/lib/utils";
+import { TERM_COLUMN } from "./column";
+
+interface PromptBarProps {
+  /** Runs a submitted input line through the command registry. */
+  onSubmit: (input: string) => void;
+  /**
+   * Focus the input when it becomes true — on mount (home loads) and every
+   * time a panel closes. Panels focus themselves while open.
+   */
+  autoFocus?: boolean;
+}
+
+/**
+ * The interactive prompt: single-line input with in-memory history recall
+ * (ArrowUp/ArrowDown), a filtered suggestion list opened by typing "/",
+ * Tab completion of the command name, Enter to run, Esc to dismiss the
+ * list, and empty-input no-op. State is component-local — nothing here
+ * persists across reloads.
+ */
+export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
+  const [nav, setNav] = useState<HistoryNav>(initialHistoryNav);
+  const [listDismissed, setListDismissed] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  useEffect(() => {
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
+
+  // Keep the highlighted suggestion visible inside a long list.
+  useEffect(() => {
+    if (activeIndex < 0) return;
+    document
+      .getElementById(`term-suggestion-${activeIndex}`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex]);
+
+  // Suggestions cover the command name only: input starts with "/" and has
+  // no whitespace yet. Anything else (args, plain text) closes the list.
+  const trimmed = value.trim();
+  const token =
+    trimmed.startsWith("/") && !/\s/.test(trimmed) ? trimmed.slice(1) : null;
+  const suggestions = useMemo(
+    () => (token === null ? [] : suggest(token)),
+    [token],
+  );
+  const listOpen = token !== null && !listDismissed && suggestions.length > 0;
+  const shortcutsOpen = value === "?";
+
+  const acceptSuggestion = (name: string) => {
+    setValue(`/${name}`);
+    setListDismissed(true);
+    setActiveIndex(-1);
+    inputRef.current?.focus();
+  };
+
+  const submit = () => {
+    const input = value.trim();
+    if (input === "" || input === "?") return;
+    onSubmit(input);
+    setValue("");
+    setHistory((previous) => appendHistoryEntry(previous, input));
+    setNav(initialHistoryNav);
+    setListDismissed(false);
+    setActiveIndex(-1);
+  };
+
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (shortcutsOpen && (event.key === "Escape" || event.key === "Backspace")) {
+      event.preventDefault();
+      setValue("");
+      return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (listOpen && activeIndex >= 0) {
+        const selected = suggestions[activeIndex];
+        if (selected) acceptSuggestion(selected.name);
+        return;
+      }
+      submit();
+      return;
+    }
+    if (event.key === "Tab") {
+      if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey || token === null) {
+        return;
+      }
+      const selected = (listOpen ? suggestions[activeIndex] : undefined) ?? suggestions[0];
+      if (!selected || selected.name === token) return;
+      event.preventDefault();
+      acceptSuggestion(selected.name);
+      return;
+    }
+    if (event.key === "Escape") {
+      if (listOpen) {
+        event.preventDefault();
+        setListDismissed(true);
+        setActiveIndex(-1);
+      }
+      return;
+    }
+    if (event.key === "ArrowUp") {
+      if (listOpen && activeIndex > 0) {
+        event.preventDefault();
+        setActiveIndex(activeIndex - 1);
+        return;
+      }
+      if (listOpen) {
+        // Leaving the list: from here the arrows walk the history.
+        setListDismissed(true);
+      }
+      const next = recallPrevious(nav, history, value);
+      if (next !== nav) {
+        event.preventDefault();
+        setNav(next);
+        if (next.index !== null) setValue(history[next.index] ?? "");
+      }
+      return;
+    }
+    if (event.key === "ArrowDown") {
+      if (listOpen && activeIndex < suggestions.length - 1) {
+        event.preventDefault();
+        setActiveIndex(activeIndex >= 0 ? activeIndex + 1 : 0);
+        return;
+      }
+      if (listOpen) return; // bottom of the list: keep the highlight
+      const next = recallNext(nav, history);
+      if (next !== nav) {
+        event.preventDefault();
+        setNav(next);
+        setValue(next.index === null ? next.draft : (history[next.index] ?? ""));
+      }
+    }
+  };
+
+  return (
+    <div className="shrink-0 bg-term-bg [padding-bottom:env(safe-area-inset-bottom)]">
+      <div className={cn(TERM_COLUMN, "py-2")}>
+        <div className="relative font-mono text-sm">
+          <div
+            className={cn(
+              "flex items-center gap-3 rounded-xl border border-term-surface2 px-3",
+              "focus-within:border-term-accent",
+            )}
+          >
+            <label htmlFor="term-prompt" className="sr-only">
+              Terminal command
+            </label>
+            <span aria-hidden="true" className="select-none text-xl text-term-accent">
+              ›
+            </span>
+            <input
+              ref={inputRef}
+              id="term-prompt"
+              type="text"
+              role="combobox"
+              aria-expanded={listOpen}
+              aria-controls={listOpen ? "term-suggestions" : undefined}
+              aria-describedby={
+                shortcutsOpen ? "term-prompt-hints term-shortcuts" : "term-prompt-hints"
+              }
+              aria-autocomplete="list"
+              aria-activedescendant={
+                listOpen && activeIndex >= 0 ? `term-suggestion-${activeIndex}` : undefined
+              }
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              placeholder="Type a command…"
+              value={value}
+              onChange={(event) => {
+                setValue(event.target.value);
+                setListDismissed(false);
+                setActiveIndex(-1);
+              }}
+              onKeyDown={handleKeyDown}
+              className={cn(
+                "min-h-touch w-full min-w-0 bg-transparent text-term-fg outline-none",
+                "[caret-color:var(--term-accent)] placeholder:text-term-muted",
+              )}
+            />
+          </div>
+          {listOpen && (
+            <ul
+              id="term-suggestions"
+              role="listbox"
+              aria-label="Command suggestions"
+              className={cn(
+                "absolute bottom-full left-0 right-0 z-10 mb-2 max-h-64 overflow-y-auto py-1",
+                "rounded-xl border border-term-surface2 bg-term-surface shadow-lg",
+              )}
+            >
+              {suggestions.map((command, index) => (
+                <li
+                  key={command.name}
+                  id={`term-suggestion-${index}`}
+                  role="option"
+                  aria-selected={index === activeIndex}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => acceptSuggestion(command.name)}
+                  className={cn(
+                    "flex min-h-touch cursor-pointer items-center gap-3 px-3 py-2 text-sm",
+                    index === activeIndex
+                      ? "bg-term-surface2 text-term-fg"
+                      : "text-term-muted hover:bg-term-surface2",
+                  )}
+                >
+                  <span aria-hidden="true" className="w-2 shrink-0 text-term-accent">
+                    {index === activeIndex ? "›" : ""}
+                  </span>
+                  <span className="flex w-32 shrink-0 items-baseline gap-2 overflow-hidden">
+                    <span className="shrink-0 text-term-accent">/{command.name}</span>
+                    {command.aliases.length > 0 && (
+                      <span className="hidden truncate text-xs text-term-muted sm:inline">
+                        {command.aliases.map((alias) => `/${alias}`).join(", ")}
+                      </span>
+                    )}
+                  </span>
+                  <span className="min-w-0 truncate text-term-muted">{command.summary}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {shortcutsOpen && (
+            <section
+              id="term-suggestions"
+              aria-labelledby="term-shortcuts-title"
+              className={cn(
+                "absolute bottom-full left-0 right-0 z-10 mb-2 max-h-[min(24rem,60dvh)]",
+                "overflow-y-auto rounded-xl border border-term-surface2 bg-term-surface p-4 shadow-lg",
+              )}
+            >
+              <div className="mb-3 flex items-baseline justify-between gap-3">
+                <h2 id="term-shortcuts-title" className="text-sm text-term-fg">
+                  Keyboard shortcuts
+                </h2>
+                <span className="text-xs text-term-muted">Esc to dismiss</span>
+              </div>
+              <dl id="term-shortcuts" className="grid grid-cols-[7rem_1fr] gap-x-4 gap-y-2">
+                {TERMINAL_SHORTCUTS.map((shortcut) => (
+                  <div key={shortcut.key} className="contents">
+                    <dt className="text-term-accent">{shortcut.key}</dt>
+                    <dd className="text-term-muted">{shortcut.description}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
+        </div>
+        <div
+          id="term-prompt-hints"
+          className="mt-1 flex justify-between gap-4 px-1 font-mono text-xs leading-4 text-term-muted"
+        >
+          <span>/ for commands · ? for shortcuts</span>
+          <span className="hidden sm:inline">Enter to run</span>
+        </div>
+        <div role="status" className="sr-only">
+          {shortcutsOpen ? "Keyboard shortcuts open. Press Escape or Backspace to dismiss." : ""}
+        </div>
+      </div>
+    </div>
+  );
+}

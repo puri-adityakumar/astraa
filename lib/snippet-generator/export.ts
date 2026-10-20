@@ -1,3 +1,6 @@
+import type { ExportSize } from "./capture";
+
+export type { ExportSize };
 export type ExportScale = 1 | 2;
 
 export function buildExportFilename(filename: string, timestamp: number): string {
@@ -7,24 +10,44 @@ export function buildExportFilename(filename: string, timestamp: number): string
   return `${safe}-${timestamp}.png`;
 }
 
+/**
+ * With `size` omitted (legacy), the raster follows the node's measured
+ * display bounds times the scale. With an explicit `size` (terminal), the
+ * node renders at that exact size and the canvas multiplier produces the
+ * requested raster, so the output never depends on the display viewport.
+ */
 export async function exportSnippet(
   node: HTMLElement,
   scale: ExportScale,
+  size?: ExportSize | undefined,
 ): Promise<Blob> {
   await document.fonts.ready;
   const mod = await import("dom-to-image-more");
   const toBlob = mod.default.toBlob ?? mod.toBlob;
-  const { width, height } = node.getBoundingClientRect();
-  const blob = await toBlob(node, {
-    width: width * scale,
-    height: height * scale,
-    style: {
-      transform: `scale(${scale})`,
-      transformOrigin: "top left",
-    },
+  const base = {
     cacheBust: true,
     quality: 1,
-  });
+  };
+  let blob: Blob | null;
+  if (size) {
+    blob = await toBlob(node, {
+      ...base,
+      width: size.width,
+      height: size.height,
+      scale,
+    });
+  } else {
+    const { width, height } = node.getBoundingClientRect();
+    blob = await toBlob(node, {
+      ...base,
+      width: width * scale,
+      height: height * scale,
+      style: {
+        transform: `scale(${scale})`,
+        transformOrigin: "top left",
+      },
+    });
+  }
   if (!blob) throw new Error("Export failed: empty blob");
   return blob;
 }

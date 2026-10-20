@@ -8,7 +8,9 @@ import { RefreshCw } from "lucide-react";
 import { WorkInProgress } from "@/components/wip";
 
 export function SnakeClient() {
-  const { gameState, resetGame, GRID_SIZE } = useSnakeGame();
+  const { gameState, resetGame, GRID_SIZE } = useSnakeGame(
+    process.env.NEXT_PUBLIC_ENV !== "prod",
+  );
   const { snake, food, isGameOver, score } = gameState;
 
   return (

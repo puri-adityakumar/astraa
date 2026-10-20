@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { ShimmerButton } from "@/components/ui/shimmer-button"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useSyncExternalStore } from "react"
 import { StatsBar } from "./stats-bar"
 
 const fadeInUp = {
@@ -19,12 +19,16 @@ const fadeInUp = {
   }
 }
 
-export function HeroSection() {
-  const [isMac, setIsMac] = useState(false)
+const subscribePlatform = () => () => {};
+const getPlatformSnapshot = () => navigator.platform.toUpperCase().includes("MAC");
+const getServerPlatformSnapshot = () => false;
 
-  useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0)
-  }, [])
+export function HeroSection() {
+  const isMac = useSyncExternalStore(
+    subscribePlatform,
+    getPlatformSnapshot,
+    getServerPlatformSnapshot,
+  );
 
   return (
     <section className="relative flex-1 flex items-center justify-center -my-6 sm:-my-8 lg:-my-12">

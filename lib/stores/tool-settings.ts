@@ -31,7 +31,11 @@ export const useToolSettings = create<ToolSettingsState>()(
       
       getToolSettings: (toolId) => {
         const { toolSettings } = get()
-        return toolSettings[toolId] || null
+        const settings = toolSettings[toolId]
+        if (!settings) return null
+        return settings.lastUsed
+          ? { ...settings, lastUsed: new Date(settings.lastUsed) }
+          : settings
       },
       
       updateToolSettings: (toolId, updates) => {
@@ -71,7 +75,8 @@ export const useToolSettings = create<ToolSettingsState>()(
       
       getLastUsed: (toolId) => {
         const { toolSettings } = get()
-        return toolSettings[toolId]?.lastUsed || null
+        const lastUsed = toolSettings[toolId]?.lastUsed
+        return lastUsed ? new Date(lastUsed) : null
       },
       
       clearToolSettings: (toolId) => {
@@ -111,6 +116,15 @@ export const useToolSettings = create<ToolSettingsState>()(
       name: 'tool-settings',
       storage: createJSONStorage(() => createZustandStorage()),
       version: 1,
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          for (const settings of Object.values(state.toolSettings)) {
+            if (settings.lastUsed) {
+              settings.lastUsed = new Date(settings.lastUsed)
+            }
+          }
+        }
+      },
       migrate: (persistedState: any, version: number) => {
         if (version === 0) {
           // Migrate from version 0 to 1

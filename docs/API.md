@@ -7,7 +7,7 @@ External API integrations and server actions used in Astraa.
 - [Overview](#overview)
 - [Currency Exchange API](#currency-exchange-api)
 - [Cryptocurrency API](#cryptocurrency-api)
-- [AI Text Generation](#ai-text-generation)
+- [Lorem Ipsum Generator (Local)](#lorem-ipsum-generator-local)
 - [Redis (Upstash)](#redis-upstash)
 - [Error Handling](#error-handling)
 
@@ -20,11 +20,9 @@ graph LR
     Client[Browser]
     Currency[Currency API]
     Crypto[CoinGecko API]
-    AI[OpenRouter API]
 
     Client --> Currency
     Client --> Crypto
-    Client --> |Server Action| AI
 ```
 
 **One internal API route** (`/api/stats`) returns visitor count, GitHub stars, and contributor count. All other data flows through client-side calls or server actions.
@@ -182,93 +180,35 @@ export async function getCryptoPrice(
 
 Full list in `lib/crypto-data.ts`.
 
-## AI Text Generation
+## Lorem Ipsum Generator (Local)
 
-Server action for generating contextual placeholder text via OpenRouter.
-
-### Configuration
-
-**Provider:** OpenRouter
-**Model:** `meta-llama/llama-3.3-70b-instruct:free`
-**Authentication:** Environment variable `OPENROUTER_API_KEY`
+Placeholder text is generated locally in the browser — no API call is made.
 
 ### Usage
 
 ```typescript
-import { generateText } from "@/lib/openrouter"
+import { generateLorem } from "@/lib/text/lorem"
 
-// Generate text about a topic
-const result = await generateText("artificial intelligence", 200)
+// 50 words starting with the classic opener
+const text = generateLorem({ count: 50, unit: "words" })
 
-if (result.success) {
-  console.log(result.text)
-} else {
-  console.error(result.error)
-}
-```
-
-### Implementation
-
-```typescript
-// lib/openrouter.ts
-"use server"
-
-import { OpenRouter } from "@openrouter/sdk"
-
-export async function generateText(
-  topic: string,
-  wordCount: number
-): Promise<TextGenerationResult> {
-  const apiKey = process.env.OPENROUTER_API_KEY
-
-  if (!apiKey) {
-    return { success: false, error: "OPENROUTER_API_KEY is not configured." }
-  }
-
-  const openRouter = new OpenRouter({ apiKey })
-
-  try {
-    const completion = await openRouter.chat.send({
-      model: "meta-llama/llama-3.3-70b-instruct:free",
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful assistant that generates meaningful placeholder text based on a topic."
-        },
-        {
-          role: "user",
-          content: `Generate approximately ${wordCount} words of text about "${topic}".`
-        }
-      ]
-    })
-
-    const text = completion.choices?.[0]?.message?.content
-
-    if (!text) {
-      throw new Error("No content received from API")
-    }
-
-    return { success: true, text }
-  } catch (error) {
-    return { success: false, error: "Failed to generate text." }
-  }
-}
-```
-
-### Response Types
-
-```typescript
-type TextGenerationResult =
-  | { success: true; text: string }
-  | { success: false; error: string }
+// 3 paragraphs without the opener
+const text = generateLorem({
+  count: 3,
+  unit: "paragraphs",
+  startWithLorem: false
+})
 ```
 
 ### Parameters
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `topic` | string | Subject for text generation |
-| `wordCount` | number | Approximate word count |
+| `count` | number | Number of units to generate |
+| `unit` | `"words" \| "sentences" \| "paragraphs"` | Generation unit |
+| `startWithLorem` | boolean (optional) | Start with "Lorem ipsum dolor sit amet" (default true) |
+
+Limits: 1–1000 words, 1–100 sentences, 1–20 paragraphs. The same generator backs the `/text` terminal command and the `/tools/text` page.
 
 ## Redis (Upstash)
 
@@ -290,16 +230,20 @@ KV_REST_API_TOKEN=your_redis_token
 
 ### Usage
 
-Redis is used directly in `middleware.ts` (Edge runtime) — it cannot import from `lib/`. The client is instantiated inline:
+Redis is used directly in `proxy.ts` (Node runtime) — it may import from `lib/`, but the client is instantiated inline behind a guarded factory so missing env means "skip counting", never an error:
 
 ```typescript
-// middleware.ts
+// proxy.ts
 import { Redis } from "@upstash/redis"
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-})
+function createVisitorRedis(): Redis | null {
+  const url = process.env.KV_REST_API_URL
+  const token = process.env.KV_REST_API_TOKEN
+  if (!url || !token) {
+    return null
+  }
+  return new Redis({ url, token })
+}
 ```
 
 ### Use Cases
@@ -372,14 +316,12 @@ export async function getExchangeRate(from: string, to: string) {
 |-----|-----------|----------|
 | Currency API (CDN) | Unlimited | - |
 | CoinGecko | 10-30 req/min | Demo key |
-| OpenRouter | Varies by plan | Server-side only |
 
 ### Environment Variables
 
 ```bash
 # .env.local
 NEXT_PUBLIC_ENV=dev
-OPENROUTER_API_KEY=your_api_key_here
 KV_REST_API_URL=your_redis_url
 KV_REST_API_TOKEN=your_redis_token
 # SENTRY_AUTH_TOKEN=your_sentry_token  # optional
@@ -388,7 +330,6 @@ KV_REST_API_TOKEN=your_redis_token
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
-| `OPENROUTER_API_KEY` | Optional | AI text generation |
 | `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL |
 | `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
 | `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |

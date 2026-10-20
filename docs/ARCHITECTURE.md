@@ -22,7 +22,6 @@ graph TB
     end
 
     subgraph External["External Services"]
-        OR[OpenRouter API]
         CG[CoinGecko API]
         FX[Currency API]
         Sentry[Sentry]
@@ -30,7 +29,6 @@ graph TB
 
     UI --> State
     State --> Tools
-    Tools --> OR
     Tools --> CG
     Tools --> FX
     UI --> Sentry
@@ -39,45 +37,34 @@ graph TB
 **Architecture Type:** Client-side rendered SPA with Next.js App Router
 
 **Key Characteristics:**
-- Minimal backend — server actions for AI text generation, API routes for specific integrations
+- Minimal backend — one API route (`/api/stats`); all tool processing happens client-side
 - Browser-based processing for tools
 - External APIs for live data
 - Client-side state persistence (IndexedDB primary, localStorage fallback)
-- Edge middleware for visitor counting (Upstash Redis)
+- `proxy.ts` (Node runtime) for flavour routing and visitor counting (Upstash Redis)
 
 ## Frontend Structure
 
 ```
 app/
 ├── layout.tsx              # Root layout with providers
-├── page.tsx                # Landing page
+├── (site)/                 # Legacy flavour (classic UI)
+│   ├── layout.tsx          # Legacy nav, footer, container
+│   ├── page.tsx            # Landing page
+│   ├── tools/              # Tool pages (password, hash, currency, text, image,
+│   │                       #   units, calculator, json, sql, music, …)
+│   ├── games/              # Game pages (snake, memory, dino, pacman, sudoku, word-search)
+│   ├── explore/            # Activity feed
+│   ├── contribute/         # Contribution page
+│   └── privacy/            # Privacy policy
+├── terminal/               # Terminal flavour (default; never visible in the URL)
+│   ├── layout.tsx          # Terminal chrome and colour schemes
+│   ├── page.tsx            # Terminal home
+│   └── tools/[tool]/       # Terminal with the tool panel open
 ├── error.tsx               # Error boundary
 ├── global-error.tsx        # Global error boundary
 ├── not-found.tsx           # 404 page
-├── api/                    # API routes
-├── tools/
-│   ├── page.tsx            # Tools listing
-│   ├── password/           # Password generator
-│   ├── hash/               # Hash generator
-│   ├── currency/           # Currency converter
-│   ├── text/               # Text generator
-│   ├── image/              # Image resizer
-│   ├── units/              # Unit converter
-│   ├── calculator/         # Calculator
-│   ├── json/               # JSON validator
-│   ├── sql/                # SQL formatter
-│   └── music/              # Lofi Focus Studio
-├── games/
-│   ├── page.tsx            # Games listing
-│   ├── snake/              # Snake game
-│   ├── memory/             # Memory game
-│   ├── dino/               # Dino game
-│   ├── pacman/             # Pacman game
-│   ├── sudoku/             # Sudoku game
-│   └── word-search/        # Word Search game
-├── explore/                # Activity feed
-├── contribute/             # Contribution page
-└── privacy/                # Privacy policy
+└── api/                    # API routes
 ```
 
 ### Page Component Pattern
@@ -155,14 +142,16 @@ graph LR
 
 **No authentication required** - all routes are public.
 
-### Middleware
+### Proxy
 
 ```typescript
-// middleware.ts
-// Edge middleware for visitor counting via Upstash Redis
-// - Tracks unique visitors on the home page
-// - Uses 24-hour dedup cookie to prevent double-counting
-// - Non-blocking increment using Next.js after() API
+// proxy.ts (repo root — replaced the deleted middleware.ts; Node runtime)
+// Routes the terminal and legacy flavours on the astraa_flavour cookie:
+// - "/", "/tools" and registered "/tools/<slug>" are rewritten to the
+//   terminal routes unless the cookie is "legacy" (address bar unchanged)
+// - Direct hits on /terminal* get a 308 redirect to the public URL
+// - Visitor counting on the home page via Upstash Redis, with a 24-hour
+//   dedup cookie and a non-blocking increment using next/server after()
 ```
 
 ### Navigation Components

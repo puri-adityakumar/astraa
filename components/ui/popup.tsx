@@ -90,7 +90,7 @@ export function ComingSoonPopup({
           </motion.div>
           <p className="text-sm text-muted-foreground text-center">
             This feature is currently under development.
-            We'll notify you as soon as it's ready!
+            We&apos;ll notify you as soon as it&apos;s ready!
           </p>
         </div>
         <Button

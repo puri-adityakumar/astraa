@@ -35,7 +35,7 @@ export function Dropzone({ onPick, variant = "empty", visible = true }: Dropzone
     <button
       type="button"
       onClick={trigger}
-      className="group flex w-full max-w-md flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-border bg-gradient-to-b from-muted/30 to-transparent p-10 text-center transition-all hover:border-primary/60 hover:from-primary/10 hover:to-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group flex w-full flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-border bg-gradient-to-b from-muted/30 to-transparent p-10 text-center transition-all hover:border-primary/60 hover:from-primary/10 hover:to-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       aria-label="Upload markdown file"
     >
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors group-hover:bg-primary/15 group-hover:text-primary">

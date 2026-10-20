@@ -2,6 +2,7 @@ declare module "dom-to-image-more" {
   export interface DomToImageOptions {
     width?: number;
     height?: number;
+    scale?: number;
     style?: Partial<CSSStyleDeclaration> | Record<string, string>;
     cacheBust?: boolean;
     quality?: number;

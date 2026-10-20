@@ -13,21 +13,37 @@ class IndexedDBAdapter implements StorageAdapter {
   private dbName = 'astraa-tools-db'
   private version = 1
   private storeName = 'store'
+  private dbPromise: Promise<IDBDatabase> | null = null
+  private fallback = new LocalStorageAdapter()
   
   private async getDB(): Promise<IDBDatabase> {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, this.version)
-      
-      request.onerror = () => reject(request.error)
-      request.onsuccess = () => resolve(request.result)
-      
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          db.createObjectStore(this.storeName)
+    if (!this.dbPromise) {
+      this.dbPromise = new Promise<IDBDatabase>((resolve, reject) => {
+        const request = indexedDB.open(this.dbName, this.version)
+
+        request.onerror = () => reject(request.error)
+        request.onsuccess = () => {
+          const db = request.result
+          db.onversionchange = () => {
+            db.close()
+            this.dbPromise = null
+          }
+          resolve(db)
         }
-      }
-    })
+
+        request.onupgradeneeded = (event) => {
+          const db = (event.target as IDBOpenDBRequest).result
+          if (!db.objectStoreNames.contains(this.storeName)) {
+            db.createObjectStore(this.storeName)
+          }
+        }
+      }).catch((error: unknown) => {
+        this.dbPromise = null
+        throw error
+      })
+    }
+
+    return this.dbPromise
   }
   
   async getItem(key: string): Promise<string | null> {
@@ -36,14 +52,16 @@ class IndexedDBAdapter implements StorageAdapter {
       const transaction = db.transaction([this.storeName], 'readonly')
       const store = transaction.objectStore(this.storeName)
       
-      return new Promise((resolve, reject) => {
+      return await new Promise<string | null>((resolve, reject) => {
+        transaction.onerror = () => reject(transaction.error)
+        transaction.onabort = () => reject(transaction.error)
         const request = store.get(key)
         request.onerror = () => reject(request.error)
-        request.onsuccess = () => resolve(request.result || null)
+        request.onsuccess = () => resolve(request.result ?? null)
       })
     } catch (error) {
       console.warn('IndexedDB getItem failed, falling back to localStorage:', error)
-      return localStorage.getItem(key)
+      return await this.fallback.getItem(key)
     }
   }
   
@@ -53,14 +71,15 @@ class IndexedDBAdapter implements StorageAdapter {
       const transaction = db.transaction([this.storeName], 'readwrite')
       const store = transaction.objectStore(this.storeName)
       
-      return new Promise((resolve, reject) => {
-        const request = store.put(value, key)
-        request.onerror = () => reject(request.error)
-        request.onsuccess = () => resolve()
+      return await new Promise<void>((resolve, reject) => {
+        transaction.oncomplete = () => resolve()
+        transaction.onerror = () => reject(transaction.error)
+        transaction.onabort = () => reject(transaction.error)
+        store.put(value, key)
       })
     } catch (error) {
       console.warn('IndexedDB setItem failed, falling back to localStorage:', error)
-      localStorage.setItem(key, value)
+      await this.fallback.setItem(key, value)
     }
   }
   
@@ -70,29 +89,37 @@ class IndexedDBAdapter implements StorageAdapter {
       const transaction = db.transaction([this.storeName], 'readwrite')
       const store = transaction.objectStore(this.storeName)
       
-      return new Promise((resolve, reject) => {
-        const request = store.delete(key)
-        request.onerror = () => reject(request.error)
-        request.onsuccess = () => resolve()
+      return await new Promise<void>((resolve, reject) => {
+        transaction.oncomplete = () => resolve()
+        transaction.onerror = () => reject(transaction.error)
+        transaction.onabort = () => reject(transaction.error)
+        store.delete(key)
       })
     } catch (error) {
       console.warn('IndexedDB removeItem failed, falling back to localStorage:', error)
-      localStorage.removeItem(key)
+      await this.fallback.removeItem(key)
     }
   }
 }
 
 class LocalStorageAdapter implements StorageAdapter {
   async getItem(key: string): Promise<string | null> {
-    return localStorage.getItem(key)
+    if (typeof localStorage !== 'undefined' && typeof localStorage?.getItem === 'function') {
+      return localStorage.getItem(key)
+    }
+    return null
   }
   
   async setItem(key: string, value: string): Promise<void> {
-    localStorage.setItem(key, value)
+    if (typeof localStorage !== 'undefined' && typeof localStorage?.setItem === 'function') {
+      localStorage.setItem(key, value)
+    }
   }
   
   async removeItem(key: string): Promise<void> {
-    localStorage.removeItem(key)
+    if (typeof localStorage !== 'undefined' && typeof localStorage?.removeItem === 'function') {
+      localStorage.removeItem(key)
+    }
   }
 }
 
@@ -100,8 +127,16 @@ class LocalStorageAdapter implements StorageAdapter {
  * Creates a storage adapter that uses IndexedDB with localStorage fallback
  */
 export function createEnhancedStorage(): StorageAdapter {
+  if (typeof window === 'undefined') {
+    return {
+      getItem: async () => null,
+      setItem: async () => {},
+      removeItem: async () => {}
+    }
+  }
+
   // Check if IndexedDB is available
-  if (typeof window !== 'undefined' && 'indexedDB' in window) {
+  if (typeof window.indexedDB?.open === 'function') {
     return new IndexedDBAdapter()
   }
   

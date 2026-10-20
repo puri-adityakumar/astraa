@@ -8,7 +8,7 @@ type SerializeOptions = {
 function sortDeep(value: JsonValue): JsonValue {
   if (Array.isArray(value)) return value.map(sortDeep);
   if (value && typeof value === "object") {
-    const out: Record<string, JsonValue> = {};
+    const out: Record<string, JsonValue> = Object.create(null);
     for (const key of Object.keys(value).sort()) {
       out[key] = sortDeep((value as Record<string, JsonValue>)[key] as JsonValue);
     }

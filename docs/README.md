@@ -15,7 +15,8 @@ A modern, browser-based utility tools and games suite built with Next.js 16, Typ
 Astraa provides an integrated platform of developer and creator utilities that run entirely in the browser. No backend processing required for most features.
 
 **Key Features:**
-- Password, hash, and text generators
+- Terminal-style interface (default) with slash commands
+- Password, hash, and lorem ipsum generators
 - Currency and cryptocurrency converters
 - Image resizer and unit converter
 - Calculator and developer tools
@@ -61,9 +62,6 @@ npm install
 
 # 4. Copy environment variables (optional)
 cp .env.sample .env.local
-
-# 5. Configure environment variables
-# OPENROUTER_API_KEY - Required for AI text generation
 ```
 
 ### Environment Variables
@@ -71,7 +69,6 @@ cp .env.sample .env.local
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
-| `OPENROUTER_API_KEY` | Optional | API key for AI-powered text generation |
 | `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL (visitor counting) |
 | `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
 | `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |

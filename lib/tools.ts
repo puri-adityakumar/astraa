@@ -31,8 +31,8 @@ export const toolCategories: ToolCategory[] = [
         icon: Hash
       },
       {
-        name: 'Text Generator',
-        description: 'Smart, context-aware Lorem Ipsum alternative',
+        name: 'Lorem Ipsum Generator',
+        description: 'Generate lorem ipsum placeholder text locally',
         path: '/tools/text',
         icon: Type
       },

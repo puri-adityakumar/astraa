@@ -102,7 +102,6 @@ npm run dev
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_ENV` | Yes | `dev` shows WIP features for testing, `prod` shows "Coming Soon" cards |
-| `OPENROUTER_API_KEY` | Optional | API key for AI text generation ([get one here](https://openrouter.ai/keys)) |
 | `SENTRY_AUTH_TOKEN` | Optional | Sentry error tracking token |
 
 ### Available Commands
@@ -155,7 +154,7 @@ astraa/
 │   └── games/          # Game logic hooks
 ├── hooks/              # Custom React hooks
 ├── types/              # TypeScript type definitions
-└── middleware.ts        # Edge middleware (visitor counting)
+└── proxy.ts             # Proxy (flavour routing + visitor counting)
 ```
 
 ### Core Architecture Pattern

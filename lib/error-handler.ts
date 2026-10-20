@@ -10,36 +10,46 @@ export interface ErrorDetails {
 }
 
 // Pre-compiled RegExp constants for sanitization (avoids re-creation per call)
-const WINDOWS_PATH_RE = /[A-Za-z]:\\[\w\\\-. ]+/g
-const UNIX_PATH_RE = /\/[\w\/\-. ]+/g
-const URL_RE = /https?:\/\/[^\s]+/g
-const EMAIL_RE = /[\w.-]+@[\w.-]+\.\w+/g
+const WINDOWS_PATH_RE = /[A-Za-z]:\\[\w\\\-.]+/g
+const UNIX_PATH_RE = /\/[\w\/\-.]+/g
+const URL_RE = /https?:\/\/[^\s]+/gi
+const EMAIL_RE = /[\w.+-]+@[\w.-]+\.\w+/g
 const IP_RE = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g
 
 /**
  * Convert various error types into user-friendly messages
  */
 export function getUserFriendlyError(error: unknown): ErrorDetails {
-  // Network errors
-  if (error instanceof TypeError && error.message.includes("fetch")) {
-    return {
-      title: "Connection Error",
-      message: "Unable to connect to the server. Please check your internet connection and try again.",
-      action: "Retry",
-      technical: error.message,
-    }
-  }
-
   if (error instanceof Error) {
     const lowerMessage = error.message.toLowerCase()
+    const technical = sanitizeErrorMessage(error.message)
 
     // Timeout errors
-    if (lowerMessage.includes("timeout")) {
+    if (
+      error.name === "TimeoutError" ||
+      error.name === "AbortError" ||
+      lowerMessage.includes("timeout")
+    ) {
       return {
         title: "Request Timeout",
         message: "The request took too long to complete. Please try again.",
         action: "Retry",
-        technical: error.message,
+        technical,
+      }
+    }
+
+    // Network errors differ between browsers.
+    if (
+      (error instanceof TypeError && lowerMessage.includes("fetch")) ||
+      lowerMessage.includes("load failed") ||
+      lowerMessage.includes("networkerror") ||
+      error.name === "NetworkError"
+    ) {
+      return {
+        title: "Connection Error",
+        message: "Unable to connect to the server. Please check your internet connection and try again.",
+        action: "Retry",
+        technical,
       }
     }
 
@@ -49,7 +59,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Permission Denied",
         message: "You don't have permission to perform this action.",
         action: "Go Back",
-        technical: error.message,
+        technical,
       }
     }
 
@@ -59,7 +69,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "Invalid Input",
         message: "The provided input is invalid. Please check your data and try again.",
         action: "Fix Input",
-        technical: error.message,
+        technical,
       }
     }
 
@@ -69,7 +79,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
         title: "File Error",
         message: "There was a problem with the file. Please ensure it's the correct format and size.",
         action: "Try Another File",
-        technical: error.message,
+        technical,
       }
     }
 
@@ -78,7 +88,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
       title: "Something Went Wrong",
       message: "An unexpected error occurred. Please try again or contact support if the problem persists.",
       action: "Try Again",
-      technical: error.message,
+      technical,
     }
   }
 
@@ -87,7 +97,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
     title: "Unknown Error",
     message: "An unexpected error occurred. Please try again.",
     action: "Try Again",
-    technical: String(error),
+    technical: sanitizeErrorMessage(String(error)),
   }
 }
 
@@ -127,9 +137,9 @@ export async function handleAsyncError<T>(
  */
 export function sanitizeErrorMessage(message: string): string {
   return message
+    .replace(URL_RE, "[url]")
     .replace(WINDOWS_PATH_RE, "[path]")
     .replace(UNIX_PATH_RE, "[path]")
-    .replace(URL_RE, "[url]")
     .replace(EMAIL_RE, "[email]")
     .replace(IP_RE, "[ip]")
 }

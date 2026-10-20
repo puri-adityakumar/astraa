@@ -14,13 +14,14 @@ import { oneDark } from "@codemirror/theme-one-dark";
 export function TextView() {
   const text = useJsonEditor((s) => s.text);
   const setText = useJsonEditor((s) => s.setText);
-  const { resolvedTheme } = useTheme();
+  const { forcedTheme, resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const isDark = resolvedTheme === "dark";
+    // Terminal panels force the scheme's kind; legacy pages resolve it.
+    const isDark = (forcedTheme ?? resolvedTheme) === "dark";
     const state = EditorState.create({
       doc: text,
       extensions: [
@@ -31,6 +32,17 @@ export function TextView() {
         lintGutter(),
         autocompletion(),
         keymap.of([...defaultKeymap, ...historyKeymap]),
+        EditorView.theme({
+          "&": { fontSize: "13px" },
+          ".cm-content": {
+            fontFamily:
+              "var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
+          },
+          ".cm-scroller": {
+            scrollbarWidth: "thin",
+            scrollbarColor: "rgba(255,255,255,0.2) transparent",
+          },
+        }),
         EditorView.lineWrapping,
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
@@ -44,7 +56,7 @@ export function TextView() {
     viewRef.current = view;
     return () => view.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedTheme]);
+  }, [forcedTheme, resolvedTheme]);
 
   useEffect(() => {
     const v = viewRef.current;

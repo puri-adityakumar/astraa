@@ -17,36 +17,23 @@ Development guidelines, workflows, and best practices for Astraa.
 astraa/
 ├── app/                      # Next.js App Router pages
 │   ├── layout.tsx            # Root layout
-│   ├── page.tsx              # Landing page
+│   ├── (site)/               # Legacy flavour (classic UI)
+│   │   ├── page.tsx          # Landing page
+│   │   ├── tools/            # Tool pages (password, hash, currency, text, image,
+│   │   │                     #   units, calculator, json, sql, music, …)
+│   │   ├── games/            # Game pages (snake, memory, dino, pacman, sudoku, word-search)
+│   │   ├── explore/          # Activity feed
+│   │   ├── contribute/       # Contribution page
+│   │   └── privacy/          # Privacy policy
+│   ├── terminal/             # Terminal flavour (default; never visible in the URL)
+│   │   ├── page.tsx          # Terminal home
+│   │   └── tools/[tool]/     # Terminal with the tool panel open
 │   ├── error.tsx             # Error boundary
 │   ├── global-error.tsx      # Global error boundary
 │   ├── not-found.tsx         # 404 page
 │   ├── robots.ts             # robots.txt generation
 │   ├── sitemap.ts            # sitemap.xml generation
-│   ├── api/                  # API routes (stats endpoint)
-│   ├── tools/                # Tool pages
-│   │   ├── page.tsx          # Tools listing
-│   │   ├── password/         # Password generator
-│   │   ├── hash/             # Hash generator
-│   │   ├── currency/         # Currency converter
-│   │   ├── text/             # Text generator
-│   │   ├── image/            # Image resizer
-│   │   ├── units/            # Unit converter
-│   │   ├── calculator/       # Calculator
-│   │   ├── json/             # JSON validator
-│   │   ├── sql/              # SQL formatter
-│   │   └── music/            # Lofi Focus Studio
-│   ├── games/                # Game pages
-│   │   ├── page.tsx          # Games listing
-│   │   ├── snake/            # Snake game
-│   │   ├── memory/           # Memory game
-│   │   ├── dino/             # Dino game
-│   │   ├── pacman/           # Pacman game
-│   │   ├── sudoku/           # Sudoku game
-│   │   └── word-search/      # Word Search game
-│   ├── explore/              # Activity feed
-│   ├── contribute/           # Contribution page
-│   └── privacy/              # Privacy policy
+│   └── api/                  # API routes (stats endpoint)
 ├── components/               # React components
 │   ├── ui/                   # Shadcn/UI components
 │   ├── home/                 # Landing page components
@@ -58,14 +45,16 @@ astraa/
 │   ├── image/                # Image resizer components
 │   ├── music/                # Music player components
 │   └── units/                # Unit converter components
-├── middleware.ts              # Edge middleware (visitor counting via Upstash Redis)
+├── proxy.ts                   # Proxy (flavour routing + visitor counting via Upstash Redis)
 ├── lib/                      # Utilities and logic
 │   ├── tools.ts              # Tools catalog
 │   ├── games.ts              # Games catalog
 │   ├── tools-context.tsx     # Tools context provider
 │   ├── activity-tracker.tsx  # Activity tracking
 │   ├── api.ts                # External API calls
-│   ├── openrouter.ts         # AI text generation
+│   ├── site-metadata.ts      # Shared metadata for both flavours
+│   ├── text/                 # Lorem ipsum generator
+│   ├── terminal/             # Terminal command layer (registry, commands, themes, cookies)
 │   ├── redis.ts              # Upstash Redis client
 │   ├── utils.ts              # General utilities
 │   ├── clipboard.ts          # Clipboard utilities
@@ -336,7 +325,12 @@ export function calculateTotal(items: Item[]): number {
 
 ## Testing Approach
 
-Currently no test suite configured. Manual testing recommended during development.
+Unit tests run with [Vitest](https://vitest.dev) and cover the pure logic in `lib/` (calculator, hash, password, unit conversions, error handler, the terminal command layer, the lorem ipsum generator). Test files are co-located with their modules (e.g., `lib/calculator/calculator-utils.test.ts`).
+
+```bash
+npm test           # Run all tests
+npm run test:watch # Run tests in watch mode
+```
 
 ### Manual Testing Checklist
 
@@ -389,7 +383,6 @@ npm start
 ```bash
 # .env.local (development) — see .env.sample
 NEXT_PUBLIC_ENV=dev
-OPENROUTER_API_KEY=your_key_here
 KV_REST_API_URL=your_redis_url
 KV_REST_API_TOKEN=your_redis_token
 # SENTRY_AUTH_TOKEN=your_sentry_token  # optional
@@ -466,6 +459,8 @@ export function processData(input: string): Result {
   // Implementation
 }
 ```
+
+5. **Expose it as a terminal command (optional):** create `lib/terminal/commands/<name>.ts` (plus a test) with a pure `run(args)` returning an `answer`/`open`/`fallback` result, register it in `lib/terminal/registry.ts`, add the slug to `TERMINAL_TOOL_SLUGS` in `lib/terminal/slugs.ts`, and map the slug to the client in `components/terminal/panel-clients.tsx` (give the client an optional `variant?: "page" | "panel"` prop).
 
 ### Adding a UI Component
 

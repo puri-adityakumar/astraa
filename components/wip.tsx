@@ -2,20 +2,14 @@
 
 import { motion } from "framer-motion"
 import { Construction } from "lucide-react"
-import { ReactNode, useState, useEffect } from "react"
+import type { ReactNode } from "react"
 
 interface WorkInProgressProps {
   children?: ReactNode
 }
 
 export function WorkInProgress({ children }: WorkInProgressProps) {
-  const [showWip, setShowWip] = useState(false)
-
-  useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV === 'prod') {
-      setShowWip(true)
-    }
-  }, [])
+  const showWip = process.env.NEXT_PUBLIC_ENV === "prod";
 
   if (showWip) {
     return (

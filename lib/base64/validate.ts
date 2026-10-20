@@ -25,6 +25,9 @@ export function validateBase64(
 
   // Compute effective length excluding trailing padding.
   const trimmed = stripped.replace(/=+$/g, "");
+  if (trimmed.length % 4 === 1) {
+    return { ok: false, reason: "bad padding" };
+  }
   const padded = opts.urlSafe
     ? trimmed + "=".repeat((4 - (trimmed.length % 4)) % 4)
     : stripped;

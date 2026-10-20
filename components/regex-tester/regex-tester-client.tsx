@@ -27,17 +27,31 @@ import { StatusFooter } from "./status-footer";
 import { SnippetCardExport } from "./snippet-card-export";
 import { useRegexTester } from "@/lib/stores/regex-tester";
 import { compileRegex } from "@/lib/regex-tester/compile";
-import { runMatches } from "@/lib/regex-tester/match";
 import { encodeState, decodeState } from "@/lib/regex-tester/url-state";
 import { debounce } from "@/lib/regex-tester/debounce";
-import { runMatchesSafe } from "@/lib/regex-tester/redos-client";
+import { runMatchesSafe, type SafeMatchResult } from "@/lib/regex-tester/redos-client";
+import { useRegexWorker } from "./use-regex-worker";
 import { useToolSettings } from "@/lib/stores/tool-settings";
 import { copyToClipboard } from "@/lib/clipboard";
 
 const TEST_BYTE_CAP = 100 * 1024;
 const DEBOUNCE_MS = 150;
+const EMPTY_MATCH_RESULT: SafeMatchResult = {
+  results: [],
+  elapsedMs: 0,
+  capped: false,
+  timedOut: false,
+  hardTimeout: false,
+};
 
-export function RegexTesterClient() {
+type RegexTesterVariant = "page" | "panel";
+
+interface RegexTesterClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: RegexTesterVariant;
+}
+
+export function RegexTesterClient({ variant = "page" }: RegexTesterClientProps) {
   const pattern = useRegexTester((s) => s.pattern);
   const flags = useRegexTester((s) => s.flags);
   const testString = useRegexTester((s) => s.testString);
@@ -50,10 +64,7 @@ export function RegexTesterClient() {
   const { toast } = useToast();
 
   const [hoveredMatchId, setHoveredMatchId] = useState<number | null>(null);
-  const [debouncedPattern, setDebouncedPattern] = useState(pattern);
-  const [debouncedFlags, setDebouncedFlags] = useState(flags);
-  const [debouncedTest, setDebouncedTest] = useState(testString);
-  const [hardTimeout, setHardTimeout] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const testStringRef = useRef<TestStringAreaHandle>(null);
   const patternInputRef = useRef<PatternHighlightInputHandle>(null);
 
@@ -94,67 +105,39 @@ export function RegexTesterClient() {
       });
       const next = `#${hash}`;
       if (window.location.hash !== next) {
-        window.history.replaceState(null, "", next);
+        // Keep the current history state — in terminal panels it carries the
+        // open panel for Back/Forward.
+        window.history.replaceState(window.history.state, "", next);
       }
     }, DEBOUNCE_MS);
     sync();
     return sync.cancel;
   }, [pattern, flags, testString, replacement]);
 
-  // Mirror the live inputs into debounced versions used for derivations.
-  useEffect(() => {
-    const sync = debounce(() => {
-      setDebouncedPattern(pattern);
-      setDebouncedFlags(flags);
-      setDebouncedTest(testString);
-    }, DEBOUNCE_MS);
-    sync();
-    return sync.cancel;
-  }, [pattern, flags, testString]);
-
   useEffect(() => {
     useToolSettings.getState().updateToolUsage("regex-tester");
   }, []);
 
   const compileResult = useMemo(
-    () => compileRegex(debouncedPattern, debouncedFlags),
-    [debouncedPattern, debouncedFlags],
+    () => compileRegex(pattern, flags),
+    [pattern, flags],
   );
 
   const patternError =
     !compileResult.ok && pattern.length > 0 ? compileResult.error : null;
 
-  const matchResult = useMemo(() => {
-    if (!compileResult.ok) {
-      return { results: [], elapsedMs: 0, capped: false, timedOut: false };
-    }
-    return runMatches(compileResult.regex, debouncedTest);
-  }, [compileResult, debouncedTest]);
+  const matchTask = useCallback(async (signal: AbortSignal) => {
+    if (!compileResult.ok) return EMPTY_MATCH_RESULT;
+    return runMatchesSafe(pattern, flags, testString, undefined, signal);
+  }, [compileResult, pattern, flags, testString]);
+  const {
+    value: matchResult,
+    pending,
+    error: matchError,
+    runNow,
+  } = useRegexWorker(matchTask, EMPTY_MATCH_RESULT);
 
   const matches = matchResult.results;
-
-  useEffect(() => {
-    let cancelled = false;
-    if (!matchResult.timedOut) {
-      // Defer the reset to avoid the cascading-render lint rule.
-      const id = window.setTimeout(() => {
-        if (!cancelled) setHardTimeout(false);
-      }, 0);
-      return () => {
-        cancelled = true;
-        window.clearTimeout(id);
-      };
-    }
-    runMatchesSafe(debouncedPattern, debouncedFlags, debouncedTest).then(
-      (safe) => {
-        if (cancelled) return;
-        setHardTimeout(safe.hardTimeout);
-      },
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [matchResult.timedOut, debouncedPattern, debouncedFlags, debouncedTest]);
 
   const handleJumpToMatch = useCallback(
     (matchId: number) => {
@@ -205,13 +188,12 @@ export function RegexTesterClient() {
 
   useEffect(() => {
     const onKey = async (e: KeyboardEvent) => {
+      if (!(e.target instanceof Node) || !rootRef.current?.contains(e.target)) return;
       const mod = e.metaKey || e.ctrlKey;
       if (!mod) return;
       if (e.key === "Enter") {
         e.preventDefault();
-        setDebouncedPattern(pattern);
-        setDebouncedFlags(flags);
-        setDebouncedTest(testString);
+        runNow();
         return;
       }
       if (e.key.toLowerCase() === "k") {
@@ -259,6 +241,7 @@ export function RegexTesterClient() {
     handleShare,
     setReplaceOpen,
     toast,
+    runNow,
   ]);
 
   const reduceMotion = useReducedMotion();
@@ -266,8 +249,61 @@ export function RegexTesterClient() {
   const itemVariants = reduceMotion ? {} : staggerItem;
   const headerVariants = reduceMotion ? {} : fadeInUp;
 
+  const testerCard = (
+    <Card className="p-4 sm:p-6 space-y-6">
+      <PatternRow
+        ref={patternInputRef}
+        error={patternError}
+        onShare={handleShare}
+        exportSlot={
+          <SnippetCardExport
+            pattern={pattern}
+            flags={flags}
+            matches={matches}
+          />
+        }
+      />
+      <TestStringArea
+        ref={testStringRef}
+        matches={matches}
+        hoveredMatchId={hoveredMatchId}
+        onHoverMatch={setHoveredMatchId}
+      />
+      <MatchesPanel
+        matches={matches}
+        hoveredMatchId={hoveredMatchId}
+        onHoverMatch={setHoveredMatchId}
+        onJumpToMatch={handleJumpToMatch}
+      />
+      <ReplacePanel />
+      <div className="hidden sm:block">
+        <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
+      </div>
+      <StatusFooter
+        matchCount={matches.length}
+        elapsedMs={matchResult.elapsedMs}
+        bytes={testBytes}
+        cap={TEST_BYTE_CAP}
+        timedOut={matchResult.timedOut}
+        hardTimeout={matchResult.hardTimeout}
+        pending={pending}
+        error={matchError}
+      />
+    </Card>
+  );
+
+  if (variant === "panel") {
+    return (
+      <div ref={rootRef} className="w-full space-y-6">
+        {testerCard}
+        <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} variant={variant} />
+      </div>
+    );
+  }
+
   return (
     <motion.div
+      ref={rootRef}
       className="container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8"
       variants={containerVariants}
       initial="hidden"
@@ -288,46 +324,7 @@ export function RegexTesterClient() {
         </p>
       </motion.div>
 
-      <motion.div variants={itemVariants}>
-        <Card className="p-4 sm:p-6 space-y-6">
-          <PatternRow
-            ref={patternInputRef}
-            error={patternError}
-            onShare={handleShare}
-            exportSlot={
-              <SnippetCardExport
-                pattern={pattern}
-                flags={flags}
-                matches={matches}
-              />
-            }
-          />
-          <TestStringArea
-            ref={testStringRef}
-            matches={matches}
-            hoveredMatchId={hoveredMatchId}
-            onHoverMatch={setHoveredMatchId}
-          />
-          <MatchesPanel
-            matches={matches}
-            hoveredMatchId={hoveredMatchId}
-            onHoverMatch={setHoveredMatchId}
-            onJumpToMatch={handleJumpToMatch}
-          />
-          <ReplacePanel />
-          <div className="hidden sm:block">
-            <ReferencePanel onInsertAtCaret={handleInsertAtCaret} />
-          </div>
-          <StatusFooter
-            matchCount={matches.length}
-            elapsedMs={matchResult.elapsedMs}
-            bytes={testBytes}
-            cap={TEST_BYTE_CAP}
-            timedOut={matchResult.timedOut}
-            hardTimeout={hardTimeout}
-          />
-        </Card>
-      </motion.div>
+      <motion.div variants={itemVariants}>{testerCard}</motion.div>
 
       <ReferenceSheet onInsertAtCaret={handleInsertAtCaret} />
     </motion.div>

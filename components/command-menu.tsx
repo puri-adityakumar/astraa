@@ -19,27 +19,36 @@ import { Badge } from "@/components/ui/badge"
 import { DialogTitle } from "@/components/ui/dialog"
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 
+const subscribeMounted = () => () => {};
+const getMountedSnapshot = () => true;
+const getServerMountedSnapshot = () => false;
+
 export function CommandMenu() {
   const router = useRouter()
   const [open, setOpen] = React.useState(false)
-  const [mounted, setMounted] = React.useState(false)
+  const mounted = React.useSyncExternalStore(
+    subscribeMounted,
+    getMountedSnapshot,
+    getServerMountedSnapshot,
+  );
   const [search, setSearch] = React.useState("")
   const { categories } = useTools()
 
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const handleOpenChange = React.useCallback((nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) setSearch("");
+  }, []);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       // Cmd/Ctrl + K to open command menu
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
-        setOpen((prev) => !prev)
+        handleOpenChange(!open);
       }
       // Escape to close
       if (e.key === "Escape") {
-        setOpen(false)
+        handleOpenChange(false);
       }
       // Cmd/Ctrl + / for quick search focus
       if (e.key === "/" && (e.metaKey || e.ctrlKey)) {
@@ -49,17 +58,11 @@ export function CommandMenu() {
     }
     document.addEventListener("keydown", down)
     return () => document.removeEventListener("keydown", down)
-  }, [])
-
-  // Reset search when dialog closes
-  React.useEffect(() => {
-    if (!open) {
-      setSearch("")
-    }
-  }, [open])
+  }, [open, handleOpenChange])
 
   const runCommand = React.useCallback((command: () => unknown) => {
     setOpen(false)
+    setSearch("");
     command()
   }, [])
 
@@ -79,7 +82,7 @@ export function CommandMenu() {
       </Button>
       <AnimatePresence>
         {mounted && open && (
-          <CommandDialog open={open} onOpenChange={setOpen}>
+          <CommandDialog open={open} onOpenChange={handleOpenChange}>
             <VisuallyHidden.Root>
               <DialogTitle>Search tools and games</DialogTitle>
             </VisuallyHidden.Root>
@@ -92,7 +95,7 @@ export function CommandMenu() {
             <CommandList>
               <CommandEmpty>
                 <div className="py-6 text-center text-sm text-muted-foreground">
-                  No results found for "{search}"
+                  No results found for &quot;{search}&quot;
                 </div>
               </CommandEmpty>
 

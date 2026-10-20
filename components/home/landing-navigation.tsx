@@ -3,8 +3,9 @@
 import { CommandMenu } from '@/components/command-menu'
 import { Logo } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { TryTerminalButton, switchToTerminalFlavour } from '@/components/try-terminal'
 import Link from 'next/link'
-import { Github, Menu, X, Home, Compass } from 'lucide-react'
+import { Github, Menu, X, Home, Compass, Terminal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -76,6 +77,8 @@ export function LandingNavigation() {
 
           {/* Right Section: Actions */}
           <div className="flex items-center justify-end gap-2 sm:gap-3">
+            <TryTerminalButton className="hidden sm:inline-flex min-h-touch gap-2 hover:bg-primary/10 hover:text-primary transition-colors duration-200" />
+
             <ThemeToggle />
 
             {/* GitHub Link - Desktop */}
@@ -191,6 +194,34 @@ export function LandingNavigation() {
                     </motion.div>
                   ))}
                 </nav>
+
+                {/* Try terminal - switches to the terminal flavour */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: mobileNavigationLinks.length * 0.05, duration: 0.2 }}
+                >
+                  <button
+                    type='button'
+                    role='menuitem'
+                    onClick={() => {
+                      setIsMenuOpen(false)
+                      switchToTerminalFlavour()
+                    }}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium w-full',
+                      'hover:bg-primary/10 hover:text-primary transition-all duration-200',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                      'min-h-touch group'
+                    )}
+                  >
+                    <Terminal
+                      className='h-5 w-5 transition-transform duration-200 group-hover:scale-110'
+                      aria-hidden='true'
+                    />
+                    <span>Try terminal</span>
+                  </button>
+                </motion.div>
               </div>
             </motion.div>
           </>

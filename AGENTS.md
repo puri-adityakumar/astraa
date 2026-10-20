@@ -23,17 +23,26 @@ npm run test:watch # Run tests in watch mode
 **State**: Zustand stores in `lib/stores/` (UserPreferences, ToolSettings, ActivityTracking) persisted via IndexedDB with localStorage fallback. Context: ToolsContext (`lib/tools-context.tsx`), ActivityProvider (`lib/activity-tracker.tsx`).
 
 **External APIs**:
-- OpenRouter (`lib/openrouter.ts`): Server action, AI text generation
 - CoinGecko (`lib/crypto-data.ts`): Crypto prices
 - Currency APIs (`lib/api.ts`): Exchange rates with fallback
-- Upstash Redis (`middleware.ts`): Visitor counting, Edge runtime — cannot import from `lib/`
+- Upstash Redis (`proxy.ts`): Visitor counting, Node runtime — may import from `lib/`; missing env means skip counting
+
+**Terminal flavour**: The default interface for `/` and `/tools/*`; the classic UI is "Legacy" (`/explore`, `/contribute`, `/privacy`, `/games` are always legacy). `proxy.ts` at the root (Node runtime — replaced `middleware.ts`) routes on the `astraa_flavour` cookie: absent or non-`legacy` rewrites `/`, `/tools` and registered `/tools/<slug>` to `app/terminal/**` (address bar unchanged); `legacy` serves `app/(site)/**`. It also 308-redirects direct `/terminal*` hits and runs the visitor counter.
+
+- `lib/terminal/` is the pure command layer (registry, parse, `commands/<name>.ts`, themes, cookies); panels mount existing tool clients with `variant="panel"`; only the cookies `astraa_flavour` and `astraa_term_theme` persist (command history is memory-only).
+- **Adding a terminal command**: create `lib/terminal/commands/<name>.ts` (+ test) → register in `lib/terminal/registry.ts` → add the slug to `lib/terminal/slugs.ts` → map it in `components/terminal/panel-clients.tsx` and give the client `variant?: "page" | "panel"`.
+
+**Two flavours, one component**: every tool UI is a single client component rendered by both flavours — the legacy page (`app/(site)/tools/<slug>/page.tsx`) renders it with `variant="page"` (the default) and the terminal panel mounts the same component with `variant="panel"`. A change to a tool client or its `lib/<tool>/` logic therefore reaches both flavours from one edit — never duplicate work into a flavour-specific copy.
+- Guard flavour-specific tweaks inside a shared client with the `variant` prop so the other rendering stays unaffected.
+- Terminal-only concerns (slash commands, panel chrome, terminal themes) stay in `lib/terminal/` and `components/terminal/` and must not leak into `app/(site)/**`.
+- After touching a shared client, verify both renderings: the terminal panel and the legacy page (sidebar's "Legacy UI" switch or the `astraa_flavour=legacy` cookie).
 
 **Registry**: Tools in `lib/tools.ts`, games in `lib/games.ts`.
 
 ## TypeScript Configuration
 
 - Strict mode with `noUnusedLocals`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`
-- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`, `@/config`
+- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`
 - Prefer `unknown` over `any`; explicit return types for public functions
 
 ## Code Style
@@ -173,6 +182,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 - Includes heading + tagline + "All processing happens locally in your browser" line where applicable
 - Animations use `lib/animations/variants.ts` and `useReducedMotion()`
 - Dark/light follows `next-themes` and HSL semantic tokens
+- Changes relevant to both flavours are made once in the shared tool client (branching on `variant` when needed) and verified in both renderings, not copied per flavour
 
 ### UX coverage
 - Empty state, loading state, error states are all specified

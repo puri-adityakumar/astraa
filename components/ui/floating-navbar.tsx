@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useSyncExternalStore } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Search } from "lucide-react"
+import { ArrowLeft, Search, Terminal } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { switchToTerminalFlavour } from "@/components/try-terminal"
 import {
   CommandDialog,
   CommandEmpty,
@@ -22,17 +23,21 @@ import { DialogTitle } from "@/components/ui/dialog"
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 import { ArrowRight } from "lucide-react"
 
+const subscribeMounted = () => () => {};
+const getMountedSnapshot = () => true;
+const getServerMountedSnapshot = () => false;
+
 export function FloatingNav({ className }: { className?: string }) {
   const [searchOpen, setSearchOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(
+    subscribeMounted,
+    getMountedSnapshot,
+    getServerMountedSnapshot,
+  );
   const [visible, setVisible] = useState(true)
   const lastScrollY = useRef(0)
   const router = useRouter()
   const { categories } = useTools()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -102,22 +107,33 @@ export function FloatingNav({ className }: { className?: string }) {
               </kbd>
             </Button>
 
-            {/* Right: Back */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="group shrink-0 h-8 w-8 flex items-center justify-center rounded-full border border-neutral-200/20 dark:border-neutral-800/20 hover:bg-muted/50"
-              onClick={() => router.back()}
-              aria-label="Go back"
-            >
-              <motion.div
-                initial={{ x: 0 }}
-                whileHover={{ x: -2 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            {/* Right: Try terminal + Back */}
+            <div className="flex items-center gap-2 shrink-0">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200/20 dark:border-neutral-800/20 hover:bg-muted/50"
+                onClick={switchToTerminalFlavour}
+                aria-label="Try terminal"
               >
-                <ArrowLeft className="h-4 w-4" />
-              </motion.div>
-            </motion.button>
+                <Terminal className="h-4 w-4" aria-hidden="true" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="group shrink-0 h-8 w-8 flex items-center justify-center rounded-full border border-neutral-200/20 dark:border-neutral-800/20 hover:bg-muted/50"
+                onClick={() => router.back()}
+                aria-label="Go back"
+              >
+                <motion.div
+                  initial={{ x: 0 }}
+                  whileHover={{ x: -2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </motion.div>
+              </motion.button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

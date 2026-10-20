@@ -15,7 +15,14 @@ import { useToolSettings } from "@/lib/stores/tool-settings";
 import { createParseClient, type ParseClient } from "@/lib/json/parse-client";
 import { logError } from "@/lib/error-handler";
 
-export function JsonEditorClient() {
+type JsonEditorVariant = "page" | "panel";
+
+interface JsonEditorClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: JsonEditorVariant;
+}
+
+export function JsonEditorClient({ variant = "page" }: JsonEditorClientProps) {
   const text = useJsonEditor((s) => s.text);
   const view = useJsonEditor((s) => s.view);
   const setParseResult = useJsonEditor((s) => s.setParseResult);
@@ -39,20 +46,25 @@ export function JsonEditorClient() {
     }
     return () => {
       clientRef.current?.destroy();
+      clientRef.current = null;
     };
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    const isCurrent = () => !cancelled && useJsonEditor.getState().text === text;
     window.clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(async () => {
-      if (clientRef.current) {
-        const result = await clientRef.current.parse(text);
-        setParseResult(result.value, result.diagnostics);
-      } else {
-        try {
+      try {
+        if (clientRef.current) {
+          const result = await clientRef.current.parse(text);
+          if (result && isCurrent()) setParseResult(result.value, result.diagnostics);
+        } else {
           const value = text.trim() === "" ? null : JSON.parse(text);
-          setParseResult(value, []);
-        } catch (e) {
+          if (isCurrent()) setParseResult(value, []);
+        }
+      } catch (e) {
+        if (isCurrent()) {
           setParseResult(null, [
             {
               severity: "error",
@@ -62,11 +74,40 @@ export function JsonEditorClient() {
         }
       }
     }, 200);
-    return () => window.clearTimeout(debounceRef.current);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(debounceRef.current);
+    };
   }, [text, setParseResult]);
 
+  const editorCard = (
+    <Card className="p-4 sm:p-6 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <ViewTabs />
+      </div>
+      <Toolbar />
+      {view === "text" && <TextView />}
+      {view === "tree" && <TreeView />}
+      {view === "convert" && <ConvertView />}
+      {view === "generate" && <GenerateView />}
+      <StatusBar />
+    </Card>
+  );
+
+  if (variant === "panel") {
+    return (
+      <div data-json-tool className="w-full space-y-4">
+        {editorCard}
+        <DropzoneOverlay />
+      </div>
+    );
+  }
+
   return (
-    <div className="container px-4 sm:px-6 max-w-[1400px] pt-24 pb-12 space-y-8">
+    <div
+      data-json-tool
+      className="container px-4 sm:px-6 max-w-[1400px] pt-24 pb-12 space-y-8"
+    >
       <div className="space-y-4 text-center sm:text-left">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           JSON Editor
@@ -81,17 +122,7 @@ export function JsonEditorClient() {
         </p>
       </div>
 
-      <Card className="p-4 sm:p-6 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <ViewTabs />
-        </div>
-        <Toolbar />
-        {view === "text" && <TextView />}
-        {view === "tree" && <TreeView />}
-        {view === "convert" && <ConvertView />}
-        {view === "generate" && <GenerateView />}
-        <StatusBar />
-      </Card>
+      {editorCard}
 
       <DropzoneOverlay />
     </div>

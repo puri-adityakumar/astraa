@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { redis, REDIS_KEYS } from '@/lib/redis'
+import { getRedis, REDIS_KEYS } from '@/lib/redis'
 
 // Cache GitHub data for 5 minutes
 let githubCache: { stars: number; contributors: number; timestamp: number } | null = null
@@ -51,8 +51,9 @@ async function getGitHubStats() {
 
 export async function GET() {
     // Fetch Redis visitor count and GitHub stats in parallel
+    const redis = getRedis()
     const [visitorsResult, githubResult] = await Promise.allSettled([
-        redis.get<number>(REDIS_KEYS.VISITOR_COUNT),
+        redis ? redis.get<number>(REDIS_KEYS.VISITOR_COUNT) : Promise.resolve(0),
         getGitHubStats(),
     ])
 

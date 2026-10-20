@@ -8,8 +8,8 @@ import {
 } from "./defaults";
 
 describe("defaults", () => {
-  it("ships exactly 12 background presets", () => {
-    expect(BG_PRESETS).toHaveLength(12);
+  it("ships exactly 13 background presets", () => {
+    expect(BG_PRESETS).toHaveLength(13);
   });
 
   it("every preset has id, name, and non-empty css", () => {

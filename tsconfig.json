@@ -50,9 +50,6 @@
         "./types/*",
         "./src/types/*"
       ],
-      "@/config/*": [
-        "./src/config/*"
-      ],
       "@/hooks/*": [
         "./hooks/*",
         "./src/hooks/*"
@@ -73,6 +70,8 @@
     "node_modules",
     "out",
     ".next",
-    "tests"
+    "tests",
+    "tempo",
+    "components/design-preview"
   ]
 }

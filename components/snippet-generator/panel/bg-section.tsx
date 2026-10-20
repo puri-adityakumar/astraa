@@ -76,7 +76,7 @@ export function BgSection() {
       value={activeTab}
       onValueChange={(v) => {
         setHexDraft(null);
-        if (v === "preset") setBg({ kind: "preset", id: "violet" });
+        if (v === "preset") setBg({ kind: "preset", id: "muted" });
         else if (v === "solid") setBg({ kind: "solid", color: "#18181b" });
         else if (v === "gradient") {
           setBg({ kind: "gradient", from: "#667eea", to: "#764ba2", angle: 135 });
@@ -294,7 +294,7 @@ export function BgSection() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setBg({ kind: "preset", id: "violet" })}
+              onClick={() => setBg({ kind: "preset", id: "muted" })}
               className="w-full justify-center text-muted-foreground"
             >
               <Trash2 className="h-3.5 w-3.5 mr-1.5" aria-hidden />

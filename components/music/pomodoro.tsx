@@ -9,34 +9,38 @@ const WORK_TIME = 25 * 60 // 25 minutes in seconds
 const BREAK_TIME = 5 * 60 // 5 minutes in seconds
 
 export function Pomodoro() {
-  const [timeLeft, setTimeLeft] = useState(WORK_TIME)
-  const [isRunning, setIsRunning] = useState(false)
-  const [isBreak, setIsBreak] = useState(false)
+  const [timer, setTimer] = useState({
+    timeLeft: WORK_TIME,
+    isRunning: false,
+    isBreak: false,
+  });
+  const { timeLeft, isRunning, isBreak } = timer;
 
   useEffect(() => {
-    let interval: NodeJS.Timeout
-
-    if (isRunning && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((time) => time - 1)
-      }, 1000)
-    } else if (timeLeft === 0) {
-      setIsBreak(!isBreak)
-      setTimeLeft(isBreak ? WORK_TIME : BREAK_TIME)
-      setIsRunning(false)
-    }
+    if (!isRunning) return;
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (!prev.isRunning) return prev;
+        if (prev.timeLeft <= 1) {
+          return {
+            timeLeft: prev.isBreak ? WORK_TIME : BREAK_TIME,
+            isBreak: !prev.isBreak,
+            isRunning: false,
+          };
+        }
+        return { ...prev, timeLeft: prev.timeLeft - 1 };
+      });
+    }, 1000);
 
     return () => clearInterval(interval)
-  }, [isRunning, timeLeft, isBreak])
+  }, [isRunning])
 
   const toggleTimer = () => {
-    setIsRunning(!isRunning)
+    setTimer((prev) => ({ ...prev, isRunning: !prev.isRunning }));
   }
 
   const resetTimer = () => {
-    setTimeLeft(WORK_TIME)
-    setIsBreak(false)
-    setIsRunning(false)
+    setTimer({ timeLeft: WORK_TIME, isBreak: false, isRunning: false });
   }
 
   const formatTime = (seconds: number) => {

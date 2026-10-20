@@ -1,0 +1,59 @@
+/*
+ * Terminal flavour styles — imported only by app/terminal/layout.tsx, so
+ * legacy pages never receive them. Colours come from the --term-* variables
+ * injected by the layout (lib/terminal/theme-css.ts) per data-term-theme
+ * scheme attribute.
+ */
+
+[data-flavour="terminal"] {
+  background-color: var(--term-bg);
+  color: var(--term-fg);
+}
+
+/* Visible keyboard focus for every control in the terminal (rows, tabs,
+   picker, close buttons, prompt). */
+[data-flavour="terminal"] :focus-visible {
+  outline: 2px solid var(--term-accent);
+  outline-offset: 2px;
+}
+
+/* Exceptions: the panel section only receives programmatic focus on open, and
+   the always-focused prompt shows focus on its surrounding box (PromptBar). */
+[data-flavour="terminal"] [data-term-panel]:focus-visible,
+[data-flavour="terminal"] #term-prompt:focus-visible {
+  outline: none;
+}
+
+/* Reduced motion inside the terminal: exact zeros, stronger than the global
+   0.01ms fallback in globals.css. */
+@media (prefers-reduced-motion: reduce) {
+  [data-flavour="terminal"],
+  [data-flavour="terminal"] *,
+  [data-flavour="terminal"] *::before,
+  [data-flavour="terminal"] *::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The prompt sits below main as a flex sibling, so the column stays on one
+   grid only if main's scrollbar never takes layout space — hide it entirely
+   (wheel, touch and keyboard scrolling are unaffected; the terminal reads
+   as one continuous surface, like the reference terminal). */
+[data-flavour="terminal"] main {
+  scrollbar-width: none;
+}
+
+[data-flavour="terminal"] #term-suggestions {
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--term-surface2) transparent;
+}
+
+[data-flavour="terminal"] aside nav {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--term-surface2) transparent;
+}

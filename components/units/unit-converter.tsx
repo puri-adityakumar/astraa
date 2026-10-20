@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp } from "lucide-react"
@@ -9,18 +9,23 @@ import { cn } from "@/lib/utils"
 import { unitCategories, convertUnit, type Unit } from "@/lib/unit-conversions"
 import { UnitConverterForm } from "@/components/units/unit-converter-form"
 
-export function UnitConverterClient() {
+export type UnitConverterVariant = "page" | "panel"
+
+interface UnitConverterClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: UnitConverterVariant
+}
+
+export function UnitConverterClient({ variant = "page" }: UnitConverterClientProps) {
   const [category, setCategory] = useState(unitCategories[0]?.name ?? "")
   const [value, setValue] = useState("1")
   const [fromUnit, setFromUnit] = useState<Unit>(unitCategories[0]?.units[0] ?? {} as Unit)
   const [toUnit, setToUnit] = useState<Unit>(unitCategories[0]?.units[1] ?? {} as Unit)
-  const [result, setResult] = useState<string>("")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  useEffect(() => {
+  const result = useMemo(() => {
     if (!value || isNaN(Number(value))) {
-      setResult("")
-      return
+      return "";
     }
 
     const converted = convertUnit(
@@ -30,11 +35,9 @@ export function UnitConverterClient() {
       category
     )
 
-    setResult(
-      converted.toLocaleString(undefined, {
-        maximumFractionDigits: 6,
-      })
-    )
+    return converted.toLocaleString(undefined, {
+      maximumFractionDigits: 6,
+    });
   }, [value, fromUnit, toUnit, category])
 
   const handleCategoryChange = (newCategory: string) => {
@@ -48,22 +51,8 @@ export function UnitConverterClient() {
 
   const currentUnits = unitCategories.find(c => c.name === category)?.units || []
 
-  return (
-    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
-      {/* Header */}
-      <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Unit Converter
-        </h1>
-        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
-          Seamlessly convert between different units of measurement. Select a category from the menu to get started.
-        </p>
-        <p className="text-xs text-muted-foreground/70">
-          All processing happens locally in your browser
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 sm:gap-8">
+  const converter = (
+    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 sm:gap-8">
         {/* Sidebar Navigation */}
         <div className="space-y-1">
           <div className="flex items-center justify-between md:block px-2 md:px-0 mb-3 ml-2 lg:ml-0">
@@ -129,7 +118,28 @@ export function UnitConverterClient() {
             </div>
           </Card>
         </div>
+    </div>
+  )
+
+  if (variant === "panel") {
+    return <div className="w-full">{converter}</div>
+  }
+
+  return (
+    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
+      {/* Header */}
+      <div className="space-y-4 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Unit Converter
+        </h1>
+        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
+          Seamlessly convert between different units of measurement. Select a category from the menu to get started.
+        </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
       </div>
+      {converter}
     </div>
   )
 }

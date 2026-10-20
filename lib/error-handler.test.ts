@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { getUserFriendlyError, sanitizeErrorMessage } from "./error-handler";
+import { describe, it, expect, vi } from "vitest";
+import { getUserFriendlyError, logError, sanitizeErrorMessage } from "./error-handler";
 
 describe("getUserFriendlyError", () => {
   it("handles network/fetch errors", () => {
@@ -12,6 +12,22 @@ describe("getUserFriendlyError", () => {
     const error = new Error("Request timeout");
     const result = getUserFriendlyError(error);
     expect(result.title).toBe("Request Timeout");
+  });
+  it.each(["TimeoutError", "AbortError"])("handles %s by name", (name) => {
+    const error = new Error("The operation was interrupted");
+    error.name = name;
+    expect(getUserFriendlyError(error).title).toBe("Request Timeout");
+  });
+  it.each(["Load failed", "NetworkError when attempting to fetch resource"])(
+    "handles browser network failure: %s",
+    (message) => {
+      expect(getUserFriendlyError(new TypeError(message)).title).toBe("Connection Error");
+    },
+  );
+  it("prioritizes an abort over fetch text", () => {
+    const error = new Error("The fetch was aborted");
+    error.name = "AbortError";
+    expect(getUserFriendlyError(error).title).toBe("Request Timeout");
   });
   it("handles permission errors", () => {
     const error = new Error("Permission denied");
@@ -43,6 +59,38 @@ describe("getUserFriendlyError", () => {
     const result = getUserFriendlyError(null);
     expect(result.title).toBe("Unknown Error");
   });
+  it.each([
+    new TypeError("Failed to fetch"),
+    new Error("Request timeout"),
+    new Error("Permission denied"),
+    new Error("Invalid input"),
+    new Error("File unavailable"),
+    new Error("Something broke"),
+    "Unknown error",
+  ])("sanitizes technical details in every error category: %s", (error) => {
+    const privateDetails =
+      " at /home/admin/secret for admin+private@company.com via " +
+      "https://api.secret.com/key?token=private&user=admin#fragment";
+    const input = error instanceof Error
+      ? new (error.name === "TypeError" ? TypeError : Error)(error.message + privateDetails)
+      : error + privateDetails;
+    const result = getUserFriendlyError(input);
+    expect(result.technical).toBe(
+      `${error instanceof Error ? error.message : error} at [path] for [email] via [url]`,
+    );
+  });
+  it("logs sanitized technical details", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      logError(new Error("Failed at https://api.secret.com/key?token=private"));
+      expect(consoleError).toHaveBeenCalledWith(
+        "Error occurred:",
+        expect.objectContaining({ technical: "Failed at [url]" }),
+      );
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
 });
 
 describe("sanitizeErrorMessage", () => {
@@ -57,17 +105,32 @@ describe("sanitizeErrorMessage", () => {
     expect(result).not.toContain("secret");
   });
   it("removes URLs", () => {
-    // Note: UNIX_PATH_RE (/\/[\w\/\-. ]+/g) matches before URL_RE in the chain,
-    // so "https://api.secret.com/key" becomes "https:[path]" rather than "[url]".
-    // The sensitive content is still removed; only the replacement token differs.
     const result = sanitizeErrorMessage("Failed to fetch https://api.secret.com/key");
-    expect(result).toContain("[path]");
-    expect(result).not.toContain("secret");
+    expect(result).toBe("Failed to fetch [url]");
+  });
+  it("redacts complete URLs including queries and fragments", () => {
+    const result = sanitizeErrorMessage(
+      "Failed at https://api.secret.com/key?token=secret&user=admin#private then retried",
+    );
+    expect(result).toBe("Failed at [url] then retried");
+  });
+  it("preserves text following paths", () => {
+    expect(sanitizeErrorMessage("File /home/admin/secret.txt could not be read")).toBe(
+      "File [path] could not be read",
+    );
+    expect(sanitizeErrorMessage("File C:\\Users\\admin\\secret.txt could not be read")).toBe(
+      "File [path] could not be read",
+    );
   });
   it("removes email addresses", () => {
     const result = sanitizeErrorMessage("Contact admin@company.com for help");
     expect(result).toContain("[email]");
     expect(result).not.toContain("admin@company.com");
+  });
+  it("removes email addresses with plus tags", () => {
+    expect(sanitizeErrorMessage("Contact admin+private@company.com for help")).toBe(
+      "Contact [email] for help",
+    );
   });
   it("removes IP addresses", () => {
     const result = sanitizeErrorMessage("Connection to 192.168.1.100 failed");

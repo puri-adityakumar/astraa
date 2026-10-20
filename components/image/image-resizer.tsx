@@ -8,7 +8,13 @@ import { ImageControls } from "./image-controls"
 import { calculateDimensions, resizeImage, downloadImage } from "@/lib/image/image-utils"
 import type { ImageOptions } from "@/lib/image/types"
 
-export function ImageResizerClient() {
+export type ImageResizerVariant = "page" | "panel"
+
+interface ImageResizerClientProps {
+  variant?: ImageResizerVariant
+}
+
+export function ImageResizerClient({ variant = "page" }: ImageResizerClientProps) {
   const { toast } = useToast()
   const [image, setImage] = useState<string | null>(null)
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 })
@@ -116,6 +122,49 @@ export function ImageResizerClient() {
     }
   }
 
+  const body = (
+    <Card className="p-6">
+      <div className="grid gap-8 lg:grid-cols-[1fr,320px]">
+        <div className="space-y-4">
+          <ImagePreview image={image} />
+          <div className="p-8 border-2 border-dashed rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors text-center cursor-pointer relative">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <div className="space-y-2 pointer-events-none">
+              <span className="text-sm font-medium">Click to upload or drag and drop</span>
+              <p className="text-xs text-muted-foreground">Supports JPEG, PNG, WebP</p>
+            </div>
+          </div>
+          <canvas ref={canvasRef} className="hidden" />
+        </div>
+
+        <ImageControls
+          dimensions={dimensions}
+          options={options}
+          isLocked={isLocked}
+          originalByteSize={fileSize}
+          estimatedByteSize={estimatedSize}
+          onWidthChange={handleWidthChange}
+          onHeightChange={handleHeightChange}
+          onLockChange={setIsLocked}
+          onOptionsChange={(newOptions) => setOptions({ ...options, ...newOptions })}
+          onImageUpload={handleImageUpload}
+          onDownload={handleDownload}
+          onReset={() => setDimensions(originalSize)}
+          disabled={!image}
+        />
+      </div>
+    </Card>
+  )
+
+  if (variant === "panel") {
+    return <div className="w-full">{body}</div>
+  }
+
   return (
     <div className="container max-w-5xl space-y-8 pt-24 pb-12">
       <div className="space-y-2 text-center sm:text-left">
@@ -130,42 +179,7 @@ export function ImageResizerClient() {
         </p>
       </div>
 
-      <Card className="p-6">
-        <div className="grid gap-8 lg:grid-cols-[1fr,320px]">
-          <div className="space-y-4">
-            <ImagePreview image={image} />
-            <div className="p-8 border-2 border-dashed rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors text-center cursor-pointer relative">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-              <div className="space-y-2 pointer-events-none">
-                <span className="text-sm font-medium">Click to upload or drag and drop</span>
-                <p className="text-xs text-muted-foreground">Supports JPEG, PNG, WebP</p>
-              </div>
-            </div>
-            <canvas ref={canvasRef} className="hidden" />
-          </div>
-
-          <ImageControls
-            dimensions={dimensions}
-            options={options}
-            isLocked={isLocked}
-            originalByteSize={fileSize}
-            estimatedByteSize={estimatedSize}
-            onWidthChange={handleWidthChange}
-            onHeightChange={handleHeightChange}
-            onLockChange={setIsLocked}
-            onOptionsChange={(newOptions) => setOptions({ ...options, ...newOptions })}
-            onImageUpload={handleImageUpload}
-            onDownload={handleDownload}
-            onReset={() => setDimensions(originalSize)}
-            disabled={!image}
-          />
-        </div>
-      </Card>
+      {body}
     </div>
   )
 }

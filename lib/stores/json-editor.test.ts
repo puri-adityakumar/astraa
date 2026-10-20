@@ -35,6 +35,43 @@ describe("useJsonEditor", () => {
     useJsonEditor.getState().reset();
     expect(useJsonEditor.getState().text).toBe(DEFAULT_STATE.text);
   });
+
+  it.each(["format", "minify", "sortKeysAction"] as const)(
+    "%s uses current text rather than a stale parse",
+    (action) => {
+      const store = useJsonEditor.getState();
+      store.setParseResult({ stale: true }, []);
+      store.setText("{\"z\":2,\"a\":1}");
+      store[action]();
+      const text = useJsonEditor.getState().text;
+      expect(JSON.parse(text)).toEqual({ z: 2, a: 1 });
+      if (action === "minify") expect(text).toBe("{\"z\":2,\"a\":1}");
+      if (action === "sortKeysAction") {
+        expect(text.indexOf("\"a\"")).toBeLessThan(text.indexOf("\"z\""));
+      }
+    },
+  );
+
+  it.each(["format", "minify", "sortKeysAction"] as const)(
+    "%s leaves incomplete current text intact",
+    (action) => {
+      const store = useJsonEditor.getState();
+      store.setParseResult({ stale: true }, []);
+      store.setText("{\"unfinished\":");
+      store[action]();
+      expect(useJsonEditor.getState().text).toBe("{\"unfinished\":");
+    },
+  );
+
+  it.each(["format", "minify", "sortKeysAction"] as const)(
+    "%s handles the valid JSON null value",
+    (action) => {
+      const store = useJsonEditor.getState();
+      store.setText(" null ");
+      store[action]();
+      expect(useJsonEditor.getState().text).toBe("null");
+    },
+  );
 });
 
 describe("stripVolatile", () => {

@@ -1,156 +1,211 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Copy, Sparkles } from "lucide-react";
-import { generateText } from "@/lib/openrouter";
+import { useToast } from "@/components/ui/use-toast";
+import { Copy, RefreshCw } from "lucide-react";
 import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "sonner";
+import { LOREM_LIMITS, generateLorem, type LoremUnit } from "@/lib/text/lorem";
 import { cn } from "@/lib/utils";
 
-export function TextGeneratorClient() {
-  const [topic, setTopic] = useState("");
-  const [wordCount, setWordCount] = useState(100);
-  const [generatedText, setGeneratedText] = useState("");
-  const [isPending, startTransition] = useTransition();
+const UNIT_OPTIONS: { value: LoremUnit; label: string }[] = [
+  { value: "words", label: "Words" },
+  { value: "sentences", label: "Sentences" },
+  { value: "paragraphs", label: "Paragraphs" },
+];
 
-  const handleGenerate = () => {
-    if (!topic) {
-      toast.error("Please enter a topic");
-      return;
+interface TextGeneratorClientProps {
+  /** "panel" drops the page container and heading; default rendering unchanged. */
+  variant?: "page" | "panel";
+}
+
+/** Clamp a count into the unit's allowed range (NaN/Infinity → minimum). */
+function clampCount(value: number, unit: LoremUnit): number {
+  const limits = LOREM_LIMITS[unit];
+  if (!Number.isFinite(value)) return limits.min;
+  return Math.min(Math.max(Math.round(value), limits.min), limits.max);
+}
+
+export function TextGeneratorClient({ variant = "page" }: TextGeneratorClientProps) {
+  const { toast } = useToast();
+  const [unit, setUnit] = useState<LoremUnit>("words");
+  const [count, setCount] = useState(50);
+  const [startWithLorem, setStartWithLorem] = useState(true);
+  const [output, setOutput] = useState("");
+
+  const handleUnitChange = useCallback(
+    (next: LoremUnit) => {
+      setUnit(next);
+      setCount((previous) => clampCount(previous, next));
+    },
+    [],
+  );
+
+  const handleGenerate = useCallback(() => {
+    const limits = LOREM_LIMITS[unit];
+    const safeCount = clampCount(count, unit);
+    setOutput(
+      generateLorem({ count: safeCount, unit, startWithLorem, random: Math.random }),
+    );
+    if (safeCount !== count) setCount(safeCount);
+    if (!Number.isFinite(count) || count < limits.min || count > limits.max) {
+      toast({
+        title: "Count adjusted",
+        description: `${unit === "words" ? "Words" : unit === "sentences" ? "Sentences" : "Paragraphs"} must be between ${limits.min} and ${limits.max}.`,
+      });
     }
-
-    startTransition(async () => {
-      const result = await generateText(topic, wordCount);
-      if (result.success && result.text) {
-        setGeneratedText(String(result.text));
-        toast.success("Text generated successfully!");
-      } else {
-        toast.error(result.error || "Something went wrong");
-      }
-    });
-  };
+  }, [count, unit, startWithLorem, toast]);
 
   const handleCopyToClipboard = async () => {
-    if (!generatedText) return;
-    const result = await copyToClipboard(generatedText);
+    if (!output) return;
+    const result = await copyToClipboard(output);
     if (result.success) {
-      toast.success("Copied to clipboard");
+      toast({ title: "Copied!", description: "Lorem ipsum copied to clipboard" });
     } else {
-      toast.error(result.error || "Failed to copy");
+      toast({
+        title: "Copy failed",
+        description: result.error,
+        variant: "destructive",
+      });
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleGenerate();
-    }
-  };
+  // Panel variant drops the page container and the big page heading; the
+  // card below is identical in both variants.
+  const outerClass = variant === "panel"
+    ? "w-full"
+    : "container px-4 sm:px-6 max-w-2xl pt-24 pb-12 space-y-8";
 
   return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
-      {/* Heading */}
-      <div className="space-y-2 text-center sm:text-left">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          AI Text Generator
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          The modern alternative to Lorem Ipsum. Generate meaningful,
-          context-aware placeholder text tailored to your specific topic.
-        </p>
-        <p className="text-xs text-muted-foreground/70">
-          Text generated via OpenRouter API. No personal data stored.
-        </p>
-      </div>
-
-      {/* Input Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center p-2 rounded-xl bg-muted/30 border border-border/50">
-        <div className="flex-1 w-full relative">
-          <Input
-            id="topic"
-            placeholder="Type a topic (e.g. 'Coffee brewing methods')"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="h-12 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/50"
-          />
+    <div className={outerClass}>
+      {/* Header */}
+      {variant === "page" && (
+        <div className="space-y-4 text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Lorem Ipsum Generator
+          </h1>
+          <p className="text-muted-foreground text-base sm:text-lg text-pretty">
+            Generate classic lorem ipsum placeholder text in words, sentences,
+            or paragraphs.
+          </p>
+          <p className="text-xs text-muted-foreground/70">
+            All processing happens locally in your browser
+          </p>
         </div>
+      )}
 
-        {/* Mobile Divider (Horizontal) */}
-        <div className="w-full h-[1px] bg-border sm:hidden" />
-        {/* Desktop Divider (Vertical) */}
-        <div className="h-8 w-[1px] bg-border hidden sm:block" />
+      <div className="bg-card border border-border/50 rounded-xl shadow-sm p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+        {/* 1. Controls */}
+        <div className="space-y-6">
+          <Label className="text-base font-semibold">Generate placeholder text</Label>
 
-        {/* Controls Container */}
-        <div className="flex items-center justify-between w-full sm:w-auto gap-4 px-2">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              Words:
-            </span>
-            <Input
-              id="words"
-              type="number"
-              min={10}
-              max={1000}
-              value={wordCount}
-              onChange={(e) => setWordCount(Number(e.target.value))}
-              className="h-9 w-20 text-center border-muted-foreground/20 bg-background/50 focus-visible:ring-1"
-            />
-          </div>
-
-          <Button
-            size="icon"
-            onClick={handleGenerate}
-            disabled={isPending || !topic}
-            className={cn(
-              "h-10 w-10 shrink-0 rounded-full transition-all duration-300",
-              !isPending &&
-                "bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 hover:scale-105 shadow-[0_0_15px_-3px_rgba(6,182,212,0.6)]",
-            )}
+          {/* Panels top-align the side-by-side rows so the Count range hint
+              cannot push Unit's input down; the page keeps its bottom-aligned
+              row. */}
+          <div
+            className={
+              variant === "panel"
+                ? "flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6"
+                : "flex flex-col sm:flex-row items-stretch sm:items-end gap-4 sm:gap-6"
+            }
           >
-            {isPending ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Sparkles className="h-5 w-5 text-white" />
-            )}
-            <span className="sr-only">Generate</span>
-          </Button>
-        </div>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="lorem-unit" className="font-normal text-muted-foreground text-sm">
+                Unit
+              </Label>
+              <Select value={unit} onValueChange={(value) => handleUnitChange(value as LoremUnit)}>
+                <SelectTrigger id="lorem-unit" className="w-full sm:w-40 min-h-touch">
+                  <SelectValue placeholder="Select a unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {UNIT_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-      {/* Output Area */}
-      <div className="relative min-h-[500px] rounded-xl border border-border bg-card/50 shadow-sm backdrop-blur-sm transition-all">
-        {generatedText ? (
-          <>
-            <Textarea
-              className="min-h-[500px] w-full p-8 text-lg leading-relaxed resize-none bg-transparent border-0 focus-visible:ring-0"
-              value={generatedText}
-              readOnly
-            />
-            <Button
-              size="icon"
-              variant="outline"
-              className="absolute top-4 right-4 h-9 w-9 bg-background/80 backdrop-blur-md hover:bg-background transition-colors"
-              onClick={handleCopyToClipboard}
-              title="Copy to clipboard"
-            >
-              <Copy className="h-4 w-4" />
-              <span className="sr-only">Copy</span>
-            </Button>
-          </>
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/30 p-8 text-center select-none pointer-events-none">
-            <Sparkles className="h-16 w-16 mb-4 opacity-20" />
-            <p className="text-xl font-medium">Ready to generate</p>
-            <p className="text-sm mt-2 max-w-sm">
-              Enter a topic above and hit the magic button to create unique,
-              context-aware placeholder text.
-            </p>
+            <div className="space-y-2 flex-1 sm:max-w-40">
+              <Label htmlFor="lorem-count" className="font-normal text-muted-foreground text-sm">
+                Count
+              </Label>
+              <Input
+                id="lorem-count"
+                type="number"
+                min={LOREM_LIMITS[unit].min}
+                max={LOREM_LIMITS[unit].max}
+                value={Number.isFinite(count) ? count : ""}
+                onChange={(event) => setCount(Number(event.target.value))}
+                className="h-11 text-center"
+              />
+              <p className="text-xs text-muted-foreground/70">
+                {LOREM_LIMITS[unit].min}–{LOREM_LIMITS[unit].max} {unit}
+              </p>
+            </div>
           </div>
-        )}
+
+          <div className="flex items-center gap-3">
+            <Label htmlFor="lorem-start" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">
+              Start with &ldquo;Lorem ipsum dolor sit amet&rdquo;
+            </Label>
+            <Switch
+              id="lorem-start"
+              checked={startWithLorem}
+              onCheckedChange={setStartWithLorem}
+            />
+          </div>
+        </div>
+
+        {/* 2. Output */}
+        <div className="space-y-6 pt-2">
+          <Label className="text-base font-semibold">Generated text</Label>
+
+          <Textarea
+            aria-label="Generated lorem ipsum text"
+            placeholder="Press Generate to create lorem ipsum placeholder text."
+            className="min-h-[300px] w-full p-4 text-base leading-relaxed resize-y bg-background/50"
+            value={output}
+            readOnly
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Button
+              size="lg"
+              variant="default"
+              className="w-full font-semibold text-base h-12"
+              onClick={handleGenerate}
+            >
+              <RefreshCw className="w-4 h-4" />
+              Generate
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className={cn(
+                "w-full font-semibold text-base h-12 hover:bg-muted/50 hover:text-foreground",
+                !output && "opacity-50 cursor-not-allowed",
+              )}
+              onClick={handleCopyToClipboard}
+              disabled={!output}
+            >
+              <Copy className="w-4 h-4" />
+              Copy
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { TreeRow as TreeRowComponent } from "./tree/tree-row";
 import { useJsonEditor } from "@/lib/stores/json-editor";
 import { flatten } from "@/lib/json/flatten";
 import { joinPath } from "@/lib/json/paths";
+import { copyToClipboard } from "@/lib/clipboard";
 
 export function TreeView() {
   const parsedValue = useJsonEditor((s) => s.parsedValue);
@@ -62,8 +63,16 @@ export function TreeView() {
                 row={row}
                 onToggle={togglePath}
                 onCopyPath={async (p) => {
-                  await navigator.clipboard.writeText(p);
-                  toast({ title: "Path copied", description: p || "root" });
+                  const result = await copyToClipboard(p);
+                  toast(
+                    result.success
+                      ? { title: "Path copied", description: p || "root" }
+                      : {
+                          title: "Copy failed",
+                          description: result.error,
+                          variant: "destructive",
+                        },
+                  );
                 }}
                 onEditSave={(p, value) => applyPatchAt(p, "set", value)}
                 onAddChild={(p, key, value) => {

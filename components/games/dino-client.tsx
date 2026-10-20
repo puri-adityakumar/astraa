@@ -10,8 +10,10 @@ import { WorkInProgress } from "@/components/wip";
 
 export function DinoClient() {
   const [mode, setMode] = useState<"custom" | "original">("original");
-  const { gameState, startGame, jump, config } = useDinoGame();
-  const { score, highScore, isGameOver, dinoY, obstacles, groundX } =
+  const { gameState, startGame, jump, gameContainerRef, config } = useDinoGame(
+    mode === "custom" && process.env.NEXT_PUBLIC_ENV !== "prod",
+  );
+  const { score, highScore, isPlaying, isGameOver, dinoY, obstacles, groundX } =
     gameState;
 
   return (
@@ -59,8 +61,9 @@ export function DinoClient() {
           </Card>
         ) : (
           <Card
+            ref={gameContainerRef}
             className="p-6 relative h-[400px] overflow-hidden cursor-pointer"
-            onClick={() => (isGameOver ? startGame() : jump())}
+            onClick={() => (!isPlaying || isGameOver ? startGame() : jump())}
           >
             {/* Score Display */}
             <div className="absolute top-4 right-4 font-mono text-lg">
@@ -109,7 +112,7 @@ export function DinoClient() {
                   left: obstacle.x,
                   width: obstacle.width,
                   height: obstacle.height,
-                  bottom: config.groundHeight,
+                  bottom: config.groundHeight + obstacle.y,
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

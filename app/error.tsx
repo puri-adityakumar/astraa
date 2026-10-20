@@ -6,6 +6,8 @@ import { AlertTriangle, RefreshCw, Home, ArrowLeft, Copy, Check } from "lucide-r
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { SiteChrome } from "@/components/site-chrome"
+import * as Sentry from "@sentry/nextjs"
 
 export default function Error({
   error,
@@ -18,8 +20,8 @@ export default function Error({
   const [showDetails, setShowDetails] = useState(false)
 
   useEffect(() => {
-    // Log error for debugging
     console.error('Application error:', error)
+    Sentry.captureException(error)
   }, [error])
 
   const copyErrorDetails = async () => {
@@ -34,7 +36,8 @@ export default function Error({
   }
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-4">
+    <SiteChrome>
+      <div className="min-h-[70vh] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -73,7 +76,7 @@ export default function Error({
             <div className="space-y-2">
               <h2 className="text-2xl md:text-3xl font-semibold">Something went wrong</h2>
               <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
-                Don't worry, it's not your fault. An unexpected error occurred.
+                Don&apos;t worry, it&apos;s not your fault. An unexpected error occurred.
                 Try refreshing the page or go back to continue.
               </p>
             </div>
@@ -170,6 +173,7 @@ export default function Error({
           </div>
         </Card>
       </motion.div>
-    </div>
+      </div>
+    </SiteChrome>
   )
 }

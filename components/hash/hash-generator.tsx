@@ -7,8 +7,16 @@ import { HashInput } from "./hash-input"
 import { HashOutput } from "./hash-output"
 import { generateHash } from "@/lib/hash"
 import { hashAlgorithms } from "@/lib/hash"
+import { getUserFriendlyError, logError } from "@/lib/error-handler"
 
-export function HashGeneratorClient() {
+type HashGeneratorVariant = "page" | "panel"
+
+interface HashGeneratorClientProps {
+  /** "panel" drops the page container and heading for terminal panels. */
+  variant?: HashGeneratorVariant
+}
+
+export function HashGeneratorClient({ variant = "page" }: HashGeneratorClientProps) {
   const { toast } = useToast()
   const [input, setInput] = useState("")
   const [selectedHash, setSelectedHash] = useState(hashAlgorithms[0]?.id ?? "sha256")
@@ -24,8 +32,44 @@ export function HashGeneratorClient() {
       return
     }
 
-    const newHash = generateHash(input, selectedHash)
-    setHash(newHash)
+    try {
+      setHash(generateHash(input, selectedHash));
+    } catch (error) {
+      setHash("");
+      const details = getUserFriendlyError(error);
+      toast({
+        title: details.title,
+        description: details.message,
+        variant: "destructive",
+      });
+      logError(error, { context: "hash generation" });
+    }
+  }
+
+  const generator = (
+    <Card className="p-4 sm:p-6 space-y-6">
+      <HashInput
+        value={input}
+        selectedHash={selectedHash}
+        onChange={setInput}
+        onHashChange={setSelectedHash}
+        onGenerate={handleGenerateHash}
+      />
+      {hash && (
+        <HashOutput
+          type={selectedHash}
+          hash={hash}
+        />
+      )}
+    </Card>
+  )
+
+  if (variant === "panel") {
+    return (
+      <div className="w-full">
+        {generator}
+      </div>
+    )
   }
 
   return (
@@ -41,22 +85,7 @@ export function HashGeneratorClient() {
           All processing happens locally in your browser
         </p>
       </div>
-
-      <Card className="p-4 sm:p-6 space-y-6">
-        <HashInput
-          value={input}
-          selectedHash={selectedHash}
-          onChange={setInput}
-          onHashChange={setSelectedHash}
-          onGenerate={handleGenerateHash}
-        />
-        {hash && (
-          <HashOutput
-            type={selectedHash}
-            hash={hash}
-          />
-        )}
-      </Card>
+      {generator}
     </div>
   )
 }

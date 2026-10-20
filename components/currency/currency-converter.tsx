@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { FiatConverter } from "./fiat-converter"
 import { CryptoConverter } from "./crypto-converter"
 
-export function CurrencyConverterClient() {
+export function CurrencyConverterClient({ variant = "page" }: { variant?: "page" | "panel" }) {
   const [activeTab, setActiveTab] = useState("fiat")
   const [amount, setAmount] = useState<string>("1")
   const [result, setResult] = useState<string>("")
@@ -17,22 +17,17 @@ export function CurrencyConverterClient() {
     setResult("")
   }
 
-  return (
-    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
-      {/* Header */}
-      <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Currency Converter
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl">
-          Convert between different currencies and cryptocurrencies using real-time rates.
-        </p>
-        <p className="text-xs text-muted-foreground/70">
-          Exchange rates from CoinGecko and exchangerate-api. No personal data transmitted.
-        </p>
-      </div>
+  // The terminal panel column (max 720px) is narrower than the viewport
+  // breakpoint where a 240px navigation rail leaves the converter card enough
+  // room, so panels stack the navigation above the card; the page keeps its
+  // md: two-column grid.
+  const bodyClass =
+    variant === "panel"
+      ? "grid grid-cols-1 gap-8"
+      : "grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8";
 
-      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
+  const body = (
+    <div className={bodyClass}>
         {/* Sidebar Navigation */}
         <div className="space-y-1">
           <nav className="space-y-1">
@@ -77,6 +72,7 @@ export function CurrencyConverterClient() {
                   onAmountChange={setAmount}
                   onResult={setResult}
                   result={result}
+                  variant={variant}
                 />
               ) : (
                 <CryptoConverter
@@ -84,12 +80,35 @@ export function CurrencyConverterClient() {
                   onAmountChange={setAmount}
                   onResult={setResult}
                   result={result}
+                  variant={variant}
                 />
               )}
             </div>
           </Card>
         </div>
       </div>
+  )
+
+  if (variant === "panel") {
+    return <div className="w-full">{body}</div>
+  }
+
+  return (
+    <div className="container max-w-5xl pt-24 pb-12 space-y-8">
+      {/* Header */}
+      <div className="space-y-4 text-center sm:text-left">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          Currency Converter
+        </h1>
+        <p className="text-muted-foreground text-lg max-w-2xl">
+          Convert between different currencies and cryptocurrencies using real-time rates.
+        </p>
+        <p className="text-xs text-muted-foreground/70">
+          Exchange rates from CoinGecko and exchangerate-api. No personal data transmitted.
+        </p>
+      </div>
+
+      {body}
     </div>
   )
 }

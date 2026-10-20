@@ -31,7 +31,13 @@ type PendingAction =
   | { kind: "view-toggle" }
   | { kind: "delete"; id: string };
 
-export function MarkdownEditorClient() {
+export type MarkdownEditorVariant = "page" | "panel";
+
+interface MarkdownEditorClientProps {
+  variant?: MarkdownEditorVariant;
+}
+
+export function MarkdownEditorClient({ variant = "page" }: MarkdownEditorClientProps) {
   const file = useMarkdownEditor((s) =>
     s.files.find((f) => f.id === s.currentId),
   );
@@ -71,15 +77,46 @@ export function MarkdownEditorClient() {
     [toast, uploadFile],
   );
 
+  // Panel-only: Radix AlertDialog has no trigger element here (controlled by
+  // file-list rows), so dismissing it drops focus to <body>. Remember the
+  // initiating control at open time (before the dialog mounts and grabs
+  // focus) and put focus back on cancel. The page rendering keeps its
+  // existing behaviour.
+  const dialogReturnFocusRef = useRef<HTMLElement | null>(null);
+  const armReturnFocus = useCallback(() => {
+    if (variant !== "panel") return;
+    dialogReturnFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+  }, [variant]);
+  const restoreDialogFocus = useCallback(() => {
+    if (variant !== "panel") return;
+    // Defer past the dialog unmount: the unmount removes the focused button
+    // and the browser would otherwise leave focus on <body>.
+    const el = dialogReturnFocusRef.current;
+    dialogReturnFocusRef.current = null;
+    if (el) window.setTimeout(() => el.focus(), 0);
+  }, [variant]);
+  const cancelPending = useCallback(() => {
+    setPending(null);
+    restoreDialogFocus();
+  }, [restoreDialogFocus]);
+  const cancelReplace = useCallback(() => {
+    setPendingReplace(null);
+    restoreDialogFocus();
+  }, [restoreDialogFocus]);
+
   const tryIngest = useCallback(
     (raw: File) => {
       if (dirty) {
+        armReturnFocus();
         setPendingReplace({ file: raw });
         return;
       }
       void ingestFile(raw);
     },
-    [dirty, ingestFile],
+    [dirty, ingestFile, armReturnFocus],
   );
 
   const onPickFile = useCallback(() => filePickerRef.current?.click(), []);
@@ -142,6 +179,7 @@ export function MarkdownEditorClient() {
   const onToggleMode = useCallback(() => {
     if (mode === "edit") {
       if (dirty) {
+        armReturnFocus();
         setPending({ kind: "view-toggle" });
         return;
       }
@@ -149,23 +187,28 @@ export function MarkdownEditorClient() {
       return;
     }
     setMode("edit");
-  }, [mode, dirty, setMode]);
+  }, [mode, dirty, setMode, armReturnFocus]);
 
   const onSelect = useCallback(
     (id: string) => {
       if (id === file?.id) return;
       if (dirty) {
+        armReturnFocus();
         setPending({ kind: "switch", id });
         return;
       }
       selectFile(id);
     },
-    [dirty, file?.id, selectFile],
+    [dirty, file?.id, selectFile, armReturnFocus],
   );
 
-  const onDelete = useCallback((id: string) => {
-    setPending({ kind: "delete", id });
-  }, []);
+  const onDelete = useCallback(
+    (id: string) => {
+      armReturnFocus();
+      setPending({ kind: "delete", id });
+    },
+    [armReturnFocus],
+  );
 
   const confirmPending = useCallback(() => {
     if (!pending) return;
@@ -176,12 +219,14 @@ export function MarkdownEditorClient() {
     } else if (pending.kind === "delete") {
       deleteFile(pending.id);
     }
+    dialogReturnFocusRef.current = null;
     setPending(null);
   }, [pending, selectFile, setMode, deleteFile]);
 
   const confirmReplace = useCallback(() => {
     if (pendingReplace) {
       void ingestFile(pendingReplace.file);
+      dialogReturnFocusRef.current = null;
       setPendingReplace(null);
     }
   }, [pendingReplace, ingestFile]);
@@ -224,20 +269,8 @@ export function MarkdownEditorClient() {
     return "";
   })();
 
-  return (
-    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
-      <div className="space-y-4 text-center sm:text-left">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Markdown
-        </h1>
-        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
-          Drop a markdown file to view it. Toggle to edit, then export as .md, .html, or PDF.
-        </p>
-        <p className="text-xs text-muted-foreground/70">
-          All processing happens locally in your browser
-        </p>
-      </div>
-
+  const content = (
+    <>
       {!file ? (
         <div className="space-y-8 py-8">
           <div className="flex justify-center">
@@ -337,7 +370,7 @@ export function MarkdownEditorClient() {
         description={pendingDescription}
         confirmLabel={pending?.kind === "delete" ? "Delete" : "Discard"}
         onConfirm={confirmPending}
-        onCancel={() => setPending(null)}
+        onCancel={cancelPending}
       />
 
       <ConfirmDialog
@@ -346,8 +379,30 @@ export function MarkdownEditorClient() {
         description={`Replace "${pendingReplace?.file.name}"? Unsaved edits will be lost.`}
         confirmLabel="Replace"
         onConfirm={confirmReplace}
-        onCancel={() => setPendingReplace(null)}
+        onCancel={cancelReplace}
       />
+    </>
+  );
+
+  if (variant === "panel") {
+    return <div className="w-full space-y-8">{content}</div>;
+  }
+
+  return (
+    <div className="container px-4 sm:px-6 max-w-5xl pt-24 pb-12 space-y-8">
+      <div className="space-y-4 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Markdown
+        </h1>
+        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl">
+          Drop a markdown file to view it. Toggle to edit, then export as .md, .html, or PDF.
+        </p>
+        <p className="text-xs text-muted-foreground/70">
+          All processing happens locally in your browser
+        </p>
+      </div>
+
+      {content}
     </div>
   );
 }

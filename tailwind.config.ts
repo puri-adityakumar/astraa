@@ -39,6 +39,7 @@ const config: Config = {
         sans: ['var(--font-geist-sans)', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
         logo: ['Funnel Display', 'sans-serif'],
+        pixel: ['var(--font-geist-pixel-square)', 'monospace'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],
@@ -137,6 +138,18 @@ const config: Config = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        term: {
+          bg: 'var(--term-bg)',
+          surface: 'var(--term-surface)',
+          surface2: 'var(--term-surface2)',
+          fg: 'var(--term-fg)',
+          muted: 'var(--term-muted)',
+          accent: 'var(--term-accent)',
+          green: 'var(--term-green)',
+          red: 'var(--term-red)',
+          yellow: 'var(--term-yellow)',
+          cyan: 'var(--term-cyan)',
+        },
       },
     },
     keyframes: {
