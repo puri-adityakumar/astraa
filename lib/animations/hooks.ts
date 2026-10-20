@@ -3,15 +3,40 @@
  * Custom hooks for animation-related functionality
  */
 
-import { useReducedMotion as useFramerReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+
+function subscribeToReducedMotion(onChange: () => void): () => void {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return () => {};
+  }
+
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+  mediaQuery.addEventListener('change', onChange);
+  return () => mediaQuery.removeEventListener('change', onChange);
+}
+
+function getReducedMotionSnapshot(): boolean {
+  return typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
+function getServerReducedMotionSnapshot(): boolean {
+  return false;
+}
 
 /**
  * Hook to check if user prefers reduced motion
  * Returns true if animations should be disabled
  */
 export function useReducedMotion(): boolean {
-  return useFramerReducedMotion() ?? false;
+  return useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getServerReducedMotionSnapshot,
+  );
 }
 
 /**
