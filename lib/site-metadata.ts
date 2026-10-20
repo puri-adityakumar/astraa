@@ -221,7 +221,7 @@ export const jsonMetadata: Metadata = {
 };
 
 export const markdownMetadata: Metadata = {
-  title: "Markdown Editor | astraa",
+  title: "Markdown Editor",
   description:
     "Write Markdown with live preview. Local-only file storage, math and diagram rendering, drag-drop images, and PDF export. Free browser-based tool.",
   keywords: [
@@ -233,7 +233,7 @@ export const markdownMetadata: Metadata = {
     "developer tools",
   ],
   openGraph: {
-    title: "Markdown Editor | astraa",
+    title: "Markdown Editor",
     description:
       "Write Markdown with live preview, math, diagrams, and PDF export. All local in your browser.",
     url: "/tools/markdown",
@@ -241,7 +241,7 @@ export const markdownMetadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Markdown Editor | astraa",
+    title: "Markdown Editor",
     description: "Write Markdown with live preview. Free, local, browser-based.",
   },
   alternates: {
@@ -318,7 +318,7 @@ export const passwordMetadata: Metadata = {
 };
 
 export const regexMetadata: Metadata = {
-  title: "Regex Tester | astraa",
+  title: "Regex Tester",
   description:
     "Test and validate JavaScript regular expressions live in your browser. Capture-group highlights, replace mode, starter library, click-to-insert cheatsheet, and shareable URLs.",
   keywords: [
@@ -332,7 +332,7 @@ export const regexMetadata: Metadata = {
     "regex builder",
   ],
   openGraph: {
-    title: "Regex Tester | astraa",
+    title: "Regex Tester",
     description:
       "Live JavaScript regex playground with capture-group highlights, replace mode, and shareable URLs.",
     url: "/tools/regex",
@@ -340,7 +340,7 @@ export const regexMetadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Regex Tester | astraa",
+    title: "Regex Tester",
     description:
       "Live JavaScript regex playground with capture-group highlights, replace mode, and shareable URLs.",
   },

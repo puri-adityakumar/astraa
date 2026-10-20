@@ -35,6 +35,21 @@ describe("site-metadata", () => {
     },
   );
 
+  it.each(EXPECTED_SLUGS)(
+    "leaves the brand suffix to the root title template for /tools/%s",
+    (slug) => {
+      const metadata = toolMetadataBySlug[slug];
+      const titles = [
+        metadata?.title,
+        metadata?.openGraph?.title,
+        metadata?.twitter?.title,
+      ];
+      for (const title of titles) {
+        expect(JSON.stringify(title ?? "").toLowerCase()).not.toContain("| astraa");
+      }
+    },
+  );
+
   it("keeps the home title and canonical", () => {
     expect(homeMetadata.title).toEqual({
       absolute: "Free Online Utility Tools for Developers & Creators",

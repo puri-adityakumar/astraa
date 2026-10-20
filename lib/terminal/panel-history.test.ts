@@ -49,7 +49,7 @@ describe("openPanelTransition", () => {
       kind: "replace",
       url: "/tools/regex",
       state: { [PANEL_STATE_KEY]: "regex" },
-      title: "Regex Tester | astraa | Astraa",
+      title: "Regex Tester | Astraa",
       panel: "regex",
     });
     expect(openPanelTransition("regex", "json")).toEqual({
