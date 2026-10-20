@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useTheme } from "next-themes";
 import type { Pluggable } from "unified";
+import { markdownUrlTransform } from "@/lib/markdown/url-transform";
 
 const PRELOADED_LANGS = ["javascript", "typescript", "python", "bash", "json", "markdown"];
 
@@ -165,6 +166,7 @@ export function Preview({ content }: PreviewProps) {
         <p className="text-muted-foreground">Nothing to preview.</p>
       ) : (
         <ReactMarkdown
+          urlTransform={markdownUrlTransform}
           remarkPlugins={[
             remarkGfm,
             ...(hasMath && mathPlugins ? [mathPlugins.remark] : []),
