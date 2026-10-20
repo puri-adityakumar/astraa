@@ -149,7 +149,10 @@ export const useActivityTracking = create<ActivityTrackingState>()(
 
       getRecentActivities: (limit = 10) => {
         const { stats } = get()
-        return stats.recentActivities.slice(0, limit)
+        return stats.recentActivities.slice(0, limit).map(activity => ({
+          ...activity,
+          timestamp: new Date(activity.timestamp)
+        }))
       },
 
       getDailyUsage: (date = new Date()) => {
@@ -166,7 +169,7 @@ export const useActivityTracking = create<ActivityTrackingState>()(
           stats: {
             ...state.stats,
             recentActivities: state.stats.recentActivities.filter(
-              activity => activity.timestamp > cutoffDate
+              activity => new Date(activity.timestamp).getTime() > cutoffDate.getTime()
             )
           }
         }))
@@ -193,6 +196,10 @@ export const useActivityTracking = create<ActivityTrackingState>()(
         if (state) {
           state.sessionId = generateSessionId()
           state.stats.sessionStartTime = new Date()
+          state.stats.recentActivities = state.stats.recentActivities.map(activity => ({
+            ...activity,
+            timestamp: new Date(activity.timestamp)
+          }))
         }
       },
       migrate: (persistedState: any, version: number) => {

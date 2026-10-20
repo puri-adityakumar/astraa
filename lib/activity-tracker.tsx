@@ -106,9 +106,12 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
 
   // Simulate real-time activity (pauses when tab is hidden)
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>
+    let interval: ReturnType<typeof setInterval> | undefined
 
     const startPolling = () => {
+      clearInterval(interval)
+      if (document.hidden) return
+
       interval = setInterval(() => {
         if (Math.random() > 0.7) { // 30% chance every 3 seconds
           const newActivity = generateDemoActivity()
