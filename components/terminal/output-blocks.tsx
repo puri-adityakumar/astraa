@@ -99,7 +99,7 @@ function SingleBlock({ block }: { block: OutputBlock }) {
       // Shared key column at sm+ so /help categories and the theme list all
       // align their values to one grid line (mobile keeps auto-sizing).
       return (
-        <div className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-4 gap-y-1 font-mono text-sm sm:grid-cols-[10rem_minmax(0,1fr)]">
+        <div className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-4 gap-y-1 font-mono text-sm sm:grid-cols-[13rem_minmax(0,1fr)]">
           {block.entries.map((entry, index) => (
             <div key={index} className="contents">
               <span className="whitespace-nowrap text-term-accent sm:whitespace-normal">{entry.key}</span>

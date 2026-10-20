@@ -34,14 +34,19 @@ export function ToolRow({ command, showSummary = false, displayName, onRun }: To
       <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent transition-colors duration-200 group-hover:text-term-fg">
         {`/${command.name}`}
       </span>
-      <span className="min-w-0 truncate transition-transform duration-200 ease-out group-hover:translate-x-1">
+      <span
+        className={cn(
+          "min-w-0 truncate transition-transform duration-200 ease-out group-hover:translate-x-1",
+          showSummary && "lg:w-48 lg:shrink-0",
+        )}
+      >
         {label}
       </span>
       {command.status === "coming-soon" && (
         <span className="ml-auto shrink-0 font-mono text-xs text-term-muted">soon</span>
       )}
       {showSummary && command.status === "live" && (
-        <span className="ml-auto hidden truncate font-mono text-xs text-term-muted md:block">
+        <span className="hidden min-w-0 flex-1 truncate font-mono text-xs text-term-muted lg:block">
           {command.summary}
         </span>
       )}

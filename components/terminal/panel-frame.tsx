@@ -62,7 +62,7 @@ export function PanelFrame({ title, panelKey, focusKey, onClose, children }: Pan
         tabIndex={-1}
         data-term-panel={panelKey}
         aria-label={`${title} panel`}
-        className="outline-none"
+        className="pt-4 outline-none sm:pt-6"
       >
         <header className="mb-4 flex min-h-touch items-center gap-3">
           <h2 className="font-mono text-base font-semibold text-term-fg">

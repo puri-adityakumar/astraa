@@ -17,6 +17,13 @@
   outline-offset: 2px;
 }
 
+/* Exceptions: the panel section only receives programmatic focus on open, and
+   the always-focused prompt shows focus on its row border (PromptBar). */
+[data-flavour="terminal"] [data-term-panel]:focus-visible,
+[data-flavour="terminal"] #term-prompt:focus-visible {
+  outline: none;
+}
+
 /* Reduced motion inside the terminal: exact zeros, stronger than the global
    0.01ms fallback in globals.css. */
 @media (prefers-reduced-motion: reduce) {

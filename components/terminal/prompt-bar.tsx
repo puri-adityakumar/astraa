@@ -144,7 +144,14 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
 
   return (
     <div className="shrink-0 bg-term-bg [padding-bottom:env(safe-area-inset-bottom)]">
-      <div className={cn(TERM_COLUMN, "border-t border-term-surface2 py-3")}>
+      {/* The input's own outline is suppressed (terminal.css); focus shows on
+          the prompt's top rule instead so the indicator spans the whole row. */}
+      <div
+        className={cn(
+          TERM_COLUMN,
+          "border-t border-term-surface2 py-3 focus-within:border-term-accent",
+        )}
+      >
         <div className="relative flex items-center gap-2 font-mono text-sm">
           <label htmlFor="term-prompt" className="sr-only">
             Terminal command
@@ -201,7 +208,7 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
                       : "text-term-muted hover:bg-term-surface2",
                   )}
                 >
-                  <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 text-term-accent">
+                  <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 text-xs text-term-accent">
                     /{command.name}
                   </span>
                   <span className="min-w-0 truncate">{command.summary}</span>

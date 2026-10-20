@@ -234,43 +234,47 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
             <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
         </header>
-        {/* One content column: scrollback, panels and the frame overlay live
-            in the scroll region; the prompt sits below it as a flex sibling
+        {/* One content column: scrollback and panels live in the scroll
+            region under the frame overlay; the prompt sits below it as a flex sibling
             so it is always pinned to the bottom. main hides its scrollbar
             (terminal.css) — a zero-space scrollbar means the column can
             never shift under the prompt, which is what keeps every surface
             on one grid. */}
-        <main ref={mainRef} className="relative flex min-h-0 flex-1 flex-col overflow-y-auto">
+        <div className="relative flex min-h-0 flex-1 flex-col">
+          {/* The frame sits outside the scroll container so its side borders
+              always span the visible height instead of scrolling away. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 left-1/2 w-full max-w-3xl -translate-x-1/2 border-x border-term-surface2"
           />
-          <div className="min-h-0 flex-1">
-            {entries.length > 0 && (
-              <div className={cn(TERM_COLUMN, "py-8")}>
-                <Scrollback entries={entries} />
+          <main ref={mainRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+            <div className="min-h-0 flex-1">
+              {entries.length > 0 && (
+                <div className={cn(TERM_COLUMN, "py-8")}>
+                  <Scrollback entries={entries} />
+                </div>
+              )}
+              {browser !== null ? (
+                <BrowserPanel
+                  url={browser.url}
+                  canBack={browser.past.length > 0}
+                  canForward={browser.future.length > 0}
+                  onBack={browserBack}
+                  onForward={browserForward}
+                  onNavigate={openBrowser}
+                  onClose={closeBrowser}
+                />
+              ) : panel !== null ? (
+                <PanelHost slug={panel} onClose={close} />
+              ) : entries.length === 0 ? (
+                <HomeView onRun={handleSubmit} />
+              ) : null}
+              <div aria-live="polite" aria-atomic="true" className="sr-only">
+                {liveText}
               </div>
-            )}
-            {browser !== null ? (
-              <BrowserPanel
-                url={browser.url}
-                canBack={browser.past.length > 0}
-                canForward={browser.future.length > 0}
-                onBack={browserBack}
-                onForward={browserForward}
-                onNavigate={openBrowser}
-                onClose={closeBrowser}
-              />
-            ) : panel !== null ? (
-              <PanelHost slug={panel} onClose={close} />
-            ) : entries.length === 0 ? (
-              <HomeView onRun={handleSubmit} />
-            ) : null}
-            <div aria-live="polite" aria-atomic="true" className="sr-only">
-              {liveText}
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
         <PromptBar onSubmit={handleSubmit} autoFocus={panel === null && browser === null} />
       </div>
     </div>
