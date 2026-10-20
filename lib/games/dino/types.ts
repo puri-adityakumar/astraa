@@ -4,6 +4,7 @@ export interface GameState {
   highScore: number
   isGameOver: boolean
   dinoY: number
+  dinoVelocity: number
   isJumping: boolean
   obstacles: Obstacle[]
   groundX: number
@@ -11,6 +12,7 @@ export interface GameState {
 
 export interface Obstacle {
   x: number
+  y: number
   width: number
   height: number
   type: 'cactus' | 'bird'
