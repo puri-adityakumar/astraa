@@ -15,7 +15,7 @@ export function toolDisplayName(slug: string): string {
 }
 
 /**
- * Compact names for the fixed-width sidebar rail, where every label must
+ * Compact names for the fixed-width right panel, where every label must
  * fit beside a compact command chip without truncating.
  */
 const SHORT_NAMES: Record<ToolSlug, string> = {

@@ -27,7 +27,7 @@ import { LeftRail } from "./left-rail";
 import { PanelHost } from "./panel-host";
 import { PromptBar } from "./prompt-bar";
 import { Scrollback } from "./scrollback";
-import { Sidebar } from "./sidebar";
+import { RightPanel } from "./right-panel";
 import { usePanelUrl } from "./use-panel-url";
 import { useTerminalTheme } from "./terminal-theme";
 
@@ -234,11 +234,11 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
         <header
           className={cn(
             "flex h-14 shrink-0 items-center justify-between px-4",
-            "border-b border-term-surface2 xl:hidden",
+            "border-b border-term-surface2 lg:hidden",
           )}
         >
-          {/* Carries the page's accessible name while the sidebar (the desktop
-              h1) is hidden below 768px. */}
+          {/* Carries the page's accessible name while the left rail (the
+              desktop h1) is hidden below 768px. */}
           <h1
             aria-label="Astraa"
             className="select-none whitespace-nowrap font-pixel text-base text-term-fg md:hidden"
@@ -250,7 +250,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
             type="button"
             aria-label="Tools menu"
             aria-expanded={menuOpen}
-            aria-controls="term-sidebar"
+            aria-controls="term-tools-panel"
             onClick={() => setMenuOpen((open) => !open)}
             className={cn(
               "ml-auto flex min-h-touch min-w-touch items-center justify-center gap-2 px-3",
@@ -313,7 +313,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
           autoFocus={panel === null && browser === null && !configOpen}
         />
       </div>
-      <Sidebar
+      <RightPanel
         open={menuOpen}
         onClose={closeMenu}
         triggerRef={menuButtonRef}

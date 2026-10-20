@@ -59,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 ## The Terminal Flavour
 
 The home page and all tool pages open in a **terminal-style interface by default**: a
-`guest@astraa >` prompt, a sidebar of tool keys, and a pixel-font ASTRAA banner. Everything
+`guest@astraa >` prompt, flanking side panels of tool keys, and a pixel-font ASTRAA banner. Everything
 runs locally in your browser — tools are driven by slash commands, either answered inline in
 the scrollback or opened in a panel.
 
@@ -91,7 +91,7 @@ the tool's panel, so there is always a way in.
 
 ### Responsive layout
 
-The terminal adapts to small screens: at phone widths the sidebar collapses and every tool
+The terminal adapts to small screens: below 1024px the right panel collapses into a drawer (below 768px the left panel folds in too) and every tool
 panel lays out for a 375px viewport — controls stay reachable, the prompt never overlaps
 other content, and nested overlays (select menus, the regex reference sheet, the snippet
 customisation sheet, the markdown discard confirmation) each take one `Escape` press before
@@ -108,7 +108,7 @@ and its pages are otherwise unchanged.
 ### Colour schemes
 
 Six terminal colour schemes plus an automatic mode — switch with `/theme <name>` or the
-sidebar picker:
+`/config` settings panel:
 
 - **Mocha** and **Latte** (Catppuccin)
 - **Dracula**
@@ -134,7 +134,7 @@ or transmitted. See the privacy policy on the site (`/privacy`) for details.
 ### Switching to Legacy
 
 The classic web UI is still there as the **Legacy** flavour: type `/legacy`, or use the
-"Legacy UI" toggle in the terminal sidebar, and the same URL renders the legacy page. Your
+"Legacy UI" icon in the terminal's left panel, and the same URL renders the legacy page. Your
 choice is stored in the `astraa_flavour` cookie, and the legacy navigation's "Try terminal"
 control switches back.
 

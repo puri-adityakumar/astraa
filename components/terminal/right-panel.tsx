@@ -14,7 +14,7 @@ import { SponsorSlot } from "./sponsor-slot";
 import { ToolRow } from "./tool-row";
 import { toolShortName } from "./tool-names";
 
-interface SidebarProps {
+interface RightPanelProps {
   open: boolean;
   onClose: () => void;
   triggerRef: RefObject<HTMLButtonElement | null>;
@@ -22,8 +22,9 @@ interface SidebarProps {
   onRun: (input: string) => void;
 }
 
-/** The right-hand catalogue is a permanent xl rail and a modal drawer below xl. */
-export function Sidebar({ open, onClose, triggerRef, onRun }: SidebarProps) {
+/** The right-hand catalogue panel mirrors the left rail at lg and up; below
+ *  lg (where three columns would squeeze the terminal) it is a modal drawer. */
+export function RightPanel({ open, onClose, triggerRef, onRun }: RightPanelProps) {
   const commands = toolCommands(getCommands());
   const gameEntries = gameRows(games);
   const drawerRef = useRef<HTMLElement>(null);
@@ -61,7 +62,7 @@ export function Sidebar({ open, onClose, triggerRef, onRun }: SidebarProps) {
         }
       }
     };
-    const desktop = window.matchMedia("(min-width: 1280px)");
+    const desktop = window.matchMedia("(min-width: 1024px)");
     const handleDesktop = () => {
       if (desktop.matches) onClose();
     };
@@ -82,12 +83,12 @@ export function Sidebar({ open, onClose, triggerRef, onRun }: SidebarProps) {
           aria-label="Close tools menu"
           tabIndex={-1}
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-term-bg opacity-80 xl:hidden"
+          className="fixed inset-0 z-40 bg-term-bg opacity-80 lg:hidden"
         />
       )}
       <aside
         ref={drawerRef}
-        id="term-sidebar"
+        id="term-tools-panel"
         aria-label="Tools and games"
         role={open ? "dialog" : undefined}
         aria-modal={open ? true : undefined}
@@ -95,14 +96,14 @@ export function Sidebar({ open, onClose, triggerRef, onRun }: SidebarProps) {
         className={cn(
           "min-h-0 shrink-0 flex-col border-l border-term-surface2 bg-term-surface",
           open
-            ? "fixed inset-y-0 right-0 z-50 flex w-80 max-w-[90vw] xl:static xl:w-64"
-            : "hidden w-64 xl:flex",
+            ? "fixed inset-y-0 right-0 z-50 flex w-80 max-w-[90vw] lg:static lg:w-56"
+            : "hidden w-56 lg:flex",
         )}
       >
         <div
           className={cn(
             "flex shrink-0 items-center justify-between px-4 py-2",
-            "border-b border-term-surface2 xl:hidden",
+            "border-b border-term-surface2 lg:hidden",
           )}
         >
           <span className="font-mono text-sm text-term-fg">Tools &amp; games</span>
@@ -118,6 +119,11 @@ export function Sidebar({ open, onClose, triggerRef, onRun }: SidebarProps) {
           >
             <X aria-hidden="true" className="h-5 w-5" />
           </button>
+        </div>
+        <div className="hidden shrink-0 justify-end px-5 py-6 lg:flex">
+          <h2 className="select-none whitespace-nowrap font-pixel text-xl text-term-fg">
+            tools
+          </h2>
         </div>
         <nav aria-label="Tools and games" className="min-h-0 flex-1 overflow-y-auto px-2 py-5">
           <section aria-labelledby="term-tools-heading">
