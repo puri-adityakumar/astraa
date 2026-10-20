@@ -8,7 +8,6 @@ import { copyToClipboard } from "@/lib/clipboard";
 import { getUserFriendlyError, logError } from "@/lib/error-handler";
 import {
   decodeToBytes,
-  decodeToText,
   downloadAsFile,
   encodeBytes,
   encodeText,
@@ -146,7 +145,7 @@ export function Base64Client({ variant = "page" }: Base64ClientProps) {
           }
           const bytes = decodeToBytes(source, options);
           setDecodedBytes(bytes);
-          const out = decodeToText(source, options);
+          const out = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
           setOutput(out);
           setStatus({
             kind: "valid",

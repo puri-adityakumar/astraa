@@ -45,7 +45,7 @@ describe("validateBase64", () => {
   });
 
   it("accepts url-safe alphabet when urlSafe is true", () => {
-    expect(validateBase64("aGVs-bG8_", { urlSafe: true })).toEqual({ ok: true });
+    expect(validateBase64("aGVs-bG_", { urlSafe: true })).toEqual({ ok: true });
   });
 
   it("rejects url-safe alphabet when urlSafe is false", () => {
@@ -58,4 +58,16 @@ describe("validateBase64", () => {
   it("accepts url-safe without padding", () => {
     expect(validateBase64("aGVsbG8", { urlSafe: true })).toEqual({ ok: true });
   });
+
+  it.each(["A", "AAAAA", " A \n", "A===", "AAAAA==="])(
+    "rejects an impossible base64 data length: %j",
+    (input) => {
+      for (const urlSafe of [false, true]) {
+        expect(validateBase64(input, { urlSafe })).toEqual({
+          ok: false,
+          reason: "bad padding",
+        });
+      }
+    },
+  );
 });
