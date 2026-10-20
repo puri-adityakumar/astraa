@@ -5,6 +5,5 @@ export default [
   ...nextConfig,
   ...coreWebVitals,
   {
-    ignores: ["**/*.test.ts"],
-  },
-];
+    ignores: ["**/*.test.ts", "**/.next/**", "tempo/.next/**", "node_modules/**"],
+  },];
