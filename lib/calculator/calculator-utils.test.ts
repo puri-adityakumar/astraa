@@ -35,6 +35,34 @@ describe("evaluateExpression", () => {
   it("handles division by zero", () => {
     expect(evaluateExpression("5/0")).toBe(Infinity);
   });
+  it("handles nested parentheses", () => {
+    expect(evaluateExpression("(2+3)*(4-(1+1))")).toBe(10);
+  });
+  it("treats percent as a postfix division by 100", () => {
+    expect(evaluateExpression("50%")).toBe(0.5);
+    expect(evaluateExpression("(25+25)%*200")).toBe(100);
+    expect(evaluateExpression("50%+25%")).toBe(0.75);
+  });
+  it("handles unary signs at the start, after operators, and in parentheses", () => {
+    expect(evaluateExpression("-2+1")).toBe(-1);
+    expect(evaluateExpression("3*-2")).toBe(-6);
+    expect(evaluateExpression("3--2")).toBe(5);
+    expect(evaluateExpression("(-2+1)*4")).toBe(-4);
+    expect(evaluateExpression("-(2+3)")).toBe(-5);
+    expect(evaluateExpression("-2^2")).toBe(-4);
+    expect(evaluateExpression("2^-2")).toBe(0.25);
+  });
+  it("handles signed scientific notation", () => {
+    expect(evaluateExpression("1e+21+1e+21")).toBe(2e21);
+    expect(evaluateExpression("2E-3*1e+3")).toBe(2);
+    expect(evaluateExpression("-1e-2+1")).toBe(0.99);
+  });
+  it.each(["(2+2", "2+2)", "()", "2+", "2a+3", "2(3)", "%2", "1e+"])(
+    "rejects malformed expression %s",
+    (expression) => {
+      expect(evaluateExpression(expression)).toBeNaN();
+    },
+  );
 });
 
 describe("scientificFunctions", () => {
@@ -46,6 +74,16 @@ describe("scientificFunctions", () => {
   });
   it("returns NaN for negative factorial", () => {
     expect(scientificFunctions.fact(-1)).toBeNaN();
+  });
+  it("returns Infinity above the largest finite factorial", () => {
+    expect(scientificFunctions.fact(170)).toBeLessThan(Infinity);
+    expect(scientificFunctions.fact(171)).toBe(Infinity);
+    expect(scientificFunctions.fact(1e21)).toBe(Infinity);
+  });
+  it("rejects fractional and non-finite factorial inputs", () => {
+    expect(scientificFunctions.fact(2.5)).toBeNaN();
+    expect(scientificFunctions.fact(NaN)).toBeNaN();
+    expect(scientificFunctions.fact(Infinity)).toBeNaN();
   });
   it("calculates sqrt", () => {
     expect(scientificFunctions.sqrt(9)).toBe(3);

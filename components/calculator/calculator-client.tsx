@@ -32,6 +32,9 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
   const appendNumber = useCallback(
     (num: string) => {
       if (isNewNumber) {
+        if (/[)%]$/.test(expression)) {
+          setExpression((prev) => prev + "*");
+        }
         if (num === ".") {
           setDisplay("0.");
         } else {
@@ -48,16 +51,42 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
         });
       }
     },
-    [isNewNumber],
+    [isNewNumber, expression],
   );
 
   const appendOperator = useCallback(
     (op: string) => {
       if (display === "Error") return;
 
+      if (op === "(") {
+        setExpression((prev) => {
+          if (!isNewNumber) return prev + display + "*(";
+          return prev + (/[)%]$/.test(prev) ? "*(" : "(");
+        });
+        setIsNewNumber(true);
+        return;
+      }
+
+      if (op === ")" || op === "%") {
+        setExpression((prev) => {
+          const next = isNewNumber ? (prev || display) : prev + display;
+          if (!next || /[+\-*/^(]$/.test(next)) return prev;
+          if (op === ")") {
+            const opens = next.split("(").length - next.split(")").length;
+            if (opens <= 0) return prev;
+          }
+          return next + op;
+        });
+        setIsNewNumber(true);
+        return;
+      }
+
       if (isNewNumber) {
         setExpression((prev) => {
-          if (!prev) return prev;
+          if (!prev) return op === "-" && display === "0" ? "-" : display + op;
+          if (/[)%]$/.test(prev)) return prev + op;
+          if (prev.endsWith("(")) return ["+", "-"].includes(op) ? prev + op : prev;
+          if (op === "-") return prev + op;
           return prev.slice(0, -1) + op;
         });
       } else {
@@ -72,8 +101,11 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
     if (!expression && isNewNumber) return;
 
     try {
-      const fullExpression = expression + display;
+      const fullExpression = isNewNumber && /[)%]$/.test(expression)
+        ? expression
+        : expression + display;
       const result = evaluateExpression(fullExpression);
+      if (Number.isNaN(result)) throw new Error("Invalid expression");
       setDisplay(result.toString());
       setExpression("");
       setIsNewNumber(true);

@@ -21,7 +21,8 @@ export const scientificFunctions = {
   sqrt: Math.sqrt,
   abs: Math.abs,
   fact: (n: number) => {
-    if (n < 0) return NaN;
+    if (n < 0 || !Number.isInteger(n)) return NaN;
+    if (n > 170) return Infinity;
     if (n === 0 || n === 1) return 1;
     let result = 1;
     for (let i = 2; i <= n; i++) result *= i;
@@ -30,93 +31,50 @@ export const scientificFunctions = {
 }
 
 const WHITESPACE_RE = /\s+/g;
-const OPERATOR_SET = new Set(["+", "-", "*", "/", "^"]);
+const TOKEN_RE = /(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?|[()+\-*/^%]/g;
 
 export function evaluateExpression(expression: string): number {
   // Remove whitespace and validate
   expression = expression.replace(WHITESPACE_RE, "");
   if (!expression) return 0;
 
-  // Tokenize the expression
-  const tokens = tokenize(expression)
+  const tokens = expression.match(TOKEN_RE) ?? [];
+  if (tokens.join("") !== expression) return NaN;
+  let index = 0;
 
-  // Convert to postfix notation
-  const postfix = toPostfix(tokens)
-
-  // Evaluate postfix expression
-  return evaluatePostfix(postfix)
-}
-
-function tokenize(expression: string): string[] {
-  const tokens: string[] = []
-  let current = ''
-
-  for (let i = 0; i < expression.length; i++) {
-    const char = expression[i]
-
-    if (char && isOperator(char)) {
-      if (current) tokens.push(current)
-      tokens.push(char)
-      current = ''
-    } else if (char) {
-      current += char
-    }
-  }
-
-  if (current) tokens.push(current)
-
-  return tokens
-}
-
-function isOperator(char: string): boolean {
-  return OPERATOR_SET.has(char);
-}
-
-function toPostfix(tokens: string[]): string[] {
-  const output: string[] = []
-  const operators: string[] = []
-
-  for (const token of tokens) {
-    if (isOperator(token)) {
-      while (operators.length > 0) {
-        const lastOp = operators[operators.length - 1]
-        if (!lastOp || !operations[lastOp] || !operations[token]) break
-        if (operations[lastOp].precedence < operations[token].precedence) break
-        const popped = operators.pop()
-        if (popped) output.push(popped)
-      }
-      operators.push(token)
+  function parseOperand(): number {
+    const token = tokens[index++];
+    let value: number;
+    if (token === "+" || token === "-") {
+      // Exponents bind more tightly than a leading sign: -2^2 = -(2^2).
+      value = parseBinary(3) * (token === "-" ? -1 : 1);
+    } else if (token === "(") {
+      value = parseBinary(1);
+      if (tokens[index++] !== ")") return NaN;
+    } else if (token && !["%", ")", "*", "/", "^"].includes(token)) {
+      value = Number(token);
     } else {
-      output.push(token)
+      return NaN;
     }
-  }
-
-  while (operators.length > 0) {
-    const popped = operators.pop()
-    if (popped) output.push(popped)
-  }
-
-  return output
-}
-
-function evaluatePostfix(tokens: string[]): number {
-  const stack: number[] = []
-
-  for (const token of tokens) {
-    if (isOperator(token) && operations[token]) {
-      const b = stack.pop()
-      const a = stack.pop()
-      
-      if (a !== undefined && b !== undefined) {
-        stack.push(operations[token].execute(a, b))
-      } else {
-        // Handle error case for fewer operands than needed
-        return NaN
-      }
-    } else {
-      stack.push(Number(token))
+    while (tokens[index] === "%") {
+      value /= 100;
+      index++;
     }
+    return value;
   }
 
-  return stack[0] ?? 0
+  function parseBinary(minPrecedence: number): number {
+    let value = parseOperand();
+    while (index < tokens.length) {
+      const token = tokens[index] ?? "";
+      const operation = operations[token];
+      if (!operation || operation.precedence < minPrecedence) break;
+      index++;
+      value = operation.execute(value, parseBinary(operation.precedence + 1));
+    }
+    return value;
+  }
+
+  const result = parseBinary(1);
+  return index === tokens.length ? result : NaN;
 }
