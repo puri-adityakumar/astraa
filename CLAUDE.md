@@ -103,7 +103,7 @@ try {
 ### TypeScript
 
 - Strict mode plus stricter checks in `tsconfig.json`: `noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `noUncheckedIndexedAccess`, `noImplicitOverride`. Array/object indexing returns `T | undefined` — handle it.
-- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`, `@/config`
+- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`
 - Prefer `unknown` over `any`; use explicit return types for public functions
 
 ### Naming Conventions

@@ -50,9 +50,6 @@
         "./types/*",
         "./src/types/*"
       ],
-      "@/config/*": [
-        "./src/config/*"
-      ],
       "@/hooks/*": [
         "./hooks/*",
         "./src/hooks/*"

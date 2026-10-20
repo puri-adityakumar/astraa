@@ -42,7 +42,7 @@ npm run test:watch # Run tests in watch mode
 ## TypeScript Configuration
 
 - Strict mode with `noUnusedLocals`, `noImplicitReturns`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`
-- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`, `@/config`
+- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/app`, `@/types`
 - Prefer `unknown` over `any`; explicit return types for public functions
 
 ## Code Style
