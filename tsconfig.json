@@ -71,7 +71,6 @@
     "out",
     ".next",
     "tests",
-    "tempo",
     "components/design-preview"
   ]
 }
