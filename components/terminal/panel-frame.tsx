@@ -17,12 +17,13 @@ interface PanelFrameProps {
 }
 
 /**
- * Whether a portalled Radix overlay (Select/Popover/DropdownMenu content
- * wrapper, a Dialog or an AlertDialog) is currently open. Escape inside one
- * must dismiss the overlay itself, not the whole panel.
+ * Escape belongs to open overlays, including the prompt suggestions and
+ * mobile drawer, before it can close the panel.
  */
-function hasOpenRadixOverlay(): boolean {
+function hasOpenOverlay(): boolean {
   return (
+    document.getElementById("term-suggestions") !== null ||
+    document.querySelector("[data-term-drawer-open]") !== null ||
     document.querySelector(
       "[data-radix-popper-content-wrapper] [data-state='open'], [role='dialog'][data-state='open'], [role='alertdialog'][data-state='open']",
     ) !== null
@@ -45,7 +46,7 @@ export function PanelFrame({ title, panelKey, focusKey, onClose, children }: Pan
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      if (hasOpenRadixOverlay()) return;
+      if (hasOpenOverlay()) return;
       event.preventDefault();
       event.stopPropagation();
       onClose();

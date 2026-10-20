@@ -163,6 +163,11 @@ describe("closestCommand", () => {
     expect(closestCommand("xxxxxxxxxx")).toBeUndefined();
   });
 
+  it("does not suggest a command for an empty name", () => {
+    expect(closestCommand("")).toBeUndefined();
+    expect(closestCommandIn(getCommands(), "")).toBeUndefined();
+  });
+
   it("closestCommandIn works on a provided list", () => {
     const list = [fixtureCommand()];
     expect(closestCommandIn(list, "fixure")?.name).toBe("fixture");
@@ -286,12 +291,10 @@ describe("runInput", () => {
     const weird = "/ / / /";
     const result = await runInput(weird, "mocha");
     expect(result?.type).toBe("answer");
-    // The empty name sits at edit distance 2 from the shortest alias (/re).
     expect(await runInput("/", "mocha")).toEqual({
       type: "answer",
       output: [
         { type: "error", text: 'Unknown command "/".' },
-        { type: "text", text: "Did you mean /regex?" },
         { type: "text", text: "Type /help to see all commands." },
       ],
     });

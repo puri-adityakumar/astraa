@@ -60,6 +60,7 @@ export function Sidebar({ open, onClose, onRun }: SidebarProps) {
       )}
       <aside
         id="term-sidebar"
+        data-term-drawer-open={open ? "" : undefined}
         className={cn(
           "z-50 flex-col border-r border-term-surface2 bg-term-surface",
           open

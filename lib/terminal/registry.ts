@@ -120,6 +120,7 @@ export function closestCommandIn(
   all: readonly TerminalCommand[],
   name: string,
 ): TerminalCommand | undefined {
+  if (name === "") return undefined;
   const needle = name.toLowerCase();
   let best: TerminalCommand | undefined;
   let bestDistance = Number.POSITIVE_INFINITY;

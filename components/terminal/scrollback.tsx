@@ -1,11 +1,7 @@
-import type { OutputBlock } from "@/lib/terminal/types";
+import type { ScrollbackEntry } from "@/lib/terminal/scrollback";
 import { OutputBlocks } from "./output-blocks";
 
-export interface ScrollbackEntry {
-  id: number;
-  input: string;
-  output: OutputBlock[];
-}
+export type { ScrollbackEntry } from "@/lib/terminal/scrollback";
 
 function Entry({ entry }: { entry: ScrollbackEntry }) {
   return (

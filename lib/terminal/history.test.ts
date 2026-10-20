@@ -1,7 +1,38 @@
 import { describe, expect, it } from "vitest";
-import { historyEntryFor, initialHistoryNav, recallNext, recallPrevious } from "./history";
+import {
+  appendHistoryEntry,
+  historyEntryFor,
+  initialHistoryNav,
+  PROMPT_HISTORY_LIMIT,
+  recallNext,
+  recallPrevious,
+} from "./history";
 
 const HISTORY = ["/theme", "/help"];
+
+describe("appendHistoryEntry", () => {
+  it("adds a sanitized entry without mutating the previous history", () => {
+    expect(appendHistoryEntry(HISTORY, "/pw 24")).toEqual([
+      "/theme",
+      "/help",
+      "/password",
+    ]);
+    expect(HISTORY).toEqual(["/theme", "/help"]);
+  });
+
+  it("keeps only the newest 500 entries and recall still starts at the newest", () => {
+    const history = Array.from({ length: PROMPT_HISTORY_LIMIT }, (_, index) => `${index}`);
+    const next = appendHistoryEntry(history, "/help");
+
+    expect(next).toHaveLength(500);
+    expect(next[0]).toBe("1");
+    expect(next.at(-1)).toBe("/help");
+    expect(recallPrevious(initialHistoryNav, next, "")).toEqual({
+      index: 499,
+      draft: "",
+    });
+  });
+});
 
 describe("recallPrevious", () => {
   it("recalls the newest entry and saves the draft", () => {

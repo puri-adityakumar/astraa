@@ -6,6 +6,8 @@
  */
 import { parseInput } from "./parse";
 
+export const PROMPT_HISTORY_LIMIT = 500;
+
 export interface HistoryNav {
   /** Position in the history array being viewed; null = editing freely. */
   readonly index: number | null;
@@ -51,4 +53,8 @@ export function historyEntryFor(input: string): string {
     return "/password";
   }
   return trimmed;
+}
+
+export function appendHistoryEntry(history: readonly string[], input: string): string[] {
+  return [...history, historyEntryFor(input)].slice(-PROMPT_HISTORY_LIMIT);
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import {
-  historyEntryFor,
+  appendHistoryEntry,
   initialHistoryNav,
   recallNext,
   recallPrevious,
@@ -73,7 +73,7 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
     if (input === "") return;
     onSubmit(input);
     setValue("");
-    setHistory((previous) => [...previous, historyEntryFor(input)]);
+    setHistory((previous) => appendHistoryEntry(previous, input));
     setNav(initialHistoryNav);
     setListDismissed(false);
     setActiveIndex(-1);
@@ -91,10 +91,13 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
       return;
     }
     if (event.key === "Tab") {
-      if (token === null) return;
-      event.preventDefault();
+      if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey || token === null) {
+        return;
+      }
       const selected = (listOpen ? suggestions[activeIndex] : undefined) ?? suggestions[0];
-      if (selected) acceptSuggestion(selected.name);
+      if (!selected || selected.name === token) return;
+      event.preventDefault();
+      acceptSuggestion(selected.name);
       return;
     }
     if (event.key === "Escape") {

@@ -22,7 +22,7 @@ interface UsePanelUrl {
  * and popstate driving open/close so Back closes and Forward reopens. No
  * path reloads the document.
  */
-export function usePanelUrl(initialSlug?: ToolSlug): UsePanelUrl {
+export function usePanelUrl(initialSlug?: ToolSlug, onPopPanel?: () => void): UsePanelUrl {
   const [panel, setPanel] = useState<ToolSlug | null>(initialSlug ?? null);
   const panelRef = useRef<ToolSlug | null>(initialSlug ?? null);
   const pushedRef = useRef(false);
@@ -37,11 +37,12 @@ export function usePanelUrl(initialSlug?: ToolSlug): UsePanelUrl {
       pushedRef.current = next.pushed;
       panelRef.current = next.panel;
       document.title = next.title;
+      if (next.panel !== null) onPopPanel?.();
       setPanel(next.panel);
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [initialSlug]);
+  }, [initialSlug, onPopPanel]);
 
   const open = useCallback((slug: ToolSlug) => {
     const transition = openPanelTransition(panelRef.current, slug);

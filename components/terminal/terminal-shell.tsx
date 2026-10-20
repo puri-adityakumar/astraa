@@ -2,9 +2,20 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
+import {
+  browserHistoryBack,
+  browserHistoryForward,
+  navigateBrowser,
+  type BrowserHistory,
+} from "@/lib/terminal/browser-history";
 import { outputToLiveText } from "@/lib/terminal/live-text";
 import { commandForSlug, runInput } from "@/lib/terminal/registry";
 import { scrollAction } from "@/lib/terminal/scroll-policy";
+import {
+  appendScrollbackEntry,
+  completeScrollbackEntry,
+  type ScrollbackEntry,
+} from "@/lib/terminal/scrollback";
 import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
 import { cn } from "@/lib/utils";
 import { TERM_COLUMN } from "./column";
@@ -13,7 +24,7 @@ import { switchToLegacyFlavour } from "./flavour-switch";
 import { HomeView } from "./home-view";
 import { PanelHost } from "./panel-host";
 import { PromptBar } from "./prompt-bar";
-import { Scrollback, type ScrollbackEntry } from "./scrollback";
+import { Scrollback } from "./scrollback";
 import { Sidebar } from "./sidebar";
 import { usePanelUrl } from "./use-panel-url";
 import { useTerminalTheme } from "./terminal-theme";
@@ -38,11 +49,8 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   // persistence. The object (not just the url) is the open flag so the start
   // page (url null) still keeps the panel open, and it carries the panel's
   // back/forward stacks (cross-origin frame history is not inspectable).
-  const [browser, setBrowser] = useState<{
-    url: string | null;
-    past: (string | null)[];
-    future: (string | null)[];
-  } | null>(null);
+  const [browser, setBrowser] = useState<BrowserHistory | null>(null);
+  const closeBrowser = useCallback(() => setBrowser(null), []);
   // Coming-soon tools (music, sql) never open a panel: a direct load of
   // their URL prints the coming-soon line in the scrollback instead
   // (architecture §5 rule 5).
@@ -51,6 +59,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const initialComingSoon = initialCommand?.status === "coming-soon";
   const { panel, open, close } = usePanelUrl(
     initialComingSoon ? undefined : initialTool,
+    closeBrowser,
   );
   const { theme, setTheme } = useTerminalTheme();
   const mainRef = useRef<HTMLElement>(null);
@@ -59,6 +68,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   );
   const seededToolRef = useRef<string | null>(null);
   const nextIdRef = useRef(0);
+  const generationRef = useRef(0);
 
   // The browser and tool panels are mutually exclusive: opening one closes
   // the other. close() also rewinds a pushed /tools/<slug> history entry.
@@ -67,58 +77,19 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const openBrowser = useCallback(
     (url: string | null) => {
       close();
-      setBrowser((current) =>
-        current === null
-          ? { url, past: [], future: [] }
-          : { url, past: [...current.past, current.url], future: [] },
-      );
+      setBrowser((current) => navigateBrowser(current, url));
     },
     [close],
   );
-  const closeBrowser = useCallback(() => setBrowser(null), []);
   const browserBack = useCallback(() => {
-    setBrowser((current) => {
-      if (current === null || current.past.length === 0) return current;
-      const url = current.past[current.past.length - 1] ?? null;
-      return {
-        url,
-        past: current.past.slice(0, -1),
-        future: [current.url, ...current.future],
-      };
-    });
+    setBrowser(browserHistoryBack);
   }, []);
   const browserForward = useCallback(() => {
-    setBrowser((current) => {
-      if (current === null || current.future.length === 0) return current;
-      const url = current.future[0] ?? null;
-      return {
-        url,
-        past: [...current.past, current.url],
-        future: current.future.slice(1),
-      };
-    });
+    setBrowser(browserHistoryForward);
   }, []);
 
-  // Direct loads of /tools/music and /tools/sql seed the scrollback with
-  // the command's coming-soon answer, exactly as if it had been typed.
-  useEffect(() => {
-    const command = initialCommand;
-    if (!command || command.status !== "coming-soon") return;
-    if (seededToolRef.current !== null) return;
-    seededToolRef.current = command.name;
-    void runInput(`/${command.name}`, theme).then((result) => {
-      if (!result || result.type !== "answer") return;
-      nextIdRef.current += 1;
-      const id = nextIdRef.current;
-      setEntries((previous) => [
-        ...previous,
-        { id, input: `/${command.name}`, output: result.output },
-      ]);
-      setLiveText(outputToLiveText(result.output));
-    });
-  }, [initialCommand, theme]);
-
   const clearScreen = useCallback(() => {
+    generationRef.current += 1;
     setEntries([]);
     setLiveText("Screen cleared.");
     close();
@@ -157,13 +128,18 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
         align();
         const observer = new ResizeObserver(align);
         observer.observe(el);
-        window.setTimeout(() => observer.disconnect(), 2000);
+        const timeout = window.setTimeout(() => observer.disconnect(), 2000);
+        return () => {
+          window.clearTimeout(timeout);
+          observer.disconnect();
+        };
       }
     } else if (action === "bottom") {
       main.scrollTo({ top: main.scrollHeight });
     } else if (action === "top") {
       main.scrollTo({ top: 0 });
     }
+    return undefined;
   }, [entries, panel, browser]);
 
   // Ctrl+L clears the screen like /clear, wherever the focus is.
@@ -187,7 +163,12 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   // registry: echoes it in the scrollback and executes its result.
   const handleSubmit = useCallback(
     async (input: string) => {
+      if (input.trim() === "") return;
+      const id = ++nextIdRef.current;
+      const generation = generationRef.current;
+      setEntries((previous) => appendScrollbackEntry(previous, { id, input, output: [] }));
       const result = await runInput(input, theme);
+      if (generation !== generationRef.current) return;
       if (result === null) return;
       if (result.type === "builtin") {
         const { action } = result;
@@ -201,25 +182,32 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
         // echo to the scrollback first.
         if (action.kind === "theme") setTheme(action.theme);
         if (action.kind === "legacy") switchToLegacyFlavour();
-      } else if (result.type === "browser") {
-        openBrowser(result.url);
-      } else if (result.type === "open" || result.type === "fallback") {
-        setBrowser(null);
-        open(result.slug);
+      } else if (id === nextIdRef.current) {
+        if (result.type === "browser") {
+          openBrowser(result.url);
+        } else if (result.type === "open" || result.type === "fallback") {
+          setBrowser(null);
+          open(result.slug);
+        }
       }
       const output: OutputBlock[] =
         result.type === "fallback"
           ? [{ type: "error", text: result.message }]
           : (result.output ?? []);
-      nextIdRef.current += 1;
-      setEntries((previous) => [
-        ...previous,
-        { id: nextIdRef.current, input, output },
-      ]);
+      setEntries((previous) => completeScrollbackEntry(previous, id, output));
       setLiveText(outputToLiveText(output));
     },
     [clearScreen, theme, setTheme, open, openBrowser],
   );
+
+  // Direct coming-soon loads use the same ordering and clear guards as typed commands.
+  useEffect(() => {
+    const command = initialCommand;
+    if (!command || command.status !== "coming-soon") return;
+    if (seededToolRef.current !== null) return;
+    seededToolRef.current = command.name;
+    void handleSubmit(`/${command.name}`);
+  }, [initialCommand, handleSubmit]);
 
   return (
     <div className="flex h-dvh overflow-hidden bg-term-bg text-term-fg">
