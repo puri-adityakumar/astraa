@@ -48,7 +48,7 @@ export function CategoryTabs({ categories, active, idPrefix, onChange }: Categor
       role="tablist"
       aria-label="Tool categories"
       onKeyDown={handleKeyDown}
-      className="flex flex-wrap gap-1"
+      className="flex gap-1 overflow-x-auto border-b border-term-surface2"
     >
       {categories.map((category) => {
         const selected = category === active;
@@ -65,10 +65,11 @@ export function CategoryTabs({ categories, active, idPrefix, onChange }: Categor
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(category)}
             className={cn(
-              "min-h-touch rounded-md border px-3 font-mono text-sm",
+              "min-h-touch shrink-0 border-b-2 px-3 font-mono text-xs",
+              "hover:bg-term-surface focus-visible:bg-term-surface",
               selected
-                ? "border-term-surface2 bg-term-surface2 text-term-fg"
-                : "border-transparent text-term-muted hover:bg-term-surface2 hover:text-term-fg focus-visible:bg-term-surface2",
+                ? "border-term-accent text-term-fg"
+                : "border-transparent text-term-muted hover:text-term-fg",
             )}
           >
             {category}

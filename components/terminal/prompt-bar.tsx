@@ -10,6 +10,7 @@ import {
   type HistoryNav,
 } from "@/lib/terminal/history";
 import { suggest } from "@/lib/terminal/registry";
+import { TERMINAL_SHORTCUTS } from "@/lib/terminal/shortcuts";
 import { cn } from "@/lib/utils";
 import { TERM_COLUMN } from "./column";
 
@@ -60,6 +61,7 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
     [token],
   );
   const listOpen = token !== null && !listDismissed && suggestions.length > 0;
+  const shortcutsOpen = value === "?";
 
   const acceptSuggestion = (name: string) => {
     setValue(`/${name}`);
@@ -70,7 +72,7 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
 
   const submit = () => {
     const input = value.trim();
-    if (input === "") return;
+    if (input === "" || input === "?") return;
     onSubmit(input);
     setValue("");
     setHistory((previous) => appendHistoryEntry(previous, input));
@@ -80,6 +82,11 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
   };
 
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (shortcutsOpen && (event.key === "Escape" || event.key === "Backspace")) {
+      event.preventDefault();
+      setValue("");
+      return;
+    }
     if (event.key === "Enter") {
       event.preventDefault();
       if (listOpen && activeIndex >= 0) {
@@ -144,54 +151,60 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
 
   return (
     <div className="shrink-0 bg-term-bg [padding-bottom:env(safe-area-inset-bottom)]">
-      {/* The input's own outline is suppressed (terminal.css); focus shows on
-          the prompt's top rule instead so the indicator spans the whole row. */}
-      <div
-        className={cn(
-          TERM_COLUMN,
-          "border-t border-term-surface2 py-3 focus-within:border-term-accent",
-        )}
-      >
-        <div className="relative flex items-center gap-2 font-mono text-sm">
-          <label htmlFor="term-prompt" className="sr-only">
-            Terminal command
-          </label>
-          <span
-            aria-hidden="true"
-            className="select-none whitespace-nowrap text-term-green"
+      <div className={cn(TERM_COLUMN, "py-2")}>
+        <div className="relative font-mono text-sm">
+          <div
+            className={cn(
+              "flex items-center gap-3 rounded-xl border border-term-surface2 px-3",
+              "focus-within:border-term-accent",
+            )}
           >
-            guest@astraa &gt;
-          </span>
-          <input
-            ref={inputRef}
-            id="term-prompt"
-            type="text"
-            role="combobox"
-            aria-expanded={listOpen}
-            aria-controls={listOpen ? "term-suggestions" : undefined}
-            aria-autocomplete="list"
-            aria-activedescendant={
-              listOpen && activeIndex >= 0 ? `term-suggestion-${activeIndex}` : undefined
-            }
-            autoComplete="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            placeholder="/help"
-            value={value}
-            onChange={(event) => {
-              setValue(event.target.value);
-              setListDismissed(false);
-              setActiveIndex(-1);
-            }}
-            onKeyDown={handleKeyDown}
-            className="min-h-touch w-full min-w-0 bg-transparent text-term-fg outline-none [caret-color:var(--term-accent)] placeholder:text-term-muted"
-          />
+            <label htmlFor="term-prompt" className="sr-only">
+              Terminal command
+            </label>
+            <span aria-hidden="true" className="select-none text-xl text-term-accent">
+              ›
+            </span>
+            <input
+              ref={inputRef}
+              id="term-prompt"
+              type="text"
+              role="combobox"
+              aria-expanded={listOpen}
+              aria-controls={listOpen ? "term-suggestions" : undefined}
+              aria-describedby={
+                shortcutsOpen ? "term-prompt-hints term-shortcuts" : "term-prompt-hints"
+              }
+              aria-autocomplete="list"
+              aria-activedescendant={
+                listOpen && activeIndex >= 0 ? `term-suggestion-${activeIndex}` : undefined
+              }
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              placeholder="Type a command…"
+              value={value}
+              onChange={(event) => {
+                setValue(event.target.value);
+                setListDismissed(false);
+                setActiveIndex(-1);
+              }}
+              onKeyDown={handleKeyDown}
+              className={cn(
+                "min-h-touch w-full min-w-0 bg-transparent text-term-fg outline-none",
+                "[caret-color:var(--term-accent)] placeholder:text-term-muted",
+              )}
+            />
+          </div>
           {listOpen && (
             <ul
               id="term-suggestions"
               role="listbox"
               aria-label="Command suggestions"
-              className="absolute bottom-full left-0 right-0 z-10 mb-2 max-h-64 overflow-y-auto rounded-md border border-term-surface2 bg-term-surface py-1 shadow-lg"
+              className={cn(
+                "absolute bottom-full left-0 right-0 z-10 mb-2 max-h-64 overflow-y-auto py-1",
+                "rounded-xl border border-term-surface2 bg-term-surface shadow-lg",
+              )}
             >
               {suggestions.map((command, index) => (
                 <li
@@ -202,20 +215,63 @@ export function PromptBar({ onSubmit, autoFocus = true }: PromptBarProps) {
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => acceptSuggestion(command.name)}
                   className={cn(
-                    "flex min-h-touch cursor-default items-center gap-3 px-3 py-2 font-mono text-sm",
+                    "flex min-h-touch cursor-pointer items-center gap-3 px-3 py-2 text-sm",
                     index === activeIndex
                       ? "bg-term-surface2 text-term-fg"
                       : "text-term-muted hover:bg-term-surface2",
                   )}
                 >
-                  <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 text-xs text-term-accent">
-                    /{command.name}
+                  <span aria-hidden="true" className="w-2 shrink-0 text-term-accent">
+                    {index === activeIndex ? "›" : ""}
                   </span>
-                  <span className="min-w-0 truncate">{command.summary}</span>
+                  <span className="flex w-32 shrink-0 items-baseline gap-2 overflow-hidden">
+                    <span className="shrink-0 text-term-accent">/{command.name}</span>
+                    {command.aliases.length > 0 && (
+                      <span className="hidden truncate text-xs text-term-muted sm:inline">
+                        {command.aliases.map((alias) => `/${alias}`).join(", ")}
+                      </span>
+                    )}
+                  </span>
+                  <span className="min-w-0 truncate text-term-muted">{command.summary}</span>
                 </li>
               ))}
             </ul>
           )}
+          {shortcutsOpen && (
+            <section
+              id="term-suggestions"
+              aria-labelledby="term-shortcuts-title"
+              className={cn(
+                "absolute bottom-full left-0 right-0 z-10 mb-2 max-h-[min(24rem,60dvh)]",
+                "overflow-y-auto rounded-xl border border-term-surface2 bg-term-surface p-4 shadow-lg",
+              )}
+            >
+              <div className="mb-3 flex items-baseline justify-between gap-3">
+                <h2 id="term-shortcuts-title" className="text-sm text-term-fg">
+                  Keyboard shortcuts
+                </h2>
+                <span className="text-xs text-term-muted">Esc to dismiss</span>
+              </div>
+              <dl id="term-shortcuts" className="grid grid-cols-[7rem_1fr] gap-x-4 gap-y-2">
+                {TERMINAL_SHORTCUTS.map((shortcut) => (
+                  <div key={shortcut.key} className="contents">
+                    <dt className="text-term-accent">{shortcut.key}</dt>
+                    <dd className="text-term-muted">{shortcut.description}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
+        </div>
+        <div
+          id="term-prompt-hints"
+          className="mt-1 flex justify-between gap-4 px-1 font-mono text-xs leading-4 text-term-muted"
+        >
+          <span>/ for commands · ? for shortcuts</span>
+          <span className="hidden sm:inline">Enter to run</span>
+        </div>
+        <div role="status" className="sr-only">
+          {shortcutsOpen ? "Keyboard shortcuts open. Press Escape or Backspace to dismiss." : ""}
         </div>
       </div>
     </div>

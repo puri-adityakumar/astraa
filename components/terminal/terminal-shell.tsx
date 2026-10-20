@@ -20,8 +20,10 @@ import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
 import { cn } from "@/lib/utils";
 import { TERM_COLUMN } from "./column";
 import { BrowserPanel } from "./browser-panel";
+import { ConfigPanel } from "./config-panel";
 import { switchToLegacyFlavour } from "./flavour-switch";
 import { HomeView } from "./home-view";
+import { LeftRail } from "./left-rail";
 import { PanelHost } from "./panel-host";
 import { PromptBar } from "./prompt-bar";
 import { Scrollback } from "./scrollback";
@@ -35,7 +37,7 @@ interface TerminalShellProps {
 }
 
 /**
- * The terminal shell: desktop sidebar rail (or mobile top bar + drawer), a
+ * The terminal shell: desktop identity and catalogue rails (or a tools drawer), a
  * scrolling main column with the home view, scrollback and the open tool
  * panel, and the interactive prompt pinned to the bottom. Submitted lines
  * run through the command registry; everything stays in memory — nothing
@@ -43,14 +45,22 @@ interface TerminalShellProps {
  */
 export function TerminalShell({ initialTool }: TerminalShellProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const [entries, setEntries] = useState<ScrollbackEntry[]>([]);
   const [liveText, setLiveText] = useState("");
+  const [configOpen, setConfigOpen] = useState(false);
+  const closeConfig = useCallback(() => setConfigOpen(false), []);
   // The browser panel is session state like the scrollback: no URL sync, no
   // persistence. The object (not just the url) is the open flag so the start
   // page (url null) still keeps the panel open, and it carries the panel's
   // back/forward stacks (cross-origin frame history is not inspectable).
   const [browser, setBrowser] = useState<BrowserHistory | null>(null);
   const closeBrowser = useCallback(() => setBrowser(null), []);
+  const closeAuxiliaryPanels = useCallback(() => {
+    setBrowser(null);
+    setConfigOpen(false);
+  }, []);
   // Coming-soon tools (music, sql) never open a panel: a direct load of
   // their URL prints the coming-soon line in the scrollback instead
   // (architecture §5 rule 5).
@@ -59,24 +69,25 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   const initialComingSoon = initialCommand?.status === "coming-soon";
   const { panel, open, close } = usePanelUrl(
     initialComingSoon ? undefined : initialTool,
-    closeBrowser,
+    closeAuxiliaryPanels,
   );
   const { theme, setTheme } = useTerminalTheme();
   const mainRef = useRef<HTMLElement>(null);
-  const previousPanelRef = useRef<ToolSlug | "browser" | null>(
+  const previousPanelRef = useRef<ToolSlug | "browser" | "config" | null>(
     initialComingSoon ? null : (initialTool ?? null),
   );
   const seededToolRef = useRef<string | null>(null);
   const nextIdRef = useRef(0);
   const generationRef = useRef(0);
 
-  // The browser and tool panels are mutually exclusive: opening one closes
-  // the other. close() also rewinds a pushed /tools/<slug> history entry.
+  // Browser, config and tool panels are mutually exclusive. close() also
+  // rewinds a pushed /tools/<slug> history entry.
   // openBrowser is a fresh visit: drop the forward stack. Back and forward
   // move between the stacks without touching it.
   const openBrowser = useCallback(
     (url: string | null) => {
       close();
+      setConfigOpen(false);
       setBrowser((current) => navigateBrowser(current, url));
     },
     [close],
@@ -94,6 +105,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
     setLiveText("Screen cleared.");
     close();
     setBrowser(null);
+    setConfigOpen(false);
   }, [close]);
 
   // Keep the newest output in view without pushing a freshly opened panel's
@@ -109,7 +121,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
-    const panelKey: ToolSlug | "browser" | null = browser !== null ? "browser" : panel;
+    const panelKey = configOpen ? "config" : browser !== null ? "browser" : panel;
     const panelChanged = previousPanelRef.current !== panelKey;
     previousPanelRef.current = panelKey;
     const action = scrollAction({
@@ -140,7 +152,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
       main.scrollTo({ top: 0 });
     }
     return undefined;
-  }, [entries, panel, browser]);
+  }, [entries, panel, browser, configOpen]);
 
   // Ctrl+L clears the screen like /clear, wherever the focus is.
   useEffect(() => {
@@ -182,11 +194,17 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
         // echo to the scrollback first.
         if (action.kind === "theme") setTheme(action.theme);
         if (action.kind === "legacy") switchToLegacyFlavour();
+        if (action.kind === "config" && id === nextIdRef.current) {
+          close();
+          setBrowser(null);
+          setConfigOpen(true);
+        }
       } else if (id === nextIdRef.current) {
         if (result.type === "browser") {
           openBrowser(result.url);
         } else if (result.type === "open" || result.type === "fallback") {
           setBrowser(null);
+          setConfigOpen(false);
           open(result.slug);
         }
       }
@@ -197,7 +215,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
       setEntries((previous) => completeScrollbackEntry(previous, id, output));
       setLiveText(outputToLiveText(output));
     },
-    [clearScreen, theme, setTheme, open, openBrowser],
+    [clearScreen, theme, setTheme, close, open, openBrowser],
   );
 
   // Direct coming-soon loads use the same ordering and clear guards as typed commands.
@@ -211,26 +229,36 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
 
   return (
     <div className="flex h-dvh overflow-hidden bg-term-bg text-term-fg">
-      <Sidebar
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        onRun={handleSubmit}
-      />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-term-surface2 px-4 md:hidden">
+      <LeftRail inert={menuOpen} />
+      <div inert={menuOpen} className="flex min-w-0 flex-1 flex-col">
+        <header
+          className={cn(
+            "flex h-14 shrink-0 items-center justify-between px-4",
+            "border-b border-term-surface2 xl:hidden",
+          )}
+        >
           {/* Carries the page's accessible name while the sidebar (the desktop
               h1) is hidden below 768px. */}
-          <h1 aria-label="Astraa" className="select-none font-pixel text-base text-term-fg">
-            ASTRAA
+          <h1
+            aria-label="Astraa"
+            className="select-none whitespace-nowrap font-pixel text-base text-term-fg md:hidden"
+          >
+            astraa
           </h1>
           <button
+            ref={menuButtonRef}
             type="button"
-            aria-label="Menu"
+            aria-label="Tools menu"
             aria-expanded={menuOpen}
             aria-controls="term-sidebar"
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex min-h-touch min-w-touch items-center justify-center rounded-md hover:bg-term-surface2"
+            className={cn(
+              "ml-auto flex min-h-touch min-w-touch items-center justify-center gap-2 px-3",
+              "font-mono text-xs text-term-muted rounded-md",
+              "hover:bg-term-surface2 hover:text-term-fg",
+            )}
           >
+            <span>Tools</span>
             <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
         </header>
@@ -245,7 +273,10 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
               always span the visible height instead of scrolling away. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-1/2 w-full max-w-3xl -translate-x-1/2 border-x border-term-surface2"
+            className={cn(
+              "pointer-events-none absolute inset-y-0 left-1/2 w-full max-w-3xl",
+              "-translate-x-1/2 border-x border-term-surface2",
+            )}
           />
           <main ref={mainRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
             <div className="min-h-0 flex-1">
@@ -254,7 +285,9 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
                   <Scrollback entries={entries} />
                 </div>
               )}
-              {browser !== null ? (
+              {configOpen ? (
+                <ConfigPanel onClose={closeConfig} />
+              ) : browser !== null ? (
                 <BrowserPanel
                   url={browser.url}
                   canBack={browser.past.length > 0}
@@ -275,8 +308,17 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
             </div>
           </main>
         </div>
-        <PromptBar onSubmit={handleSubmit} autoFocus={panel === null && browser === null} />
+        <PromptBar
+          onSubmit={handleSubmit}
+          autoFocus={panel === null && browser === null && !configOpen}
+        />
       </div>
+      <Sidebar
+        open={menuOpen}
+        onClose={closeMenu}
+        triggerRef={menuButtonRef}
+        onRun={handleSubmit}
+      />
     </div>
   );
 }

@@ -58,17 +58,26 @@ describe("buildHelpOutput", () => {
     const commands = [
       ...BUILTIN_COMMANDS,
       fixtureCommand(),
-      fixtureCommand({ name: "music", aliases: [], slug: null, status: "coming-soon", summary: "Lofi studio" }),
+      fixtureCommand({
+        name: "music",
+        aliases: [],
+        slug: null,
+        status: "coming-soon",
+        summary: "Lofi studio",
+      }),
     ];
     const entries = kvEntries(buildHelpOutput(commands));
     const keys = entries.map((e) => e.key);
-    for (const name of ["help", "clear", "theme", "legacy", "calculator", "music"]) {
+    for (const name of ["help", "clear", "config", "theme", "legacy", "calculator", "music"]) {
       expect(keys.some((k) => k.startsWith(`/${name}`))).toBe(true);
     }
     const calc = entries.find((e) => e.key === "/calculator, /calc");
     expect(calc?.value).toBe("Evaluate arithmetic expressions · live");
     const music = entries.find((e) => e.key === "/music");
     expect(music?.value).toBe("Lofi studio · coming soon");
+    expect(entries.find((entry) => entry.key === "/config, /settings")?.value).toBe(
+      "Change theme and interface settings · live",
+    );
   });
 
   it("keeps Built-ins first and preserves first-seen order afterwards", () => {
@@ -115,6 +124,19 @@ describe("findHelpTopic", () => {
     expect(findHelpTopic(commands, "calculator")?.name).toBe("calculator");
     expect(findHelpTopic(commands, "CALC")?.name).toBe("calculator");
     expect(findHelpTopic(commands, "  Theme ")?.name).toBe("theme");
+    expect(findHelpTopic(commands, " SETTINGS ")?.name).toBe("config");
     expect(findHelpTopic(commands, "nope")).toBeUndefined();
+  });
+});
+
+describe("config help", () => {
+  it("documents settings and the direct subcommands", () => {
+    const config = findHelpTopic(BUILTIN_COMMANDS, "settings");
+    expect(config).toBeDefined();
+    if (!config) return;
+    expect(buildCommandHelp(config)).toContainEqual({
+      type: "list",
+      items: ["/config", "/config theme <name>", "/config interface legacy"],
+    });
   });
 });

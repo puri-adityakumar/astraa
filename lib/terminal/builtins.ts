@@ -1,9 +1,10 @@
 /**
- * The four built-in commands: /help, /clear, /theme, /legacy. Their results
+ * Built-in commands: /help, /clear, /config, /theme, /legacy. Their results
  * are either pure output (/help, /theme list, errors) or BuiltinActions the
  * UI executes (clear the scrollback, switch the scheme, switch flavour).
  */
 import { isTermTheme, TERM_THEMES, type TermTheme } from "./cookies";
+import { parseConfigArgs } from "./config";
 import {
   BUILTIN_CATEGORY,
   buildCommandHelp,
@@ -116,10 +117,47 @@ const legacyCommand: TerminalCommand = {
   },
 };
 
+const configCommand: TerminalCommand = {
+  name: "config",
+  aliases: ["settings"],
+  summary: "Change theme and interface settings",
+  usage: ["/config", "/config theme <name>", "/config interface legacy"],
+  category: BUILTIN_CATEGORY,
+  slug: null,
+  status: "live",
+  run(args: string, ctx: CommandContext): CommandResult | Promise<CommandResult> {
+    const request = parseConfigArgs(args);
+    switch (request.kind) {
+      case "open":
+        return {
+          type: "builtin",
+          action: { kind: "config" },
+          output: [{ type: "text", text: "Opening settings." }],
+        };
+      case "theme":
+        return themeCommand.run(request.name, ctx);
+      case "legacy":
+        return legacyCommand.run("", ctx);
+      case "invalid":
+        return {
+          type: "answer",
+          output: [
+            {
+              type: "error",
+              text:
+                "Use /config, /config theme <name>, /config interface legacy or /config legacy.",
+            },
+          ],
+        };
+    }
+  },
+};
+
 /** Registered into the registry by default, in this order. */
 export const BUILTIN_COMMANDS: readonly TerminalCommand[] = [
   helpCommand,
   clearCommand,
+  configCommand,
   themeCommand,
   legacyCommand,
 ];

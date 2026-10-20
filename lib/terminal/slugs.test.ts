@@ -43,5 +43,7 @@ describe("terminal tool slugs", () => {
     expect(isTerminalToolSlug("")).toBe(false);
     expect(isTerminalToolSlug("Calculator")).toBe(false);
     expect(isTerminalToolSlug("calculator/")).toBe(false);
+    expect(isTerminalToolSlug("config")).toBe(false);
+    expect(isTerminalToolSlug("settings")).toBe(false);
   });
 });

@@ -5,6 +5,8 @@ import { toolDisplayName } from "./tool-names";
 interface ToolRowProps {
   command: TerminalCommand;
   showSummary?: boolean;
+  /** Smaller command chips and labels for the right-hand catalogue. */
+  compact?: boolean;
   /** Overrides the derived label — used by rows without a tool slug. */
   displayName?: string;
   /** Runs the bare command in place; the href stays for no-JS/crawlers. */
@@ -20,30 +22,53 @@ interface ToolRowProps {
  * new tab as usual. Commands without a tool page (coming-soon tools, the
  * slug-less browser) render a button that runs the bare command.
  */
-export function ToolRow({ command, showSummary = false, displayName, onRun }: ToolRowProps) {
-  const label = displayName ?? (command.slug !== null ? toolDisplayName(command.slug) : command.name);
+export function ToolRow({
+  command,
+  showSummary = false,
+  compact = false,
+  displayName,
+  onRun,
+}: ToolRowProps) {
+  const label =
+    displayName ?? (command.slug !== null ? toolDisplayName(command.slug) : command.name);
   const className = cn(
-    "group flex min-h-touch items-center gap-3 rounded-md px-3 py-2",
-    "font-mono text-sm text-term-fg no-underline",
+    "group flex min-h-touch items-center rounded-md py-2",
+    "font-mono text-term-fg no-underline",
     "hover:bg-term-surface2 focus-visible:bg-term-surface2",
+    compact ? "gap-2 px-2 text-xs" : "gap-3 px-3 text-sm",
   );
   const content = (
     <>
       {/* Fixed key column (claude.dev/terminal discipline): every label on
           every list starts at the same x regardless of chip text length. */}
-      <span className="inline-flex w-24 shrink-0 items-center justify-center rounded border border-term-surface2 px-1.5 py-0.5 font-mono text-xs text-term-accent transition-colors duration-200 group-hover:text-term-fg">
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center justify-center rounded",
+          "border border-term-surface2 py-0.5 font-mono text-term-accent",
+          "transition-colors duration-200 group-hover:text-term-fg motion-reduce:transition-none",
+          compact ? "w-24 px-1.5 text-[11px]" : "w-24 px-1.5 text-xs",
+        )}
+      >
         {`/${command.name}`}
       </span>
       <span
         className={cn(
-          "min-w-0 truncate transition-transform duration-200 ease-out group-hover:translate-x-1",
+          "min-w-0 truncate transition-transform duration-200 ease-out",
+          "group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none",
           showSummary && "lg:w-48 lg:shrink-0",
         )}
       >
         {label}
       </span>
       {command.status === "coming-soon" && (
-        <span className="ml-auto shrink-0 font-mono text-xs text-term-muted">soon</span>
+        <span
+          className={cn(
+            "ml-auto shrink-0 font-mono text-term-muted",
+            compact ? "text-[10px]" : "text-xs",
+          )}
+        >
+          soon
+        </span>
       )}
       {showSummary && command.status === "live" && (
         <span className="hidden min-w-0 flex-1 truncate font-mono text-xs text-term-muted lg:block">

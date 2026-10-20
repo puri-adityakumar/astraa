@@ -18,7 +18,7 @@
 }
 
 /* Exceptions: the panel section only receives programmatic focus on open, and
-   the always-focused prompt shows focus on its row border (PromptBar). */
+   the always-focused prompt shows focus on its surrounding box (PromptBar). */
 [data-flavour="terminal"] [data-term-panel]:focus-visible,
 [data-flavour="terminal"] #term-prompt:focus-visible {
   outline: none;
@@ -44,6 +44,12 @@
    as one continuous surface, like the reference terminal). */
 [data-flavour="terminal"] main {
   scrollbar-width: none;
+}
+
+[data-flavour="terminal"] #term-suggestions {
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--term-surface2) transparent;
 }
 
 [data-flavour="terminal"] aside nav {

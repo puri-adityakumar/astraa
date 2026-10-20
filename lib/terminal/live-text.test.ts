@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { outputToLiveText, SECRET_LIVE_TEXT } from "./live-text";
+import { runInput } from "./registry";
 import type { OutputBlock } from "./types";
 
 describe("outputToLiveText", () => {
@@ -56,5 +57,12 @@ describe("outputToLiveText", () => {
 
   it("returns an empty string for no blocks", () => {
     expect(outputToLiveText([])).toBe("");
+  });
+
+  it("announces opening settings without requiring a new output block type", async () => {
+    const result = await runInput("/config", "auto");
+    expect(result?.type).toBe("builtin");
+    if (result?.type !== "builtin") return;
+    expect(outputToLiveText(result.output ?? [])).toBe("Opening settings.");
   });
 });

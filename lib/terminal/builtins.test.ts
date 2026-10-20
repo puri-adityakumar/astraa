@@ -16,16 +16,70 @@ function expectAnswer(result: CommandResult | null | undefined): OutputBlock[] {
 }
 
 describe("built-in command definitions", () => {
-  it("defines exactly help, clear, theme and legacy as live built-ins", () => {
-    expect(BUILTIN_COMMANDS.map((c) => c.name)).toEqual(["help", "clear", "theme", "legacy"]);
+  it("defines the live built-ins in order, including the settings alias", () => {
+    expect(BUILTIN_COMMANDS.map((c) => c.name)).toEqual([
+      "help",
+      "clear",
+      "config",
+      "theme",
+      "legacy",
+    ]);
     for (const command of BUILTIN_COMMANDS) {
       expect(command.category).toBe("Built-ins");
       expect(command.slug).toBeNull();
       expect(command.status).toBe("live");
-      expect(command.aliases).toEqual([]);
+      expect(command.aliases).toEqual(command.name === "config" ? ["settings"] : []);
       expect(command.usage.length).toBeGreaterThan(0);
     }
   });
+});
+
+describe("/config", () => {
+  const config = BUILTIN_COMMANDS.find((command) => command.name === "config");
+  const theme = BUILTIN_COMMANDS.find((command) => command.name === "theme");
+
+  it("opens the settings panel and provides an announcement", async () => {
+    expect(await config?.run(" \t ", ctx)).toEqual({
+      type: "builtin",
+      action: { kind: "config" },
+      output: [{ type: "text", text: "Opening settings." }],
+    });
+  });
+
+  it.each(TERM_THEMES)("reuses /theme for the valid scheme %s", async (name) => {
+    expect(await config?.run(`ThEmE \t ${name.toUpperCase()} `, ctx)).toEqual(
+      await theme?.run(name, ctx),
+    );
+  });
+
+  it("lists themes when the theme subcommand has no value", async () => {
+    expect(await config?.run("theme", ctx)).toEqual(await theme?.run("", ctx));
+  });
+
+  it.each(["unknown", "mocha latte"])("reuses theme errors for %j", async (name) => {
+    const result = await config?.run(`theme ${name}`, ctx);
+    expect(result).toEqual(await theme?.run(name, ctx));
+    expect(expectAnswer(result)[0]?.type).toBe("error");
+  });
+
+  it.each(["legacy", " InTerFace \t LEGACY "])("switches interface for %j", async (args) => {
+    expect(await config?.run(args, ctx)).toEqual({
+      type: "builtin",
+      action: { kind: "legacy" },
+    });
+  });
+
+  it.each(["unknown", "interface", "interface terminal", "legacy extra"])(
+    "provides valid subcommands for unsupported input %j",
+    async (args) => {
+      const block = expectAnswer(await config?.run(args, ctx))[0];
+      expect(block?.type).toBe("error");
+      if (block?.type !== "error") return;
+      expect(block.text).toContain("/config theme <name>");
+      expect(block.text).toContain("/config interface legacy");
+      expect(block.text).toContain("/config legacy");
+    },
+  );
 });
 
 describe("/clear", () => {
@@ -65,7 +119,9 @@ describe("/theme", () => {
 
   it("marks auto as following the system setting", async () => {
     const theme = BUILTIN_COMMANDS.find((c) => c.name === "theme");
-    const output = expectAnswer(await theme?.run("", { theme: "auto", commands: BUILTIN_COMMANDS }));
+    const output = expectAnswer(
+      await theme?.run("", { theme: "auto", commands: BUILTIN_COMMANDS }),
+    );
     const block = output[0];
     if (block?.type !== "kv") return;
     const auto = block.entries.find((e) => e.key.startsWith("auto"));

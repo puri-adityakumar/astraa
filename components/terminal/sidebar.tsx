@@ -1,134 +1,201 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import Link from "next/link";
-import { Monitor } from "lucide-react";
+import { X } from "lucide-react";
+import { games } from "@/lib/games";
 import { browserCommand } from "@/lib/terminal/commands/browser";
+import { gameRows } from "@/lib/terminal/game-rows";
 import { toolCommands } from "@/lib/terminal/rows";
 import { getCommands } from "@/lib/terminal/registry";
 import { cn } from "@/lib/utils";
-import { switchToLegacyFlavour } from "./flavour-switch";
-import { SchemePicker } from "./scheme-picker";
+import { SiteIcons } from "./left-rail";
+import { SponsorSlot } from "./sponsor-slot";
 import { ToolRow } from "./tool-row";
 import { toolShortName } from "./tool-names";
-
-const SITE_LINKS = [
-  { href: "/explore", label: "Explore" },
-  { href: "/contribute", label: "Contribute" },
-  { href: "/privacy", label: "Privacy" },
-] as const;
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
+  triggerRef: RefObject<HTMLButtonElement | null>;
   /** Runs a bare tool command (row click) through the shell. */
-  onRun?: (input: string) => void;
+  onRun: (input: string) => void;
 }
 
-/**
- * Terminal sidebar: the desktop rail (>= 768px) and, below that, the
- * slide-over drawer opened by the top bar's menu button. A single content
- * instance keeps heading and panel ids unique across both presentations.
- */
-export function Sidebar({ open, onClose, onRun }: SidebarProps) {
+/** The right-hand catalogue is a permanent xl rail and a modal drawer below xl. */
+export function Sidebar({ open, onClose, triggerRef, onRun }: SidebarProps) {
   const commands = toolCommands(getCommands());
+  const gameEntries = gameRows(games);
+  const drawerRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
-  // Every row funnels through the shell — the browser row included, since it
-  // has no tool slug to link to.
   const runRow = (input: string) => {
-    onRun?.(input);
+    onRun(input);
     onClose();
   };
 
   useEffect(() => {
     if (!open) return;
+    const trigger = triggerRef.current;
+    closeRef.current?.focus();
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      } else if (event.key === "Tab") {
+        const controls = Array.from(
+          drawerRef.current?.querySelectorAll<HTMLElement>(
+            "a[href], button:not([disabled]), [tabindex='0']",
+          ) ?? [],
+        ).filter((element) => element.getClientRects().length > 0);
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const handleDesktop = () => {
+      if (desktop.matches) onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    desktop.addEventListener("change", handleDesktop);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, true);
+      desktop.removeEventListener("change", handleDesktop);
+      trigger?.focus();
+    };
+  }, [open, onClose, triggerRef]);
 
   return (
     <>
       {open && (
-        <div
-          aria-hidden="true"
+        <button
+          type="button"
+          aria-label="Close tools menu"
+          tabIndex={-1}
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-term-fg/50 md:hidden"
+          className="fixed inset-0 z-40 bg-term-bg opacity-80 xl:hidden"
         />
       )}
       <aside
+        ref={drawerRef}
         id="term-sidebar"
+        aria-label="Tools and games"
+        role={open ? "dialog" : undefined}
+        aria-modal={open ? true : undefined}
         data-term-drawer-open={open ? "" : undefined}
         className={cn(
-          "z-50 flex-col border-r border-term-surface2 bg-term-surface",
+          "min-h-0 shrink-0 flex-col border-l border-term-surface2 bg-term-surface",
           open
-            ? "fixed inset-y-0 left-0 flex w-72 max-w-[85vw] md:static md:w-64"
-            : "hidden md:static md:flex md:w-64",
+            ? "fixed inset-y-0 right-0 z-50 flex w-80 max-w-[90vw] xl:static xl:w-64"
+            : "hidden w-64 xl:flex",
         )}
       >
-        <div className="px-4 pb-3 pt-5">
-          <h1
-            aria-label="Astraa"
-            className="select-none font-pixel text-lg tracking-wide text-term-fg"
+        <div
+          className={cn(
+            "flex shrink-0 items-center justify-between px-4 py-2",
+            "border-b border-term-surface2 xl:hidden",
+          )}
+        >
+          <span className="font-mono text-sm text-term-fg">Tools &amp; games</span>
+          <button
+            ref={closeRef}
+            type="button"
+            aria-label="Close tools"
+            onClick={onClose}
+            className={cn(
+              "flex min-h-touch min-w-touch items-center justify-center rounded-md",
+              "text-term-muted hover:bg-term-surface2 hover:text-term-fg",
+            )}
           >
-            ASTRAA
-          </h1>
+            <X aria-hidden="true" className="h-5 w-5" />
+          </button>
         </div>
-
-        <nav aria-label="Tools" className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
-          {commands.length === 0 ? (
-            <p className="px-3 py-2 font-mono text-sm text-term-muted">
-              No tools registered yet.
-            </p>
-          ) : (
-            <ul className="space-y-1">
+        <nav aria-label="Tools and games" className="min-h-0 flex-1 overflow-y-auto px-2 py-5">
+          <section aria-labelledby="term-tools-heading">
+            <h2
+              id="term-tools-heading"
+              className={cn(
+                "mb-2 flex items-center justify-between px-3",
+                "font-mono text-xs text-term-muted",
+              )}
+            >
+              Tools <span>{commands.length + 1}</span>
+            </h2>
+            <ul className="space-y-0.5">
               <li>
-                <ToolRow command={browserCommand} displayName="Browser" onRun={runRow} />
+                <ToolRow
+                  command={browserCommand}
+                  displayName="Browser"
+                  compact
+                  onRun={runRow}
+                />
               </li>
               {commands.map((command) => (
                 <li key={command.name}>
                   <ToolRow
                     command={command}
                     displayName={toolShortName(command.slug)}
+                    compact
                     onRun={runRow}
                   />
                 </li>
               ))}
             </ul>
-          )}
-        </nav>
-
-        <div className="space-y-1 border-t border-term-surface2 px-2 py-3">
-          <SchemePicker />
-          <div className="px-2 py-1">
-            <button
-              type="button"
-              onClick={switchToLegacyFlavour}
-              className="flex min-h-touch w-full items-center justify-between rounded-md px-3 font-mono text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
+          </section>
+          <section aria-labelledby="term-games-heading" className="mt-6">
+            <h2
+              id="term-games-heading"
+              className={cn(
+                "mb-2 flex items-center justify-between px-3",
+                "font-mono text-xs text-term-muted",
+              )}
             >
-              <span>Legacy UI</span>
-              <Monitor className="h-4 w-4 shrink-0 text-term-muted" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-
-        <nav aria-label="Site" className="border-t border-term-surface2 px-2 py-3">
-          <ul className="space-y-1">
-            {SITE_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={onClose}
-                  className="flex min-h-touch items-center rounded-md px-3 font-mono text-sm text-term-fg hover:bg-term-surface2 focus-visible:bg-term-surface2"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+              Games <span>{gameEntries.length}</span>
+            </h2>
+            <ul className="space-y-0.5">
+              {gameEntries.map((game) => (
+                <li key={game.path}>
+                  {game.comingSoon ? (
+                    <div
+                      className={cn(
+                        "flex min-h-touch items-center justify-between gap-2 px-3",
+                        "font-mono text-xs text-term-muted",
+                      )}
+                    >
+                      <span>{game.name}</span>
+                      <span className="text-[10px]">soon</span>
+                    </div>
+                  ) : (
+                    <Link
+                      href={game.path}
+                      onClick={onClose}
+                      className={cn(
+                        "flex min-h-touch items-center rounded-md px-3",
+                        "font-mono text-xs text-term-fg",
+                        "hover:bg-term-surface2 focus-visible:bg-term-surface2",
+                      )}
+                    >
+                      {game.name}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
         </nav>
+        <div className="shrink-0 space-y-3 border-t border-term-surface2 px-4 py-3 md:hidden">
+          <SponsorSlot compact />
+          <SiteIcons onNavigate={onClose} />
+        </div>
       </aside>
     </>
   );

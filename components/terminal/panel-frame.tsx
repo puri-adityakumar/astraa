@@ -64,16 +64,24 @@ export function PanelFrame({ title, panelKey, focusKey, onClose, children }: Pan
         aria-label={`${title} panel`}
         className="pt-4 outline-none sm:pt-6"
       >
-        <header className="mb-4 flex min-h-touch items-center gap-3">
-          <h2 className="font-mono text-base font-semibold text-term-fg">
+        <header
+          className="mb-5 flex min-h-touch items-center gap-3 border-b border-term-surface2 pb-3"
+        >
+          <span aria-hidden="true" className="font-mono text-lg text-term-accent">✻</span>
+          <h2 className="min-w-0 break-words font-mono text-sm font-medium text-term-fg">
             {title}
           </h2>
-          <span className="font-mono text-xs text-term-muted">Esc to close</span>
+          <span className="ml-auto hidden shrink-0 font-mono text-xs text-term-muted sm:inline">
+            Esc to close
+          </span>
           <button
             type="button"
             aria-label={`Close ${title}`}
             onClick={onClose}
-            className="ml-auto flex min-h-touch min-w-touch items-center justify-center rounded-md text-term-muted hover:bg-term-surface2 hover:text-term-fg"
+            className={cn(
+              "ml-auto flex min-h-touch min-w-touch shrink-0 items-center justify-center rounded-md",
+              "text-term-muted hover:bg-term-surface2 hover:text-term-fg sm:ml-0",
+            )}
           >
             <X aria-hidden="true" className="h-5 w-5" />
           </button>

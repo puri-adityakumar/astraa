@@ -15,10 +15,8 @@ interface HomeViewProps {
 }
 
 /**
- * The terminal home view, shown while the scrollback is empty: pixel ASTRAA
- * banner, intro, registry-driven category tabs and rows, and the /help tip
- * card. Rows are empty-safe — tool categories stay visible before any tool
- * command is registered.
+ * The terminal home view, shown while the scrollback is empty. Categories
+ * stay visible before any tool command is registered.
  */
 export function HomeView({ onRun }: HomeViewProps = {}) {
   const categories = toolCategories.map((category) => category.name);
@@ -27,17 +25,19 @@ export function HomeView({ onRun }: HomeViewProps = {}) {
   const tabId = categoryId("term", active);
 
   return (
-    <div className={cn(TERM_COLUMN, "flex min-h-[calc(100dvh-10rem)] flex-col py-8")}>
-      <div
-        aria-hidden="true"
-        className="select-none font-pixel text-4xl leading-none text-term-fg sm:text-5xl"
-      >
-        ASTRAA
-      </div>
-      <p className="mt-4 max-w-prose font-mono text-sm leading-relaxed text-term-muted">
-        A browser-based utility toolkit — all processing happens locally in
-        your browser. Pick a tool below or type a command at the prompt.
-      </p>
+    <div className={cn(TERM_COLUMN, "flex flex-col py-6 sm:py-8")}>
+      <section className="rounded-xl border border-term-surface2 p-4 font-mono sm:p-5">
+        <h2 className="flex items-center gap-3 text-base text-term-fg">
+          <span aria-hidden="true" className="text-xl text-term-accent">✻</span>
+          Welcome to astraa
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-term-muted">
+          /help for commands, /config for settings
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-term-muted">
+          All processing happens locally in your browser.
+        </p>
+      </section>
 
       <div>
         <div className="mt-8">
@@ -65,12 +65,6 @@ export function HomeView({ onRun }: HomeViewProps = {}) {
             ))
           )}
         </div>
-      </div>
-
-      <div className="flex-1" />
-
-      <div className="mt-8 rounded-md border border-term-surface2 bg-term-surface p-4 font-mono text-sm text-term-muted">
-        Tip: type <span className="font-mono text-term-fg">/help</span> to see all commands
       </div>
     </div>
   );

@@ -4,7 +4,7 @@
  */
 import type { OutputBlock, TerminalCommand } from "./types";
 
-/** Category grouping the four built-in commands. */
+/** Category grouping the built-in commands. */
 export const BUILTIN_CATEGORY = "Built-ins";
 
 /** "/calculator, /calc" — the row key used in /help listings. */

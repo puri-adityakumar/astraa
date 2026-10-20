@@ -26,7 +26,8 @@ export type OutputBlock =
 export type BuiltinAction =
   | { kind: "clear" }
   | { kind: "theme"; theme: TermTheme }
-  | { kind: "legacy" };
+  | { kind: "legacy" }
+  | { kind: "config" };
 
 /** Environment passed to every command run. */
 export interface CommandContext {

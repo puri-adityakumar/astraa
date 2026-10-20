@@ -89,20 +89,29 @@ function SingleBlock({ block }: { block: OutputBlock }) {
   switch (block.type) {
     case "text":
       return (
-        <p className="whitespace-pre-wrap font-mono text-sm text-term-fg">{block.text}</p>
+        <p className="whitespace-pre-wrap break-words font-mono text-sm leading-6 text-term-fg">
+          {block.text}
+        </p>
       );
     case "error":
       return (
-        <p className="whitespace-pre-wrap font-mono text-sm text-term-red">{block.text}</p>
+        <p className="whitespace-pre-wrap break-words font-mono text-sm leading-6 text-term-red">
+          {block.text}
+        </p>
       );
     case "kv":
       // Shared key column at sm+ so /help categories and the theme list all
-      // align their values to one grid line (mobile keeps auto-sizing).
+      // align their values to one grid line without squeezing mobile values.
       return (
-        <div className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-4 gap-y-1 font-mono text-sm sm:grid-cols-[13rem_minmax(0,1fr)]">
+        <div
+          className={cn(
+            "grid grid-cols-[minmax(0,40%)_minmax(0,1fr)] gap-x-4 gap-y-2",
+            "font-mono text-sm leading-6 sm:grid-cols-[13rem_minmax(0,1fr)]",
+          )}
+        >
           {block.entries.map((entry, index) => (
             <div key={index} className="contents">
-              <span className="whitespace-nowrap text-term-accent sm:whitespace-normal">{entry.key}</span>
+              <span className="text-term-accent [overflow-wrap:anywhere]">{entry.key}</span>
               <span className="min-w-0 break-words text-term-muted">{renderValue(entry.value)}</span>
             </div>
           ))}
@@ -116,7 +125,12 @@ function SingleBlock({ block }: { block: OutputBlock }) {
       );
     case "list":
       return (
-        <ul className="list-disc space-y-1 pl-5 font-mono text-sm text-term-fg marker:text-term-muted">
+        <ul
+          className={cn(
+            "list-disc space-y-1 break-words pl-5 font-mono text-sm leading-6",
+            "text-term-fg marker:text-term-muted",
+          )}
+        >
           {block.items.map((item, index) => (
             <li key={index}>{item}</li>
           ))}

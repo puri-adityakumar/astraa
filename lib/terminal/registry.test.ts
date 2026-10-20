@@ -32,6 +32,7 @@ describe("registry list", () => {
     expect(getCommands().map((c) => c.name)).toEqual([
       "help",
       "clear",
+      "config",
       "theme",
       "legacy",
       "calculator",
@@ -67,6 +68,8 @@ describe("resolveCommand", () => {
   it("resolves built-ins by exact name", () => {
     expect(resolveCommand("help")?.name).toBe("help");
     expect(resolveCommand("clear")?.name).toBe("clear");
+    expect(resolveCommand("config")?.name).toBe("config");
+    expect(resolveCommand("SETTINGS")?.name).toBe("config");
   });
 
   it("resolves names case-insensitively", () => {
@@ -128,6 +131,8 @@ describe("suggest", () => {
     expect(suggest("th").map((c) => c.name)).toEqual(["theme"]);
     expect(suggest("/th").map((c) => c.name)).toEqual(["theme"]);
     expect(suggest("TH").map((c) => c.name)).toEqual(["theme"]);
+    expect(suggest("/con").map((c) => c.name)).toEqual(["config", "units"]);
+    expect(suggest("/SET").map((c) => c.name)).toEqual(["config"]);
   });
 
   it("matches alias prefixes once registered", () => {
@@ -247,6 +252,26 @@ describe("runInput", () => {
     });
   });
 
+  it.each(["/config", "/settings", " /SeTtInGs \t "])(
+    "opens settings through the registered command %j",
+    async (input) => {
+      expect(await runInput(input, "mocha")).toEqual({
+        type: "builtin",
+        action: { kind: "config" },
+        output: [{ type: "text", text: "Opening settings." }],
+      });
+    },
+  );
+
+  it("runs config subcommands through its alias", async () => {
+    expect(await runInput("/settings theme LATTE", "mocha")).toEqual(
+      await runInput("/theme latte", "mocha"),
+    );
+    expect(await runInput("/config interface legacy", "mocha")).toEqual(
+      await runInput("/legacy", "mocha"),
+    );
+  });
+
   it("never throws when a command throws synchronously", async () => {
     const undo = register(
       fixtureCommand({
@@ -263,7 +288,9 @@ describe("runInput", () => {
       expect(result?.type).toBe("answer");
       expect(result).toEqual({
         type: "answer",
-        output: [{ type: "error", text: "/explode failed to run. Type /help to see all commands." }],
+        output: [
+          { type: "error", text: "/explode failed to run. Type /help to see all commands." },
+        ],
       });
     } finally {
       undo();
