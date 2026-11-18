@@ -14,13 +14,15 @@ interface ToolRowProps {
 }
 
 /**
- * One registry-driven row: key chip + display name. Commands with a tool
- * page render an <a href="/tools/<slug>>; with `onRun` the plain left click
- * (or Enter on the focused link) runs the bare command — the same path as
- * typing it — instead of navigating. Modified clicks (Cmd/Ctrl/Shift/Alt)
- * and middle clicks fall through so the browser opens /tools/<slug> in a
- * new tab as usual. Commands without a tool page (coming-soon tools, the
- * slug-less browser) render a button that runs the bare command.
+ * One registry-driven row: key chip + display name, with the summary
+ * stacked under the name (`showSummary`) so it wraps instead of truncating.
+ * Commands with a tool page render an <a href="/tools/<slug>>; with `onRun`
+ * the plain left click (or Enter on the focused link) runs the bare command —
+ * the same path as typing it — instead of navigating. Modified clicks
+ * (Cmd/Ctrl/Shift/Alt) and middle clicks fall through so the browser opens
+ * /tools/<slug> in a new tab as usual. Commands without a tool page
+ * (coming-soon tools, the slug-less browser) render a button that runs the
+ * bare command.
  */
 export function ToolRow({
   command,
@@ -53,12 +55,19 @@ export function ToolRow({
       </span>
       <span
         className={cn(
-          "min-w-0 truncate transition-transform duration-200 ease-out",
+          "min-w-0 transition-transform duration-200 ease-out",
           "group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none",
-          showSummary && "lg:w-48 lg:shrink-0",
+          showSummary ? "flex-1" : "truncate",
         )}
       >
-        {label}
+        <span className="block truncate">{label}</span>
+        {showSummary && command.status === "live" && (
+          <span className="mt-0.5 hidden lg:block">
+            <span className="line-clamp-2 font-mono text-xs text-term-muted">
+              {command.summary}
+            </span>
+          </span>
+        )}
       </span>
       {command.status === "coming-soon" && (
         <span
@@ -68,11 +77,6 @@ export function ToolRow({
           )}
         >
           soon
-        </span>
-      )}
-      {showSummary && command.status === "live" && (
-        <span className="hidden min-w-0 flex-1 truncate font-mono text-xs text-term-muted lg:block">
-          {command.summary}
         </span>
       )}
     </>
