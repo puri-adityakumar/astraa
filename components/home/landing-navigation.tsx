@@ -156,8 +156,6 @@ export function LandingNavigation() {
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               className="fixed left-0 right-0 lg:hidden bg-background border-b border-border shadow-lg"
               style={{ top: 'var(--nav-height, 64px)' }}
-              role="menu"
-              aria-orientation="vertical"
             >
               <div className="container mx-auto px-4 py-4 space-y-2 max-h-[calc(100vh-var(--nav-height,64px))] overflow-y-auto">
                 {/* Command Menu - Mobile */}
@@ -183,7 +181,6 @@ export function LandingNavigation() {
                           "min-h-touch group"
                         )}
                         onClick={() => setIsMenuOpen(false)}
-                        role="menuitem"
                       >
                         <link.icon
                           className="h-5 w-5 transition-transform duration-200 group-hover:scale-110"
@@ -203,7 +200,6 @@ export function LandingNavigation() {
                 >
                   <button
                     type='button'
-                    role='menuitem'
                     onClick={() => {
                       setIsMenuOpen(false)
                       switchToTerminalFlavour()
