@@ -386,6 +386,7 @@ NEXT_PUBLIC_ENV=dev
 KV_REST_API_URL=your_redis_url
 KV_REST_API_TOKEN=your_redis_token
 # SENTRY_AUTH_TOKEN=your_sentry_token  # optional
+COINGECKO_API_KEY=your_coingecko_key  # optional, server-only, never NEXT_PUBLIC_
 ```
 
 ### Deployment Platforms

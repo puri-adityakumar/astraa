@@ -1,26 +1,21 @@
-const COINGECKO_API_KEY = "CG-nrVyRWCGSZozXJpLvsBAmQo5"
-const COINGECKO_API = "https://api.coingecko.com/api/v3"
-
+/**
+ * Browser-side data helpers. Provider credentials stay on the server: crypto
+ * prices come from the same-origin /api/crypto-price route, which reads the
+ * server-only CoinGecko key and answers only catalog pairs.
+ */
 export async function getCryptoPrice(cryptoId: string, currency: string): Promise<number | null> {
   try {
-    const response = await fetch(
-      `${COINGECKO_API}/simple/price?ids=${cryptoId}&vs_currencies=${currency.toLowerCase()}`,
-      {
-        headers: {
-          'x-cg-demo-api-key': COINGECKO_API_KEY,
-        },
-      }
-    )
+    const query = new URLSearchParams({ crypto: cryptoId, currency });
+    const response = await fetch(`/api/crypto-price?${query.toString()}`);
 
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status}`)
     }
 
-    const data = await response.json()
-    const price = data[cryptoId]?.[currency.toLowerCase()]
+    const data = (await response.json()) as { price?: unknown };
+    const price = data.price;
 
-    if (price === undefined) {
-      // It might not be an error if the coin just doesn't exist, but for our app it's a failure to get price
+    if (typeof price !== "number" || !Number.isFinite(price)) {
       console.warn(`Price not found for ${cryptoId} in ${currency}`)
       return null
     }
