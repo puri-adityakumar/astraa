@@ -1,5 +1,6 @@
 "use client"
 
+import { useId } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -49,6 +50,10 @@ export function ImageControls({
   onReset,
   disabled,
 }: ImageControlsProps) {
+  const widthId = useId()
+  const heightId = useId()
+  const qualityLabelId = useId()
+
   return (
     <div className="space-y-8">
       {/* 1. Dimensions Section */}
@@ -56,8 +61,9 @@ export function ImageControls({
         <div className="flex items-end gap-2">
           {/* Width */}
           <div className="flex-1 space-y-2">
-            <Label className="text-muted-foreground font-normal">Width</Label>
+            <Label htmlFor={widthId} className="text-muted-foreground font-normal">Width</Label>
             <Input
+              id={widthId}
               type="number"
               value={dimensions.width}
               onChange={(e) => onWidthChange(Number(e.target.value))}
@@ -88,8 +94,9 @@ export function ImageControls({
 
           {/* Height */}
           <div className="flex-1 space-y-2">
-            <Label className="text-muted-foreground font-normal">Height</Label>
+            <Label htmlFor={heightId} className="text-muted-foreground font-normal">Height</Label>
             <Input
+              id={heightId}
               type="number"
               value={dimensions.height}
               onChange={(e) => onHeightChange(Number(e.target.value))}
@@ -117,10 +124,11 @@ export function ImageControls({
 
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <Label className="font-normal text-muted-foreground">Quality</Label>
+            <Label id={qualityLabelId} className="font-normal text-muted-foreground">Quality</Label>
             <span className="text-sm font-medium">{options.quality}%</span>
           </div>
           <Slider
+            thumbProps={{ "aria-labelledby": qualityLabelId }}
             value={[options.quality]}
             onValueChange={([value]) => value !== undefined && onOptionsChange({ quality: value })}
             min={1}
