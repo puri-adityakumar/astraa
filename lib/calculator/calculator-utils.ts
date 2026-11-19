@@ -30,6 +30,16 @@ export const scientificFunctions = {
   }
 }
 
+/**
+ * Display text for a computed value, or null when the value is not a real
+ * number (NaN, ±Infinity). Division by zero, literal overflow (1e999),
+ * exponent overflow and domain errors all surface through here so the UI
+ * rejects them instead of printing a raw sentinel.
+ */
+export function formatFiniteResult(value: number): string | null {
+  return Number.isFinite(value) ? value.toString() : null;
+}
+
 const WHITESPACE_RE = /\s+/g;
 const TOKEN_RE = /(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?|[()+\-*/^%]/g;
 

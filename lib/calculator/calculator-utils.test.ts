@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { evaluateExpression, scientificFunctions } from "./calculator-utils";
+import {
+  evaluateExpression,
+  formatFiniteResult,
+  scientificFunctions,
+} from "./calculator-utils";
 
 describe("evaluateExpression", () => {
   it("evaluates basic addition", () => {
@@ -63,6 +67,37 @@ describe("evaluateExpression", () => {
       expect(evaluateExpression(expression)).toBeNaN();
     },
   );
+});
+
+describe("formatFiniteResult", () => {
+  it("formats finite results unchanged", () => {
+    expect(formatFiniteResult(5)).toBe("5");
+    expect(formatFiniteResult(-0.5)).toBe("-0.5");
+    expect(formatFiniteResult(0)).toBe("0");
+    expect(formatFiniteResult(2.5)).toBe("2.5");
+  });
+  it.each(["5/0", "-5/0", "0/0"])("rejects zero-division result %s", (expression) => {
+    expect(formatFiniteResult(evaluateExpression(expression))).toBeNull();
+  });
+  it.each(["1e999", "1e308*10", "9^999"])("rejects overflow result %s", (expression) => {
+    expect(formatFiniteResult(evaluateExpression(expression))).toBeNull();
+  });
+  it("rejects domain errors from the scientific functions", () => {
+    expect(formatFiniteResult(scientificFunctions.ln(0))).toBeNull();
+    expect(formatFiniteResult(scientificFunctions.log(0))).toBeNull();
+    expect(formatFiniteResult(scientificFunctions.sqrt(-1))).toBeNull();
+    expect(formatFiniteResult(scientificFunctions.fact(171))).toBeNull();
+  });
+  it("keeps large finite scientific results", () => {
+    expect(formatFiniteResult(scientificFunctions.fact(170))).not.toBeNull();
+    expect(formatFiniteResult(scientificFunctions.sqrt(9))).toBe("3");
+  });
+  it("keeps recovering after a rejected result", () => {
+    expect(formatFiniteResult(evaluateExpression("5/0"))).toBeNull();
+    expect(formatFiniteResult(evaluateExpression("2+3*4"))).toBe("14");
+    expect(formatFiniteResult(scientificFunctions.ln(0))).toBeNull();
+    expect(formatFiniteResult(evaluateExpression("10/4"))).toBe("2.5");
+  });
 });
 
 describe("scientificFunctions", () => {

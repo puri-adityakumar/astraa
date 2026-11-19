@@ -7,6 +7,7 @@ import { CalculatorDisplay } from "@/components/calculator/calculator-display";
 import { CalculatorButton } from "@/components/calculator/calculator-button";
 import {
   evaluateExpression,
+  formatFiniteResult,
   scientificFunctions,
 } from "@/lib/calculator/calculator-utils";
 
@@ -105,8 +106,9 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
         ? expression
         : expression + display;
       const result = evaluateExpression(fullExpression);
-      if (Number.isNaN(result)) throw new Error("Invalid expression");
-      setDisplay(result.toString());
+      const text = formatFiniteResult(result);
+      if (text === null) throw new Error("Non-finite result");
+      setDisplay(text);
       setExpression("");
       setIsNewNumber(true);
     } catch {
@@ -151,7 +153,9 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
           result = scientificFunctions[fn](num);
         }
 
-        setDisplay(result.toString());
+        const text = formatFiniteResult(result);
+        if (text === null) throw new Error("Non-finite result");
+        setDisplay(text);
         setIsNewNumber(true);
       } catch {
         setDisplay("Error");
@@ -168,10 +172,9 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
     if (display === "Error") return;
 
     try {
-      const num = parseFloat(display);
-      const result = 1 / num;
-      if (!Number.isFinite(result)) throw new Error("non-finite result");
-      setDisplay(result.toString());
+      const text = formatFiniteResult(1 / parseFloat(display));
+      if (text === null) throw new Error("Non-finite result");
+      setDisplay(text);
       setIsNewNumber(true);
     } catch {
       setDisplay("Error");
