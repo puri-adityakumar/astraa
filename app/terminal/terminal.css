@@ -24,6 +24,13 @@
   outline: none;
 }
 
+/* The transcript spans the whole column, so its focus ring draws inside the
+   box: an offset ring is clipped by the shell at narrow widths and covered
+   by the right panel at wide ones. */
+[data-flavour="terminal"] main:focus-visible {
+  outline-offset: -2px;
+}
+
 /* Reduced motion inside the terminal: exact zeros, stronger than the global
    0.01ms fallback in globals.css. */
 @media (prefers-reduced-motion: reduce) {

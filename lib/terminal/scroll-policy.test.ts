@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { scrollAction } from "./scroll-policy";
+import { scrollAction, transcriptOverflows } from "./scroll-policy";
 
 describe("scrollAction", () => {
   it("keeps a fresh empty home at the top", () => {
@@ -52,5 +52,21 @@ describe("scrollAction", () => {
     expect(
       scrollAction({ panelOpen: true, panelChanged: false, hasEntries: false }),
     ).toBe("none");
+  });
+});
+
+describe("transcriptOverflows", () => {
+  it("is false while the column shows everything", () => {
+    expect(transcriptOverflows(600, 600)).toBe(false);
+    expect(transcriptOverflows(240, 600)).toBe(false);
+  });
+
+  it("ignores sub-pixel rounding up to one pixel", () => {
+    expect(transcriptOverflows(600.4, 600)).toBe(false);
+  });
+
+  it("is true once content passes the fold by more than a pixel", () => {
+    expect(transcriptOverflows(601.4, 600)).toBe(true);
+    expect(transcriptOverflows(1714, 600)).toBe(true);
   });
 });

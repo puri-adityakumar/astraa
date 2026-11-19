@@ -28,3 +28,17 @@ export function scrollAction({
   }
   return hasEntries ? "bottom" : "top";
 }
+
+/**
+ * Whether the transcript column holds more than it can show — one of the two
+ * tests behind its keyboard tab stop (an unreachable scroll container fails
+ * axe scrollable-region-focusable). The one-pixel tolerance absorbs
+ * fractional layout heights, so sub-pixel rounding never adds a phantom stop
+ * to the tab order.
+ */
+export function transcriptOverflows(
+  scrollHeight: number,
+  clientHeight: number,
+): boolean {
+  return scrollHeight > clientHeight + 1;
+}
