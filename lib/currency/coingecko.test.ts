@@ -11,6 +11,17 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+/** Renders every logged argument, including objects, so a leak cannot hide. */
+function loggedText(calls: readonly unknown[][]): string {
+  return calls
+    .map((call) =>
+      call
+        .map((arg) => (typeof arg === "string" ? arg : JSON.stringify(arg)))
+        .join(" "),
+    )
+    .join("\n");
+}
+
 /** Reloads the module so the in-memory price cache starts empty per test. */
 async function loadProvider(): Promise<typeof fetchCryptoPrice> {
   vi.resetModules();
@@ -80,7 +91,7 @@ describe("fetchCryptoPrice", () => {
     });
   });
 
-  it("reports a provider rejection without echoing the key", async () => {
+  it("logs a provider rejection as sanitized status context", async () => {
     const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
     fetchMock.mockResolvedValue(jsonResponse({ error: "invalid key" }, 401));
     const provider = await loadProvider();
@@ -88,19 +99,36 @@ describe("fetchCryptoPrice", () => {
     await expect(provider("bitcoin", "USD")).resolves.toEqual({
       status: "error",
     });
-    for (const call of errorLog.mock.calls) {
-      expect(call.map(String).join(" ")).not.toContain(TEST_KEY);
-    }
+
+    const logged = loggedText(errorLog.mock.calls);
+    expect(logged).toContain("provider_status");
+    expect(logged).toContain("401");
+    expect(logged).toContain("bitcoin");
+    expect(logged).not.toContain(TEST_KEY);
+    expect(logged).not.toContain("api.coingecko.com");
+    expect(logged).not.toContain("x-cg-demo-api-key");
+    expect(logged).not.toContain("invalid key");
   });
 
-  it("reports a transport failure as an error", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+  it("never logs the raw transport error, its URL, or a key it carries", async () => {
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    const leaky = new Error(
+      `request to https://api.coingecko.com/api/v3/simple/price?x=${TEST_KEY} failed`,
+    );
+    leaky.name = "ProviderFetchError";
+    fetchMock.mockRejectedValue(leaky);
     const provider = await loadProvider();
 
     await expect(provider("bitcoin", "USD")).resolves.toEqual({
       status: "error",
     });
+
+    const logged = loggedText(errorLog.mock.calls);
+    expect(logged).toContain("transport_ProviderFetchError");
+    expect(logged).not.toContain(TEST_KEY);
+    expect(logged).not.toContain("api.coingecko.com");
+    expect(logged).not.toContain("x-cg-demo-api-key");
+    expect(logged).not.toContain("simple/price");
   });
 
   it("serves a repeated pair from the cache instead of the provider", async () => {

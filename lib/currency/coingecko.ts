@@ -1,3 +1,5 @@
+import { logError } from "@/lib/error-handler";
+
 /**
  * Server-only CoinGecko access, imported exclusively by route handlers. The
  * provider credential is read from a server-only environment variable, so it
@@ -44,6 +46,20 @@ function remember(key: string, price: number | null): void {
   priceCache.set(key, { price, expiresAt: Date.now() + CACHE_TTL_MS });
 }
 
+function logProviderFailure(
+  reason: string,
+  cryptoId: string,
+  currency: string,
+  status?: number,
+): void {
+  logError(new Error(`CoinGecko price request failed: ${reason}`), {
+    context: "currency/coingecko",
+    cryptoId,
+    currency,
+    ...(status === undefined ? {} : { status }),
+  });
+}
+
 export async function fetchCryptoPrice(
   cryptoId: string,
   currency: string,
@@ -72,7 +88,7 @@ export async function fetchCryptoPrice(
     });
 
     if (!response.ok) {
-      console.error(`CoinGecko price request failed: ${response.status}`);
+      logProviderFailure("provider_status", cryptoId, currency, response.status);
       return { status: "error" };
     }
 
@@ -80,7 +96,13 @@ export async function fetchCryptoPrice(
     remember(cacheKey, price);
     return { status: "ok", price };
   } catch (error) {
-    console.error(`Failed to fetch crypto price for ${cryptoId}:`, error);
+    // Only the error's class name is logged: provider URLs, response bodies,
+    // headers, and the key itself never reach the shared logger.
+    logProviderFailure(
+      `transport_${error instanceof Error ? error.name : "unknown"}`,
+      cryptoId,
+      currency,
+    );
     return { status: "error" };
   }
 }

@@ -5,15 +5,15 @@
  */
 export async function getCryptoPrice(cryptoId: string, currency: string): Promise<number | null> {
   try {
-    const query = new URLSearchParams({ crypto: cryptoId, currency })
-    const response = await fetch(`/api/crypto-price?${query.toString()}`)
+    const query = new URLSearchParams({ crypto: cryptoId, currency });
+    const response = await fetch(`/api/crypto-price?${query.toString()}`);
 
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status}`)
     }
 
-    const data = (await response.json()) as { price?: unknown }
-    const price = data.price
+    const data = (await response.json()) as { price?: unknown };
+    const price = data.price;
 
     if (typeof price !== "number" || !Number.isFinite(price)) {
       console.warn(`Price not found for ${cryptoId} in ${currency}`)

@@ -9,7 +9,7 @@ const PRICE_CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
 };
 
-export async function GET(request: Request) {
+export async function GET(request: Request): Promise<NextResponse> {
   const pair = resolveCryptoPricePair(new URL(request.url).searchParams);
   if (pair === null) {
     return NextResponse.json({ error: "invalid_pair" }, { status: 400 });
