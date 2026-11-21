@@ -10,11 +10,40 @@ export type ParseClient = {
   destroy: () => void;
 };
 
+const WORKER_FAILED = "JSON parser worker failed";
+
 export function createParseClient(worker: Worker): ParseClient {
   let nextId = 1;
   let latestId = 0;
   let destroyed = false;
+  let failed = false;
   const pending = new Map<number, Pending>();
+
+  function settlePending() {
+    for (const entry of pending.values()) entry.resolve(null);
+    pending.clear();
+  }
+
+  function detach() {
+    worker.onmessage = null;
+    worker.onerror = null;
+  }
+
+  function release() {
+    detach();
+    try {
+      worker.terminate();
+    } catch {
+      // The worker is already gone; callers have nothing left to release.
+    }
+  }
+
+  function fail(error: Error) {
+    failed = true;
+    for (const entry of pending.values()) entry.reject(error);
+    pending.clear();
+    release();
+  }
 
   worker.onmessage = (e: MessageEvent<ParseResult>) => {
     const result = e.data;
@@ -29,17 +58,14 @@ export function createParseClient(worker: Worker): ParseClient {
   };
 
   worker.onerror = () => {
-    for (const entry of pending.values()) {
-      entry.reject(new Error("JSON parser worker failed"));
-    }
-    pending.clear();
+    fail(new Error(WORKER_FAILED));
   };
 
   return {
     parse(text: string) {
       if (destroyed) return Promise.resolve(null);
-      for (const entry of pending.values()) entry.resolve(null);
-      pending.clear();
+      if (failed) return Promise.reject(new Error(WORKER_FAILED));
+      settlePending();
       const id = nextId++;
       latestId = id;
       return new Promise<ParseResult | null>((resolve, reject) => {
@@ -53,12 +79,10 @@ export function createParseClient(worker: Worker): ParseClient {
       });
     },
     destroy() {
+      if (destroyed) return;
       destroyed = true;
-      worker.terminate();
-      for (const entry of pending.values()) entry.resolve(null);
-      pending.clear();
-      worker.onmessage = null;
-      worker.onerror = null;
+      settlePending();
+      release();
     },
   };
 }

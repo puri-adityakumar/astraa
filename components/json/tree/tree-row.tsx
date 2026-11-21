@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronRight, Copy, Pencil, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { JsonValue, TreeRow as TreeRowType } from "@/lib/json/types";
+import { MAX_TREE_DEPTH } from "@/lib/json/flatten";
 import { TreeEditPopover } from "./tree-edit-popover";
 import { TreeAddMenu } from "./tree-add-menu";
 
@@ -31,6 +32,9 @@ const ROW_ACTION_CLASS = cn(
   "transition-colors duration-100 ease-out",
 );
 
+const INDENT_PX = 16;
+const MAX_INDENT_DEPTH = 16;
+
 export function TreeRow({
   row,
   onToggle,
@@ -42,6 +46,7 @@ export function TreeRow({
   const isContainer = row.type === "object" || row.type === "array";
   const [editOpen, setEditOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  const extraDepth = row.depth - MAX_INDENT_DEPTH;
 
   return (
     <div
@@ -53,7 +58,7 @@ export function TreeRow({
         "text-xs font-mono",
         "hover:bg-muted/50 transition-colors duration-100 ease-out",
       )}
-      style={{ paddingLeft: 8 + row.depth * 16 }}
+      style={{ paddingLeft: 8 + Math.min(row.depth, MAX_INDENT_DEPTH) * INDENT_PX }}
     >
       <button
         type="button"
@@ -73,6 +78,15 @@ export function TreeRow({
           aria-hidden
         />
       </button>
+      {extraDepth > 0 && (
+        <span
+          className="shrink-0 text-[10px] tabular-nums text-muted-foreground/70"
+          title={`Depth ${row.depth}`}
+        >
+          +{extraDepth}
+          <span className="sr-only">{` (depth ${row.depth})`}</span>
+        </span>
+      )}
       <span className="text-foreground">
         {typeof row.key === "number"
           ? `[${row.key}]`
@@ -84,6 +98,14 @@ export function TreeRow({
       <span className={cn("ml-1 truncate", TYPE_COLOR[row.type])}>
         {row.preview}
       </span>
+      {row.depthLimited && (
+        <span
+          className="ml-1 shrink-0 text-[10px] uppercase tracking-wide text-muted-foreground/70"
+          title={`Nested deeper than ${MAX_TREE_DEPTH} levels; deeper children are not shown`}
+        >
+          depth limit
+        </span>
+      )}
       <div
         className={cn(
           "ml-auto flex items-center gap-0.5",

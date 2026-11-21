@@ -18,7 +18,10 @@ function previewOf(v: JsonValue): string {
   return `{${Object.keys(v).length}}`;
 }
 
-export function flatten(value: JsonValue, expanded: Set<string>): TreeRow[] {
+/** Deepest nesting the tree renders; deeper nodes are marked instead of walked. */
+export const MAX_TREE_DEPTH = 256;
+
+export function flatten(value: JsonValue, expanded: ReadonlySet<string>): TreeRow[] {
   const rows: TreeRow[] = [];
 
   function visit(v: JsonValue, path: string, key: string | number, depth: number) {
@@ -26,7 +29,9 @@ export function flatten(value: JsonValue, expanded: Set<string>): TreeRow[] {
     const hasChildren =
       (type === "object" && Object.keys(v as Record<string, JsonValue>).length > 0) ||
       (type === "array" && (v as JsonValue[]).length > 0);
-    const isExpanded = expanded.has(path);
+    const depthLimited = hasChildren && depth >= MAX_TREE_DEPTH;
+    const canExpand = hasChildren && !depthLimited;
+    const isExpanded = canExpand && expanded.has(path);
     const childCount = hasChildren
       ? type === "array"
         ? (v as JsonValue[]).length
@@ -40,12 +45,13 @@ export function flatten(value: JsonValue, expanded: Set<string>): TreeRow[] {
       type,
       value: v,
       preview: previewOf(v),
-      hasChildren,
+      hasChildren: canExpand,
       isExpanded,
       ...(childCount !== undefined ? { childCount } : {}),
+      ...(depthLimited ? { depthLimited: true } : {}),
     });
 
-    if (hasChildren && isExpanded) {
+    if (canExpand && isExpanded) {
       if (type === "array") {
         (v as JsonValue[]).forEach((child, i) => {
           visit(child, joinPath(path, i), i, depth + 1);
