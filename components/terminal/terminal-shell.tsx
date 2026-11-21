@@ -18,6 +18,7 @@ import {
 } from "@/lib/terminal/scrollback";
 import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
 import { cn } from "@/lib/utils";
+import { SkipLink } from "@/components/skip-link";
 import { TERM_COLUMN } from "./column";
 import { BrowserPanel } from "./browser-panel";
 import { ConfigPanel } from "./config-panel";
@@ -229,6 +230,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
 
   return (
     <div className="flex h-dvh overflow-hidden bg-term-bg text-term-fg">
+      <SkipLink />
       <LeftRail inert={menuOpen} />
       <div inert={menuOpen} className="flex min-w-0 flex-1 flex-col">
         <header
@@ -278,7 +280,12 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
               "-translate-x-1/2 border-x border-term-surface2",
             )}
           />
-          <main ref={mainRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <main
+            ref={mainRef}
+            id="main-content"
+            tabIndex={-1}
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+          >
             <div className="min-h-0 flex-1">
               {entries.length > 0 && (
                 <div className={cn(TERM_COLUMN, "py-8")}>

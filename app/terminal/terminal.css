@@ -24,6 +24,12 @@
   outline: none;
 }
 
+/* The skip link focuses the full-width transcript, so draw its focus ring
+   inside the box: an offset ring is clipped by the shell at every width. */
+[data-flavour="terminal"] main:focus-visible {
+  outline-offset: -2px;
+}
+
 /* Reduced motion inside the terminal: exact zeros, stronger than the global
    0.01ms fallback in globals.css. */
 @media (prefers-reduced-motion: reduce) {
