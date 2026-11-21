@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Download, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,9 @@ export function ConvertView() {
   const [output, setOutput] = useState("");
   const [yamlInput, setYamlInput] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const yamlInputId = useId();
+  const formatLabel =
+    FORMATS.find((f) => f.id === convertFormat)?.label ?? convertFormat;
 
   useEffect(() => {
     let cancelled = false;
@@ -126,6 +129,7 @@ export function ConvertView() {
           readOnly
           value={output}
           spellCheck={false}
+          aria-label={`${formatLabel} output`}
           placeholder="Output will appear here…"
           className={cn(
             "w-full h-[50vh] p-3 rounded-md border bg-muted/30",
@@ -150,10 +154,14 @@ export function ConvertView() {
 
       {convertFormat === "yaml" && (
         <div className="space-y-2 pt-2 border-t">
-          <p className="text-sm text-muted-foreground">
+          <label
+            htmlFor={yamlInputId}
+            className="block text-sm text-muted-foreground"
+          >
             Or paste YAML to convert into JSON:
-          </p>
+          </label>
           <textarea
+            id={yamlInputId}
             value={yamlInput}
             onChange={(e) => setYamlInput(e.target.value)}
             placeholder="key: value"

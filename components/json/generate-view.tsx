@@ -28,6 +28,8 @@ export function GenerateView() {
   const [output, setOutput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const formatLabel =
+    FORMATS.find((f) => f.id === generateFormat)?.label ?? generateFormat;
 
   useEffect(() => {
     let cancelled = false;
@@ -130,6 +132,7 @@ export function GenerateView() {
           readOnly
           value={output}
           spellCheck={false}
+          aria-label={`${formatLabel} output`}
           placeholder="Output will appear here…"
           className={cn(
             "w-full h-[50vh] p-3 rounded-md border bg-muted/30",

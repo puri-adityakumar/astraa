@@ -31,6 +31,7 @@ export function TextView() {
         linter(jsonParseLinter()),
         lintGutter(),
         autocompletion(),
+        EditorView.contentAttributes.of({ "aria-label": "JSON input" }),
         keymap.of([...defaultKeymap, ...historyKeymap]),
         EditorView.theme({
           "&": { fontSize: "13px" },

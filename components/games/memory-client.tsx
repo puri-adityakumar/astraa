@@ -37,7 +37,12 @@ export function MemoryClient() {
               <p className="text-sm text-muted-foreground">Matches</p>
               <p className="text-2xl font-semibold">{matches}</p>
             </div>
-            <Button onClick={resetGame} variant="outline" size="icon">
+            <Button
+              onClick={resetGame}
+              variant="outline"
+              size="icon"
+              aria-label="Reset game"
+            >
               <RefreshCw className="h-4 w-4" />
             </Button>
           </div>

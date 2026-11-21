@@ -44,7 +44,11 @@ export function HashSelector({ selectedHash, onHashChange }: HashSelectorProps) 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`About ${selectedAlgorithm.name}`}
+              >
                 <HelpCircle className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
