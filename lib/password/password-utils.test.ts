@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { generatePassword, generatePin } from "./password-utils";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { generatePassword, generateMemorablePassword, generatePin } from "./password-utils";
 
 describe("generatePassword", () => {
   it("generates password of correct length", () => {
@@ -62,5 +62,47 @@ describe("generatePin", () => {
     const result = generatePin(10);
     expect(result.success).toBe(true);
     if (result.success) expect(result.password).toMatch(/^[0-9]+$/);
+  });
+});
+
+describe("generateMemorablePassword", () => {
+  // niceware v4 only accepts a Uint8Array when a browser `window` exists; the
+  // generator runs in the client, so mirror that environment here.
+  beforeAll(() => vi.stubGlobal("window", { Uint8Array }));
+  afterAll(() => vi.unstubAllGlobals());
+
+  it("joins one word per requested count with hyphens", async () => {
+    const result = await generateMemorablePassword(5, false);
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.password.split("-")).toHaveLength(5);
+  });
+  it("capitalizes every word when requested", async () => {
+    const result = await generateMemorablePassword(4, true);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.password.split("-").every((word) => /^[A-Z]/.test(word))).toBe(true);
+    }
+  });
+  it("leaves words lowercase when capitalization is off", async () => {
+    const result = await generateMemorablePassword(4, false);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.password.split("-").every((word) => word === word.toLowerCase())).toBe(true);
+    }
+  });
+  it("clamps the word count to the supported 2-10 range", async () => {
+    const low = await generateMemorablePassword(1, false);
+    expect(low.success).toBe(true);
+    if (low.success) expect(low.password.split("-")).toHaveLength(2);
+
+    const high = await generateMemorablePassword(99, false);
+    expect(high.success).toBe(true);
+    if (high.success) expect(high.password.split("-")).toHaveLength(10);
+  });
+  it("produces a different passphrase each call", async () => {
+    const first = await generateMemorablePassword(6, false);
+    const second = await generateMemorablePassword(6, false);
+    expect(first.success && second.success).toBe(true);
+    if (first.success && second.success) expect(first.password).not.toBe(second.password);
   });
 });

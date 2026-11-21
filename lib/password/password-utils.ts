@@ -1,5 +1,3 @@
-import niceware from 'niceware';
-
 interface PasswordOptions {
     uppercase: boolean
     lowercase: boolean
@@ -7,7 +5,7 @@ interface PasswordOptions {
     symbols: boolean
 }
 
-type PasswordResult =
+export type PasswordResult =
     | { success: true; password: string }
     | { success: false; error: string }
 
@@ -88,10 +86,20 @@ export function generatePassword(length: number, options: PasswordOptions): Pass
     };
 }
 
-export function generateMemorablePassword(count: number, capitalize: boolean): PasswordResult {
+/**
+ * Memorable passphrases come from niceware's 65,536-word list, which is ~750 KB
+ * of JavaScript. It is imported on demand so that list ships in its own chunk
+ * and never in a route's initial payload; the first memorable password of a
+ * session pays one chunk fetch, later ones reuse the loaded module.
+ */
+export async function generateMemorablePassword(
+    count: number,
+    capitalize: boolean,
+): Promise<PasswordResult> {
     const safeCount = Math.max(2, Math.min(count, 10));
 
     try {
+        const { default: niceware } = await import("niceware");
         const bytes = crypto.getRandomValues(new Uint8Array(safeCount * 2));
         const words = niceware.bytesToPassphrase(bytes);
 
@@ -103,7 +111,7 @@ export function generateMemorablePassword(count: number, capitalize: boolean): P
             success: true,
             password: formattedWords.join("-")
         }
-    } catch (error) {
+    } catch {
         return {
             success: false,
             error: "Failed to generate memorable password"
