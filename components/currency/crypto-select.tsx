@@ -20,7 +20,7 @@ export function CryptoSelect({ value, onValueChange }: CryptoSelectProps) {
       <SelectTrigger className="w-full h-11">
         <SelectValue placeholder="Select cryptocurrency" />
       </SelectTrigger>
-      <SelectContent className="max-h-[300px]">
+      <SelectContent className="max-h-[min(300px,var(--radix-select-content-available-height))]">
         {cryptocurrencies.map((crypto) => (
           <SelectItem key={crypto.id} value={crypto.id}>
             <div className="flex items-center gap-3">

@@ -21,7 +21,7 @@ export function CurrencySelect({ value, onValueChange, label }: CurrencySelectPr
       <SelectTrigger className="w-full h-11">
         <SelectValue placeholder={`Select ${label}`} />
       </SelectTrigger>
-      <SelectContent className="max-h-[300px]">
+      <SelectContent className="max-h-[min(300px,var(--radix-select-content-available-height))]">
         {currencies.map((currency) => (
           <SelectItem key={currency.code} value={currency.code}>
             <div className="flex items-center gap-3">
