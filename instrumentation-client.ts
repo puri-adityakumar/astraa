@@ -7,9 +7,6 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: "https://088e07b57ecdb335e811566d71cac965@o4510567847952384.ingest.de.sentry.io/4510571667390544",
 
-  // Add optional integrations for additional features
-  integrations: [Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })],
-
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1,
   environment: process.env.NODE_ENV,
@@ -27,6 +24,13 @@ Sentry.init({
   // Never send user PII: the site promises all processing stays in the browser.
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: false,
+});
+
+// Replay attaches after init so its recorder stays out of the shared
+// instrumentation chunk loaded by every route. See the Session Replay guide:
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/session-replay/
+void import("./lib/sentry-replay").then(({ replayIntegration }) => {
+  Sentry.addIntegration(replayIntegration({ maskAllText: true, blockAllMedia: true }));
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
