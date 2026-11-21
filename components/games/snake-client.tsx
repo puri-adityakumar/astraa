@@ -57,7 +57,7 @@ export function SnakeClient() {
                   key={index}
                   className={`
                   ${isSnake ? "bg-primary" : "bg-transparent"}
-                  ${isFood ? "bg-accent" : ""}
+                  ${isFood ? "bg-brand" : ""}
                 `}
                 />
               );

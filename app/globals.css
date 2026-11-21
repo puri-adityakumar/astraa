@@ -25,6 +25,7 @@
   --muted-foreground: 240 3.8% 46.1%;
   --accent: 142 76% 36%;
   --accent-foreground: 355.7 100% 97.3%;
+  --brand: 142 76% 36%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
   --success: 142 76% 36%;
@@ -53,8 +54,9 @@
   --secondary-foreground: 0 0% 98%;
   --muted: 240 3.7% 15.9%;
   --muted-foreground: 240 5% 64.9%;
-  --accent: 291 100% 69%;
+  --accent: 240 3.7% 15.9%;
   --accent-foreground: 0 0% 98%;
+  --brand: 291 100% 69%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
   --success: 142 76% 45%;
@@ -187,7 +189,7 @@
       transparent 30%
     ),
     linear-gradient(to bottom left, 
-      hsl(var(--accent)/0.2) 0%, 
+      hsl(var(--brand)/0.2) 0%,
       transparent 30%
     ),
     hsl(var(--background));
@@ -294,7 +296,7 @@
   
   /* Gradient text utilities */
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-brand;
   }
   
   /* Card with enhanced shadow */
