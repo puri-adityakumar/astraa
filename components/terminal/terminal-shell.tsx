@@ -18,6 +18,7 @@ import {
 } from "@/lib/terminal/scrollback";
 import type { OutputBlock, ToolSlug } from "@/lib/terminal/types";
 import { cn } from "@/lib/utils";
+import { SkipLink } from "@/components/skip-link";
 import { TERM_COLUMN } from "./column";
 import { BrowserPanel } from "./browser-panel";
 import { ConfigPanel } from "./config-panel";
@@ -270,6 +271,7 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
 
   return (
     <div className="flex h-dvh overflow-hidden bg-term-bg text-term-fg">
+      <SkipLink />
       <LeftRail inert={menuOpen} />
       <div inert={menuOpen} className="flex min-w-0 flex-1 flex-col">
         <header
@@ -328,7 +330,8 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
           <main
             ref={mainRef}
             aria-label="Transcript"
-            tabIndex={transcriptTabStop ? 0 : undefined}
+            id="main-content"
+            tabIndex={transcriptTabStop ? 0 : -1}
             className="flex min-h-0 flex-1 flex-col overflow-y-auto"
           >
             <div className="min-h-0 flex-1">
