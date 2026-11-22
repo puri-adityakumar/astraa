@@ -18,7 +18,7 @@ const MAX_ATTEMPTS = 8;
  * stopped replays discard their buffer and cannot be re-attached by a later
  * error, and recording is never restarted afterwards — the SDK's own sampling
  * decision from page load stands. The short retry covers integrations that
- * attach after init (see the deferred replay import), not a missing one.
+ * attach after init (e.g. deferred replay registration), not a missing one.
  */
 export function ReplayGuard(): null {
   const pathname = usePathname();
@@ -30,12 +30,8 @@ export function ReplayGuard(): null {
 
     let attempts = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    let cancelled = false;
 
     const stopReplay = () => {
-      if (cancelled) {
-        return;
-      }
       const replay: StoppableReplay | undefined =
         Sentry.getClient()?.getIntegrationByName("Replay");
       if (!replay) {
@@ -50,12 +46,7 @@ export function ReplayGuard(): null {
 
     stopReplay();
 
-    return () => {
-      cancelled = true;
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return null;

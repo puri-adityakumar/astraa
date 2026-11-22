@@ -5,8 +5,9 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
-const read = (relativePath: string): string =>
-  readFileSync(resolve(repoRoot, relativePath), "utf8");
+function read(relativePath: string): string {
+  return readFileSync(resolve(repoRoot, relativePath), "utf8");
+}
 
 const SENTRY_CONFIG_FILES = [
   "instrumentation-client.ts",
