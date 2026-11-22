@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { PasswordDisplay } from "./password-display"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
@@ -47,6 +47,10 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
   const [pinLength, setPinLength] = useState([4])
 
   // -- Generation Logic --
+  // Memorable passphrases await the lazily imported word list, so an older
+  // request can resolve after a newer one; only the newest result is applied.
+  const requestRef = useRef(0)
+
   const generate = useCallback(async (next: {
     mode?: GenMode;
     length?: number[];
@@ -55,6 +59,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
     memOptions?: typeof memOptions;
     pinLength?: number[];
   } = {}) => {
+    const request = ++requestRef.current
     let result: PasswordResult
     const nextMode = next.mode ?? mode;
     if (nextMode === "random") {
@@ -68,6 +73,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
       result = generatePin((next.pinLength ?? pinLength)[0] ?? 4)
     }
 
+    if (request !== requestRef.current) return
     if (result.success) {
       setPassword(result.password)
     }
