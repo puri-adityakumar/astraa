@@ -59,5 +59,5 @@ export const games: Game[] = [
 
 /** Registry entries that are playable today, in registry order. */
 export function availableGames(list: readonly Game[] = games): Game[] {
-  return list.filter((game) => !game.comingSoon)
+  return list.filter((game) => !game.comingSoon);
 }
