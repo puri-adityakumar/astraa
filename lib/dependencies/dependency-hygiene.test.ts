@@ -89,7 +89,13 @@ function sourceFiles(): string[] {
   visit(path.join(ROOT, "components"));
   visit(path.join(ROOT, "lib"));
   visit(path.join(ROOT, "hooks"));
-  for (const root of ["proxy.ts", "instrumentation.ts", "instrumentation-client.ts", "next.config.js"]) {
+  const rootEntries = [
+    "proxy.ts",
+    "instrumentation.ts",
+    "instrumentation-client.ts",
+    "next.config.js",
+  ];
+  for (const root of rootEntries) {
     const full = path.join(ROOT, root);
     if (existsSync(full)) files.push(full);
   }
@@ -98,13 +104,11 @@ function sourceFiles(): string[] {
 
 function importedSpecs(file: string): string[] {
   const source = readFileSync(file, "utf8");
-  const pattern =
-    /from\s+["']([^"']+)["']|import\s*\(\s*["']([^"']+)["']\s*\)|require\(["']([^"']+)["']\)|import\s+["']([^"']+)["']/g;
+  const pattern = /(?:from\s+|import\s*\(\s*|require\(|import\s+)["']([^"']+)["']/g;
   const specs: string[] = [];
   let match: RegExpExecArray | null;
   while ((match = pattern.exec(source))) {
-    const captured = match.slice(1).find((group): group is string => group !== undefined);
-    if (captured) specs.push(captured);
+    if (match[1]) specs.push(match[1]);
   }
   return specs;
 }
@@ -140,8 +144,9 @@ function resolveLocal(fromFile: string, specifier: string): string | null {
 }
 
 describe("dependency hygiene (issue #106)", () => {
+  const pkg = JSON.parse(repoFile("package.json")) as Pkg;
+
   it("keeps build tooling and type packages out of runtime dependencies", () => {
-    const pkg = JSON.parse(repoFile("package.json")) as Pkg;
     for (const name of BUILD_TOOLING) {
       expect(pkg.dependencies[name], `${name} must not be a runtime dependency`).toBeUndefined();
       expect(pkg.devDependencies[name], `${name} should be a devDependency`).toBeTruthy();
@@ -149,7 +154,6 @@ describe("dependency hygiene (issue #106)", () => {
   });
 
   it("does not resurrect removed dead or orphaned dependencies", () => {
-    const pkg = JSON.parse(repoFile("package.json")) as Pkg;
     for (const name of REMOVED_DEPENDENCIES) {
       expect(pkg.dependencies[name], `${name} was removed by issue #106`).toBeUndefined();
       expect(pkg.devDependencies[name], `${name} was removed by issue #106`).toBeUndefined();
@@ -157,18 +161,14 @@ describe("dependency hygiene (issue #106)", () => {
   });
 
   it("imports every runtime dependency from source", () => {
-    const pkg = JSON.parse(repoFile("package.json")) as Pkg;
-    const importers = new Map<string, string[]>();
+    const imported = new Set<string>();
     for (const file of sourceFiles()) {
       for (const specifier of importedSpecs(file)) {
-        const name = packageName(specifier);
-        if (!importers.has(name)) importers.set(name, []);
-        importers.get(name)?.push(path.relative(ROOT, file));
+        imported.add(packageName(specifier));
       }
     }
     const missing = Object.keys(pkg.dependencies)
-      .filter((name) => !NON_IMPORTED_DEPENDENCIES.has(name))
-      .filter((name) => (importers.get(name)?.length ?? 0) === 0);
+      .filter((name) => !NON_IMPORTED_DEPENDENCIES.has(name) && !imported.has(name));
     expect(
       missing,
       `runtime dependencies with no source import (delete them or move to devDependencies)`,
@@ -182,16 +182,16 @@ describe("dependency hygiene (issue #106)", () => {
       .map((name) => path.join("components/ui", name));
 
     const reachable = new Set<string>();
-    const queue = sourceFiles()
+    const stack = sourceFiles()
       .map((file) => path.relative(ROOT, file))
       .filter((file) => file.startsWith("app/") || file === "proxy.ts");
-    while (queue.length > 0) {
-      const file = queue.pop();
+    while (stack.length > 0) {
+      const file = stack.pop();
       if (!file || reachable.has(file)) continue;
       reachable.add(file);
       for (const specifier of importedSpecs(path.join(ROOT, file))) {
         const resolved = resolveLocal(file, specifier);
-        if (resolved && !reachable.has(resolved)) queue.push(resolved);
+        if (resolved && !reachable.has(resolved)) stack.push(resolved);
       }
     }
 
