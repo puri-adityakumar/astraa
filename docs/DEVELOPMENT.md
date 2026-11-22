@@ -69,8 +69,8 @@ astraa/
 │   ├── calculator/           # Calculator logic
 │   ├── image/                # Image processing logic
 │   └── games/                # Game-specific logic (snake, memory, dino)
-├── instrumentation-client.ts  # Sentry client-side instrumentation
-├── instrumentation.ts         # Sentry server-side instrumentation
+├── instrumentation-client.ts  # Sentry client-side instrumentation (retired: commented out, issue #105)
+├── instrumentation.ts         # Server/edge instrumentation entry (Sentry retired: commented out)
 ├── hooks/                    # Custom React hooks
 ├── types/                    # TypeScript type definitions
 ├── public/                   # Static assets

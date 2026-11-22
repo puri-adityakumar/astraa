@@ -7,7 +7,9 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { SiteChrome } from "@/components/site-chrome"
-import * as Sentry from "@sentry/nextjs"
+// Sentry retired (issue #105): the capture below is commented out and errors
+// are logged to the console instead. Uncomment with the import to restore.
+// import * as Sentry from "@sentry/nextjs"
 
 export default function Error({
   error,
@@ -21,7 +23,7 @@ export default function Error({
 
   useEffect(() => {
     console.error('Application error:', error)
-    Sentry.captureException(error)
+    // Sentry.captureException(error)
   }, [error])
 
   const copyErrorDetails = async () => {

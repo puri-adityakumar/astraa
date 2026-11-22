@@ -71,7 +71,7 @@ cp .env.sample .env.local
 | `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
 | `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL (visitor counting) |
 | `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |
+| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads (unused: Sentry telemetry retired, integration commented out) |
 
 ## Running the Application
 
@@ -116,7 +116,7 @@ npm run lint
 | State | Zustand 5, React Context |
 | Forms | React Hook Form, Zod 4 |
 | Database | Upstash Redis |
-| Monitoring | Sentry, Vercel Analytics |
+| Monitoring | Vercel Analytics (anonymous, cookieless); Sentry retired (integration commented out) |
 
 ## License
 

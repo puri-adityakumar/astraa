@@ -324,7 +324,7 @@ export async function getExchangeRate(from: string, to: string) {
 NEXT_PUBLIC_ENV=dev
 KV_REST_API_URL=your_redis_url
 KV_REST_API_TOKEN=your_redis_token
-# SENTRY_AUTH_TOKEN=your_sentry_token  # optional
+# SENTRY_AUTH_TOKEN=your_sentry_token  # optional, unused while Sentry is retired
 ```
 
 | Variable | Required | Description |
@@ -332,4 +332,4 @@ KV_REST_API_TOKEN=your_redis_token
 | `NEXT_PUBLIC_ENV` | Optional | Environment flag (dev/prod) |
 | `KV_REST_API_URL` | Optional | Vercel KV / Upstash Redis URL |
 | `KV_REST_API_TOKEN` | Optional | Vercel KV / Upstash Redis token |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads |
+| `SENTRY_AUTH_TOKEN` | Optional | Sentry source map uploads (unused: Sentry telemetry retired, integration commented out) |

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import * as Sentry from "@sentry/nextjs";
+// Sentry retired (issue #105): the span wrappers below are commented out and
+// the exports run directly. Uncomment them together with this import.
+// import * as Sentry from "@sentry/nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import { logError, getUserFriendlyError } from "@/lib/error-handler";
 import {
@@ -43,13 +45,15 @@ export function useExportActions(
     if (!node) return;
     setPending(scale === 1 ? "1x" : "2x");
     try {
-      await Sentry.startSpan(
-        { op: "snippet.export", name: `PNG ${scale}x` },
-        async () => {
-          const blob = await exportSnippet(node, scale, getExportSize?.());
-          downloadBlob(blob, buildExportFilename(filename, Date.now()));
-        },
-      );
+      // await Sentry.startSpan(
+      //   { op: "snippet.export", name: `PNG ${scale}x` },
+      //   async () => {
+      //     const blob = await exportSnippet(node, scale, getExportSize?.());
+      //     downloadBlob(blob, buildExportFilename(filename, Date.now()));
+      //   },
+      // );
+      const blob = await exportSnippet(node, scale, getExportSize?.());
+      downloadBlob(blob, buildExportFilename(filename, Date.now()));
       toast({ title: "Downloaded", description: `PNG ${scale}× saved.` });
     } catch (e) {
       const details = getUserFriendlyError(e);
@@ -69,13 +73,15 @@ export function useExportActions(
     if (!node) return;
     setPending("copy");
     try {
-      await Sentry.startSpan(
-        { op: "snippet.export", name: "Copy clipboard" },
-        async () => {
-          const blob = await exportSnippet(node, 2, getExportSize?.());
-          await copyBlobToClipboard(blob);
-        },
-      );
+      // await Sentry.startSpan(
+      //   { op: "snippet.export", name: "Copy clipboard" },
+      //   async () => {
+      //     const blob = await exportSnippet(node, 2, getExportSize?.());
+      //     await copyBlobToClipboard(blob);
+      //   },
+      // );
+      const blob = await exportSnippet(node, 2, getExportSize?.());
+      await copyBlobToClipboard(blob);
       toast({ title: "Copied", description: "PNG copied to clipboard." });
     } catch (e) {
       const details = getUserFriendlyError(e);

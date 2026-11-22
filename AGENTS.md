@@ -137,7 +137,7 @@ try {
 ```
 
 - Error boundaries: global (`app/global-error.tsx`), page-level (`app/error.tsx`)
-- Sentry: client (`instrumentation-client.ts`), server (`sentry.server.config.ts`), edge (`sentry.edge.config.ts`)
+- Telemetry: Vercel Analytics mounted in `app/layout.tsx` (production only, cookieless). Sentry retired (issue #105): the client (`instrumentation-client.ts`), server (`sentry.server.config.ts`), and edge (`sentry.edge.config.ts`) setups are commented out, not deleted — restore by uncommenting them.
 
 ## Animations
 
@@ -226,7 +226,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 
 ### Observability
 - Tool usage tracked via `updateToolUsage(toolId)`
-- Sentry instrumentation on meaningful flows
+- Vercel Analytics for product telemetry (Sentry retired: commented out)
 - Errors logged with enough context to debug
 
 ### Out-of-scope clarity

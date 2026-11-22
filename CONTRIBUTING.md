@@ -102,7 +102,7 @@ npm run dev
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_ENV` | Yes | `dev` shows WIP features for testing, `prod` shows "Coming Soon" cards |
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry error tracking token |
+| `SENTRY_AUTH_TOKEN` | Optional | Sentry error tracking token (unused: Sentry telemetry retired, integration commented out) |
 
 ### Available Commands
 
