@@ -137,7 +137,7 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor(
     <div
       ref={hostRef}
       className="h-full overflow-auto bg-muted/30 text-sm"
-      style={{ fontFamily: "var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace" }}
+      style={{ fontFamily: "'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace" }}
     />
   );
 });
