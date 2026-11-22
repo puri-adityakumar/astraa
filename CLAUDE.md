@@ -88,7 +88,7 @@ try {
 
 - Error boundaries: global (`app/global-error.tsx`), page-level (`app/error.tsx`)
 - `getUserFriendlyError()` maps error types (network, timeout, permission, file) to user-friendly messages and sanitizes sensitive data (paths, URLs, emails, IPs)
-- Sentry: client (`instrumentation-client.ts`), server (`sentry.server.config.ts`), edge (`sentry.edge.config.ts`)
+- Telemetry: Vercel Analytics mounted in `app/layout.tsx` (production only, cookieless). Sentry retired (issue #105): the client (`instrumentation-client.ts`), server (`sentry.server.config.ts`), and edge (`sentry.edge.config.ts`) setups are commented out, not deleted — restore by uncommenting them.
 
 ## Code Style
 
@@ -237,28 +237,27 @@ Available hooks in `lib/animations/hooks.ts`: `useReducedMotion()`, `useAnimatio
 
 See `lib/animations/README.md` for full config, presets, and usage guidance.
 
-### Sentry Integration
+### Telemetry (Vercel Analytics; Sentry retired)
+
+Vercel Analytics is mounted once in `app/layout.tsx` behind a production-only
+guard, so the terminal and legacy renderings both report the same anonymous
+page views. It sets no cookies and collects no personal data. Do not add new
+Sentry calls: the Sentry integration is retired (issue #105) and its setup is
+commented out across `instrumentation-client.ts`, `instrumentation.ts`,
+`sentry.server.config.ts`, `sentry.edge.config.ts`, and `next.config.js`,
+with the dependency kept so it can be restored by uncommenting.
 
 ```typescript
-import * as Sentry from "@sentry/nextjs"
+import { logError, getUserFriendlyError } from "@/lib/error-handler"
 
-// Capture exceptions
-Sentry.captureException(error)
-
-// Performance tracing — use for meaningful actions (button clicks, API calls)
-const result = await Sentry.startSpan(
-  { op: "function.name", name: "Descriptive Name" },
-  async (span) => {
-    span.setAttribute("key", value)
-    return data
-  }
-)
-
-// Structured logging
-const { logger } = Sentry
-logger.info("Action completed", { key: "value" })
-logger.error("Failed operation", { orderId: "123" })
-logger.debug(logger.fmt`Cache miss for user: ${userId}`)  // use logger.fmt for template variables
+// Report errors to the user and log locally; nothing is forwarded anywhere
+try {
+  await riskyOperation()
+} catch (error) {
+  const details = getUserFriendlyError(error)
+  toast({ title: details.title, description: details.message, variant: "destructive" })
+  logError(error, { context: "additional context" })
+}
 ```
 
 ### Accessibility
@@ -342,7 +341,7 @@ Before turning a design/spec into an implementation plan, walk through these che
 
 ### Observability
 - Tool usage tracked via `updateToolUsage(toolId)`
-- Sentry instrumentation on meaningful flows (`Sentry.startSpan`, `Sentry.captureException`)
+- Vercel Analytics for product telemetry (Sentry retired: commented out)
 - Errors logged with enough context to debug
 
 ### Out-of-scope clarity

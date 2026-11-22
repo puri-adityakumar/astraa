@@ -10,9 +10,10 @@ const COPIED_RESET_MS = 2000;
 
 /**
  * The secret block — the only way a password renders in the terminal. The
- * value is length-matched bullets until Reveal; the element carrying the
- * text (dots or plaintext) is Sentry-masked so replays capture neither
- * state.
+ * value is length-matched bullets until Reveal; the element holding the
+ * text (dots or plaintext) carries the Sentry-mask hooks. Sentry is retired
+ * (issue #105), so the hooks are inert today but stay in place so session
+ * replay keeps masking this text if Sentry is ever restored.
  */
 function SecretBlock({ secret }: { secret: string }) {
   const [revealed, setRevealed] = useState(false);

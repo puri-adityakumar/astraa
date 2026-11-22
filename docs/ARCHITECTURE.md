@@ -24,14 +24,14 @@ graph TB
     subgraph External["External Services"]
         CG[CoinGecko API]
         FX[Currency API]
-        Sentry[Sentry]
+        VA[Vercel Analytics]
     end
 
     UI --> State
     State --> Tools
     Tools --> CG
     Tools --> FX
-    UI --> Sentry
+    UI --> VA
 ```
 
 **Architecture Type:** Client-side rendered SPA with Next.js App Router
@@ -324,7 +324,7 @@ export function getUserFriendlyError(error: unknown): ErrorDetails {
 }
 
 export function logError(error: unknown, context?: Record<string, unknown>) {
-  // Log to console (Sentry captures errors at boundary level via global-error.tsx)
+  // Log to console only (Sentry is retired; nothing forwards errors anywhere)
   console.error(error, context)
 }
 ```
@@ -344,23 +344,26 @@ try {
 }
 ```
 
-### Sentry Integration
+### Telemetry (Vercel Analytics; Sentry retired)
 
 ```mermaid
 graph LR
-    Client[Client Error]
-    Server[Server Error]
-    Edge[Edge Error]
-    Sentry[Sentry Dashboard]
+    Page[Page View]
+    VA[Vercel Web Analytics]
 
-    Client --> |instrumentation-client.ts| Sentry
-    Server --> |sentry.server.config.ts| Sentry
-    Edge --> |sentry.edge.config.ts| Sentry
+    Page --> |app/layout.tsx, production only| VA
 ```
 
-**Note:** `logError()` in `lib/error-handler.ts` logs to console only. Sentry captures errors at boundary level via `global-error.tsx` and the instrumentation files above.
+- **Vercel Analytics** is mounted once in `app/layout.tsx` behind a
+  `NODE_ENV === "production"` guard, so the terminal and legacy renderings of
+  the site both report the same anonymous page views. It sets no cookies and
+  records are not tied to individuals or IP addresses (see the Privacy
+  Policy, "Product Analytics and Error Tracking").
+- **Sentry is retired** (issue #105): the client (`instrumentation-client.ts`),
+  server (`sentry.server.config.ts`), edge (`sentry.edge.config.ts`), and
+  `next.config.js` wrapper setups are commented out rather than deleted, and
+  the `@sentry/nextjs` dependency stays installed, so the integration can be
+  restored by uncommenting them. `app/error.tsx` and `app/global-error.tsx`
+  capture nothing and log to the console only.
 
-**Configuration:**
-- Trace sample rate: 100% (development)
-- Session replay: 10% normal, 100% on error
-- Source maps uploaded for debugging
+**Note:** `logError()` in `lib/error-handler.ts` logs to console only.

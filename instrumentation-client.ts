@@ -1,32 +1,41 @@
 // This file configures the initialization of Sentry on the client.
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
-
-import * as Sentry from "@sentry/nextjs";
-
-Sentry.init({
-  dsn: "https://088e07b57ecdb335e811566d71cac965@o4510567847952384.ingest.de.sentry.io/4510571667390544",
-
-  // Add optional integrations for additional features
-  integrations: [Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })],
-
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1,
-  environment: process.env.NODE_ENV,
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-
-  // Define how likely Replay events are sampled.
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
-
-  // Define how likely Replay events are sampled when an error occurs.
-  replaysOnErrorSampleRate: 1.0,
-
-  // Never send user PII: the site promises all processing stays in the browser.
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: false,
-});
-
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+//
+// RETIRED (2026-11-22, issue #105): Sentry is disabled for users. The setup
+// below is commented out rather than deleted so it can be restored by
+// uncommenting it (the @sentry/nextjs dependency stays installed). Product
+// telemetry now uses Vercel Analytics, mounted in app/layout.tsx.
+//
+// import * as Sentry from "@sentry/nextjs";
+//
+// Sentry.init({
+//   dsn: "https://088e07b57ecdb335e811566d71cac965@o4510567847952384.ingest.de.sentry.io/4510571667390544",
+//
+//   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+//   tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1,
+//   environment: process.env.NODE_ENV,
+//   // Enable logs to be sent to Sentry
+//   enableLogs: true,
+//
+//   // Define how likely Replay events are sampled.
+//   // This sets the sample rate to be 10%. You may want this to be 100% while
+//   // in development and sample at a lower rate in production
+//   replaysSessionSampleRate: 0.1,
+//
+//   // Define how likely Replay events are sampled when an error occurs.
+//   replaysOnErrorSampleRate: 1.0,
+//
+//   // Never send user PII: the site promises all processing stays in the browser.
+//   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
+//   sendDefaultPii: false,
+// });
+//
+// Replay attaches after init so its recorder stays out of the shared
+// instrumentation chunk loaded by every route. See the Session Replay guide:
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/session-replay/
+// void import("./lib/sentry-replay").then(({ replayIntegration }) => {
+//   Sentry.addIntegration(replayIntegration({ maskAllText: true, blockAllMedia: true }));
+// });
+//
+// export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

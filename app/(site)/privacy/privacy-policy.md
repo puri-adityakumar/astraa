@@ -1,5 +1,5 @@
 # Privacy Policy
-Last updated: December 20, 2025
+Last updated: November 22, 2026
 
 This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
 
@@ -170,6 +170,13 @@ The following tools run entirely in your browser. No input data is sent to any s
 
 ### Terminal Interface
 The terminal-style interface stores only two cookies: `astraa_flavour` remembers which interface (terminal or legacy) you chose, and `astraa_term_theme` remembers your terminal colour scheme. Both are functional preference cookies that are sent to Astraa only to choose the interface and colour scheme for you; Astraa never uses them for tracking or analytics. Your terminal command history is kept in memory only for the current session and is cleared when you close the tab; it is never written to storage or transmitted to any server.
+
+### Product Analytics and Error Tracking
+Astraa uses Vercel Web Analytics to understand aggregate product usage in both the terminal and legacy interfaces. Vercel Web Analytics does not use cookies and does not collect personal data: page views are recorded anonymously and are not tied to you, your IP address, or your identity, and the collected data cannot be used to reconstruct your browsing across other websites or to personally identify you. No tool input — calculations, text, files, passwords, or any other content you process — is ever included in analytics; the tools themselves keep working entirely in your browser.
+
+Sentry error tracking is retired: the integration is disabled in the Astraa codebase (its setup is commented out, not removed), so error reports, tracing, and session replay are no longer collected or sent to Sentry. Nothing you do in the Astraa tools is recorded as part of a session replay.
+
+Astraa also keeps an anonymous visitor counter for the home page: a short-lived `astraa_visited` cookie prevents the same visit from being counted repeatedly for 24 hours, and the counter itself stores only a total number of visits — no IPs, identifiers, or per-visitor records.
 
 ### Data Storage
 Astraa uses browser-local storage (IndexedDB with localStorage fallback) for user preferences, tool settings, and usage statistics. This data never leaves your device and can be cleared through your browser settings at any time.
