@@ -119,7 +119,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
           Generate secure, random passwords, memorable passphrases, or PIN codes instantly.
         </p>
         <p className="text-xs text-muted-foreground/70">
-          All processing happens locally in your browser
+          Generated in your browser — passwords are never sent to any server
         </p>
       </div>
       )}

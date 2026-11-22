@@ -1,5 +1,5 @@
 # Privacy Policy
-Last updated: December 20, 2025
+Last updated: November 22, 2026
 
 This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
 
@@ -151,9 +151,26 @@ We will let You know via email and/or a prominent notice on Our Service, prior t
 
 You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
 
+## Error Monitoring, Analytics and Telemetry
+
+Astraa runs a small set of privacy-preserving monitoring services so we can find and fix bugs. The tools themselves never send your input or output to a server (see Tool-Specific Data Handling below); the services in this section receive technical diagnostics about the site, configured as follows.
+
+### Sentry (Error Monitoring)
+We use Sentry, hosted in Sentry's Germany (EU) region, for error and performance monitoring:
+
+*   **Error reports** — when something crashes or fails, Sentry receives the error message, a technical stack trace, and the page URL. Sentry's default PII collection is disabled (`sendDefaultPii` is off in every Astraa Sentry configuration), so IP addresses, cookies, and user details are not attached to reports.
+*   **Performance traces** — request and page-load timing data, sampled at 10% in production.
+*   **Session Replay** — for roughly 10% of visits, and to accompany unexpected errors, Sentry records a replay of the page so we can see what a bug looked like. Every replay masks all text on the page — including anything you type or a tool generates — and blocks all images and video, so what is uploaded is layout and interaction, not content. In addition, replay is switched off entirely on the tools that handle secrets (**Password Generator**, **Hash Generator**, and **Text Generator**), and it stays off for the remainder of your visit after you have opened one of them.
+
+### Vercel Analytics and Speed Insights
+Pages are measured with Vercel Web Analytics, which counts page views and referrers in aggregate without cookies or personal profiles, and with Vercel Speed Insights, which collects Web Vitals performance metrics such as load time.
+
+### Visitor Counter
+A bare count of visits to the home page is kept so we can see total traffic. A short-lived `astraa_visited` cookie (24 hours) prevents counting you more than once per day; no IP address or other identifier is stored with the count.
+
 ## Tool-Specific Data Handling
 
-Astraa is designed with privacy in mind. Most tools process data entirely in your browser with no server communication.
+Astraa is designed with privacy in mind. Most tools process data entirely in your browser with no server communication. See Error Monitoring, Analytics and Telemetry above for the monitoring data collected regardless of which tool you use.
 
 ### Client-Side Tools (No Data Transmitted)
 The following tools run entirely in your browser. No input data is sent to any server:
