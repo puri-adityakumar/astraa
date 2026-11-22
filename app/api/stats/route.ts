@@ -1,4 +1,6 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+
+import { createRateLimiter, type RateLimitConfig } from '@/lib/rate-limit'
 import { getRedis, REDIS_KEYS } from '@/lib/redis'
 
 // Cache GitHub data for 5 minutes
@@ -49,7 +51,26 @@ async function getGitHubStats() {
     }
 }
 
-export async function GET() {
+// Public, unauthenticated endpoint: cap each client at 30 reads per minute so
+// a scripted flood cannot burn Upstash and GitHub quota. Far above any
+// legitimate page-load and manual-refresh pattern.
+const STATS_RATE_LIMIT: RateLimitConfig = {
+    limit: 30,
+    windowMs: 60_000,
+    prefix: "astraa:ratelimit:stats",
+}
+
+const checkRateLimit = createRateLimiter(STATS_RATE_LIMIT)
+
+export async function GET(request: NextRequest) {
+    const { success } = await checkRateLimit(request)
+    if (!success) {
+        return NextResponse.json(
+            { error: "Too many requests, please try again later." },
+            { status: 429, headers: { "Retry-After": "60" } },
+        )
+    }
+
     // Fetch Redis visitor count and GitHub stats in parallel
     const redis = getRedis()
     const [visitorsResult, githubResult] = await Promise.allSettled([
