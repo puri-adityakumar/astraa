@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 import { toolCategories } from "@/lib/tools";
-import { games } from "@/lib/games";
+import { availableGames } from "@/lib/games";
 
 const BASE_URL = "https://www.astraa.tech";
 
@@ -16,14 +16,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     }));
 
-  const gameEntries: MetadataRoute.Sitemap = games
-    .filter((game) => !game.comingSoon)
+  const gameEntries: MetadataRoute.Sitemap = availableGames()
     .map((game) => ({
       url: `${BASE_URL}${game.path}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
+
+  // The catalogue URL only earns a spot once a game is actually playable.
+  const catalogueEntry: MetadataRoute.Sitemap = gameEntries.length
+    ? [
+        {
+          url: `${BASE_URL}/games`,
+          lastModified: new Date(),
+          changeFrequency: "weekly",
+          priority: 0.8,
+        },
+      ]
+    : [];
 
   return [
     {
@@ -38,12 +49,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
     },
-    {
-      url: `${BASE_URL}/games`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
+    ...catalogueEntry,
     {
       url: `${BASE_URL}/explore`,
       lastModified: new Date(),

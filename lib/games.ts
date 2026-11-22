@@ -1,4 +1,4 @@
-import { Gamepad2, Brain, Dices } from "lucide-react"
+import { Gamepad2, Brain } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 export type Game = {
@@ -54,12 +54,10 @@ export const games: Game[] = [
     path: "/games/word-search",
     icon: Brain,
     comingSoon: true
-  },
-  {
-    name: "2048",
-    description: "Merge tiles to reach 2048",
-    path: "/games/2048",
-    icon: Dices,
-    comingSoon: true
   }
 ]
+
+/** Registry entries that are playable today, in registry order. */
+export function availableGames(list: readonly Game[] = games): Game[] {
+  return list.filter((game) => !game.comingSoon)
+}
