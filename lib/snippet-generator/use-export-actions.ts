@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// Sentry retired (issue #105): the span wrappers below are commented out and
-// the exports run directly. Uncomment them together with this import.
+// Sentry retired (issue #105): the span wrappers below are commented out
+// around the active export lines, so uncommenting the wrappers (together
+// with this import) restores spans without duplicating any operation.
 // import * as Sentry from "@sentry/nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import { logError, getUserFriendlyError } from "@/lib/error-handler";
@@ -48,12 +49,10 @@ export function useExportActions(
       // await Sentry.startSpan(
       //   { op: "snippet.export", name: `PNG ${scale}x` },
       //   async () => {
-      //     const blob = await exportSnippet(node, scale, getExportSize?.());
-      //     downloadBlob(blob, buildExportFilename(filename, Date.now()));
-      //   },
-      // );
       const blob = await exportSnippet(node, scale, getExportSize?.());
       downloadBlob(blob, buildExportFilename(filename, Date.now()));
+      //   },
+      // );
       toast({ title: "Downloaded", description: `PNG ${scale}× saved.` });
     } catch (e) {
       const details = getUserFriendlyError(e);
@@ -76,12 +75,10 @@ export function useExportActions(
       // await Sentry.startSpan(
       //   { op: "snippet.export", name: "Copy clipboard" },
       //   async () => {
-      //     const blob = await exportSnippet(node, 2, getExportSize?.());
-      //     await copyBlobToClipboard(blob);
-      //   },
-      // );
       const blob = await exportSnippet(node, 2, getExportSize?.());
       await copyBlobToClipboard(blob);
+      //   },
+      // );
       toast({ title: "Copied", description: "PNG copied to clipboard." });
     } catch (e) {
       const details = getUserFriendlyError(e);

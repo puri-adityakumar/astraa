@@ -1,10 +1,13 @@
 "use client";
 
 // Sentry retired (issue #105): the capture below is commented out and errors
-// are logged to the console instead. Uncomment with the import to restore.
+// are logged through logError() so the message stays sanitized. Uncomment
+// with the import to restore.
 // import * as Sentry from "@sentry/nextjs";
 import NextError from "next/error";
 import { useEffect } from "react";
+
+import { logError } from "@/lib/error-handler";
 
 export default function GlobalError({
   error,
@@ -13,7 +16,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // Sentry.captureException(error);
-    console.error(error);
+    logError(error);
   }, [error]);
 
   return (
