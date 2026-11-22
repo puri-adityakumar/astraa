@@ -16,6 +16,7 @@ import { ActivityProvider } from '@/lib/activity-tracker';
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { ReplayGuard } from "@/components/replay-guard";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.astraa.tech"),
@@ -142,6 +143,7 @@ export default function RootLayout({
           <ToolsProvider>
             <ActivityProvider>
               {children}
+              <ReplayGuard />
               <Toaster />
               {process.env.NODE_ENV === "production" && (
                 <>
