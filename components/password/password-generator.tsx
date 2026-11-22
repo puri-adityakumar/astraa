@@ -39,8 +39,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
   // Memorable Mode State
   const [wordCount, setWordCount] = useState([5])
   const [memOptions, setMemOptions] = useState({
-    capitalize: true,
-    fullWords: true
+    capitalize: true
   })
 
   // PIN Mode State
@@ -251,18 +250,6 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
                     checked={memOptions.capitalize}
                     onCheckedChange={(capitalize) => {
                       const nextOptions = { ...memOptions, capitalize };
-                      setMemOptions(nextOptions);
-                      generate({ memOptions: nextOptions });
-                    }}
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <Label htmlFor="fullwords" className="font-normal text-muted-foreground cursor-pointer text-sm sm:text-base">Full words</Label>
-                  <Switch
-                    id="fullwords"
-                    checked={memOptions.fullWords}
-                    onCheckedChange={(fullWords) => {
-                      const nextOptions = { ...memOptions, fullWords };
                       setMemOptions(nextOptions);
                       generate({ memOptions: nextOptions });
                     }}
