@@ -169,6 +169,18 @@ describe("createRateLimiter", () => {
     });
   });
 
+  it("fails closed when the SDK resolves an unverified timeout", async () => {
+    process.env.KV_REST_API_URL = "https://example.upstash.io";
+    process.env.KV_REST_API_TOKEN = "test-token";
+    limitMock.mockResolvedValue({ success: true, reason: "timeout", remaining: 0, reset: 0 });
+    const { createRateLimiter } = await loadRateLimitModule();
+    const check = createRateLimiter({ limit: 30, windowMs: 60_000, prefix: "p" });
+    expect(await check(requestWith({ "x-forwarded-for": "8.8.8.8" }))).toEqual({
+      success: false,
+      backend: "upstash",
+    });
+  });
+
   it("converts sub-minute windows to seconds", async () => {
     process.env.KV_REST_API_URL = "https://example.upstash.io";
     process.env.KV_REST_API_TOKEN = "test-token";

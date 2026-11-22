@@ -1,5 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 
+import { logError } from "@/lib/error-handler";
 import { getRedis } from "@/lib/redis";
 
 export interface RateLimitConfig {
@@ -133,10 +134,13 @@ export function createRateLimiter(
       return { success: memory.check(identifier), backend: "memory" };
     }
     try {
-      const { success } = await upstash.limit(identifier);
-      return { success, backend: "upstash" };
+      const { success, reason } = await upstash.limit(identifier);
+      // The SDK resolves (never rejects) after its own request timeout with
+      // success: true and reason: "timeout" — an unverified check. Failing
+      // closed there keeps the quota protected during Redis slowdowns.
+      return { success: success && reason !== "timeout", backend: "upstash" };
     } catch (error) {
-      console.error("Rate limit check failed; failing closed:", error);
+      logError(error, { context: "stats rate limit check failed closed" });
       return { success: false, backend: "upstash" };
     }
   };
