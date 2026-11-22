@@ -13,19 +13,21 @@ External API integrations and server actions used in Astraa.
 
 ## Overview
 
-Astraa uses external APIs for live data. All API calls are made client-side or via server actions.
+Astraa uses external APIs for live data. API calls are made client-side, through internal route handlers, or via server actions.
 
 ```mermaid
 graph LR
     Client[Browser]
     Currency[Currency API]
     Crypto[CoinGecko API]
+    CryptoRoute[/api/crypto-price/]
 
     Client --> Currency
-    Client --> Crypto
+    Client --> CryptoRoute
+    CryptoRoute --> Crypto
 ```
 
-**One internal API route** (`/api/stats`) returns visitor count, GitHub stars, and contributor count. All other data flows through client-side calls or server actions.
+**Two internal API routes** return server-side data: `/api/stats` serves visitor count, GitHub stars, and contributor count, and `/api/crypto-price` serves cryptocurrency prices using the server-only CoinGecko credential. All other data flows through client-side calls or server actions.
 
 ## Currency Exchange API
 
