@@ -2,14 +2,6 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { IBM_Plex_Mono } from 'next/font/google';
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-ibm-plex-mono',
-  display: 'swap',
-});
 import { Toaster } from "@/components/ui/toaster";
 import { ToolsProvider } from '@/lib/tools-context';
 import { ActivityProvider } from '@/lib/activity-tracker';
@@ -41,8 +33,11 @@ export const metadata: Metadata = {
   ],
   manifest: "/manifest.json",
   icons: {
-    icon: "/assets/astraa_pfp.png",
-    apple: "/assets/astraa_pfp.png",
+    icon: [
+      { url: "/assets/astraa_icon_32.png", sizes: "32x32", type: "image/png" },
+      { url: "/assets/astraa_icon_192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: { url: "/assets/astraa_icon_180.png", sizes: "180x180", type: "image/png" },
   },
   robots: {
     index: true,
@@ -90,7 +85,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} ${ibmPlexMono.variable} font-sans`} suppressHydrationWarning>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`} suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -100,7 +95,7 @@ export default function RootLayout({
                 "@type": "Organization",
                 "name": "Astraa",
                 "url": "https://www.astraa.tech",
-                "logo": "https://www.astraa.tech/assets/astraa_pfp.png",
+                "logo": "https://www.astraa.tech/assets/astraa_icon_512.png",
                 "sameAs": [
                   "https://github.com/puri-adityakumar/astraa",
                   "https://x.com/astraadottech",

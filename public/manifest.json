@@ -8,10 +8,16 @@
   "theme_color": "#0a0a0f",
   "icons": [
     {
-      "src": "/assets/astraa_pfp.png",
+      "src": "/assets/astraa_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/astraa_icon_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }
