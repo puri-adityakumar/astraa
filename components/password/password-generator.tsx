@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { PasswordDisplay } from "./password-display"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { generatePassword, generateMemorablePassword, generatePin } from "@/lib/password/password-utils"
+import type { PasswordResult } from "@/lib/password/password-utils"
 import { copyToClipboard } from "@/lib/clipboard"
 import { cn } from "@/lib/utils"
 import { Shuffle, Lightbulb, Hash } from "lucide-react"
@@ -46,7 +47,11 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
   const [pinLength, setPinLength] = useState([4])
 
   // -- Generation Logic --
-  const generate = useCallback((next: {
+  // Memorable passphrases await the lazily imported word list, so an older
+  // request can resolve after a newer one; only the newest result is applied.
+  const requestRef = useRef(0)
+
+  const generate = useCallback(async (next: {
     mode?: GenMode;
     length?: number[];
     options?: typeof options;
@@ -54,12 +59,13 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
     memOptions?: typeof memOptions;
     pinLength?: number[];
   } = {}) => {
-    let result
+    const request = ++requestRef.current
+    let result: PasswordResult
     const nextMode = next.mode ?? mode;
     if (nextMode === "random") {
       result = generatePassword((next.length ?? length)[0] ?? 20, next.options ?? options)
     } else if (nextMode === "memorable") {
-      result = generateMemorablePassword(
+      result = await generateMemorablePassword(
         (next.wordCount ?? wordCount)[0] ?? 5,
         (next.memOptions ?? memOptions).capitalize,
       );
@@ -67,6 +73,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
       result = generatePin((next.pinLength ?? pinLength)[0] ?? 4)
     }
 
+    if (request !== requestRef.current) return
     if (result.success) {
       setPassword(result.password)
     }
@@ -75,13 +82,13 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
   // Random output can't be produced during SSR without a hydration mismatch, so the first
   // password is generated once after mount.
   useEffect(() => {
-    generate()
+    void generate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleModeChange = (nextMode: GenMode) => {
     setMode(nextMode);
-    generate({ mode: nextMode });
+    void generate({ mode: nextMode });
   };
 
   const handleCopyToClipboard = async () => {
@@ -292,7 +299,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
               size="lg"
               variant="outline"
               className="w-full font-semibold text-base h-12 hover:bg-muted/50 hover:text-foreground"
-              onClick={() => generate()}
+              onClick={() => void generate()}
             >
               {password ? "Refresh password" : "Generate password"}
             </Button>
