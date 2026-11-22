@@ -13,11 +13,24 @@ function byteSize(relativePath: string): number {
   return statSync(path.join(ROOT, relativePath)).size;
 }
 
+/** The file must exist on disk and stay under the given size budget. */
+function expectWithinBudget(relativePath: string, maxBytes: number): void {
+  expect(existsSync(path.join(ROOT, relativePath)), `${relativePath} should exist`).toBe(true);
+  expect(byteSize(relativePath), `${relativePath} should stay under budget`).toBeLessThanOrEqual(
+    maxBytes,
+  );
+}
+
 const FAVICON_FILES = [
   "public/assets/astraa_icon_32.png",
   "public/assets/astraa_icon_180.png",
   "public/assets/astraa_icon_192.png",
   "public/assets/astraa_icon_512.png",
+];
+
+const PLEX_FONT_FILES = [
+  "public/fonts/ibm-plex-mono-latin-400.woff2",
+  "public/fonts/ibm-plex-mono-latin-500.woff2",
 ];
 
 const MAX_ICON_BYTES = 150 * 1024;
@@ -26,11 +39,7 @@ const MAX_FONT_BYTES = 50 * 1024;
 describe("asset weight budget (issue #107)", () => {
   it("serves a sized favicon set instead of the 400 KB source image", () => {
     for (const file of FAVICON_FILES) {
-      expect(existsSync(path.join(ROOT, file)), `${file} should exist`).toBe(true);
-      expect(
-        byteSize(file),
-        `${file} should stay under the icon budget`,
-      ).toBeLessThanOrEqual(MAX_ICON_BYTES);
+      expectWithinBudget(file, MAX_ICON_BYTES);
     }
     expect(existsSync(path.join(ROOT, "public/assets/astraa_pfp.png"))).toBe(false);
   });
@@ -67,14 +76,8 @@ describe("asset weight budget (issue #107)", () => {
     const globals = repoFile("app/globals.css");
     expect(globals).toMatch(/ibm-plex-mono-latin-400\.woff2/);
     expect(globals).toMatch(/ibm-plex-mono-latin-500\.woff2/);
-    for (const file of [
-      "public/fonts/ibm-plex-mono-latin-400.woff2",
-      "public/fonts/ibm-plex-mono-latin-500.woff2",
-    ]) {
-      expect(existsSync(path.join(ROOT, file)), `${file} should exist`).toBe(true);
-      expect(byteSize(file), `${file} should stay under the font budget`).toBeLessThanOrEqual(
-        MAX_FONT_BYTES,
-      );
+    for (const file of PLEX_FONT_FILES) {
+      expectWithinBudget(file, MAX_FONT_BYTES);
     }
 
     const editor = repoFile("components/markdown/editor.tsx");
@@ -84,8 +87,7 @@ describe("asset weight budget (issue #107)", () => {
 
   it("ships Funnel Display as a subsetted woff2", () => {
     const woff2 = "public/fonts/FunnelDisplay-SemiBold.woff2";
-    expect(existsSync(path.join(ROOT, woff2)), `${woff2} should exist`).toBe(true);
-    expect(byteSize(woff2)).toBeLessThanOrEqual(MAX_FONT_BYTES);
+    expectWithinBudget(woff2, MAX_FONT_BYTES);
     expect(existsSync(path.join(ROOT, "public/fonts/FunnelDisplay-SemiBold.ttf"))).toBe(false);
 
     const globals = repoFile("app/globals.css");
