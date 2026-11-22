@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect } from "react"
-import { usePathname } from "next/navigation"
-import * as Sentry from "@sentry/nextjs"
-import { isSensitiveReplayRoute } from "@/lib/privacy/sensitive-replay-routes"
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import * as Sentry from "@sentry/nextjs";
+import { isSensitiveReplayRoute } from "@/lib/privacy/sensitive-replay-routes";
 
 type StoppableReplay = {
-  name: string
-  stop?(options?: { reason?: string; forceflush?: boolean }): Promise<void>
-}
+  name: string;
+  stop?(options?: { reason?: string; forceflush?: boolean }): Promise<void>;
+};
 
-const RETRY_INTERVAL_MS = 250
-const MAX_ATTEMPTS = 8
+const RETRY_INTERVAL_MS = 250;
+const MAX_ATTEMPTS = 8;
 
 /**
  * Turns session replay off while a secret-handling tool is on screen (#96):
@@ -20,43 +20,43 @@ const MAX_ATTEMPTS = 8
  * decision from page load stands. The short retry covers integrations that
  * attach after init (see the deferred replay import), not a missing one.
  */
-export function ReplayGuard() {
-  const pathname = usePathname()
+export function ReplayGuard(): null {
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!isSensitiveReplayRoute(pathname)) {
-      return
+      return;
     }
 
-    let attempts = 0
-    let timer: ReturnType<typeof setTimeout> | undefined
-    let cancelled = false
+    let attempts = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let cancelled = false;
 
     const stopReplay = () => {
       if (cancelled) {
-        return
+        return;
       }
       const replay: StoppableReplay | undefined =
-        Sentry.getClient()?.getIntegrationByName("Replay")
+        Sentry.getClient()?.getIntegrationByName("Replay");
       if (!replay) {
-        attempts += 1
+        attempts += 1;
         if (attempts < MAX_ATTEMPTS) {
-          timer = setTimeout(stopReplay, RETRY_INTERVAL_MS)
+          timer = setTimeout(stopReplay, RETRY_INTERVAL_MS);
         }
-        return
+        return;
       }
-      void replay.stop?.({ reason: "sensitive-route" })
-    }
+      void replay.stop?.({ reason: "sensitive-route" });
+    };
 
-    stopReplay()
+    stopReplay();
 
     return () => {
-      cancelled = true
+      cancelled = true;
       if (timer) {
-        clearTimeout(timer)
+        clearTimeout(timer);
       }
-    }
-  }, [pathname])
+    };
+  }, [pathname]);
 
-  return null
+  return null;
 }
