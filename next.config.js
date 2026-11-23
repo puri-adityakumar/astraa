@@ -2,10 +2,40 @@
 const nextConfig = {
   images: { unoptimized: false },
   async headers() {
+    const isProduction = process.env.NODE_ENV === "production";
+    const contentSecurityPolicy = [
+      "default-src 'self'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+      "object-src 'none'",
+      `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com${isProduction ? " 'wasm-unsafe-eval'" : " 'unsafe-eval'"}`,
+      "style-src 'self' 'unsafe-inline'",
+      `img-src 'self' data: blob: https:${isProduction ? "" : " http:"}`,
+      "font-src 'self' data:",
+      "media-src 'self' blob: https://stream.nightride.fm",
+      "worker-src 'self' blob:",
+      "frame-src 'self' blob: https:",
+      `connect-src 'self' https://api.coingecko.com https://api.exchangerate-api.com https://api.github.com https://cdn.jsdelivr.net https://vitals.vercel-insights.com https://va.vercel-scripts.com${isProduction ? "" : " http://localhost:* ws://localhost:*"}`,
+      ...(isProduction ? ["upgrade-insecure-requests"] : []),
+    ].join("; ");
+
     return [
       {
         source: "/(.*)",
         headers: [
+          {
+            key: "Content-Security-Policy",
+            value: contentSecurityPolicy,
+          },
+          ...(isProduction
+            ? [
+                {
+                  key: "Strict-Transport-Security",
+                  value: "max-age=31536000; includeSubDomains",
+                },
+              ]
+            : []),
           {
             key: "X-Content-Type-Options",
             value: "nosniff",
