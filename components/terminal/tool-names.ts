@@ -27,7 +27,7 @@ const SHORT_NAMES: Record<ToolSlug, string> = {
   json: "JSON",
   password: "Password",
   currency: "Currency",
-  text: "Lorem Ipsum",
+  text: "Lorem",
   image: "Image",
   markdown: "Markdown",
   "snippet-generator": "Snippet",
