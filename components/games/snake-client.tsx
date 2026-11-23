@@ -31,7 +31,12 @@ export function SnakeClient() {
         <Card className="p-6 space-y-6">
           <div className="flex items-center justify-between">
             <p className="text-xl font-semibold">Score: {score}</p>
-            <Button onClick={resetGame} variant="outline" size="icon">
+            <Button
+              onClick={resetGame}
+              variant="outline"
+              size="icon"
+              aria-label="Reset game"
+            >
               <RefreshCw className="h-4 w-4" />
             </Button>
           </div>
