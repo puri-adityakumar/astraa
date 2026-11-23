@@ -257,7 +257,7 @@ export function CalculatorClient({ variant = "page" }: CalculatorClientProps) {
         </div>
         <div className="h-5 w-px shrink-0 self-center bg-border" />
 
-        <span className="text-xl font-semibold text-muted-foreground ml-auto">
+        <span className="ml-auto min-w-0 break-all text-right text-xl font-semibold text-muted-foreground">
           Ans = {display}
         </span>
       </div>
