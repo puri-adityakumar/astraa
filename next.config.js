@@ -16,7 +16,7 @@ const nextConfig = {
       "media-src 'self' blob: https://stream.nightride.fm",
       "worker-src 'self' blob:",
       "frame-src 'self' blob: https:",
-      `connect-src 'self' https://api.coingecko.com https://api.exchangerate-api.com https://api.github.com https://cdn.jsdelivr.net https://o4510567847952384.ingest.de.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com${isProduction ? "" : " http://localhost:* ws://localhost:*"}`,
+      `connect-src 'self' https://api.coingecko.com https://api.exchangerate-api.com https://api.github.com https://cdn.jsdelivr.net https://vitals.vercel-insights.com https://va.vercel-scripts.com${isProduction ? "" : " http://localhost:* ws://localhost:*"}`,
       ...(isProduction ? ["upgrade-insecure-requests"] : []),
     ].join("; ");
 
