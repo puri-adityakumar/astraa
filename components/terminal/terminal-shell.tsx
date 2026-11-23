@@ -10,7 +10,7 @@ import {
 } from "@/lib/terminal/browser-history";
 import { outputToLiveText } from "@/lib/terminal/live-text";
 import { commandForSlug, runInput } from "@/lib/terminal/registry";
-import { scrollAction } from "@/lib/terminal/scroll-policy";
+import { scrollAction, transcriptOverflows } from "@/lib/terminal/scroll-policy";
 import {
   appendScrollbackEntry,
   completeScrollbackEntry,
@@ -35,6 +35,20 @@ interface TerminalShellProps {
   /** Slug for direct /tools/<slug> loads; renders with that panel open. */
   initialTool?: ToolSlug;
 }
+
+/**
+ * Content inside the transcript that a keyboard can already reach: while the
+ * column holds any of it, moving focus scrolls the column, so the region
+ * itself does not need to be a tab stop (see transcriptTabStop below).
+ */
+const KEYBOARD_FOCUSABLE = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(", ");
 
 /**
  * The terminal shell: desktop identity and catalogue rails (or a tools drawer), a
@@ -153,6 +167,33 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
     }
     return undefined;
   }, [entries, panel, browser, configOpen]);
+
+  // The transcript is a scroll container, so keyboard users need a way to
+  // move it (axe scrollable-region-focusable). It joins the tab order only
+  // when both halves of that rule hold: the column overflows, and nothing
+  // inside it is tabbable already — output like /help or an inline answer is
+  // unreachable from the keyboard otherwise, while the home rows and panel
+  // controls scroll the column as focus moves, so a stop there would only
+  // lengthen the tab order. Chromium 127+ and Firefox already make such a
+  // scroller a stop on their own, but that is a user-agent heuristic rather
+  // than a guarantee, so the attribute states it. Re-measured every render —
+  // output, panels and async answers all land in a render — and on resize,
+  // the only other way the column gains or loses height.
+  const [transcriptTabStop, setTranscriptTabStop] = useState(false);
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+    const measure = () => {
+      const needsStop =
+        transcriptOverflows(main.scrollHeight, main.clientHeight) &&
+        main.querySelector(KEYBOARD_FOCUSABLE) === null;
+      setTranscriptTabStop((current) => (current === needsStop ? current : needsStop));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(main);
+    return () => observer.disconnect();
+  });
 
   // Ctrl+L clears the screen like /clear, wherever the focus is.
   useEffect(() => {
@@ -278,7 +319,18 @@ export function TerminalShell({ initialTool }: TerminalShellProps) {
               "-translate-x-1/2 border-x border-term-surface2",
             )}
           />
-          <main ref={mainRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          {/* The transcript is the page's main landmark, and it is also a
+              keyboard stop whenever its content would otherwise be
+              unscrollable (see transcriptTabStop): Tab reaches it, and
+              PageUp/PageDown, arrows and Space scroll it natively.
+              role="region" would replace the main landmark, so the native
+              role keeps its own name instead. */}
+          <main
+            ref={mainRef}
+            aria-label="Transcript"
+            tabIndex={transcriptTabStop ? 0 : undefined}
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+          >
             <div className="min-h-0 flex-1">
               {entries.length > 0 && (
                 <div className={cn(TERM_COLUMN, "py-8")}>
