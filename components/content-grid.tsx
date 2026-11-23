@@ -67,7 +67,7 @@ export function ContentGrid({ items, emptyMessage = "No items found" }: ContentG
                     whileHover={shouldReduce ? {} : { rotate: 360, scale: 1.1 }}
                     transition={{ duration: 0.6 }}
                   >
-                    <contentItem.icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary group-hover:text-accent transition-colors" />
+                    <contentItem.icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary group-hover:text-brand transition-colors" />
                   </motion.div>
                   <div className="flex gap-2">
                     {contentItem.wip && (

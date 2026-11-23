@@ -41,6 +41,7 @@ function declarations(id: SchemeId): string {
   for (const token of Object.keys(tokens) as Array<keyof typeof tokens>) {
     css += `--${token}: ${tokens[token]};`;
   }
+  css += `--brand: ${tokens.primary};`;
   return css;
 }
 
