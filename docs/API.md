@@ -13,19 +13,21 @@ External API integrations and server actions used in Astraa.
 
 ## Overview
 
-Astraa uses external APIs for live data. All API calls are made client-side or via server actions.
+Astraa uses external APIs for live data. API calls are made client-side, through internal route handlers, or via server actions.
 
 ```mermaid
 graph LR
     Client[Browser]
     Currency[Currency API]
     Crypto[CoinGecko API]
+    CryptoRoute[/api/crypto-price/]
 
     Client --> Currency
-    Client --> Crypto
+    Client --> CryptoRoute
+    CryptoRoute --> Crypto
 ```
 
-**One internal API route** (`/api/stats`) returns visitor count, GitHub stars, and contributor count. All other data flows through client-side calls or server actions.
+**Two internal API routes** return server-side data: `/api/stats` serves visitor count, GitHub stars, and contributor count, and `/api/crypto-price` serves cryptocurrency prices using the server-only CoinGecko credential. All other data flows through client-side calls or server actions.
 
 ## Currency Exchange API
 
@@ -105,60 +107,63 @@ try {
 
 ## Cryptocurrency API
 
-Real-time cryptocurrency prices via CoinGecko.
+Real-time cryptocurrency prices via CoinGecko, proxied through this app so the
+provider credential never reaches the browser.
 
-### Endpoint
+### Browsing
 
-**Base URL:** `https://api.coingecko.com/api/v3`
-
-**Authentication:** API key passed as query parameter
-
-### Get Crypto Price
-
-**Endpoint:** `/simple/price`
-
-**Method:** `GET`
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `ids` | string | Cryptocurrency ID (e.g., "bitcoin") |
-| `vs_currencies` | string | Target currency (e.g., "usd") |
-
-### Usage
+`components/currency/crypto-converter.tsx` calls `getCryptoPrice()` from
+`lib/api.ts`. That client helper requests the same-origin route
+`/api/crypto-price`; it never talks to CoinGecko directly and holds no key.
 
 ```typescript
 import { getCryptoPrice } from "@/lib/api"
 
 // Get Bitcoin price in USD
 const price = await getCryptoPrice("bitcoin", "USD")
-// Returns: 45000.00 (example)
+// Returns: 45000.00 (example), or null when no price is available
 
 // Get Ethereum price in EUR
 const ethPrice = await getCryptoPrice("ethereum", "EUR")
-// Returns: 2100.00 (example)
 ```
 
-### Implementation
+### Server route
 
-```typescript
-// lib/api.ts
-const COINGECKO_API = "https://api.coingecko.com/api/v3"
+**Endpoint:** `/api/crypto-price` — `app/api/crypto-price/route.ts`
+**Method:** `GET`
 
-export async function getCryptoPrice(
-  cryptoId: string,
-  currency: string
-): Promise<number> {
-  const response = await fetch(
-    `${COINGECKO_API}/simple/price?ids=${cryptoId}&vs_currencies=${currency.toLowerCase()}&x_cg_demo_api_key=${API_KEY}`
-  )
-  const data = await response.json()
-  return data[cryptoId][currency.toLowerCase()]
-}
-```
+**Parameters:**
 
-### Response Format
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `crypto` | string | Cryptocurrency ID from `lib/crypto-data.ts` (e.g., `bitcoin`) |
+| `currency` | string | Fiat ISO code from `lib/currency-data.ts` (e.g., `USD`) |
+
+Only one catalog pair per request is accepted: `lib/currency/pair.ts` rejects
+anything outside the two catalogs, so caller input never reaches the provider as
+a free-form id or a URL. Responses are cacheable for 60 seconds
+(`s-maxage=60`), which caps provider lookups per pair.
+
+**Responses:**
+
+| Status | Body | Meaning |
+|--------|------|---------|
+| `200` | `{ "price": 45000 }` | Price, or `{ "price": null }` when the pair has none |
+| `400` | `{ "error": "invalid_pair" }` | Missing or non-catalog `crypto` / `currency` |
+| `502` | `{ "error": "price_unavailable" }` | The provider call failed |
+| `503` | `{ "error": "price_unavailable" }` | `COINGECKO_API_KEY` is not configured |
+
+`503` is the fail-safe path: without a key the route makes no provider request
+and never falls back to a built-in credential.
+
+### Configuration
+
+Set the server-only `COINGECKO_API_KEY` (`x-cg-demo-api-key`) in the
+environment. It must never be prefixed with `NEXT_PUBLIC_`; the value is read in
+`lib/currency/coingecko.ts`, which only route handlers import. See
+`.env.sample`.
+
+### Provider Response Format
 
 ```json
 {
@@ -167,6 +172,9 @@ export async function getCryptoPrice(
   }
 }
 ```
+
+The route reduces that payload to `{ "price": number | null }` before it reaches
+the browser.
 
 ### Supported Cryptocurrencies
 
