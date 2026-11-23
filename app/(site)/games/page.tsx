@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { availableGames } from "@/lib/games";
 import { GamesClient } from "@/components/games/games-client";
+
+const hasShippedGames = availableGames().length > 0;
 
 export const metadata: Metadata = {
   title: "Games",
@@ -18,6 +21,8 @@ export const metadata: Metadata = {
     description: "Free browser games. No downloads required.",
   },
   alternates: { canonical: "/games" },
+  // Keep the empty catalogue out of search until a game actually ships.
+  ...(hasShippedGames ? {} : { robots: { index: false, follow: true } }),
 };
 
 export default function GamesPage() {

@@ -2,21 +2,23 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { games } from "@/lib/games";
+import { availableGames } from "@/lib/games";
 import { ContentGrid } from "@/components/content-grid";
 import type { ContentItem } from "@/components/content-grid";
 
 export function GamesClient() {
-  // Convert games to ContentItem format
-  const gameItems: ContentItem[] = useMemo(() =>
-    games.map(game => ({
-      ...game,
-      category: "game",
-    })),
+  // Coming-soon entries stay out of the grid so the catalogue never renders
+  // placeholder links to routes that do not exist yet.
+  const shippedItems: ContentItem[] = useMemo(
+    () =>
+      availableGames().map((game) => ({
+        ...game,
+        category: "game",
+      })),
     [],
   );
 
-  const availableCount = gameItems.filter(g => !g.comingSoon).length;
+  const hasShippedGames = shippedItems.length > 0;
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12 pt-16">
@@ -28,15 +30,22 @@ export function GamesClient() {
       >
         <h1 className="text-fluid-4xl font-bold">Games</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto text-fluid-base">
-          Take a break with our collection of games
+          {hasShippedGames
+            ? "Take a break with our collection of games"
+            : "Our collection of browser games is in the works"}
         </p>
-        <div className="flex justify-center gap-4 text-sm text-muted-foreground">
-          <span>{availableCount} Available</span>
-        </div>
+        {hasShippedGames && (
+          <div className="flex justify-center gap-4 text-sm text-muted-foreground">
+            <span>{shippedItems.length} Available</span>
+          </div>
+        )}
       </motion.div>
 
       {/* Games Grid */}
-      <ContentGrid items={gameItems} />
+      <ContentGrid
+        items={shippedItems}
+        emptyMessage="No games are live yet — new ones are on the way. Check back soon!"
+      />
     </div>
   );
 }
