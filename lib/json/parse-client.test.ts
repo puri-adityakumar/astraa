@@ -5,8 +5,12 @@ class MockWorker {
   onmessage: ((e: MessageEvent) => void) | null = null;
   onerror: (() => void) | null = null;
   delayMs = 0;
+  dead = false;
+  terminateThrows = false;
   postMessage(data: { id: number; text: string }) {
+    if (this.dead) return;
     setTimeout(() => {
+      if (this.dead) return;
       let value: unknown = null;
       try {
         value = JSON.parse(data.text);
@@ -18,7 +22,10 @@ class MockWorker {
       } as MessageEvent);
     }, this.delayMs);
   }
-  terminate() {}
+  terminate() {
+    this.dead = true;
+    if (this.terminateThrows) throw new Error("terminate failed");
+  }
 }
 
 describe("createParseClient", () => {
@@ -69,5 +76,23 @@ describe("createParseClient", () => {
     worker.onerror?.();
     await expect(pending).rejects.toThrow("JSON parser worker failed");
     client.destroy();
+  });
+
+  it("rejects requests issued after the worker fails", async () => {
+    const client = createParseClient(worker as unknown as Worker);
+    worker.onerror?.();
+    await expect(client.parse("{}")).rejects.toThrow("JSON parser worker failed");
+    await expect(client.parse('{"a":1}')).rejects.toThrow("JSON parser worker failed");
+    client.destroy();
+  });
+
+  it("settles pending requests even when terminate throws", async () => {
+    worker.delayMs = 20;
+    worker.terminateThrows = true;
+    const client = createParseClient(worker as unknown as Worker);
+    const pending = client.parse("{\"a\":1}");
+    expect(() => client.destroy()).not.toThrow();
+    await expect(pending).resolves.toBeNull();
+    expect(() => client.destroy()).not.toThrow();
   });
 });

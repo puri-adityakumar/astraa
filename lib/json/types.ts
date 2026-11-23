@@ -33,6 +33,7 @@ export type TreeRow = {
   hasChildren: boolean;
   isExpanded: boolean;
   childCount?: number;
+  depthLimited?: boolean;
 };
 
 export type PatchOp = "set" | "remove" | "add";
