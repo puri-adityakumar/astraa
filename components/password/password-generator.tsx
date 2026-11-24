@@ -201,7 +201,7 @@ export function PasswordGeneratorClient({ variant = "page" }: PasswordGeneratorC
                   }
                 }}
                 min={mode === "random" ? 6 : mode === "memorable" ? 3 : 3}
-                max={mode === "random" ? 64 : mode === "memorable" ? 15 : 12}
+                max={mode === "random" ? 64 : mode === "memorable" ? 10 : 12}
                 step={1}
                 className="flex-1"
               />
