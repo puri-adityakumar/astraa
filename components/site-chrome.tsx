@@ -3,6 +3,7 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { PageTransition } from "@/components/ui/page-transition";
 import { LandingBackground } from "@/components/landing-background";
+import { SkipLink } from "@/components/skip-link";
 
 /**
  * Legacy site chrome (theme context, background, nav, main container, footer).
@@ -19,6 +20,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     >
       <LandingBackground />
       <div className="min-h-screen flex flex-col">
+        <SkipLink />
         <Navigation />
         <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
           <PageTransition type="fade">
